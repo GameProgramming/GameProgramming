@@ -1,0 +1,15 @@
+#Unnecessary Unity folders
+Library
+Temp
+
+#Unnecessary Unity files
+Assembly-*
+*.sln
+*.userprefs
+
+#WINDOWS
+# Windows image file caches
+Thumbs.db 
+
+# Folder config file
+Desktop.ini
