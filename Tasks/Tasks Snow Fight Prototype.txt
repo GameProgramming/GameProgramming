@@ -1,0 +1,38 @@
+- GIT einbauen bei Hannes
+
+Player und Bots: (Ben und Tiare)
+- Spawning Point
+- Health
+- Model
+- Hinfallen
+
+Player:(Ben und Tiare)
+- Kameraführung
+- Controls
+- Bewegung
+- Schneeball werfen
+
+Bots: (Ben und Tiare)
+- Mehrere Bots einbauen
+- Schnellball werfen
+- Oritentierung nach Nächsten (Orientierung nach Gewichtung)
+- Keine Bewegung
+
+Ball: (Hannes)
+- Schnellballobjekt erstellen
+- Damage einbauen
+- Collision mit Player und Bot
+
+Ansicht: (Andreas)
+- HUD erstellen bei TAB oder dauernd
+- Terrain ändern wenns geht Schnee und paar Bäume
+
+Ein paar commands:
+
+git status
+git add .
+git add filename
+git pull origin master
+git commit -m "Message"
+git push origin master
+git rm (remove)
