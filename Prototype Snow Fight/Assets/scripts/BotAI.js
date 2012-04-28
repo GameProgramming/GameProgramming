@@ -23,6 +23,8 @@ motor = GetComponent(CharacterMotor);
 private var pStatus : PlayerStatus;
 pStatus = GetComponent(PlayerStatus);
 
+private var strafing = 0.0;
+
 var bulletSpawn : Projectile;
 
 function Start ()
@@ -115,9 +117,9 @@ function Attack ()
 	{
 		angle = RotateTowardsPosition(target.position, attackRotateSpeed);
 			
-		// The angle of our forward direction and the player position is larger than 50 degrees
+		// The angle of our forward direction and the player position is larger than 100 degrees
 		// That means he is out of sight
-		if (Mathf.Abs(angle) > 40)
+		if (Mathf.Abs(angle) > 100)
 			lostSight = true;
 			
 		// If we lost sight then we keep running for some more time (extraRunTime). 
@@ -131,11 +133,19 @@ function Attack ()
 		// Keep looking if we are hitting our target
 		// If we are, knock them out of the way dealing damage
 		var pos = transform.position;
-		if((pos - target.position).magnitude < punchRadius)
+		if(!lostSight && (pos - target.position).magnitude < punchRadius)
 		{
 			bulletSpawn.inputFire = true;
-			direction = Vector3.zero;
+			direction = Vector3.left * strafing;
+			if (Random.value > 0.9) {
+				strafing = 0;
+				var x = Random.value;
+				if (x > 0.7) strafing = 1;
+				if (x < 0.3) strafing = -1;
+				if (x > 0.95) motor.inputJump = true;
+			}
 		}
+		if (lostSight) direction = Vector3.zero;
 		
 		motor.inputMoveDirection = direction;
 		
