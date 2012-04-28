@@ -6,8 +6,8 @@ Player und Bots: (Ben und Tiare)
 -- manage health
 -- manage snowball count
 -- keep track of pushed snowballs
-D?-- manage death (submit score to Game.js and respawn at base)
-D?-- manage stun (player not controllable for certain time)	
+-- manage death (submit score to Game.js and respawn at base)
+-- manage stun (player not controllable for certain time)	
 - Model
 - Hinfallen
 
@@ -18,9 +18,10 @@ D- Controls
 - Schneeball werfen
 
 Bots: (Ben und Tiare)
-- Mehrere Bots einbauen
-- Schneeball werfen
-- Oritentierung nach Nächstem wenn in sicht oder wenn man beworfen wurde (Orientierung nach Gewichtung)
+D- Mehrere Bots einbauen
+D- Schneeball werfen
+D- Oritentierung nach Nächstem wenn in sicht
+ .... - oder wenn man beworfen wurde (Orientierung nach Gewichtung)
 - Keine Bewegung (oder doch bewegung.. zumindest von base an ne vorgegebene position?)
 (- wenn kugel in reichweite, kugel auf gegner rollen)
 
