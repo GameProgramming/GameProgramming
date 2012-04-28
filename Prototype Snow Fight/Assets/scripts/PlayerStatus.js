@@ -6,6 +6,7 @@ var stunDuration = 3.0;
 private var hp : int = fullHp;
 private var isControllable = true;
 private var stunTime;
+private var gameState : GameStatus;
 //InvokeRepeating("Regenerate",5,5);
 //var damageSound : AudioClip;
 
@@ -26,21 +27,25 @@ function Update () {
 
 function OnCollisionEnter (collision : Collision) {
 	if(collision.rigidbody && collision.rigidbody.tag.Equals("Projectile")){
-		var ball = collision.rigidbody.GetComponent("Damage");
-		hp = hp - ball.dmg;
+		var ball = collision.transform.GetComponent("Damage");
+		
+		if (ball)
+			hp -= ball.GetDamage();
 		//audio.PlayOneShot(damageSound);
 		
-		if (hp > 0)
+		if (hp > 0) {
 			Stun();
-		else
+		}
+		else {
 			Die(ball);
+		}
 	}
 
 }
 
 function Die (ball : Damage) {
-	GameState = GameObject.Find("Main Camera").GetComponent("Game");
-	GameState.IncreaseScore(ball.team);
+	gameState = GameObject.Find("Game").GetComponent("GameStatus");
+	gameState.IncreaseScore(ball.GetShootingTeam());
 	
 	hp = fullHp;
 	Respawn ();

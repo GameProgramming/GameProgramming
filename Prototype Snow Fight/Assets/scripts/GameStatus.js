@@ -15,5 +15,6 @@ function Update () {
 }
 
 function IncreaseScore(scoringTeam : int) {
-	score[scoringTeam]++;
+	if (scoringTeam > 0)
+		score[scoringTeam-1]++;
 }

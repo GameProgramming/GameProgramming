@@ -1,7 +1,7 @@
 D- GIT einbauen bei Hannes
 
 Player und Bots: (Ben und Tiare)
-- 2 Spawn Points (TeamBase)
+D- 2 Spawn Points (TeamBase)
 - Health (PlayerStatus)
 -- manage health
 -- manage snowball count
