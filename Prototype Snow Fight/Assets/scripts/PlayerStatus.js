@@ -1,7 +1,12 @@
 var teamNumber = 1;
-var totalHp : int = 50;
-var hp : int = totalHp;
-InvokeRepeating("Regenerate",5,5);
+var teamBase : Transform;
+var fullHp : int = 50;
+var stunDuration = 3;
+
+private var hp : int = fullHp;
+private var isControllable = true;
+private var stunTime : Time;
+//InvokeRepeating("Regenerate",5,5);
 //var damageSound : AudioClip;
 
 
@@ -10,11 +15,14 @@ function Update () {
   	//audio.PlayOneShot(damageSound);
   	gameObject.GetComponent("Detonator").Explode();
   }
+  
+//  if(!isControllable && Time.time > stunTime + stunDuration)
+//  	isControllable = true;
 }
 
-function Regenerate () {
-  hp = totalHp;
-}
+//function Regenerate () {
+//  hp = fullHp;
+//}
 
 function OnCollisionEnter (collision : Collision) {
 	if(collision.rigidbody.tag.Equals("Projectile")){
@@ -22,8 +30,29 @@ function OnCollisionEnter (collision : Collision) {
 		hp = hp - ball.dmg;
 		//audio.PlayOneShot(damageSound);
 		
-		GameState = GameObject.Find("Main Camera").GetComponent("Game");
-		GameState.UpdateScore(ball.team);
+		if (hp > 0)
+			Stun();
+		else
+			Die(ball);
 	}
 
+}
+
+function Die (ball : Damage) {
+	GameState = GameObject.Find("Main Camera").GetComponent("Game");
+	GameState.IncreaseScore(ball.team);
+	
+	hp = fullHp;
+	Respawn ();
+}
+
+function Stun () {
+	if(isControllable) {
+		isControllable = false;
+//		stunTime = Time.time;
+	}
+}
+
+function Respawn () {
+	transform.position = teamBase.position;
 }
