@@ -44,7 +44,7 @@ function OnCollisionEnter (collision : Collision) {
 }
 
 function Die (ball : Damage) {
-	gameState = GameObject.Find("Game").GetComponent("GameStatus");
+	gameState = GameObject.FindWithTag("Game").GetComponent("GameStatus");
 	gameState.IncreaseScore(ball.GetShootingTeam());
 	
 	hp = fullHp;
