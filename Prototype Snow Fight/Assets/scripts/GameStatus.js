@@ -1,10 +1,10 @@
 #pragma strict
 var teams = 2;
-private var score = new Array();
+private var score : int[];
 
 function Start () {
-	score.length = teams;
-	var i:int;
+	score = new int[teams];
+	var i:int = 0;
 	for (i = 0; i<teams; i++) {
 		score[i] = 0;
 	}
@@ -15,5 +15,5 @@ function Update () {
 }
 
 function IncreaseScore(scoringTeam : int) {
-	//score[scoringTeam] ++;
+	score[scoringTeam]++;
 }
