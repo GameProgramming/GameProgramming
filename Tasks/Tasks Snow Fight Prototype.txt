@@ -6,8 +6,8 @@ Player und Bots: (Ben und Tiare)
 -- manage health
 -- manage snowball count
 -- keep track of pushed snowballs
--- manage death (submit score to Game.js and respawn at base)
--- manage stun (player not controllable for certain time)	
+D?-- manage death (submit score to Game.js and respawn at base)
+D?-- manage stun (player not controllable for certain time)	
 - Model
 - Hinfallen
 
