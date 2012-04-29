@@ -13,7 +13,7 @@ private var stunned : boolean = false;
 //InvokeRepeating("Regenerate",5,5);
 //var damageSound : AudioClip;
 
-var anim : Animation;
+private var anim : Animation;
 anim = transform.Find("Model").GetComponent(Animation);
 anim["hit"].speed = 10;
 anim["hit"].layer = 2;

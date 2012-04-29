@@ -2,11 +2,9 @@
 #pragma implicit
 #pragma downcast
 
-var anim : Animation;
-anim = transform.Find("Model").GetComponent(Animation);
+private var anim : Animation;
 
-var snowballSpawn : Projectile;
-snowballSpawn = transform.Find("BulletSpawnPoint").GetComponent(Projectile);
+private var snowballSpawn : Projectile;
 
 // Does this script currently respond to input?
 var canControl : boolean = true;
@@ -187,6 +185,9 @@ private var controller : CharacterController;
 function Awake () {
 	controller = GetComponent (CharacterController);
 	tr = transform;
+	
+	anim = transform.Find("Model").GetComponent(Animation);
+	snowballSpawn = transform.Find("BulletSpawnPoint").GetComponent(Projectile);
 	
 	anim["throw"].layer = 1;
 }
