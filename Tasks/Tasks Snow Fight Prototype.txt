@@ -2,7 +2,7 @@ D- GIT einbauen bei Hannes
 
 Player und Bots: (Ben und Tiare)
 D- 2 Spawn Points (TeamBase)
-- make player spawn at team base on game start
+D- make player spawn at team base on game start
 - Health (PlayerStatus)
  D -- manage health
  D -- timeout before respawn
@@ -38,7 +38,7 @@ D- schneekugel erstellen
 - schneekugel spawnpoints setzen (quasi-random? vielleicht an 10 möglichen positionen 3 kugeln setzen?)
 
 Ansicht: (Andreas)
-- HUD erstellen bei TAB oder dauernd
+D- HUD erstellen bei TAB oder dauernd
 - simples terrain finalisieren
 - modifizierbares terrain: Terrain ändern wenns geht Schnee und paar Bäume
 

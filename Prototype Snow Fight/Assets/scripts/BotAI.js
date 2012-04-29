@@ -13,7 +13,7 @@ var punchRadius = 7.1;
 private var attackAngle = 10.0;
 private var isAttacking = false;
 
-var target : Transform;
+private var target : Transform;
 
 // Cache a reference to the motor
 private var motor : CharacterMotorSF;
@@ -179,22 +179,37 @@ function OnDrawGizmosSelected ()
 function FindClosestEnemy () : GameObject {
     // Find all game objects with tag Enemy
     var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("Player"); 
+    gos = GameObject.FindGameObjectsWithTag("Bot"); 
+    var player = GameObject.FindGameObjectWithTag("Player");
     var closest : GameObject;
     var distance = Mathf.Infinity; 
     var position = transform.position; 
+    var diff;
+	var curDistance;
+	        
     // Iterate through them and find the closest one
     for (var go : GameObject in gos)  { 
     	var status = go.GetComponent(PlayerStatus);
+    	//get closest bot
     	if (status != null && status.teamNumber != pStatus.teamNumber) {
-	        var diff = (go.transform.position - position);
-	        var curDistance = diff.sqrMagnitude; 
+	        diff = (go.transform.position - position);
+	        curDistance = diff.sqrMagnitude; 
 	        if (curDistance < distance) { 
 	            closest = go; 
 	            distance = curDistance; 
 	        } 
         }
     } 
+    
+    //check if player might be enemy and is closer
+    if (player.GetComponent(PlayerStatus) && player.GetComponent(PlayerStatus).teamNumber != pStatus.teamNumber) {
+    		diff = (player.transform.position - position);
+        	curDistance = diff.sqrMagnitude; 
+        if (curDistance < distance) { 
+            closest = player; 
+            distance = curDistance; 
+        } 
+    }
     return closest;    
 }
 

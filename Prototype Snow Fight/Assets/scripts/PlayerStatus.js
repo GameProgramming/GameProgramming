@@ -3,11 +3,11 @@ var teamBase : Transform;
 var fullHp : int = 10;
 var stunDuration = 1.0;
 var respawnTimeout = 5.0;
-var hideTime = 0.2;
+var hideDuration = 0.1;
 
 private var hp : int = fullHp;
 private var stunTime;
-private var killTime;
+private var killTime = 0.0;
 private var gameState : GameStatus;
 private var died : boolean = false;
 private var stunned : boolean = false;
@@ -26,6 +26,23 @@ anim["die"].layer = 3;
 anim["die"].wrapMode = WrapMode.ClampForever;
 anim["die"].weight = 100;
 
+function Start() {
+	//spawn the player at his base (not the bots)
+	if (gameObject.CompareTag("Player"))
+		Respawn();
+		
+	//make sure the player is visible on start
+	var meshRenderers = GetComponentsInChildren (MeshRenderer);
+		for (var rend : MeshRenderer in meshRenderers) {
+			rend.enabled = true;
+		}
+		
+		var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
+		for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
+			rend.enabled = true;
+		}
+}
+
 function Update () {
 //  if(hp==0){
 //  	//audio.PlayOneShot(damageSound);
@@ -41,7 +58,7 @@ function Update () {
 		Respawn();
 		
 	//upon respawn make visible after hide time and then stun for a bit
-	if (respawning && Time.time > killTime + respawnTimeout + hideTime) {
+	if (respawning && Time.time > killTime + respawnTimeout + hideDuration) {
 		var meshRenderers = GetComponentsInChildren (MeshRenderer);
 		for (var rend : MeshRenderer in meshRenderers) {
 			rend.enabled = true;
@@ -124,6 +141,9 @@ function Respawn () {
 	hp = fullHp;
 	died = false;
 	anim.Stop("die");	
+	
+	anim.CrossFade("idle");
+	anim["idle"].speed = 10;
 }
 
 function IsDead () : boolean {
