@@ -1,11 +1,15 @@
 #pragma strict
 var teams = 2;
 var tabFade = 3.0;
+var skyBox : UnityEngine.Material;
 
 private var score : int[];
 private var fade = 0.0;
 
 function Start () {
+	if (skyBox && !RenderSettings.skybox)
+		RenderSettings.skybox = skyBox;
+
 	score = new int[teams];
 	var i:int = 0;
 	for (i = 0; i<teams; i++) {
@@ -46,4 +50,15 @@ function Update () {
 function IncreaseScore(scoringTeam : int) {
 	if (scoringTeam > 0)
 		score[scoringTeam-1]++;
+}
+
+//this happens when something falls off the level and into the death box
+function OnTriggerEnter (other : Collider) {
+	//~ playerLink=col.GetComponent (PlayerStatus);
+	if (!other.GetComponent (PlayerStatus)) { // not the player or the bots
+		//destroy the object
+		Destroy(other.gameObject);
+	}
+	else //otherwise tell the player to die
+		other.gameObject.SendMessage ("Respawn", SendMessageOptions.DontRequireReceiver);
 }

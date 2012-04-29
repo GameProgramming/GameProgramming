@@ -101,8 +101,11 @@ function OnCollisionEnter (collision : Collision) {
 function Die (ball : Damage) {
 	if (died) //we're already dead
 		return;
-	gameState = GameObject.FindWithTag("Game").GetComponent("GameStatus");
-	gameState.IncreaseScore(ball.GetShootingTeam());
+	
+	if (ball) {
+		gameState = GameObject.FindWithTag("Game").GetComponent("GameStatus");
+		gameState.IncreaseScore(ball.GetShootingTeam());
+	}
 	
 	died = true;
 	killTime = Time.time;
