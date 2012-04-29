@@ -190,17 +190,24 @@ function Awake () {
 	snowballSpawn = transform.Find("BulletSpawnPoint").GetComponent(Projectile);
 	
 	anim["throw"].layer = 1;
+	anim["throw"].blendMode = AnimationBlendMode.Additive;
+	anim["hit"].blendMode = AnimationBlendMode.Additive;
 }
 
 private function UpdateFunction () {
 	if (canControl) {
 		var speed = inputMoveDirection.magnitude;
-		if (speed > 0.01) {
-			anim.CrossFade("walk");
-			anim["walk"].speed = speed * 80;
+		if (grounded) {
+			if (speed > 0.01) {
+				anim.CrossFade("walk");
+				anim["walk"].speed = speed * 80;
+			} else {
+				anim.CrossFade("idle");
+				anim["idle"].speed = 10;
+			}
 		} else {
-			anim.CrossFade("idle");
-			anim["idle"].speed = 10;
+			anim.CrossFade("jumping");
+			anim["jumping"].speed = 10;
 		}
 		
 		if (inputFire && throwAnim == 0 && snowballSpawn.reloadProgress <= 0) {

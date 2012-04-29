@@ -12,6 +12,7 @@ ModelImporter:
     7400006: throw //// yeti
     7400008: hit //// yeti
     7400010: die //// yeti
+    7400012: jumping //// yeti
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -21,7 +22,7 @@ ModelImporter:
     generateAnimations: 3
     bakeSimulation: 0
     splitAnimations: 1
-    animationCompression: 1
+    animationCompression: 0
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
@@ -33,24 +34,29 @@ ModelImporter:
       wrapMode: 2
       loop: 0
     - name: walk
-      firstFrame: 930
+      firstFrame: 931
       lastFrame: 1800
       wrapMode: 2
       loop: 0
     - name: throw
-      firstFrame: 1830
+      firstFrame: 1831
       lastFrame: 2400
       wrapMode: 1
       loop: 0
     - name: hit
-      firstFrame: 2430
+      firstFrame: 2431
       lastFrame: 3000
       wrapMode: 1
       loop: 0
     - name: die
-      firstFrame: 3030
+      firstFrame: 3031
       lastFrame: 3600
-      wrapMode: 1
+      wrapMode: 8
+      loop: 0
+    - name: jumping
+      firstFrame: 3631
+      lastFrame: 4200
+      wrapMode: 2
       loop: 0
   meshes:
     lODScreenPercentages: []
