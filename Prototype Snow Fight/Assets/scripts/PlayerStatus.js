@@ -1,8 +1,8 @@
 var teamNumber = 1;
 var teamBase : Transform;
-var fullHp : int = 50;
-var stunDuration = 3.0;
-var respawnTimeout = 3.0;
+var fullHp : int = 10;
+var stunDuration = 1.0;
+var respawnTimeout = 5.0;
 
 private var hp : int = fullHp;
 private var stunTime;
@@ -13,6 +13,16 @@ private var stunned : boolean = false;
 //InvokeRepeating("Regenerate",5,5);
 //var damageSound : AudioClip;
 
+var anim : Animation;
+anim = transform.Find("Model").GetComponent(Animation);
+anim["hit"].speed = 10;
+anim["hit"].layer = 2;
+anim["hit"].wrapMode = WrapMode.Once;
+
+anim["die"].speed = 10;
+anim["die"].layer = 3;
+anim["die"].wrapMode = WrapMode.Once;
+anim["die"].weight = 100;
 
 function Update () {
 //  if(hp==0){
@@ -20,9 +30,9 @@ function Update () {
 //  	gameObject.GetComponent("Detonator").Explode();
 //  }
   
-  if(stunned && Time.time > stunTime + stunDuration) {
+  if(!died && stunned && Time.time > stunTime + stunDuration) {
   	stunned = false;
-  	GetComponent(CharacterMotor).canControl = true;
+  	GetComponent(CharacterMotorSF).canControl = true;
 	}
   	
 	if (died && Time.time > killTime + respawnTimeout)
@@ -40,6 +50,8 @@ function OnCollisionEnter (collision : Collision) {
 		if (ball)
 			hp -= ball.GetDamage();
 		//audio.PlayOneShot(damageSound);
+		
+		anim.CrossFade("hit");
 		
 		if (hp > 0) {
 			Stun();
@@ -59,11 +71,16 @@ function Die (ball : Damage) {
 	
 	died = true;
 	killTime = Time.time;
+	
+	GetComponent(CharacterMotorSF).canControl = false;
+	
+	anim.CrossFade("die");
 }
 
 function Stun () {
-	if(GetComponent(CharacterMotor).canControl) {
-		GetComponent(CharacterMotor).canControl = false;
+	if (died) return;
+	if(GetComponent(CharacterMotorSF).canControl) {
+		GetComponent(CharacterMotorSF).canControl = false;
 	}
 	stunned = true;
 	stunTime = Time.time;
@@ -72,7 +89,6 @@ function Stun () {
 function Respawn () {
 	transform.position = teamBase.position;
 	hp = fullHp;
-	died = false;
-	
+	died = false;	
 	Stun();
 }

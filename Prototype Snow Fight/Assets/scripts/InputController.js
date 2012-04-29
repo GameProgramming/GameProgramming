@@ -1,11 +1,8 @@
-private var motor : CharacterMotor;
-
-var bulletSpawn : Projectile;
-//bulletSpawn = transform.Find("BulletSpawnPoint").GetComponent(Projectile);
+private var motor : CharacterMotorSF;
 
 // Use this for initialization
 function Awake () {
-	motor = GetComponent(CharacterMotor);
+	motor = GetComponent(CharacterMotorSF);
 }
 
 // Update is called once per frame
@@ -34,8 +31,8 @@ function Update () {
 	motor.inputMoveDirection = transform.rotation * directionVector;
 	motor.inputJump = Input.GetButton("Jump");
 	
-	bulletSpawn.inputFire = Input.GetButtonDown("Fire1");
+	motor.inputFire = Input.GetButtonDown("Fire1");
 }
 
 // Require a character controller to be attached to the same game object
-@script RequireComponent (CharacterMotor)
+@script RequireComponent (CharacterMotorSF)

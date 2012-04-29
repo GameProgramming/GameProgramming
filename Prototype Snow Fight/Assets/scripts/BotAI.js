@@ -2,9 +2,8 @@ var attackTurnTime = 0.7;
 var rotateSpeed = 120.0;
 var attackDistance = 17.0;
 var extraRunTime = 2.0;
-var damage = 1;
 
-var attackSpeed = 5.0;
+var attackSpeed = 1.0;
 var attackRotateSpeed = 20.0;
 
 var idleTime = 1.6;
@@ -17,15 +16,13 @@ private var isAttacking = false;
 var target : Transform;
 
 // Cache a reference to the motor
-private var motor : CharacterMotor;
-motor = GetComponent(CharacterMotor);
+private var motor : CharacterMotorSF;
+motor = GetComponent(CharacterMotorSF);
 
 private var pStatus : PlayerStatus;
 pStatus = GetComponent(PlayerStatus);
 
 private var strafing = 0.0;
-
-var bulletSpawn : Projectile;
 
 function Start ()
 {
@@ -135,7 +132,7 @@ function Attack ()
 		var pos = transform.position;
 		if(!lostSight && (pos - target.position).magnitude < punchRadius)
 		{
-			bulletSpawn.inputFire = true;
+			motor.inputFire = true;
 			direction = Vector3.left * strafing;
 			if (Random.value > 0.9) {
 				strafing = 0;
@@ -202,4 +199,4 @@ function FindClosestEnemy () : GameObject {
 }
 
 
-@script RequireComponent (CharacterMotor)
+@script RequireComponent (CharacterMotorSF)
