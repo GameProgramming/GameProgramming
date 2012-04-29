@@ -2,11 +2,18 @@
 var teams = 2;
 var tabFade = 3.0;
 var skyBox : UnityEngine.Material;
+var fragsToWin = 10;
 
+var skin : GUISkin;
 private var score : int[];
 private var fade = 0.0;
+private var winner = 0;
+private var gameOver : boolean;
+
 
 function Start () {
+	gameOver = false;
+	
 	if (skyBox && !RenderSettings.skybox)
 		RenderSettings.skybox = skyBox;
 
@@ -18,6 +25,11 @@ function Start () {
 }
 
 function OnGUI() {
+
+	if (skin)
+		GUI.skin = skin;
+	else
+		Debug.Log("StartMenuGUI: GUI Skin object missing!");
 
 	if (Time.time < fade) {
 		GUI.Box (Rect (10, 10, 120, 100), "Team Frags");
@@ -37,6 +49,23 @@ function OnGUI() {
 		}
 	}	
 
+	if (gameOver) {
+		var winText : String;
+		winText = "Team "+ winner.ToString() + " wins!";
+		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
+		GUI.Box(Rect(0,0,Screen.width,Screen.height),"");
+		GUI.Label (Rect (Screen.width/2, Screen.height/2-98, 80, 25), winText, "winnerShadow");
+		GUI.Label (Rect (Screen.width/2, Screen.height/2-100, 80, 25), winText, "winner");
+			
+		var scoreText : String;
+		var j : int = 0;
+		for (j = 0; j<teams-1; j++) {
+			scoreText = scoreText + score[j].ToString() + " : ";
+			scoreText = scoreText + score[j+1].ToString();
+		}
+		GUI.Label (Rect (Screen.width/2, Screen.height/2-73, 80, 35), scoreText, "winnerShadow");
+		GUI.Label (Rect (Screen.width/2, Screen.height/2-75, 80, 35), scoreText, "winner");
+	}
 }
 
 function Update () {
@@ -45,11 +74,29 @@ function Update () {
 		fade = Time.time + tabFade;
 	}
 	
+	var levelName : String = Application.loadedLevelName;
+	if (gameOver && Input.GetKeyDown("space")) {
+		Application.LoadLevel(levelName);
+	}
 }
 
 function IncreaseScore(scoringTeam : int) {
-	if (scoringTeam > 0)
+	if (scoringTeam > 0) {
 		score[scoringTeam-1]++;
+		if(score[scoringTeam-1] >= fragsToWin) {
+			//scoring team has won the game!!
+			winner = scoringTeam;
+			gameOver = true;
+			
+			var bots = GameObject.FindGameObjectsWithTag ("Bot");
+			for (var bot in bots)
+			    bot.BroadcastMessage("GameOver");
+			    
+		    GameObject.FindGameObjectWithTag("Player").BroadcastMessage("GameOver");
+    
+			
+		}
+	}
 }
 
 //this happens when something falls off the level and into the death box

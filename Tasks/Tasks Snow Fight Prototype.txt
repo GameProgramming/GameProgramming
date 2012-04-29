@@ -11,7 +11,7 @@ D- make player spawn at team base on game start
 D -- manage death (submit score to Game.js and respawn at base)
 D -- manage stun (player not controllable for certain time)	
 - Model
-- Hinfallen (player controller deaktivieren - dann sollte der capsule collider ev. umfallen?)
+D- Hinfallen (player controller deaktivieren - dann sollte der capsule collider ev. umfallen?)
 
 Player:(Ben und Tiare)
 D- Kameraführung

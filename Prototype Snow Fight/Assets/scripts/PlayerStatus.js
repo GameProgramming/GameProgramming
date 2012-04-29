@@ -12,6 +12,7 @@ private var gameState : GameStatus;
 private var died : boolean = false;
 private var stunned : boolean = false;
 private var respawning : boolean = false;
+private var gameOver = false;
 InvokeRepeating("Regenerate",5,10);
 //var damageSound : AudioClip;
 
@@ -27,6 +28,7 @@ anim["die"].wrapMode = WrapMode.ClampForever;
 anim["die"].weight = 100;
 
 function Start() {
+	gameOver = false;
 	//spawn the player at his base (not the bots)
 	if (gameObject.CompareTag("Player"))
 		Respawn();
@@ -44,6 +46,8 @@ function Start() {
 }
 
 function Update () {
+	if (gameOver)
+		return;
 //  if(hp==0){
 //  	//audio.PlayOneShot(damageSound);
 //  	gameObject.GetComponent("Detonator").Explode();
@@ -151,4 +155,12 @@ function Respawn () {
 
 function IsDead () : boolean {
 	return died;
+}
+
+function GameOver () {
+	if(GetComponent(CharacterMotorSF).canControl) {
+		GetComponent(CharacterMotorSF).canControl = false;
+	}
+	
+	gameOver = true;
 }

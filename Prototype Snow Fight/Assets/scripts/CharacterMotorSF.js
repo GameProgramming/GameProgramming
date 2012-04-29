@@ -5,6 +5,8 @@
 private var anim : Animation;
 
 private var snowballSpawn : Projectile;
+private var gameOver = false;
+private var gameOverTime = 0.0;
 
 // Does this script currently respond to input?
 var canControl : boolean = true;
@@ -182,7 +184,13 @@ private var tr : Transform;
 
 private var controller : CharacterController;
 
+function Start () {
+	gameOver = false;
+	anim.enabled = true;
+}
+
 function Awake () {
+
 	controller = GetComponent (CharacterController);
 	tr = transform;
 	
@@ -195,6 +203,9 @@ function Awake () {
 }
 
 private function UpdateFunction () {
+	if(gameOver)
+		return;
+		
 	if (canControl && !GetComponent(PlayerStatus).IsDead()) {
 		var speed = inputMoveDirection.magnitude;
 		if (grounded) {
@@ -359,6 +370,9 @@ private function UpdateFunction () {
 }
 
 function FixedUpdate () {
+	if(gameOver)
+		return;
+
 	if (movingPlatform.enabled) {
 		if (movingPlatform.activePlatform != null) {
 			if (!movingPlatform.newPlatform) {
@@ -382,6 +396,13 @@ function FixedUpdate () {
 }
 
 function Update () {
+	if(gameOver) {
+		if(Time.time > gameOverTime + 1) {
+			anim.enabled = false;
+		}
+		return;
+	} 
+		
 	if (!useFixedUpdate)
 		UpdateFunction();
 }
@@ -633,6 +654,11 @@ function SetVelocity (velocity : Vector3) {
 	movement.velocity = velocity;
 	movement.frameVelocity = Vector3.zero;
 	SendMessage("OnExternalVelocity");
+}
+
+function GameOver() {
+	gameOver = true;
+	gameOverTime = Time.time;
 }
 
 // Require a character controller to be attached to the same game object
