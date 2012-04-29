@@ -193,7 +193,7 @@ function Awake () {
 }
 
 private function UpdateFunction () {
-	if (canControl) {
+	if (canControl && !GetComponent(PlayerStatus).IsDead()) {
 		var speed = inputMoveDirection.magnitude;
 		if (speed > 0.01) {
 			anim.CrossFade("walk");
