@@ -31,7 +31,7 @@ function Start() {
 	//spawn the player at his base (not the bots)
 	if (gameObject.CompareTag("Player"))
 		Respawn();
-		
+
 	//make sure the player is visible on start
 	var meshRenderers = GetComponentsInChildren (MeshRenderer);
 		for (var rend : MeshRenderer in meshRenderers) {
@@ -44,13 +44,21 @@ function Start() {
 		}
 }
 
+function OnGUI() {
+
+	GUI.Box (Rect (10, 530, 100, 50), "Health");
+	var hpString = hp.ToString();
+	GUI.Label (Rect (60, 550, 40, 20), hpString);
+    //GUI.Button (Rect (10,10,150,20), "Skinned Button"); 
+
+}
+
 function Update () {
 //  if(hp==0){
 //  	//audio.PlayOneShot(damageSound);
 //  	gameObject.GetComponent("Detonator").Explode();
 //  }
 
-  
   	if(!died && !respawning && stunned && Time.time > stunTime + stunDuration) {
 	  	stunned = false;
 	  	GetComponent(CharacterMotorSF).canControl = true;
@@ -77,7 +85,10 @@ function Update () {
 }
 
 function Regenerate () {
-  hp += 10;
+	if (hp < fullHp) {
+		hp += 5;
+	}
+  
 }
 
 function OnCollisionEnter (collision : Collision) {
@@ -120,16 +131,6 @@ function OnControllerColliderHit (hit : ControllerColliderHit)
 	// Apply the push
 body.velocity = pushDir * pushPower;
 } 
-
-function OnGUI() {
-
- 
-
-        //GUI.Button (Rect (10,10,150,20), "Skinned Button"); 
-
-        
-
-    }
 
 function Die (ball : Damage) {
 	if (died) //we're already dead
