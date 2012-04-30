@@ -4,6 +4,7 @@ var fullHp : int = 10;
 var stunDuration = 1.0;
 var respawnTimeout = 5.0;
 var hideDuration = 0.1;
+var pushPower = 2.0;
 
 private var hp : int = fullHp;
 private var stunTime;
@@ -48,6 +49,7 @@ function Update () {
 //  	//audio.PlayOneShot(damageSound);
 //  	gameObject.GetComponent("Detonator").Explode();
 //  }
+
   
   	if(!died && !respawning && stunned && Time.time > stunTime + stunDuration) {
 	  	stunned = false;
@@ -95,8 +97,39 @@ function OnCollisionEnter (collision : Collision) {
 			Die(ball);
 		}
 	}
-
 }
+
+function OnControllerColliderHit (hit : ControllerColliderHit)
+{
+	var body : Rigidbody = hit.collider.attachedRigidbody;
+	// no rigidbody
+	if (body == null || body.isKinematic)
+	return;
+	
+	// We dont want to push objects below us
+	if (hit.moveDirection.y < -0.3) 
+	return;
+
+	// Calculate push direction from move direction, 
+	// we only push objects to the sides never up and down
+	var pushDir = Vector3 (hit.moveDirection.x, 0, hit.moveDirection.z);
+	
+	// If you know how fast your character is trying to move,
+	// then you can also multiply the push velocity by that.
+	
+	// Apply the push
+body.velocity = pushDir * pushPower;
+} 
+
+function OnGUI() {
+
+ 
+
+        //GUI.Button (Rect (10,10,150,20), "Skinned Button"); 
+
+        
+
+    }
 
 function Die (ball : Damage) {
 	if (died) //we're already dead
