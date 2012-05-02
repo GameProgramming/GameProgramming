@@ -163,35 +163,35 @@ function OnCollisionEnter (collision : Collision) {
 	}
 }
 
-function OnControllerColliderHit (hit : ControllerColliderHit)
-{
-	var body : Rigidbody = hit.collider.attachedRigidbody;
-	// no rigidbody
-	if (body == null || body.isKinematic)
-	return;
-	
-	
-	var textDisplay:GUIText = GameObject.Find("Text Display").guiText;
-	textDisplay.text = hit.moveDirection.ToString();
-	
-	// We dont want to push objects below us
-	//if (hit.moveDirection.y < -0.3) 
-	//return;
-
-	// Calculate push direction from move direction, 
-	// we only push objects to the sides never up and down
-//	var pushDir = Vector3 (hit.moveDirection.x, 0, hit.moveDirection.z);
-	var pushDir = hit.moveDirection;
-	
-	// If you know how fast your character is trying to move,
-	// then you can also multiply the push velocity by that.
-	
-	// Apply the push
-	//body.MovePosition(pushDir * pushPower * Time.deltaTime);
-	//body.AddForce (pushDir * pushPower * Time.deltaTime);
-	pushDir.y = Mathf.Abs(pushDir.y);
-body.velocity = pushDir * pushPower;
-} 
+//function OnControllerColliderHit (hit : ControllerColliderHit)
+//{
+//	var body : Rigidbody = hit.collider.attachedRigidbody;
+//	// no rigidbody
+//	if (body == null || body.isKinematic)
+//	return;
+//	
+//	
+//	var textDisplay:GUIText = GameObject.Find("Text Display").guiText;
+//	textDisplay.text = hit.moveDirection.ToString();
+//	
+//	// We dont want to push objects below us
+//	//if (hit.moveDirection.y < -0.3) 
+//	//return;
+//
+//	// Calculate push direction from move direction, 
+//	// we only push objects to the sides never up and down
+////	var pushDir = Vector3 (hit.moveDirection.x, 0, hit.moveDirection.z);
+//	var pushDir = hit.moveDirection;
+//	
+//	// If you know how fast your character is trying to move,
+//	// then you can also multiply the push velocity by that.
+//	
+//	// Apply the push
+//	//body.MovePosition(pushDir * pushPower * Time.deltaTime);
+//	//body.AddForce (pushDir * pushPower * Time.deltaTime);
+//	pushDir.y = Mathf.Abs(pushDir.y);
+//body.velocity = pushDir * pushPower;
+//} 
 
 function Die (ball : Damage) {
 	if (died) //we're already dead
