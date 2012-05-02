@@ -102,6 +102,9 @@ function RollBall ()
 		var pos = transform.position;
 		var dist = (pos - movePos).sqrMagnitude;
 		
+		if (Random.value > 0.95 && BallOfFriend(target.transform))
+			return;
+		
 		if (dist > 1.3) {
 			// needs to approach...
 			angle = Mathf.Abs(RotateTowardsPosition(movePos, rotateSpeed));
@@ -322,13 +325,41 @@ function FindBestBigSnowball () : GameObject {
     	diff1 = (go.transform.position - position);
     	diff2 = (go.transform.position - groundBase.position);
 	    curDistance = diff1.sqrMagnitude + diff2.sqrMagnitude; 
-	    if (curDistance < distance) { 
-	        closest = go; 
-	        distance = curDistance; 
+	    if (curDistance < distance) {
+	    	if (!BallOfFriend(go.transform)) { 
+		        closest = go; 
+		        distance = curDistance; 
+	        }
 	    }
     } 
   
     return closest;    
+}
+
+function BallOfFriend ( t : Transform ) : boolean {
+    // Find all game objects with tag Enemy
+    var gos : GameObject[];
+    gos = GameObject.FindGameObjectsWithTag("Bot");  
+    var player = GameObject.FindGameObjectWithTag("Player");
+    gos = gos + [player];
+
+    var position = t.position; 
+    var diff;
+	var curDistance;
+	        
+    // Iterate through them and find the closest one
+    for (var go : GameObject in gos)  {
+    	var status = go.GetComponent(PlayerStatus);
+    	//get closest bot
+    	if (go != gameObject && status != null && status.teamNumber == pStatus.teamNumber) {
+	        diff = (go.transform.position - position);
+	        curDistance = diff.sqrMagnitude; 
+	        if (curDistance < 5) { 
+	            return true;
+	        } 
+        }
+    }
+    return false;
 }
 
 
