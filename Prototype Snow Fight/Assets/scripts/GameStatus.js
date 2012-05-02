@@ -20,6 +20,9 @@ private var gameOverTime = 0.0;
 function Start () {
 	gameOver = false;
 	
+	groundBaseOfTeam1.GetComponent(GroundBaseCounter).setTeamNumber(1);
+	groundBaseOfTeam2.GetComponent(GroundBaseCounter).setTeamNumber(2);
+	
 	if (skyBox && !RenderSettings.skybox)
 		RenderSettings.skybox = skyBox;
 
@@ -86,9 +89,9 @@ function Update () {
 	}
 }
 
-function IncreaseScore(scoringTeam : int) {
+function IncreaseScore(scoringTeam : int, valueIncrease : int) {
 	if (scoringTeam > 0) {
-		score[scoringTeam-1]++;
+		score[scoringTeam-1] += valueIncrease;
 		if(score[scoringTeam-1] >= fragsToWin) {
 			//scoring team has won the game!!
 			winner = scoringTeam;
