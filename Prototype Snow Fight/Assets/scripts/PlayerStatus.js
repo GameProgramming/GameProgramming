@@ -210,7 +210,7 @@ function Die (ball : Damage) {
 	
 	if (ball) {
 		gameState = GameObject.FindWithTag("Game").GetComponent("GameStatus");
-		gameState.IncreaseScore(ball.GetShootingTeam());
+		gameState.IncreaseScore(ball.GetShootingTeam(), 1);
 	}
 	
 	died = true;
