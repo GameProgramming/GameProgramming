@@ -9,6 +9,7 @@ private var score : int[];
 private var fade = 0.0;
 private var winner = 0;
 private var gameOver : boolean;
+private var gameOverTime = 0.0;
 
 
 function Start () {
@@ -49,7 +50,7 @@ function OnGUI() {
 		}
 	}	
 
-	if (gameOver) {
+	if (gameOver && Time.time > gameOverTime + 2) {
 		var winText : String;
 		winText = "Team "+ winner.ToString() + " wins!";
 		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
@@ -87,6 +88,7 @@ function IncreaseScore(scoringTeam : int) {
 			//scoring team has won the game!!
 			winner = scoringTeam;
 			gameOver = true;
+			gameOverTime = Time.time;
 			
 			var bots = GameObject.FindGameObjectsWithTag ("Bot");
 			for (var bot in bots)

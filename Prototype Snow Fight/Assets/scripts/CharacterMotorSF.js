@@ -397,7 +397,7 @@ function FixedUpdate () {
 
 function Update () {
 	if(gameOver) {
-		if(Time.time > gameOverTime + 1) {
+		if(Time.time > gameOverTime + 2) {
 			anim.enabled = false;
 		}
 		return;
