@@ -6,6 +6,9 @@ var respawnTimeout = 5.0;
 var hideDuration = 0.1;
 var pushPower = 2.0;
 
+var texTeam1 : Texture;
+var texTeam2 : Texture;
+
 private var teamBases : Transform[];
 private var normalColor : Color;
 
@@ -23,6 +26,7 @@ private var stunned : boolean = false;
 private var goRed : boolean = false;
 private var respawning : boolean = false;
 private var gameOver = false;
+
 InvokeRepeating("Regenerate",5,10);
 //var damageSound : AudioClip;
 
@@ -43,22 +47,28 @@ function Start() {
 	if (gameObject.CompareTag("Player"))
 		Respawn();
 
-	if (teamNumber == 1)
-		normalColor = Color.white;
-	if (teamNumber == 2)
-		normalColor = new Color (0.9,0.7,0.4,1);
 	
 	//make sure the player is visible on start
 	var meshRenderers = GetComponentsInChildren (MeshRenderer);
 	for (var rend : MeshRenderer in meshRenderers) {
 		rend.enabled = true;
-		rend.material.color = normalColor;
+		
+		if (teamNumber == 1)
+			rend.material.SetTexture("_MainTex",texTeam1);
+		
+		if (teamNumber == 2)
+			rend.material.SetTexture("_MainTex",texTeam2);
 	}
 	
 	var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
 	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
 		rend.enabled = true;
-		rend.material.color = normalColor;
+		
+		if (teamNumber == 1)
+			rend.material.SetTexture("_MainTex",texTeam1);
+		
+		if (teamNumber == 2)
+			rend.material.SetTexture("_MainTex",texTeam2);
 	}
 	
 	teamBases = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetTeamBases(teamNumber);
@@ -89,11 +99,11 @@ function Update () {
 	if (goRed && Time.time > redTime + redDuration) {
 		//color damaged player back to white
 		for (var rend : MeshRenderer in meshRenderers) {
-			rend.material.color = normalColor;
+			rend.material.color = Color.white;
 		}
 
 		for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-			rend.material.color = normalColor;
+			rend.material.color = Color.white;
 		}
 		goRed = false;
 	}
