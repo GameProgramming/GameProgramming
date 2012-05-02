@@ -13,6 +13,8 @@ private var hp : int = fullHp;
 private var stunTime;
 private var killTime = 0.0;
 private var redTime = 0.0;
+private var fade = 0.0;
+private var fadeCollision = 0.5;
 
 
 private var gameState : GameStatus;
@@ -63,10 +65,13 @@ function Start() {
 }
 
 function OnGUI() {
+	
+	if (transform.tag.Equals("Player")) {
+		GUI.Box (Rect (10, 530, 100, 50), "Health");
+		var hpString = hp.ToString();
+		GUI.Label (Rect (60, 550, 40, 20), hpString);
+	}
 
-	GUI.Box (Rect (10, 530, 100, 50), "Health");
-	var hpString = hp.ToString();
-	GUI.Label (Rect (60, 550, 40, 20), hpString);
     //GUI.Button (Rect (10,10,150,20), "Skinned Button"); 
 
 }
@@ -76,7 +81,7 @@ function Update () {
 //  	//audio.PlayOneShot(damageSound);
 //  	gameObject.GetComponent("Detonator").Explode();
 //  }
-
+	fade += Time.deltaTime;
 	//get renderers for showing/hiding or coloring player and bots
 	var meshRenderers = GetComponentsInChildren (MeshRenderer);
 	var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
@@ -129,13 +134,19 @@ function Regenerate () {
 }
 
 function OnCollisionEnter (collision : Collision) {
+
+	
 	if(collision.rigidbody && collision.rigidbody.tag.Equals("Projectile")){
 		var ball = collision.transform.GetComponent("Damage");
 		
-		if (ball)
-			hp -= ball.GetDamage();
+		if (ball) {
 			
-		hp = Mathf.Max(0, hp);
+			if (fade > 0.3) {
+				hp -= ball.GetDamage();
+				hp = Mathf.Max(0, hp);
+				fade = 0.0;
+			}
+		}
 		//audio.PlayOneShot(damageSound);
 				
 		anim.CrossFade("hit");
