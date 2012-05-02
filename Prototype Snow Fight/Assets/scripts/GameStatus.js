@@ -3,6 +3,8 @@ var teams = 2;
 var tabFade = 3.0;
 var skyBox : UnityEngine.Material;
 var fragsToWin = 10;
+var basesOfTeam1 : Transform[];
+var basesOfTeam2 : Transform[];
 
 var skin : GUISkin;
 private var score : int[];
@@ -110,4 +112,13 @@ function OnTriggerEnter (other : Collider) {
 	}
 	else //otherwise tell the player to die
 		other.gameObject.SendMessage ("Respawn", SendMessageOptions.DontRequireReceiver);
+}
+
+function GetTeamBases(teamNumber : int) : Transform[] {
+	if  (teamNumber == 1) {
+		return basesOfTeam1;
+	}
+	else { 
+		return basesOfTeam2;
+	}
 }

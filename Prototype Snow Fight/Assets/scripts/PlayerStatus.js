@@ -1,5 +1,4 @@
 var teamNumber = 1;
-var teamBase : Transform;
 var fullHp : int = 10;
 var stunDuration = 1.0;
 var redDuration = 0.2;
@@ -7,6 +6,7 @@ var respawnTimeout = 5.0;
 var hideDuration = 0.1;
 var pushPower = 2.0;
 
+private var teamBases : Transform[];
 private var normalColor : Color;
 
 private var hp : int = fullHp;
@@ -48,16 +48,18 @@ function Start() {
 	
 	//make sure the player is visible on start
 	var meshRenderers = GetComponentsInChildren (MeshRenderer);
-		for (var rend : MeshRenderer in meshRenderers) {
-			rend.enabled = true;
-			rend.material.color = normalColor;
-		}
-		
-		var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
-		for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-			rend.enabled = true;
-			rend.material.color = normalColor;
-		}
+	for (var rend : MeshRenderer in meshRenderers) {
+		rend.enabled = true;
+		rend.material.color = normalColor;
+	}
+	
+	var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
+	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
+		rend.enabled = true;
+		rend.material.color = normalColor;
+	}
+	
+	teamBases = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetTeamBases(teamNumber);
 }
 
 function OnGUI() {
@@ -221,8 +223,11 @@ function Respawn () {
 		rend.enabled = false;
 	}
 	
-	transform.position = teamBase.position;
-	transform.position.y += 5;
+	if (teamBases && teamBases.Length > 0) {
+		transform.position = teamBases[Random.Range(0,teamBases.Length-1)].position;
+		transform.position.y += 5;
+	}
+	
 	hp = fullHp;
 	died = false;
 	anim.Stop("die");	
