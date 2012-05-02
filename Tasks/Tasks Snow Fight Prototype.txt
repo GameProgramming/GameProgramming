@@ -3,9 +3,14 @@ D- GIT einbauen bei Hannes
 General Gameplay:
 D- sieg und game restart bei leertaste
 D- team bases erstellen und player und bots random spawnen lassen
+D- team2 textur ändern
+- zielregion für kugeln
+- kugel verschwinden lassen & score erhöhen
+- kugel respawnen
+D- healthbalken
 
 Player und Bots: (Ben und Tiare)
-- avoid players spawning on top of each other
+D- shadow blobs
 D- clamp health to 0
 D- teamfarben weiß/braun
 D- 2 Spawn Points (TeamBase)
@@ -27,10 +32,10 @@ D- Bewegung
 D- Schneeball werfen
 
 Bots: (Ben und Tiare)
+- vermeiden dass bots alle der selben kugel nachlaufen
 D- Mehrere Bots einbauen
 D- Schneeball werfen
 D- Oritentierung nach Nächstem wenn in sicht
-- oder wenn man beworfen wurde (Orientierung nach Gewichtung)
 D- Keine Bewegung (oder doch bewegung.. zumindest von base an ne vorgegebene position?)
 (- wenn kugel in reichweite, kugel auf gegner rollen)
 
@@ -41,7 +46,6 @@ D- Damage einbauen
 D- Collision mit Player und Bot
 D- schneekugel erstellen
 (- schneekugel beim rollen in gewissen intervallen größer werden lassen bis maximale größe erreicht)
-- schneekugel tödlich machen
 - schneekugel spawnpoints setzen (quasi-random? vielleicht an 10 möglichen positionen 3 kugeln setzen?)
 
 Ansicht: (Andreas)
