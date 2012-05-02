@@ -258,6 +258,14 @@ function Respawn () {
 	anim["idle"].speed = 10;
 }
 
+function GetFullHp () : int {
+	return fullHp;
+}
+
+function GetHp () : int {
+	return hp;
+}
+
 function IsDead () : boolean {
 	return died;
 }
