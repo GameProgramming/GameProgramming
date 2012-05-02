@@ -7,6 +7,9 @@ var spawnPointsTeam1 : Transform[];
 var spawnPointsTeam2 : Transform[];
 var teamBase1 : Transform;
 var teamBase2 : Transform;
+var numBigSnowBalls = 3;
+var bigSnowBallPrefab : GameObject;
+var ballSpawnPoints : Transform[];
 
 
 var skin : GUISkin;
@@ -16,7 +19,6 @@ private var winner = 0;
 private var gameOver : boolean;
 private var gameOverTime = 0.0;
 private var distFromTop = 20;
-
 
 function Awake () {
 	gameOver = false;
@@ -31,6 +33,11 @@ function Awake () {
 	var i:int = 0;
 	for (i = 0; i<teams; i++) {
 		score[i] = 0;
+	}
+	
+	for (i = 0; i<numBigSnowBalls; i++) {
+		Instantiate(bigSnowBallPrefab, Vector3(0,-50,0), Quaternion.identity);
+//		Instantiate(bigSnowBallPrefab, ballSpawnPoints[Random.Range(0,ballSpawnPoints.Length-1)].position, Quaternion.identity);
 	}
 }
 
@@ -132,4 +139,8 @@ function GetTeamBases(teamNumber : int) : Transform[] {
 	else { 
 		return spawnPointsTeam2;
 	}
+}
+
+function GetSnowBallSpawns() : Transform[] {
+	return ballSpawnPoints;
 }

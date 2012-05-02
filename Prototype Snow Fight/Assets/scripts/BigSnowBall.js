@@ -1,25 +1,44 @@
 #pragma strict
 
+var respawnTimeout = 2.0;
+
 private var spawnPoints : Transform[]; 
 private var respawning : boolean;
+private var spawnTime = 0.0;
+private var meshRenderers;
+private var skinnedRenderers;
 
 function Start () {
-	//spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
+	meshRenderers = GetComponentsInChildren (MeshRenderer);
+	skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
+	
+	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
+	Respawn();
 }
 
 function Update () {
-
+	//upon respawn make visible after hide time and then stun for a bit
+	if (respawning && Time.time > spawnTime + respawnTimeout) {
+		for (var rend : MeshRenderer in meshRenderers) {
+			rend.enabled = true;
+		}
+		
+		for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
+			rend.enabled = true;
+		}
+		respawning = false;
+	}
 }
 
 function Respawn () {
 	respawning = true;
+	spawnTime = Time.time;
+	
 	//hide player for a while
-	var meshRenderers = GetComponentsInChildren (MeshRenderer);
 	for (var rend : MeshRenderer in meshRenderers) {
 		rend.enabled = false;
 	}
 	
-	var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
 	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
 		rend.enabled = false;
 	}
