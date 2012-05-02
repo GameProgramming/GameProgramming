@@ -6,7 +6,7 @@ D- team bases erstellen und player und bots random spawnen lassen
 
 Player und Bots: (Ben und Tiare)
 - avoid players spawning on top of each other
-- clamp health to 0
+D- clamp health to 0
 D- teamfarben weiﬂ/braun
 D- 2 Spawn Points (TeamBase)
 D- make player spawn at team base on game start
