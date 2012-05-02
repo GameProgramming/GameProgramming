@@ -458,4 +458,9 @@ public class Detonator : MonoBehaviour {
             return null;
         }
 	}
+//	
+//	public void GlowOnHit () {
+//		_glow = gameObject.AddComponent("DetonatorGlow") as DetonatorGlow;
+//		_glow.Reset();
+//	}
 }

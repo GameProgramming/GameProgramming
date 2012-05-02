@@ -3,14 +3,14 @@ D- GIT einbauen bei Hannes
 Player und Bots: (Ben und Tiare)
 D- 2 Spawn Points (TeamBase)
 D- make player spawn at team base on game start
-- Health (PlayerStatus)
+D- Health (PlayerStatus)
  D -- manage health
  D -- timeout before respawn
--- manage snowball count
+(-- manage snowball count)
 -- keep track of pushed snowballs
 D -- manage death (submit score to Game.js and respawn at base)
 D -- manage stun (player not controllable for certain time)	
-- Model
+D- Model
 D- Hinfallen (player controller deaktivieren - dann sollte der capsule collider ev. umfallen?)
 
 Player:(Ben und Tiare)
@@ -29,7 +29,7 @@ D- Keine Bewegung (oder doch bewegung.. zumindest von base an ne vorgegebene pos
 
 Ball: (Hannes)
 - detonation anders einfärben wenn gegner getroffen wurde (damit man klarer sieht ob es ein hit war oder nicht)
-- schneeballobjekt schneller zerstören
+D- schneeballobjekt schneller zerstören
 D- schneelballobjekt erstellen
 D- Damage einbauen
 D- Collision mit Player und Bot
@@ -38,8 +38,8 @@ D- schneekugel erstellen
 - schneekugel spawnpoints setzen (quasi-random? vielleicht an 10 möglichen positionen 3 kugeln setzen?)
 
 Ansicht: (Andreas)
-- schnee langsamer fallen lassen?
-- health display
+D- schnee langsamer fallen lassen
+D- health display
 D- HUD erstellen bei TAB oder dauernd
 - simples terrain finalisieren
 - modifizierbares terrain: Terrain ändern wenns geht Schnee und paar Bäume
