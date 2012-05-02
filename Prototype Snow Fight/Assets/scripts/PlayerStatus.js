@@ -123,6 +123,7 @@ function Update () {
 function Regenerate () {
 	if (hp < fullHp) {
 		hp += 5;
+		hp = Mathf.Min(hp, fullHp);
 	}
   
 }
@@ -133,6 +134,8 @@ function OnCollisionEnter (collision : Collision) {
 		
 		if (ball)
 			hp -= ball.GetDamage();
+			
+		hp = Mathf.Max(0, hp);
 		//audio.PlayOneShot(damageSound);
 				
 		anim.CrossFade("hit");

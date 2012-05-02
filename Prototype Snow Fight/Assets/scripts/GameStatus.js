@@ -40,13 +40,13 @@ function OnGUI() {
 		for (var specificScore : int in score) {
 			if (i == 0) {
 				var team1Score  = specificScore.ToString();
-				GUI.Label (Rect (10, 40, 80, 25), "Team 1: ");
-				GUI.Label (Rect (90, 40, 20, 25), team1Score);
+				GUI.Label (Rect (10, 40, 80, 25), "Team 1: ", "teamFrags");
+				GUI.Label (Rect (90, 40, 20, 25), team1Score, "teamFrags");
 			}
 			if (i == 1) {
 				var team2Score = specificScore.ToString();
-				GUI.Label (Rect (10, 70, 80, 25), "Team 2: ");
-				GUI.Label (Rect (90, 70, 20, 25), team2Score);
+				GUI.Label (Rect (10, 70, 80, 25), "Team 2: ", "teamFrags");
+				GUI.Label (Rect (90, 70, 20, 25), team2Score, "teamFrags");
 			}
 			i++;
 		}

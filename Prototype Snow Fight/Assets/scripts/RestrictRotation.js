@@ -1,6 +1,6 @@
 #pragma strict
 
-var eulerAngles : Vector3;
+private var eulerAngles : Vector3;
 
 function Start () {
 	
