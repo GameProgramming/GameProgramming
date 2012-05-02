@@ -42,7 +42,7 @@ function OnGUI() {
 		Debug.Log("StartMenuGUI: GUI Skin object missing!");
 
 	if (Time.time < fade) {
-		GUI.Box (Rect (10, 10, 120, 100), "Team Frags");
+		GUI.Box (Rect (10, 10, 120, 50+teams*20), "Team Frags");
 		var i : int = 0;
 		for (i = 1; i <= score.Length; i++) {
 			var teamScore  = score[i-1].ToString();

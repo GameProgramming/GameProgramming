@@ -76,11 +76,18 @@ function Start() {
 
 function OnGUI() {
 	
-	if (transform.tag.Equals("Player")) {
-		GUI.Box (Rect (10, 530, 100, 50), "Health");
-		var hpString = hp.ToString();
-		GUI.Label (Rect (60, 550, 40, 20), hpString);
-	}
+	var style = new GUIStyle();		
+	var texture : Texture2D = new Texture2D(1, 1);
+	texture.SetPixel(0, 0, Color.white);
+	texture.Apply();
+	style.normal.background = texture;
+	
+	
+//	if (transform.tag.Equals("Player")) {
+//		GUI.Box (Rect (10, 530, 100, 50), "Health");
+//		var hpString = hp.ToString();
+//		GUI.Label (Rect (60, 550, 40, 20), hpString);
+//	}
 
     //GUI.Button (Rect (10,10,150,20), "Skinned Button"); 
 

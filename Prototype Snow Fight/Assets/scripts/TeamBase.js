@@ -13,11 +13,12 @@ function Update () {
 }
 
 function OnTriggerStay(other : Collider) {
-	if (other.tag.Equals("SnowballBig")) {
+	if (other.tag.Equals("BigSnowball")) {
 		enterTime += Time.deltaTime;
 		if (enterTime > 3.0) {
 			var game = GameObject.FindGameObjectWithTag("Game");
 			game.GetComponent(GameStatus).IncreaseScore(teamNumber, points);
+			//other.GetComponent(BigSnowBall).Respawn();
 			enterTime = 0.0;
 		}
 	}
