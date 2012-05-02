@@ -179,7 +179,8 @@ function OnControllerColliderHit (hit : ControllerColliderHit)
 	// then you can also multiply the push velocity by that.
 	
 	// Apply the push
-body.velocity = pushDir * pushPower;
+	body.MovePosition(pushDir * pushPower * Time.deltaTime);
+//body.velocity = pushDir * pushPower;
 } 
 
 function Die (ball : Damage) {
