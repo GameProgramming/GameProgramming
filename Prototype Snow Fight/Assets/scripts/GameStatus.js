@@ -5,6 +5,9 @@ var skyBox : UnityEngine.Material;
 var fragsToWin = 10;
 var basesOfTeam1 : Transform[];
 var basesOfTeam2 : Transform[];
+var groundBaseOfTeam1 : Transform;
+var groundBaseOfTeam2 : Transform;
+
 
 var skin : GUISkin;
 private var score : int[];

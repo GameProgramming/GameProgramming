@@ -25,8 +25,10 @@ var inputMoveDirection : Vector3 = Vector3.zero;
 @System.NonSerialized
 var inputJump : boolean = false;
 
+@System.NonSerialized
 var inputFire : boolean = false;
 private var throwAnim = 0.0;
+
 
 class CharacterMotorMovement {
 	// The maximum horizontal speed when moving
@@ -85,7 +87,7 @@ class CharacterMotorJumping {
 	var baseHeight : float = 1.0;
 	
 	// We add extraHeight units (meters) on top when holding the button down longer while jumping
-	var extraHeight : float = 4.1;
+	var extraHeight : float = 0;
 	
 	// How much does the character jump out perpendicular to the surface on walkable surfaces?
 	// 0 means a fully vertical jump and 1 means fully perpendicular.
@@ -94,7 +96,9 @@ class CharacterMotorJumping {
 	// How much does the character jump out perpendicular to the surface on too steep surfaces?
 	// 0 means a fully vertical jump and 1 means fully perpendicular.
 	var steepPerpAmount : float = 0.5;
-	
+
+	var jumpCooldown : float = 2.0;
+			
 	// For the next variables, @System.NonSerialized tells Unity to not serialize the variable or show it in the inspector view.
 	// Very handy for organization!
 
@@ -496,7 +500,8 @@ private function ApplyGravityAndJumping (velocity : Vector3) {
 		// because players will often try to jump in the exact moment when hitting the ground after a jump
 		// and if they hit the button a fraction of a second too soon and no new jump happens as a consequence,
 		// it's confusing and it feels like the game is buggy.
-		if (jumping.enabled && canControl && (Time.time - jumping.lastButtonDownTime < 0.2)) {
+		if (jumping.enabled && canControl && (Time.time - jumping.lastButtonDownTime < 0.2)
+				&& (Time.time - jumping.lastStartTime > jumping.jumpCooldown)) {
 			grounded = false;
 			jumping.jumping = true;
 			jumping.lastStartTime = Time.time;
