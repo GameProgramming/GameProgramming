@@ -136,7 +136,7 @@ function Update () {
 }
 
 function Regenerate () {
-	if (hp < fullHp) {
+	if (!gameOver && hp < fullHp) {
 		hp += 5;
 		hp = Mathf.Min(hp, fullHp);
 	}
