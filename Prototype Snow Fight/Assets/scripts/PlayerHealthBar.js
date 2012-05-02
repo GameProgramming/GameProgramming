@@ -12,7 +12,8 @@ function OnGUI() {
 		var color = new Color(1-hpPercent, hpPercent, 0,0.5);
 		var style = new GUIStyle();
 		
-		var boxWidth = hpPercent * (Screen.width - 140);
+		var totalWidth = Screen.width/4; 
+		var boxWidth = hpPercent * (Screen.width/4);
 		var boxHeight = 20;
 		
 		
@@ -21,6 +22,8 @@ function OnGUI() {
 		style.normal.background = texture;
 		
 		
-		GUI.Box (Rect (70, 10, boxWidth, boxHeight), "",style);
+		GUI.Box (Rect (Screen.width/1.4-1, 9, totalWidth+2, boxHeight+2), "");
+		GUI.Box (Rect (Screen.width/1.4, 10, boxWidth, boxHeight), "",style);
+		//GUI.Box (Rect (Screen.width/1.4 + (totalWidth-boxWidth), 10, boxWidth, boxHeight), "",style);
 	}
 }

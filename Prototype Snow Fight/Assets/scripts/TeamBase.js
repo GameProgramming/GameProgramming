@@ -18,8 +18,13 @@ function OnTriggerStay(other : Collider) {
 		if (enterTime > 3.0) {
 			var game = GameObject.FindGameObjectWithTag("Game");
 			game.GetComponent(GameStatus).IncreaseScore(teamNumber, points);
+			enterTime = 0.0;
 		}
 	}
+}
+
+function OnTriggerExit() {
+	enterTime = 0.0;
 }
 
 function setTeamNumber(number : int) {

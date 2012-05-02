@@ -30,9 +30,9 @@ function Start ()
 {
 	var game : GameStatus = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
 	if (pStatus.teamNumber == 1)
-		groundBase = game.groundBaseOfTeam1;
+		groundBase = game.teamBase1;
 	else if (pStatus.teamNumber == 2)
-		groundBase = game.groundBaseOfTeam2;
+		groundBase = game.teamBase2;
 	
 	yield WaitForSeconds(Random.value);
 	

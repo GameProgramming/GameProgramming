@@ -12,7 +12,7 @@ function Start() {
 }
 
 function OnMouseEnter() {
-    Debug.Log(textDisplay.gameObject.tag);
+    Debug.Log(gameObject.tag);
     textDisplay.material.color = rolloverColor;
     //textDisplay.text = rolloverText;
     //if(gameObject.GetComponent("Player Status")){
@@ -21,7 +21,7 @@ function OnMouseEnter() {
 }
 
 function OnMouseExit() {
-    Debug.Log(textDisplay.gameObject.tag);
+    Debug.Log("");
     textDisplay.text = "";
     //textDisplay.material.color = Color.brown;
 }

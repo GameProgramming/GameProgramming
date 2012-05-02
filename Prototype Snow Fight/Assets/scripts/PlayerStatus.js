@@ -9,7 +9,7 @@ var pushPower = 2.0;
 var texTeam1 : Texture;
 var texTeam2 : Texture;
 
-private var teamBases : Transform[];
+private var teamSpawnPoints : Transform[];
 private var normalColor : Color;
 
 private var hp : int = fullHp;
@@ -71,7 +71,7 @@ function Start() {
 			rend.material.SetTexture("_MainTex",texTeam2);
 	}
 	
-	teamBases = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetTeamBases(teamNumber);
+	teamSpawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetTeamBases(teamNumber);
 }
 
 function OnGUI() {
@@ -255,8 +255,8 @@ function Respawn () {
 		rend.enabled = false;
 	}
 	
-	if (teamBases && teamBases.Length > 0) {
-		transform.position = teamBases[Random.Range(0,teamBases.Length-1)].position;
+	if (teamSpawnPoints && teamSpawnPoints.Length > 0) {
+		transform.position = teamSpawnPoints[Random.Range(0,teamSpawnPoints.Length-1)].position;
 		transform.position.y += 5;
 	}
 	
