@@ -50,7 +50,7 @@ D- schneekugel erstellen
 
 Ansicht: (Andreas)
 D- schnee langsamer fallen lassen
-- health display (3 Schneeflocken einblenden?)
+D- health display
 D- HUD erstellen bei TAB oder dauernd
 - simples terrain finalisieren
 - modifizierbares terrain: Terrain ändern wenns geht Schnee und paar Bäume
