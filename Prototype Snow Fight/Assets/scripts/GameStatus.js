@@ -48,6 +48,16 @@ function OnGUI() {
 	else
 		Debug.Log("StartMenuGUI: GUI Skin object missing!");
 
+	var j : int = 0;
+		
+	var scoreText : String = "";
+	for (j = 0; j<teams-1; j++) {
+			scoreText = scoreText + score[j].ToString() + " : ";
+			scoreText = scoreText + score[j+1].ToString();
+	}
+	GUI.Label (Rect (0, 0, 80, 35), scoreText, "winnerShadow");
+	GUI.Label (Rect (0, 0, 80, 35), scoreText);
+	
 	if (Time.time < fade) {
 		GUI.Box (Rect (10, 10, 120, 50+teams*20), "Team Frags");
 		var i : int = 0;
@@ -68,8 +78,8 @@ function OnGUI() {
 //				GUI.Label (Rect (90, 70, 20, 25), team2Score, "teamFrags");
 //			}
 		}
-	}	
-
+	}
+		
 	if (gameOver && Time.time > gameOverTime + 2) {
 		var winText : String;
 		winText = "Team "+ winner.ToString() + " wins!";
@@ -78,12 +88,11 @@ function OnGUI() {
 		GUI.Label (Rect (Screen.width/2, Screen.height/2-98, 80, 25), winText, "winnerShadow");
 		GUI.Label (Rect (Screen.width/2, Screen.height/2-100, 80, 25), winText, "winner");
 			
-		var scoreText : String;
-		var j : int = 0;
-		for (j = 0; j<teams-1; j++) {
-			scoreText = scoreText + score[j].ToString() + " : ";
-			scoreText = scoreText + score[j+1].ToString();
-		}
+		
+		
+		
+		GUI.Box(Rect(0,0,Screen.width,Screen.height),"");
+		
 		GUI.Label (Rect (Screen.width/2, Screen.height/2-73, 80, 35), scoreText, "winnerShadow");
 		GUI.Label (Rect (Screen.width/2, Screen.height/2-75, 80, 35), scoreText, "winner");
 	}
