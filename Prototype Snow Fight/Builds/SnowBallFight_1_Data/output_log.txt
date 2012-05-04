@@ -12,7 +12,7 @@ Initialize engine version: 3.5.1f2
 Begin MonoManager ReloadAssembly
 Platform assembly: C:\uni\Informatik\GP\gpgit\Prototype Snow Fight\Builds\SnowBallFight_1_Data\Managed\UnityEngine.dll (this message is harmless)
 Loading C:\uni\Informatik\GP\gpgit\Prototype Snow Fight\Builds\SnowBallFight_1_Data\Managed\UnityEngine.dll into Unity Child Domain
-- Completed reload, in  0.052 seconds
+- Completed reload, in  0.053 seconds
 The class defined in script file named 'DestroyObject' does not match the file name!
  
 (Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
