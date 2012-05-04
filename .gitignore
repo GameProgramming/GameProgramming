@@ -6,6 +6,7 @@ Temp
 Assembly-*
 *.sln
 *.userprefs
+*/*/output_log.txt
 
 #WINDOWS
 # Windows image file caches
