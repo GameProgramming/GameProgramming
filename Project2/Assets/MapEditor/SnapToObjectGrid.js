@@ -6,12 +6,10 @@
 
 function Update () 
 {
-    var transforms : Transform[] = Selection.GetTransforms(SelectionMode.TopLevel | SelectionMode.OnlyUserModifiable);
+    var transform : Transform = gameObject.transform;
 
     
-    for (var transform : Transform in transforms)
-    {
-	    var gridx : float = transform.localScale.x;
+        var gridx : float = transform.localScale.x;
 	    var gridy : float = transform.localScale.y;
 	    var gridz : float = transform.localScale.z;
 
@@ -20,5 +18,4 @@ function Update ()
         newPosition.y = Mathf.Round(newPosition.y / gridy) * gridy;
         newPosition.z = Mathf.Round(newPosition.z / gridz) * gridz;
         transform.position = newPosition;
-    }
 }
