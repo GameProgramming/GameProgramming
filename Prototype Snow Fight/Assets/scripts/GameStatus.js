@@ -55,8 +55,8 @@ function OnGUI() {
 			scoreText = scoreText + score[j].ToString() + " : ";
 			scoreText = scoreText + score[j+1].ToString();
 	}
-	GUI.Label (Rect (0, 0, 80, 35), scoreText, "winnerShadow");
-	GUI.Label (Rect (0, 0, 80, 35), scoreText);
+	GUI.Label (Rect (5, 0, 90, 35), scoreText, "winnerShadow");
+	GUI.Label (Rect (5, 0, 90, 35), scoreText);
 	
 	if (Time.time < fade) {
 		GUI.Box (Rect (10, 10, 120, 50+teams*20), "Team Frags");
