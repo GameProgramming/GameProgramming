@@ -1,0 +1,522 @@
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 9.0c [aticfx32.dll 8.17.10.1083]
+    Renderer: Intel(R) HD Graphics Family
+    Vendor:   Intel
+    VRAM:     64 MB (via DXGI)
+    Caps:     Shader=30 DepthRT=1 NativeDepth=1 NativeShadow=1 DF16=1 DF24=1 INTZ=1 RAWZ=0 NULL=1 RESZ=1 SlowINTZ=0
+desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
+<I> Initializing (RawInput).
+<RI> Input initialized.
+Initialize engine version: 3.5.1f2
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\uni\Informatik\GP\gpgit\Prototype Snow Fight\Builds\SnowBallFight_1_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\uni\Informatik\GP\gpgit\Prototype Snow Fight\Builds\SnowBallFight_1_Data\Managed\UnityEngine.dll into Unity Child Domain
+- Completed reload, in  0.053 seconds
+The class defined in script file named 'DestroyObject' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 32 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'RolloverItem' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 44 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'Detonator' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 176 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'Damage' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'BigSnowBall' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'InputController' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+The class defined in script file named 'CharacterMotorSF' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 168 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'MouseLook' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 52 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'PlayerStatus' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 68 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'RolloverItem' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 44 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'PlayerHealthBar' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'PlayerStatus' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 68 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'CharacterMotorSF' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 168 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'BotAI' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 56 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'RolloverItem' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 44 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'Projectile' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 40 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'BotAI' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 56 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'CharacterMotorSF' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 168 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'PlayerStatus' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 68 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'RolloverItem' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 44 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'RestrictRotation' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'Projectile' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 40 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'BotAI' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 56 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'CharacterMotorSF' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 168 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'PlayerStatus' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 68 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'RolloverItem' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 44 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'TeamBase' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'Projectile' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 40 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'Projectile' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 40 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'Projectile' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 40 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'MouseLook' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 52 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'RolloverItem' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 44 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'PlayerStatus' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 68 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'CharacterMotorSF' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 168 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'BotAI' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 56 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'SmoothFollow' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 48 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'MouseLook' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 52 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'TeamBase' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'BotAI' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 56 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'CharacterMotorSF' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 168 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'PlayerStatus' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 68 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'RolloverItem' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 44 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'GameStatus' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 180 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'MouseLook' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 52 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'HideMesh' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 28 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
+The class defined in script file named 'Projectile' does not match the file name!
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Mono/MonoBehaviour.cpp Line: 1482)
+
+A script behaviour has a different serialization layout when loading. (Read 24 bytes but expected 40 bytes)
+Did you #ifdef UNITY_EDITOR a section of your serialized properties in any of your scripts?
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Serialize/SerializedFile.cpp Line: 1134)
+
