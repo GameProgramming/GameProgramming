@@ -1,12 +1,24 @@
+Feedback:
+---------
+- gameplay feels wrong, player not in control
+- can't see much (move camera up/away, yeti to one side?)
+- tilting camera should change aim (throw less far/further)
+- make clear why you can't always shoot (pick up snow?)
+- push snowballs, don't shoot at them to move them
+- stretch arm on button press and throw on release. maybe allow to load and throw with higher force when holding button for a while.
+- signalize how far the ball can be thrown
+- clearly identify the team bases
+
+
 D- GIT einbauen bei Hannes
 
 General Gameplay:
 D- sieg und game restart bei leertaste
 D- team bases erstellen und player und bots random spawnen lassen
 D- team2 textur ändern
-- zielregion für kugeln
-- kugel verschwinden lassen & score erhöhen
-- kugel respawnen
+D- zielregion für kugeln
+D- kugel verschwinden lassen & score erhöhen
+D- kugel respawnen
 D- healthbalken
 
 Player und Bots: (Ben und Tiare)
