@@ -1,17 +1,21 @@
 fileFormatVersion: 2
-guid: 03f1ef6daf783d94e936249a2e9abd68
+guid: ce8d79c79d11b8f9d00076e98d76c639
 ModelImporter:
   fileIDToRecycleName:
-    4300000: waterPlaneMesh
+    4300000: pPlane1
+    4300002: nurbsToPoly1
+    4300004: pCylinder1
+    4300006: waterPlaneMesh
+    100100000: DataTemplate __Singleton__
   serializedVersion: 10
   materials:
     importMaterials: 1
-    materialName: 0
+    materialName: 3
     materialSearch: 1
   animations:
-    generateAnimations: 3
+    generateAnimations: 0
     bakeSimulation: 0
-    splitAnimations: 1
+    splitAnimations: 0
     animationCompression: 1
     animationRotationError: .5
     animationPositionError: .5
@@ -20,7 +24,7 @@ ModelImporter:
     clipAnimations: []
   meshes:
     lODScreenPercentages: []
-    globalScale: .00999999978
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     swapUVChannels: 0
@@ -28,12 +32,12 @@ ModelImporter:
     useFileUnits: 1
     optimizeMesh: 0
     secondaryUVAngleDistortion: 8
-    secondaryUVAreaDistortion: 15.000001
+    secondaryUVAreaDistortion: 15
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
   tangentSpace:
     normalSmoothAngle: 60
-    splitTangentsAcrossUV: 1
+    splitTangentsAcrossUV: 0
     normalImportMode: 0
     tangentImportMode: 1
   textMetaNamesToFileIDs:
@@ -50,6 +54,3 @@ ModelImporter:
       data:
         first: 33
         second: a05a3200
-      data:
-        first: 111
-        second: 605fa900
