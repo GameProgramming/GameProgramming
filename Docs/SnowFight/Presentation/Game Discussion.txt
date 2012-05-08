@@ -1,0 +1,20 @@
+For both games we had a great feedback and to my mind they were fascinated ;)
+
+States of matter:
+- Graphical content is important according to Johannes
+- Level design is important
+- States changes (Mechanic)? Restrictions?
+
+Snow Fight:
+- 3D/2D design, camera movement
+- Classical game mechanism, what´s the game
+- Confused with UFO, Yeti, Cannon (ist nicht gut angekommen bei den anderen)
+- Different solid states of the snow
+- CS: Snowball fight mod
+- Pretty hard done in a semester according to Thomas
+- Technical risks
+
+
+03.05. - 1. Prototype presentation
+10.05. - 2. Game-Idea presentation (chuck norris zombies and god 2.0?)
+24.05. - 2. Prototype presentation

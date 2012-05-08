@@ -1,0 +1,82 @@
+Ziel des Spiels
+
+Wie sollte die Spielmechanik sein?
+
+Was sollten die Spielregeln sein?
+Folien dazu anschauen von heute!
+
+Erweiterungsmöglichkeiten von dem Spiel
+Multiplayer sinnvoll?
+
+
+
+
+Ideen:
+
+
+1.) 
+Jump'n Run (Hannes)
+	
+Pseudo -3D
+	
+Elemente miteinander verbinden!
+	
+Logik benutzen
+	
+Multiplayer (Spieler können nur zusammen was schaffen)
+	
+Story mit Dialoge
+
+
+
+2.) 
+Shooter (Zombie Invader) (Andreas)
+	
+Rüstung und Waffen Erweiterung
+	
+Comic-style bzw. funny moments für Spaß
+	Multiplayer
+	
+Aktionsmodus (z.B.: Bestimmte Tastenkombinationen)
+
+3.) 
+Portal mit Shift - Spiel (Tiare)
+	
+Multiplayer	
+
+portal flash, gravity
+ventilator ebene.....
+
+
+
+
+
+4.) 
+Schnellballschlacht-Spiel (Benjamin)
+
+
+Für alle: XBOX Controller Unterstützung überdenken
+
+
+
+State of Matter
+---------------
+Story: One stormy night on a mountain peak high above the clouds, a couple of raindrops fell into a crevice and seeped all the way to the core of the huge mountain. There, deep down below lay a magic crystal to which these raindrops were drawn. For hundreds of years the water surrounded the crystal and little by little the molecules absorbed the magic power. In all those years each little raindrop had dreamt about the thrill of falling freely through the air, the comfort of seeping through moist soil to find thirsty tender roots which they would nourish, and the satisfaction of making the most beautiful flowers bloom. Once the crystal's magic was completely consumed, the molecules began to group together and a new being was formed. With the memories of all these little raindrops, it felt a strong desire to escape from the dark depths of the mountain's core and return to the earth's surface to once again take part in that beautiful cycle. So the journey began..
+
+Goal: Find your way out into the open.
+
+Rules: The player consitst of water molecules and has the ability to switch his state of matter. In general he will die if he falls into the black depths.
+First he learns to turn into liquid which allows him to seep through cracks. However his movement is slow, he will always flow downhill and if he mixes with more water his being disintegrates.
+The following ability he learns is to freeze. Being an iceblock he can't move at all, but he can slide real well and float on water. If he crashes into a wall at high velocity however, he will shatter into millions of tiny pieces and thus cease to exist.
+The last discipline he discovers, is to build up enough heat to turn to steam. This allows him to flyyyyyy. His movement is restricted however and he is strongly affected by wind currents. Also he risks spreading out too far and fading into thin air.
+
+Mechanics:
+Standard shape: Move left and right with arrows and jump. Switch to fluid, solid or gas state with the keys 1, 2 and 3 respectively. Switch back by pressing the same key again.
+Water: Move left and right with arrows - moves really slowly however. Automatically flows downward.
+Solid: Quite uncontrollable.. slips and slides and can get quite fast.
+Gas: Move left and right with arrows - moves really slowly however. Automatically moves upward.
+
+2D View
+4 ways to die
+Enemies: The mountain and all its perils - tricky levels, creatures which want to drink you, crush you, breathe you..
+Collectables: Memory (how to attain the different shapes), minerals (for score)
