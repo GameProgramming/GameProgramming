@@ -7,7 +7,6 @@ Assembly-*
 *.sln
 *.userprefs
 */*/output_log.txt
-*/*/"Standard Assets"
 
 #WINDOWS
 # Windows image file caches
