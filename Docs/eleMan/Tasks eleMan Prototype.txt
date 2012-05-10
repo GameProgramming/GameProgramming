@@ -1,0 +1,42 @@
+Aufgaben
+
+* NICETOHAVE bedeutet, es muss nicht bis Anfang der Woche drin sein ;)
+* -> Ben heißt: Ben kümmert sich drum und weiß davon.
+* -> Ben? heißt: Vermutlich ist das Bens Aufgabe aber er hat sie noch nicht Accepted ;)
+
+Player
+	- Bewegung
+	  -> Tiare?/Hannes?
+	- Wechselbare Zustände
+	  -> ??
+	- Kamera
+	  -> Tiare?
+
+Waffen
+	- schießender Spieler
+      -> ??	
+	- fliegende Schüsse
+	  -> ??
+	- treffende Schüsse
+	  -> ??
+		- NICETOHAVE: auch schon bleibende/klebende Erde anfangen
+		  -> ??	
+Level
+	- Level-Objekt-Prefaf
+	  -> ??
+	- Level-Start- und End-Punkt .... evtl in Zusammenhang zum Game-Objekt
+	  -> ??
+	- Prefab/Skript-Gerüst für spezielle Objekte, die auf Spielerkollisionen/Beschuss reagieren
+	  -> ??
+		- insbesondere Bröckelboden, der bei aufschlagenden Spielern durchbricht
+		  -> ??
+	- NICEFOHAVE: Pipe-Prefab für Bereiche, durch die der Spieler gesogen werden kann
+	  -> ??
+	- Feinde, die patrouillieren
+	  -> ??
+		- ... die auch sterben
+		- ... die auch töten
+
+Content
+	- Level Design
+	  -> Ben
