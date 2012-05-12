@@ -10,7 +10,7 @@ class ControllerMovement {
 	//Wehen pressing down we crouch and can only move slowly
 	var crawlSpeed = 1.0;
 	//Speed when we hang from the ceiling
-	var hangSpeed = 1.0;
+	//var hangSpeed = 1.0;
 	
 	var maxHorizontalSpeed = 10;
 
@@ -58,8 +58,8 @@ class ControllerMovement {
 	@System.NonSerialized
 	var running = false;
 	
-	@System.NonSerialized
-	var crouching = false;
+	//@System.NonSerialized
+	//var crouching = false;
 	
 	@System.NonSerialized
 	var pushing = false;
@@ -67,8 +67,8 @@ class ControllerMovement {
 	@System.NonSerialized
 	var grabbing = false;
 	
-	@System.NonSerialized
-	var hanging = false;
+	//@System.NonSerialized
+	//var hanging = false;
 
 	@System.NonSerialized
 	var controllerSize = 0.0; //TODO: just for now
@@ -185,13 +185,13 @@ function Update () {
 
 	// Apply jumping logic
 	ApplyJumping ();
-	ApplyWallJump ();
+	//ApplyWallJump ();
 	
-	ApplyCrouching();
+	//ApplyCrouching();
 	
 	ApplyRunning ();
 	
-	ApplyHanging();
+	//ApplyHanging();
 	
 	// Moving platform support
 	if (activePlatform != null) {
@@ -298,9 +298,10 @@ function UpdateSmoothedMovementDirection () {
 			//~ Debug.DrawRay(Vector3(transform.position.x,transform.position.y+2,0), movement.contactNormal, Color.green);
 			SendMessage("Sliding", false, SendMessageOptions.DontRequireReceiver);
 			// Pick speed modifier
-			if (movement.crouching || movement.grabbing || movement.pushing) //user is ducked so only walk real slow
-				targetSpeed *= movement.crawlSpeed;
-			else if (movement.running)
+//			if (movement.crouching || movement.grabbing || movement.pushing) //user is ducked so only walk real slow
+//				targetSpeed *= movement.crawlSpeed;
+//			else 
+			if (movement.running)
 				targetSpeed *= movement.runSpeed;
 			else
 				targetSpeed *= movement.walkSpeed;
@@ -340,20 +341,20 @@ function UpdateSmoothedMovementDirection () {
 		movement.speed = targetSpeed;
 		movement.hangTime = 0.0;
 	}
-	else if (movement.hanging) { //hanging controls
-		//~ Debug.Log("We're hanging around here!", this);
-		
-		// Choose target speed
-		targetSpeed = Mathf.Min (Mathf.Abs(h), 1.0);
-		targetSpeed *= movement.hangSpeed;
-		
-		//make sure player never gets too fast
-		if(targetSpeed > movement.hangSpeed)
-			targetSpeed = movement.hangSpeed;
-		
-		movement.speed = targetSpeed;
-		movement.hangTime = 0.0;
-	}
+//	else if (movement.hanging) { //hanging controls
+//		//~ Debug.Log("We're hanging around here!", this);
+//		
+//		// Choose target speed
+//		targetSpeed = Mathf.Min (Mathf.Abs(h), 1.0);
+//		targetSpeed *= movement.hangSpeed;
+//		
+//		//make sure player never gets too fast
+//		if(targetSpeed > movement.hangSpeed)
+//			targetSpeed = movement.hangSpeed;
+//		
+//		movement.speed = targetSpeed;
+//		movement.hangTime = 0.0;
+//	}
 	else {
 		// In air controls
 		movement.hangTime += Time.deltaTime;
@@ -383,80 +384,80 @@ function ApplyJumping () {
 	}
 }
 
-function ApplyWallJump () {
+//function ApplyWallJump () {
+//
+//	// We must actually jump against a wall for this to work
+//	if (!jump.jumping)
+//		return;
+//
+//	// Store when we first touched a wall during this jump
+//	if (movement.collisionFlags == CollisionFlags.CollidedSides) {
+//		jump.touchWallJumpTime = Time.time;
+//	}
+//
+//	// The user can trigger a wall jump by hitting the button shortly before or shortly after hitting the wall the first time.
+//	var mayJump = jump.lastButtonTime > jump.touchWallJumpTime - jump.wallJumpTimeout && jump.lastButtonTime < jump.touchWallJumpTime + jump.wallJumpTimeout;
+//	if (!mayJump)
+//		return;
+//	
+//	// Prevent jumping too fast after each other
+//	if (jump.lastTime + jump.repeatTime > Time.time)
+//		return;
+//	
+//		
+//	if (Mathf.Abs(movement.contactNormal.y) < 0.2) {
+//		movement.contactNormal.y = 0;
+//		movement.direction = movement.contactNormal.normalized;
+//		// Wall jump gives us at least trotspeed
+//		movement.speed = Mathf.Clamp(movement.speed * 1.5, movement.walkSpeed, movement.runSpeed);
+//	}
+//	
+//	//Don't allow the direction to be changed just as we hit the wall
+//	//~ if (movement.velocity.x > 0)
+//		//~ movement.direction.x = 1;
+//	//~ else if (movement.velocity.x < 0)
+//		//~ movement.direction.x = -1;
+//		
+//	//~ movement.speed = movement.runSpeed + movement.velocity.x;
+//	
+//	else
+//	{
+//		movement.speed = 0;
+//	}
+//	
+//		movement.verticalSpeed = CalculateJumpVerticalSpeed (jump.height);
+//		DidJump();
+//		SendMessage("DidWallJump", null, SendMessageOptions.DontRequireReceiver);
+//	
+//}
 
-	// We must actually jump against a wall for this to work
-	if (!jump.jumping)
-		return;
-
-	// Store when we first touched a wall during this jump
-	if (movement.collisionFlags == CollisionFlags.CollidedSides) {
-		jump.touchWallJumpTime = Time.time;
-	}
-
-	// The user can trigger a wall jump by hitting the button shortly before or shortly after hitting the wall the first time.
-	var mayJump = jump.lastButtonTime > jump.touchWallJumpTime - jump.wallJumpTimeout && jump.lastButtonTime < jump.touchWallJumpTime + jump.wallJumpTimeout;
-	if (!mayJump)
-		return;
-	
-	// Prevent jumping too fast after each other
-	if (jump.lastTime + jump.repeatTime > Time.time)
-		return;
-	
-		
-	if (Mathf.Abs(movement.contactNormal.y) < 0.2) {
-		movement.contactNormal.y = 0;
-		movement.direction = movement.contactNormal.normalized;
-		// Wall jump gives us at least trotspeed
-		movement.speed = Mathf.Clamp(movement.speed * 1.5, movement.walkSpeed, movement.runSpeed);
-	}
-	
-	//Don't allow the direction to be changed just as we hit the wall
-	//~ if (movement.velocity.x > 0)
-		//~ movement.direction.x = 1;
-	//~ else if (movement.velocity.x < 0)
-		//~ movement.direction.x = -1;
-		
-	//~ movement.speed = movement.runSpeed + movement.velocity.x;
-	
-	else
-	{
-		movement.speed = 0;
-	}
-	
-		movement.verticalSpeed = CalculateJumpVerticalSpeed (jump.height);
-		DidJump();
-		SendMessage("DidWallJump", null, SendMessageOptions.DontRequireReceiver);
-	
-}
-
- function ApplyCrouching ()  {
-		if (controller.isGrounded) {
-			//send message for animation
-			if (Input.GetButton ("Crouch") && canControl) {
-				SendMessage ("Crouch", SendMessageOptions.DontRequireReceiver);
-				movement.crouching = true;
-				
-				var crouchingHeight = movement.controllerSize*0.5;
-				//make character controller smaller by half
-				controller.height = crouchingHeight;
-				movement.collisionFlags = controller.Move (Vector3 (0, -crouchingHeight*0.5, 0)); //move controller down a bit because we are currently using the jump animation
-			}
-			
-			else if (movement.crouching){ 
-				if (canGetUp()) {	 //check if player CAN get up.. otherwise stay ducked until getting up is possible
-					SendMessage ("GetUp", SendMessageOptions.DontRequireReceiver);
-					movement.crouching = false;
-					
-					var standingHeight = movement.controllerSize;
-					//make character controller bigger again
-					controller.height = standingHeight;
-					movement.collisionFlags = controller.Move (Vector3 (0, movement.controllerSize*0.5, 0)); //move controller down a bit because we are currently using the jump animation
-					//~ controller.center.y = 0;
-				}
-			}
-		}
- }
+// function ApplyCrouching ()  {
+//		if (controller.isGrounded) {
+//			//send message for animation
+//			if (Input.GetButton ("Crouch") && canControl) {
+//				SendMessage ("Crouch", SendMessageOptions.DontRequireReceiver);
+//				movement.crouching = true;
+//				
+//				var crouchingHeight = movement.controllerSize*0.5;
+//				//make character controller smaller by half
+//				controller.height = crouchingHeight;
+//				movement.collisionFlags = controller.Move (Vector3 (0, -crouchingHeight*0.5, 0)); //move controller down a bit because we are currently using the jump animation
+//			}
+//			
+//			else if (movement.crouching){ 
+//				if (canGetUp()) {	 //check if player CAN get up.. otherwise stay ducked until getting up is possible
+//					SendMessage ("GetUp", SendMessageOptions.DontRequireReceiver);
+//					movement.crouching = false;
+//					
+//					var standingHeight = movement.controllerSize;
+//					//make character controller bigger again
+//					controller.height = standingHeight;
+//					movement.collisionFlags = controller.Move (Vector3 (0, movement.controllerSize*0.5, 0)); //move controller down a bit because we are currently using the jump animation
+//					//~ controller.center.y = 0;
+//				}
+//			}
+//		}
+// }
  
  function ApplyRunning () {
 	if (controller.isGrounded && canControl) {
@@ -471,28 +472,28 @@ function ApplyWallJump () {
 	}
  }
  
- function ApplyHanging () {
-	//Make sure we really hit a ceiling and the ceiling is grabbable
-	if (movement.currentColliderObject && IsTouchingCeiling() && LayerMask.LayerToName(movement.currentColliderObject.layer) == "Grabable") {
-		if (Input.GetButton("Grab")) {
-			movement.hanging = true;
-			//~ gameObject.AddComponent ("HingeJoint");
-			//~ movement.myJoint = GetComponent(HingeJoint) ;
-			//~ movement.myJoint.axis = Vector3.forward ;
-			//~ movement.myJoint.connectedBody = movement.currentColliderObject.rigidbody;
-			//~ SendMessage ("Hang", SendMessageOptions.DontRequireReceiver);
-			SendMessage ("Hang", true, SendMessageOptions.DontRequireReceiver);
-		}
-	}
-
-	if (movement.hanging) {
-		if (HasReachedCorner() || Input.GetButtonUp("Grab")) {
-			movement.hanging = false;
-			jump.jumping = true;
-			SendMessage ("Hang", false, SendMessageOptions.DontRequireReceiver);
-		}
-	}
- }
+// function ApplyHanging () {
+//	//Make sure we really hit a ceiling and the ceiling is grabbable
+//	if (movement.currentColliderObject && IsTouchingCeiling() && LayerMask.LayerToName(movement.currentColliderObject.layer) == "Grabable") {
+//		if (Input.GetButton("Grab")) {
+//			movement.hanging = true;
+//			//~ gameObject.AddComponent ("HingeJoint");
+//			//~ movement.myJoint = GetComponent(HingeJoint) ;
+//			//~ movement.myJoint.axis = Vector3.forward ;
+//			//~ movement.myJoint.connectedBody = movement.currentColliderObject.rigidbody;
+//			//~ SendMessage ("Hang", SendMessageOptions.DontRequireReceiver);
+//			SendMessage ("Hang", true, SendMessageOptions.DontRequireReceiver);
+//		}
+//	}
+//
+//	if (movement.hanging) {
+//		if (HasReachedCorner() || Input.GetButtonUp("Grab")) {
+//			movement.hanging = false;
+//			jump.jumping = true;
+//			SendMessage ("Hang", false, SendMessageOptions.DontRequireReceiver);
+//		}
+//	}
+// }
  
 function ApplyGravity () {
 	// Apply gravity
@@ -538,14 +539,14 @@ function DidJump () {
 }
 
 
-function canGetUp () {	 //check if player CAN get up.. otherwise stay ducked until getting up is possible
-	var lastPosition = transform.position;
-	
-	movement.collisionFlags = controller.Move (Vector3 (0, movement.controllerSize*0.75, 0));	//pretend to move controller up to see if standing person would have enough space
-	transform.position = lastPosition;
-	
-	return !IsTouchingCeiling (); //if collided, there is not enough space and you can't get up
-}
+//function canGetUp () {	 //check if player CAN get up.. otherwise stay ducked until getting up is possible
+//	var lastPosition = transform.position;
+//	
+//	movement.collisionFlags = controller.Move (Vector3 (0, movement.controllerSize*0.75, 0));	//pretend to move controller up to see if standing person would have enough space
+//	transform.position = lastPosition;
+//	
+//	return !IsTouchingCeiling (); //if collided, there is not enough space and you can't get up
+//}
 
 function HasReachedCorner () {
 	var corner:boolean = false;

@@ -14,9 +14,12 @@
 var levelStateMachine : LevelStatus;		// link to script that handles the level-complete sequence.
 private var playerNumber = 0;
 private var levelCompleted = false;
-private var remainingItems : int;	// total number to pick up on this level. Grabbed from LevelStatus.
+//private var remainingItems : int;	// total number to pick up on this level. Grabbed from LevelStatus.
 private var spawnPoint : SpawnPoint;
 private var playersOrientation:Vector3;
+
+private var element : GameObject;
+private var morphed : boolean;
 
 @System.NonSerialized
 var cameraTimer = 0.0;
@@ -32,7 +35,7 @@ function Start()
 	if (!pController)
 		Debug.Log("No link to Player Controller");
 	
-	remainingItems = levelStateMachine.itemsNeeded;
+//	remainingItems = levelStateMachine.itemsNeeded;
 	playersOrientation = transform.forward; //check original orientation
 	levelCompleted = false;
 	
@@ -40,10 +43,10 @@ function Start()
 }
 
 // Utility function used by HUD script:
-function GetRemainingItems() : int
-{
-	return remainingItems;
-}
+//function GetRemainingItems() : int
+//{
+//	return remainingItems;
+//}
 
 //~ function ApplyDamage (damage : int)
 //~ {
@@ -75,20 +78,20 @@ function AddHealth (powerUp : int)
 }
 
 
-function FoundItem (numFound: int)
-{
-	remainingItems-= numFound;
-
-// NOTE: We are deliberately not clamping this value to zero. 
-// This allows for levels where the number of pickups is greater than the target number needed. 
-// This also lets us speed up the testing process by temporarily reducing the collecatbles needed. 
-// Our HUD will clamp to zero for us.
-
-	if (remainingItems == 0)
-	{
-		//~ levelStateMachine.UnlockLevelExit(); // ...and let our player out of the level.
-	}
-}
+//function FoundItem (numFound: int)
+//{
+//	remainingItems-= numFound;
+//
+//// NOTE: We are deliberately not clamping this value to zero. 
+//// This allows for levels where the number of pickups is greater than the target number needed. 
+//// This also lets us speed up the testing process by temporarily reducing the collecatbles needed. 
+//// Our HUD will clamp to zero for us.
+//
+//	if (remainingItems == 0)
+//	{
+//		//~ levelStateMachine.UnlockLevelExit(); // ...and let our player out of the level.
+//	}
+//}
 
 function OnDeath ()
 {
