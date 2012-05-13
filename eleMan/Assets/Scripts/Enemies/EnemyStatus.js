@@ -13,7 +13,8 @@ var speed : float;
 function Start () {
 	alive = true;
 	speed = 1.0;
-	//How to set spawnPoint?	
+	Spawn();
+	//How to set spawnPoint? Or just the position in Unity?
 }
 
 function Update () {
@@ -26,7 +27,7 @@ function Update () {
 
 function OnCollisionEnter (collision : Collision) {
 	//Ask here for the right collision object, which we don't know right now.
-	if () {
+	if (alive == true) {
 	   alive = false;
 	}
 	
