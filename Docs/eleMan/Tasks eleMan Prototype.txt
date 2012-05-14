@@ -6,11 +6,11 @@ Aufgaben
 
 Player
 	- Bewegung
-	  -> Tiare?/Hannes?
+	  -> Tiare/Hannes?
 	- Wechselbare Zustände
 	  -> ??
 	- Kamera
-	  -> Tiare?
+	  -> Tiare
 
 Waffen
 	- schießender Spieler
@@ -22,10 +22,10 @@ Waffen
 		- NICETOHAVE: auch schon bleibende/klebende Erde anfangen
 		  -> ??	
 Level
-	- Level-Objekt-Prefaf
-	  -> ??
+	- Level-Objekt-Prefab
+	  -> Tiare
 	- Level-Start- und End-Punkt .... evtl in Zusammenhang zum Game-Objekt
-	  -> ??
+	  -> Tiare
 	- Prefab/Skript-Gerüst für spezielle Objekte, die auf Spielerkollisionen/Beschuss reagieren
 	  -> ??
 		- insbesondere Bröckelboden, der bei aufschlagenden Spielern durchbricht
