@@ -26,7 +26,7 @@ function Update () {
 
 function OnCollisionEnter (collision : Collision) {
 	//Ask here for the right collision object, which we don't know right now.
-	if () {
+	if (true) {
 	   alive = false;
 	}
 	

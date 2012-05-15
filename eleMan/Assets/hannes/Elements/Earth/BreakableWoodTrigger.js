@@ -5,7 +5,7 @@ var textDisplay : GUIText;
 function Start() {
     if(GameObject.Find("Text Display")) {
 	    textDisplay = GameObject.Find("Text Display").guiText;
-	    textDisplay.text = "test";
+	    textDisplay.text = "";
     } 
 }
 
