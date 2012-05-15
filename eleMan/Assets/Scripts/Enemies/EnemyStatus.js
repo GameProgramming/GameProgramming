@@ -5,10 +5,11 @@
 var alive : boolean;
 //The spawn Point of the enemy if the level loads.
 var spawnPoint : SpawnPoint;
-//Furthermore we need 2 positions, where he walks between (how to do this?)
 
 function Start () {
 	alive = true;
+	spawnPoint = transform.GetChild("SpawnPoint");
+	Spawn();
 }
 
 function Update () {
@@ -28,9 +29,10 @@ function OnCollisionEnter (collision : Collision) {
 }
 
 function Spawn() {
-	//Insert Spawn/Respawn here.
+	transform.position = spawnPoint.transform.position;
 }
 
 function Die() {
-	//Remove object from the scene.
+	//Question here is if we destroy it or not. because we need the children to be a spawnpoint
+	//And if we destroy the object, the spawnPoint is also gone.
 }
