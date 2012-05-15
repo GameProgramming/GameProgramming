@@ -137,7 +137,8 @@ function Spawn () {
 		
 	SendMessage("HidePlayer");
 	// reset the character's position to the spawnPoint
-	transform.position = spawnPoint.transform.position;
+	if (spawnPoint)
+		transform.position = spawnPoint.transform.position;
 	
 	//TODO: change for multiplayer... when player dies, set focus to other..
 	GameObject.FindWithTag("MainCamera").GetComponent(CameraFocus).setSwitch(playerNumber, false);

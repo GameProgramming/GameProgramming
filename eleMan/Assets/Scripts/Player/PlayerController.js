@@ -548,39 +548,39 @@ function DidJump () {
 //	return !IsTouchingCeiling (); //if collided, there is not enough space and you can't get up
 //}
 
-function HasReachedCorner () {
-	var corner:boolean = false;
-	//~ var lastPosition = transform.position;
-	//~ var oldFlags = movement.collisionFlags;
-	//~ var currentMovementOffset = movement.direction* (controller.radius*6);
-	// We always want the movement to be framerate independent.  Multiplying by Time.deltaTime does this.
-	//~ currentMovementOffset *= Time.deltaTime;
-	//~ movement.collisionFlags = controller.Move (currentMovementOffset);	//pretend to move controller up to see if standing person would have enough space
-	//~ var dist = Mathf.SqrtMathf.Pow(movement.speed,2)+Mathf.Pow(controller.height/2,2));
-	var allowedStep = 5;
-	//~ if (!IsTouchingCeiling()) {
-	//at a corner the y-component of the hitnormal will hopefully be larger than -0.6
-	//also allow hanging from a max slope of 36° (y > -0.6)- otherwise detect it as a corner
-	//~ Debug.Log("Reached corner " + Time.time, this);
-	//~ var dir = (transform.position+Vector3(movement.speed*movement.direction.x,controller.height/2+allowedStep,0))-transform.position;
-	var dir = Vector3.up*(controller.height/2+allowedStep);
-	//~ Debug.DrawRay(transform.position, dir, Color.green);
-	//~ Debug.Log("Raycast: " + Physics.Raycast(transform.position, Vector3.up, controller.height/2+allowedStep) + " too steep: " + (movement.contactNormal.y > -0.9), this);
-	
-	
-	if (movement.currentColliderObject) {
-		if (!Physics.Raycast(transform.position, Vector3.up, controller.height/2+allowedStep) 
-			|| movement.contactNormal.y > -0.9) { //too steep
-		//~ if (movement.currentColliderObject && movement.contactNormal.y > Mathf.Cos(10 * Mathf.Deg2Rad)) {
-			//~ Debug.Log ("Reached corner " +Time.time,this);
-			corner = true;
-		}
-	}
-		
-	//~ transform.position = lastPosition;
-	//~ movement.collisionFlags = oldFlags;
-	return corner;
-}
+//function HasReachedCorner () {
+//	var corner:boolean = false;
+//	//~ var lastPosition = transform.position;
+//	//~ var oldFlags = movement.collisionFlags;
+//	//~ var currentMovementOffset = movement.direction* (controller.radius*6);
+//	// We always want the movement to be framerate independent.  Multiplying by Time.deltaTime does this.
+//	//~ currentMovementOffset *= Time.deltaTime;
+//	//~ movement.collisionFlags = controller.Move (currentMovementOffset);	//pretend to move controller up to see if standing person would have enough space
+//	//~ var dist = Mathf.SqrtMathf.Pow(movement.speed,2)+Mathf.Pow(controller.height/2,2));
+//	var allowedStep = 5;
+//	//~ if (!IsTouchingCeiling()) {
+//	//at a corner the y-component of the hitnormal will hopefully be larger than -0.6
+//	//also allow hanging from a max slope of 36° (y > -0.6)- otherwise detect it as a corner
+//	//~ Debug.Log("Reached corner " + Time.time, this);
+//	//~ var dir = (transform.position+Vector3(movement.speed*movement.direction.x,controller.height/2+allowedStep,0))-transform.position;
+//	var dir = Vector3.up*(controller.height/2+allowedStep);
+//	//~ Debug.DrawRay(transform.position, dir, Color.green);
+//	//~ Debug.Log("Raycast: " + Physics.Raycast(transform.position, Vector3.up, controller.height/2+allowedStep) + " too steep: " + (movement.contactNormal.y > -0.9), this);
+//	
+//	
+//	if (movement.currentColliderObject) {
+//		if (!Physics.Raycast(transform.position, Vector3.up, controller.height/2+allowedStep) 
+//			|| movement.contactNormal.y > -0.9) { //too steep
+//		//~ if (movement.currentColliderObject && movement.contactNormal.y > Mathf.Cos(10 * Mathf.Deg2Rad)) {
+//			//~ Debug.Log ("Reached corner " +Time.time,this);
+//			corner = true;
+//		}
+//	}
+//		
+//	//~ transform.position = lastPosition;
+//	//~ movement.collisionFlags = oldFlags;
+//	return corner;
+//}
 
 function OnControllerColliderHit (hit : ControllerColliderHit) {
 	//~ if (hit.moveDirection.y > 0.01) 
