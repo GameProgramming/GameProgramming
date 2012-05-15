@@ -6,11 +6,7 @@ class ControllerMovement {
 	// The speed when walking 
 	var walkSpeed = 3.0;
 	// when pressing "Run" button (control) we start running
-	var runSpeed = 10.0;
-	//Wehen pressing down we crouch and can only move slowly
-	var crawlSpeed = 1.0;
-	//Speed when we hang from the ceiling
-	//var hangSpeed = 1.0;
+	var runSpeed = 8.0;
 	
 	var maxHorizontalSpeed = 10;
 
@@ -58,20 +54,14 @@ class ControllerMovement {
 	@System.NonSerialized
 	var running = false;
 	
-	//@System.NonSerialized
-	//var crouching = false;
-	
 	@System.NonSerialized
 	var pushing = false;
 	
 	@System.NonSerialized
 	var grabbing = false;
 	
-	//@System.NonSerialized
-	//var hanging = false;
-
 	@System.NonSerialized
-	var controllerSize = 0.0; //TODO: just for now
+	var controllerSize = 0.0;
 	
 	// Average normal of the last touched geometry
 	@System.NonSerialized
@@ -115,7 +105,6 @@ class ControllerJumping {
 	// This prevents inordinarily too quick jumping
 	// The next line, @System.NonSerialized , tells Unity to not serialize the variable or show it in the inspector view.  Very handy for organization!
 	@System.NonSerialized
-	//~ var repeatTime = 0.05;
 	var repeatTime = 0.15;
 
 	@System.NonSerialized
@@ -139,14 +128,6 @@ class ControllerJumping {
 	// the height we jumped from (Used to determine for how long to apply extra jump power after jumping.)
 	@System.NonSerialized
 	var lastStartHeight = 0.0;
-	
-	@System.NonSerialized
-	var touchWallJumpTime = -1.0;
-	@System.NonSerialized
-	var wallJumpTimeout = 0.5;
-	
-	@System.NonSerialized
-	var wallJumpContactNormalHeight : float;
 }
 
 var jump : ControllerJumping;
@@ -185,13 +166,10 @@ function Update () {
 
 	// Apply jumping logic
 	ApplyJumping ();
-	//ApplyWallJump ();
-	
-	//ApplyCrouching();
-	
+
+	// Apply running when not pushing or pulling an object
 	ApplyRunning ();
-	
-	//ApplyHanging();
+
 	
 	// Moving platform support
 	if (activePlatform != null) {
@@ -223,11 +201,6 @@ function Update () {
    	// Move our character!
 	movement.collisionFlags = controller.Move (currentMovementOffset);
 	
-	//~ if (movement.hanging) {
-		//~ var newPosition = transform.position+movement.direction* (controller.radius*6);
-		//~ Debug.DrawRay(transform.position+Vector3(0,2,0), newPosition-transform.position, Color.green);
-	//~ }
-	
 	// Calculate the velocity based on the current and previous position.  
 	// This means our velocity will only be the amount the character actually moved as a result of collisions.
 	movement.velocity = (transform.position - lastPosition) / Time.deltaTime;
@@ -254,16 +227,6 @@ function Update () {
 				movement.direction = jumpMoveDirection.normalized;
 		}
 	}	
-	//we are in jump mode but just grabbed the ceiling
-	if (movement.hanging) {
-		movement.inAirVelocity = Vector3.zero;
-		if (jump.jumping) {
-			jump.jumping = false;
-			//~ var jumpMoveDirection = movement.direction * movement.speed + movement.inAirVelocity;
-			//~ if (jumpMoveDirection.sqrMagnitude > 0.01)
-				//~ movement.direction = jumpMoveDirection.normalized;
-		}
-	}
 
 	//this serves to freeze the camera for a while as happens when the player dies
 	if (status.cameraTimer > 0.0)
@@ -298,9 +261,6 @@ function UpdateSmoothedMovementDirection () {
 			//~ Debug.DrawRay(Vector3(transform.position.x,transform.position.y+2,0), movement.contactNormal, Color.green);
 			SendMessage("Sliding", false, SendMessageOptions.DontRequireReceiver);
 			// Pick speed modifier
-//			if (movement.crouching || movement.grabbing || movement.pushing) //user is ducked so only walk real slow
-//				targetSpeed *= movement.crawlSpeed;
-//			else 
 			if (movement.running)
 				targetSpeed *= movement.runSpeed;
 			else
@@ -341,20 +301,6 @@ function UpdateSmoothedMovementDirection () {
 		movement.speed = targetSpeed;
 		movement.hangTime = 0.0;
 	}
-//	else if (movement.hanging) { //hanging controls
-//		//~ Debug.Log("We're hanging around here!", this);
-//		
-//		// Choose target speed
-//		targetSpeed = Mathf.Min (Mathf.Abs(h), 1.0);
-//		targetSpeed *= movement.hangSpeed;
-//		
-//		//make sure player never gets too fast
-//		if(targetSpeed > movement.hangSpeed)
-//			targetSpeed = movement.hangSpeed;
-//		
-//		movement.speed = targetSpeed;
-//		movement.hangTime = 0.0;
-//	}
 	else {
 		// In air controls
 		movement.hangTime += Time.deltaTime;
@@ -364,15 +310,15 @@ function UpdateSmoothedMovementDirection () {
 }
 
 function ApplyJumping () {
-	//disable jumping when ducked or grabbing another body
-	if (movement.crouching || movement.grabbing)
+	//disable jumping when grabbing another body
+	if (movement.grabbing)
 		return;
 		
 	// Prevent jumping too fast after each other
 	if (jump.lastTime + jump.repeatTime > Time.time)
 		return;
 
-	if (controller.isGrounded) { //TODO: allow  jump when hanging?
+	if (controller.isGrounded) {
 		// Jump
 		// - Only when pressing the button down
 		// - With a timeout so you can press the button slightly before landing		
@@ -384,116 +330,20 @@ function ApplyJumping () {
 	}
 }
 
-//function ApplyWallJump () {
-//
-//	// We must actually jump against a wall for this to work
-//	if (!jump.jumping)
-//		return;
-//
-//	// Store when we first touched a wall during this jump
-//	if (movement.collisionFlags == CollisionFlags.CollidedSides) {
-//		jump.touchWallJumpTime = Time.time;
-//	}
-//
-//	// The user can trigger a wall jump by hitting the button shortly before or shortly after hitting the wall the first time.
-//	var mayJump = jump.lastButtonTime > jump.touchWallJumpTime - jump.wallJumpTimeout && jump.lastButtonTime < jump.touchWallJumpTime + jump.wallJumpTimeout;
-//	if (!mayJump)
-//		return;
-//	
-//	// Prevent jumping too fast after each other
-//	if (jump.lastTime + jump.repeatTime > Time.time)
-//		return;
-//	
-//		
-//	if (Mathf.Abs(movement.contactNormal.y) < 0.2) {
-//		movement.contactNormal.y = 0;
-//		movement.direction = movement.contactNormal.normalized;
-//		// Wall jump gives us at least trotspeed
-//		movement.speed = Mathf.Clamp(movement.speed * 1.5, movement.walkSpeed, movement.runSpeed);
-//	}
-//	
-//	//Don't allow the direction to be changed just as we hit the wall
-//	//~ if (movement.velocity.x > 0)
-//		//~ movement.direction.x = 1;
-//	//~ else if (movement.velocity.x < 0)
-//		//~ movement.direction.x = -1;
-//		
-//	//~ movement.speed = movement.runSpeed + movement.velocity.x;
-//	
-//	else
-//	{
-//		movement.speed = 0;
-//	}
-//	
-//		movement.verticalSpeed = CalculateJumpVerticalSpeed (jump.height);
-//		DidJump();
-//		SendMessage("DidWallJump", null, SendMessageOptions.DontRequireReceiver);
-//	
-//}
-
-// function ApplyCrouching ()  {
-//		if (controller.isGrounded) {
-//			//send message for animation
-//			if (Input.GetButton ("Crouch") && canControl) {
-//				SendMessage ("Crouch", SendMessageOptions.DontRequireReceiver);
-//				movement.crouching = true;
-//				
-//				var crouchingHeight = movement.controllerSize*0.5;
-//				//make character controller smaller by half
-//				controller.height = crouchingHeight;
-//				movement.collisionFlags = controller.Move (Vector3 (0, -crouchingHeight*0.5, 0)); //move controller down a bit because we are currently using the jump animation
-//			}
-//			
-//			else if (movement.crouching){ 
-//				if (canGetUp()) {	 //check if player CAN get up.. otherwise stay ducked until getting up is possible
-//					SendMessage ("GetUp", SendMessageOptions.DontRequireReceiver);
-//					movement.crouching = false;
-//					
-//					var standingHeight = movement.controllerSize;
-//					//make character controller bigger again
-//					controller.height = standingHeight;
-//					movement.collisionFlags = controller.Move (Vector3 (0, movement.controllerSize*0.5, 0)); //move controller down a bit because we are currently using the jump animation
-//					//~ controller.center.y = 0;
-//				}
-//			}
-//		}
-// }
- 
  function ApplyRunning () {
 	if (controller.isGrounded && canControl) {
-		if (Input.GetButton ("Run") && !(movement.grabbing || movement.pushing || movement.crouching || IsTooSteep())) {
-			movement.running = true;
-			SendMessage ("Run", SendMessageOptions.DontRequireReceiver);
-		}
-		else {
+		//if (Input.GetButton ("Run") && !(movement.grabbing || movement.pushing || movement.crouching || IsTooSteep())) {
+		if (movement.pushing || movement.grabbing) { //walk when pushing or pulling
 			movement.running = false;
 			SendMessage ("Walk", SendMessageOptions.DontRequireReceiver);
+		}
+		else if(!IsTooSteep()) {
+			movement.running = true;
+			SendMessage ("Run", SendMessageOptions.DontRequireReceiver);
 		}
 	}
  }
  
-// function ApplyHanging () {
-//	//Make sure we really hit a ceiling and the ceiling is grabbable
-//	if (movement.currentColliderObject && IsTouchingCeiling() && LayerMask.LayerToName(movement.currentColliderObject.layer) == "Grabable") {
-//		if (Input.GetButton("Grab")) {
-//			movement.hanging = true;
-//			//~ gameObject.AddComponent ("HingeJoint");
-//			//~ movement.myJoint = GetComponent(HingeJoint) ;
-//			//~ movement.myJoint.axis = Vector3.forward ;
-//			//~ movement.myJoint.connectedBody = movement.currentColliderObject.rigidbody;
-//			//~ SendMessage ("Hang", SendMessageOptions.DontRequireReceiver);
-//			SendMessage ("Hang", true, SendMessageOptions.DontRequireReceiver);
-//		}
-//	}
-//
-//	if (movement.hanging) {
-//		if (HasReachedCorner() || Input.GetButtonUp("Grab")) {
-//			movement.hanging = false;
-//			jump.jumping = true;
-//			SendMessage ("Hang", false, SendMessageOptions.DontRequireReceiver);
-//		}
-//	}
-// }
  
 function ApplyGravity () {
 	// Apply gravity
@@ -510,9 +360,9 @@ function ApplyGravity () {
 	
 	// * When jumping up we don't apply gravity for some time when the user is holding the jump button
 	//   This gives more control over jump height by pressing the button longer
-	var extraPowerJump =  jump.jumping && movement.verticalSpeed > 0.0 && jumpButton && transform.position.y < jump.lastStartHeight + jump.extraHeight && !IsTouchingCeiling ();
+	var extraPowerJump =  jump.jumping && movement.verticalSpeed > 0.0 && jumpButton && transform.position.y < jump.lastStartHeight + jump.extraHeight;
 	
-	if (extraPowerJump || movement.hanging)
+	if (extraPowerJump)
 		return;
 	else if (controller.isGrounded)
 		movement.verticalSpeed = -(movement.gravity+movement.additionalVerticalSpeed) * Time.deltaTime;
@@ -538,50 +388,6 @@ function DidJump () {
 	jump.lastButtonTime = -10;
 }
 
-
-//function canGetUp () {	 //check if player CAN get up.. otherwise stay ducked until getting up is possible
-//	var lastPosition = transform.position;
-//	
-//	movement.collisionFlags = controller.Move (Vector3 (0, movement.controllerSize*0.75, 0));	//pretend to move controller up to see if standing person would have enough space
-//	transform.position = lastPosition;
-//	
-//	return !IsTouchingCeiling (); //if collided, there is not enough space and you can't get up
-//}
-
-//function HasReachedCorner () {
-//	var corner:boolean = false;
-//	//~ var lastPosition = transform.position;
-//	//~ var oldFlags = movement.collisionFlags;
-//	//~ var currentMovementOffset = movement.direction* (controller.radius*6);
-//	// We always want the movement to be framerate independent.  Multiplying by Time.deltaTime does this.
-//	//~ currentMovementOffset *= Time.deltaTime;
-//	//~ movement.collisionFlags = controller.Move (currentMovementOffset);	//pretend to move controller up to see if standing person would have enough space
-//	//~ var dist = Mathf.SqrtMathf.Pow(movement.speed,2)+Mathf.Pow(controller.height/2,2));
-//	var allowedStep = 5;
-//	//~ if (!IsTouchingCeiling()) {
-//	//at a corner the y-component of the hitnormal will hopefully be larger than -0.6
-//	//also allow hanging from a max slope of 36° (y > -0.6)- otherwise detect it as a corner
-//	//~ Debug.Log("Reached corner " + Time.time, this);
-//	//~ var dir = (transform.position+Vector3(movement.speed*movement.direction.x,controller.height/2+allowedStep,0))-transform.position;
-//	var dir = Vector3.up*(controller.height/2+allowedStep);
-//	//~ Debug.DrawRay(transform.position, dir, Color.green);
-//	//~ Debug.Log("Raycast: " + Physics.Raycast(transform.position, Vector3.up, controller.height/2+allowedStep) + " too steep: " + (movement.contactNormal.y > -0.9), this);
-//	
-//	
-//	if (movement.currentColliderObject) {
-//		if (!Physics.Raycast(transform.position, Vector3.up, controller.height/2+allowedStep) 
-//			|| movement.contactNormal.y > -0.9) { //too steep
-//		//~ if (movement.currentColliderObject && movement.contactNormal.y > Mathf.Cos(10 * Mathf.Deg2Rad)) {
-//			//~ Debug.Log ("Reached corner " +Time.time,this);
-//			corner = true;
-//		}
-//	}
-//		
-//	//~ transform.position = lastPosition;
-//	//~ movement.collisionFlags = oldFlags;
-//	return corner;
-//}
-
 function OnControllerColliderHit (hit : ControllerColliderHit) {
 	//~ if (hit.moveDirection.y > 0.01) 
 		//~ return;
@@ -595,8 +401,7 @@ function OnControllerColliderHit (hit : ControllerColliderHit) {
 		activePlatform = hit.collider.transform;	
 	}
 	else {
-	//~ Debug.Log("Hitting " + Time.time,this);
-	movement.currentColliderObject = hit.gameObject;
+		movement.currentColliderObject = hit.gameObject;
 	}
 }
 
@@ -669,14 +474,6 @@ function IsJumping () {
 	return jump.jumping;
 }
 
-function IsCrouched () {
-	return movement.crouching;
-}
-
-function IsTouchingCeiling () {
-	return (movement.collisionFlags & CollisionFlags.CollidedAbove) != 0;
-}
-
 function IsTooSteep () {
 	return (movement.contactNormal.y <= Mathf.Cos(controller.slopeLimit * Mathf.Deg2Rad));
 }
@@ -695,7 +492,6 @@ function ResetSpeed() {
 
 function HidePlayer()
 {
-	//~ var meshRenderers : SkinnedMeshRenderer[];
 	var meshRenderers = GetComponentsInChildren (MeshRenderer);
 	for (var rend : MeshRenderer in meshRenderers) {
 		rend.enabled = false;
@@ -706,7 +502,6 @@ function HidePlayer()
 		rend.enabled = false;
 	}
 
-	//~ Find(SkinnedMeshRenderer).enabled = false; // stop rendering the player.
 	canControl = false;	// disable player controls.
 }
 
@@ -715,7 +510,6 @@ function HidePlayer()
 
 function ShowPlayer()
 {
-	//~ var meshRenderers : SkinnedMeshRenderer[];
 	var meshRenderers = GetComponentsInChildren (MeshRenderer);
 	for (var rend : MeshRenderer in meshRenderers) {
 		rend.enabled = true;
@@ -725,10 +519,7 @@ function ShowPlayer()
 	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
 		rend.enabled = true;
 	}
-	
-	//~ yield WaitForSeconds(1.0);
-	//~ GameObject.Find("rootJoint").GetComponent(SkinnedMeshRenderer).enabled = true; // start rendering the player again.
-		//~ Find(SkinnedMeshRenderer).enabled = true; // start rendering the player again.
+
 	canControl = true;	// allow player to control the character again.
 }
 

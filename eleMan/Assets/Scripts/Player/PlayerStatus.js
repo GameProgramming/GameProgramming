@@ -19,7 +19,7 @@ private var spawnPoint : SpawnPoint;
 private var playersOrientation:Vector3;
 
 private var element : GameObject;
-private var morphed : boolean;
+private var morphed : boolean = false;
 
 @System.NonSerialized
 var cameraTimer = 0.0;
