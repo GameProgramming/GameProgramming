@@ -3,9 +3,9 @@
 // Keeps track of inventory, health, lives, etc.
 
 
-//~ var health : int = 6;
-//~ var maxHealth : int = 6;
-//~ var lives = 4;
+var health : int = 6;
+var maxHealth : int = 6;
+var lives = 4;
 
 // sound effects.
 //~ var struckSound: AudioClip;
@@ -63,18 +63,18 @@ function Start()
 
 function AddLife (powerUp : int)
 {
-	//~ lives += powerUp;
-	//~ health = maxHealth;
+	lives += powerUp;
+	health = maxHealth;
 }
 
 function AddHealth (powerUp : int)
 {
-	//~ health += powerUp;
+	health += powerUp;
 	
-	//~ if (health>maxHealth)		// We can only show six segments in our HUD.
-	//~ {
-		//~ health=maxHealth;	
-	//~ }		
+	if (health>maxHealth)		// We can only show six segments in our HUD.
+	{
+		health=maxHealth;	
+	}		
 }
 
 
@@ -95,8 +95,6 @@ function AddHealth (powerUp : int)
 
 function OnDeath ()
 {
-	cameraTimer = 1.0;
-	Spawn ();
 	// play the death sound if available.
 	//~ if (deathSound)
 	//~ {
@@ -104,28 +102,19 @@ function OnDeath ()
 
 	//~ }
 		
-	//~ lives--;
-	//~ health = maxHealth;
+	lives--;
+	health = maxHealth;
 	
-	//~ if(lives < 0)
-		//~ Application.LoadLevel("GameOver");	
+	Debug.Log("Died. Remaining lives: " + lives);
 	
-	//~ // If we've reached here, the player still has lives remaining, so respawn.
-	//~ respawnPosition = Respawn.currentRespawn.transform.position;
-	//~ Camera.main.transform.position = respawnPosition - (transform.forward * 4) + Vector3.up;	// reset camera too
-	//~ // Hide the player briefly to give the death sound time to finish...
-	//~ SendMessage("HidePlayer");
-	
-	//~ // Relocate the player. We need to do this or the camera will keep trying to focus on the (invisible) player where he's standing on top of the FalloutDeath box collider.
-	//~ transform.position = respawnPosition + Vector3.up;
-
-	//~ yield WaitForSeconds(1.6);	// give the sound time to complete. 
-	
-	//~ // (NOTE: "HidePlayer" also disables the player controls.)
-
-	//~ SendMessage("ShowPlayer");	// Show the player again, ready for...	
-	//~ // ... the respawn point to play it's particle effect
-	//~ Respawn.currentRespawn.FireEffect ();
+	//Game Over!
+	if(lives < 0)
+		levelStateMachine.GameOver();
+	else {
+		// If we've reached here, the player still has lives remaining, so respawn.
+		cameraTimer = 1.0;
+		Spawn ();
+	}
 }
 
 function Spawn () {
@@ -135,18 +124,17 @@ function Spawn () {
 	if(!spawnPoint)
 		Debug.Log("No spawnPoint");
 		
+	// (NOTE: "HidePlayer" also disables the player controls.)
 	SendMessage("HidePlayer");
 	// reset the character's position to the spawnPoint
 	if (spawnPoint)
 		transform.position = spawnPoint.transform.position;
 	
-	//TODO: change for multiplayer... when player dies, set focus to other..
+	//this is actually only for multiplayer-mode
 	GameObject.FindWithTag("MainCamera").GetComponent(CameraFocus).setSwitch(playerNumber, false);
 
 	yield WaitForSeconds(2.0);	// give the sound time to complete. 
 	
-	// (NOTE: "HidePlayer" also disables the player controls.)
-
 	SendMessage("ShowPlayer");	// Show the player again, ready for...		
 }
 
@@ -154,12 +142,12 @@ function LevelCompleted(inGoal : boolean)
 {
 	Debug.Log("Completed: " + playerNumber, this);
 	if (inGoal) {
-		Debug.Log("InGoal " + playerNumber, this);
+		//Debug.Log("InGoal " + playerNumber, this);
 		levelCompleted = true;
 		levelStateMachine.PlayerCompleted(this);
 	}
 	else {
-		Debug.Log("Out of goal " + playerNumber, this);
+		//Debug.Log("Out of goal " + playerNumber, this);
 		levelCompleted = false;
 	}
 }
