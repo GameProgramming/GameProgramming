@@ -10,10 +10,7 @@ var reloadProgress = 0;
 var inputFire : boolean = false;
 
 function Start () {
-	player = transform.parent.GetComponent("PlayerStatus");
-	if(player) {
-		shootingTeam = player.teamNumber;
-	}
+	
 }
 
 function Update () {
