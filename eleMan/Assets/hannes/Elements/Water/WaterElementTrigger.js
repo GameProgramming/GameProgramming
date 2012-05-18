@@ -12,14 +12,13 @@ function Start() {
 
 function OnTriggerEnter(col : Collider) {
 	
-    if (col.gameObject.tag == "Player") {
-        player = col.gameObject;
+	if (col.gameObject.tag == "Player") {
+		player = col.gameObject;
     	//reset values that might habe been changed by other elements
     	player.GetComponent("EleManStats").ResetNormalPlayerStats();
     	//set earth values
-        player.GetComponent("EleManStats").element = "air";
-        player.GetComponent("PlayerStatus").jumpHeight = 8;
-		textDisplay.text = "PlayerHitAirElement";
+        player.GetComponent("EleManStats").element = "earth";
+		textDisplay.text = "PlayerHitEarthElement";
 		
         //print("hit");
         
