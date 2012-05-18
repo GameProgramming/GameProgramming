@@ -156,6 +156,13 @@ function Start () {
 }
 
 function Update () {
+	if (Input.GetButtonDown ("Shoot") && canControl) {
+		var projectileSP = GameObject.Find("BulletSpawnPoint");
+		if (projectileSP) { 
+			projectileSP.GetComponent(Projectile).SetInputFire();
+		}
+	}
+
 	if (Input.GetButtonDown ("Jump") && canControl) {
 		jump.lastButtonTime = Time.time;
 	}
