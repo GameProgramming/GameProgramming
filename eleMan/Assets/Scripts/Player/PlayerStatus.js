@@ -5,6 +5,7 @@
 
 var health : int = 6;
 var maxHealth : int = 6;
+@System.NonSerialized
 var lives = 0;
 
 // sound effects.
@@ -77,22 +78,6 @@ function AddHealth (powerUp : int)
 	}		
 }
 
-
-//function FoundItem (numFound: int)
-//{
-//	remainingItems-= numFound;
-//
-//// NOTE: We are deliberately not clamping this value to zero. 
-//// This allows for levels where the number of pickups is greater than the target number needed. 
-//// This also lets us speed up the testing process by temporarily reducing the collecatbles needed. 
-//// Our HUD will clamp to zero for us.
-//
-//	if (remainingItems == 0)
-//	{
-//		//~ levelStateMachine.UnlockLevelExit(); // ...and let our player out of the level.
-//	}
-//}
-
 function OnDeath ()
 {
 	// play the death sound if available.
@@ -102,19 +87,20 @@ function OnDeath ()
 
 	//~ }
 		
-	lives--;
+//	lives--;
+	lives++;
 	health = maxHealth;
 	
 //	Debug.Log("Died. Remaining lives: " + lives);
 	
 	//Game Over!
-	if(lives < 0)
+//	if(lives < 0)
 		levelStateMachine.GameOver();
-	else {
-		// If we've reached here, the player still has lives remaining, so respawn.
-		cameraTimer = 1.0;
-		Spawn ();
-	}
+//	else {
+//		// If we've reached here, the player still has lives remaining, so respawn.
+//		cameraTimer = 1.0;
+//		Spawn ();
+//	}
 }
 
 function Spawn () {
