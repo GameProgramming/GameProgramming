@@ -8,7 +8,8 @@ private var player : ThirdPersonController;
 
 
 function Start() {
-	player = gameObject.GetComponent("ThirdPersonController");
+	player = gameObject.GetComponent("PlayerController");
+		
 	element = "Normal";
 	initialJumpHeight = player.jumpHeight;
 	// The speed when walking

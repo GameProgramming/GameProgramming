@@ -11,6 +11,8 @@ Player
 	  -> ??
 	- Kamera
 	  -> Tiare
+	- kugel als spielfigur
+	- slide weg
 
 Waffen
 	- schie�ender Spieler
