@@ -4,7 +4,7 @@ private var initialElement : String;
 private var initialJumpHeight : float;
 private var initialWalkSpeed :float;
 private var initialRunSpeed :float;
-private var player : ThirdPersonController;
+private var player : PlayerController;
 
 
 function Start() {
