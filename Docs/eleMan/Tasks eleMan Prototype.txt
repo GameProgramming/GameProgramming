@@ -1,4 +1,4 @@
-Aufgaben
+﻿Aufgaben
 
 * NICETOHAVE bedeutet, es muss nicht bis Anfang der Woche drin sein ;)
 * -> Ben hei�t: Ben k�mmert sich drum und wei� davon.
@@ -23,9 +23,9 @@ Waffen
 		  -> ??	
 Level
 	- Level-Objekt-Prefab
-	  -> Tiare
+	  -> Tiare? (was genau soll das denn alles beinhalten? die levelgeometrie? oder nur den 		level state)
 	- Level-Start- und End-Punkt .... evtl in Zusammenhang zum Game-Objekt
-	  -> Tiare
+	  -> Tiare (wenn ziel erreicht wird, wird das level neu geladen, selbes bei game over)
 	- Prefab/Skript-Ger�st f�r spezielle Objekte, die auf Spielerkollisionen/Beschuss reagieren
 	  -> ??
 		- insbesondere Br�ckelboden, der bei aufschlagenden Spielern durchbricht
@@ -36,6 +36,8 @@ Level
 	  -> Andreas
 		- ... die auch sterben
 		- ... die auch t�ten
+	- HUD (health, lives, aktuell getragenes element anzeigen)
+	  ->??
 
 Content
 	- Level Design

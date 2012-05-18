@@ -63,10 +63,10 @@ function SetPlayersSpawn () {
 	}
 }
 
-function UnlockLevelExit()
-{
-	levelGoal.GetComponent(MeshCollider).isTrigger = true;
-}
+//function UnlockLevelExit()
+//{
+//	levelGoal.GetComponent(MeshCollider).isTrigger = true;
+//}
 
 function PlayerCompleted (player:PlayerStatus)
 {
@@ -98,7 +98,13 @@ function LevelCompleted () {
 	}
 	
 	yield WaitForSeconds (2.0);
-	Application.LoadLevel("Level");
+	Application.LoadLevel(Application.loadedLevelName);
+}
+
+function GameOver () {
+	Debug.Log("Game Over.", this);
+	yield WaitForSeconds (2.0);
+	Application.LoadLevel(Application.loadedLevelName);
 }
 
 function IsCompleted () {
