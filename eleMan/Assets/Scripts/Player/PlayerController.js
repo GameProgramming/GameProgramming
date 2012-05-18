@@ -18,7 +18,8 @@ class ControllerMovement {
 	
 	//~ //Set how strongly the character is affected by slopes thus slowing down when going uphill and speeding up when going down
 	var slopeEffect = 1;
-	
+	var slopeLimit = 45;
+		
 	// How fast does the character slide on steep surfaces?
 	var slidingSpeed : float = 15;
 	// How much can the player influence the sliding speed?
@@ -275,7 +276,7 @@ function UpdateSmoothedMovementDirection () {
 			var oldTargetSpeed = targetSpeedVector;
 			// Find the input movement direction projected onto the sliding direction
 			var projectedMoveDir = Vector3.Project(movement.direction, targetSpeedVector);
-			// Add the sliding direction, the spped control, and the sideways control vectors
+			// Add the sliding direction, the speed control, and the sideways control vectors
 			targetSpeedVector = targetSpeedVector + projectedMoveDir * movement.slidingSpeedControl;
 			// Multiply with the sliding speed
 			targetSpeedVector *= movement.slidingSpeed;
@@ -331,13 +332,13 @@ function ApplyJumping () {
 }
 
  function ApplyRunning () {
-	if (controller.isGrounded && canControl) {
+	if (controller.isGrounded && !IsTooSteep() && canControl) {
 		//if (Input.GetButton ("Run") && !(movement.grabbing || movement.pushing || movement.crouching || IsTooSteep())) {
-		if (movement.pushing || movement.grabbing) { //walk when pushing or pulling
+		if (movement.pushing || movement.grabbing) { //only walk when pushing or pulling
 			movement.running = false;
 			SendMessage ("Walk", SendMessageOptions.DontRequireReceiver);
 		}
-		else if(!IsTooSteep()) {
+		else {
 			movement.running = true;
 			SendMessage ("Run", SendMessageOptions.DontRequireReceiver);
 		}
@@ -360,8 +361,9 @@ function ApplyGravity () {
 	
 	// * When jumping up we don't apply gravity for some time when the user is holding the jump button
 	//   This gives more control over jump height by pressing the button longer
-	var extraPowerJump =  jump.jumping && movement.verticalSpeed > 0.0 && jumpButton && transform.position.y < jump.lastStartHeight + jump.extraHeight;
-	
+	//var extraPowerJump = jump.jumping && movement.verticalSpeed > 0.0 && jumpButton && transform.position.y < jump.lastStartHeight + jump.extraHeight;
+	var extraPowerJump = jump.jumping && !jump.reachedApex && jumpButton && transform.position.y < jump.lastStartHeight + jump.extraHeight;
+
 	if (extraPowerJump)
 		return;
 	else if (controller.isGrounded)
@@ -389,8 +391,8 @@ function DidJump () {
 }
 
 function OnControllerColliderHit (hit : ControllerColliderHit) {
-	//~ if (hit.moveDirection.y > 0.01) 
-		//~ return;
+//	if (hit.moveDirection.y > 0.01) 
+//	  return;
 		
 	movement.contactNormal = hit.normal;
 	movement.contactPosition = hit.point;
@@ -475,7 +477,7 @@ function IsJumping () {
 }
 
 function IsTooSteep () {
-	return (movement.contactNormal.y <= Mathf.Cos(controller.slopeLimit * Mathf.Deg2Rad));
+	return (movement.contactNormal.y <= Mathf.Cos(movement.slopeLimit * Mathf.Deg2Rad));
 }
 
 function IsGrounded () {
