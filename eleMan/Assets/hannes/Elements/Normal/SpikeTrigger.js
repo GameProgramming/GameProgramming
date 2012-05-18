@@ -14,20 +14,14 @@ function OnTriggerEnter(col : Collider) {
 	
 	if (col.gameObject.tag == "Player") {
 		player = col.gameObject;
-		if(player.GetComponent("EleManStats").element == "water")
+		if(player.GetComponent("EleManStats").element == "normal")
 		{
-    		Destroy (gameObject);
-    	}
-    	else if (player.GetComponent("EleManStats").element == "fire")
-        {
-        
-        }
-        else{//reset values that might habe been changed by other elements
+    	    //reset values that might habe been changed by other elements
     	 	player.GetComponent("EleManStats").ResetNormalPlayerStats();
     		player.GetComponent("PlayerStatus").Spawn();
         }
         
-        textDisplay.text = player.GetComponent("EleManStats").element + "PlayerHitFire";
+        textDisplay.text = player.GetComponent("EleManStats").element + "PlayerHitSpikes";
 		//print("hit");
         
     }

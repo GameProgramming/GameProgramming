@@ -20,8 +20,7 @@ function OnTriggerEnter(col : Collider) {
         player.GetComponent("EleManStats").element = "air";
         player.GetComponent(PlayerController).jump.height = 6;
 		textDisplay.text = "PlayerHit"+ player.GetComponent("EleManStats").element +"Element";
-		
-        //print("hit");
+		Debug.Log("PlayerHit"+ player.GetComponent("EleManStats").element +"Element", this);
         
     }
 }

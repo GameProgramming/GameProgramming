@@ -22,7 +22,7 @@ function OnTriggerEnter(col : Collider) {
 			
 		}
 		textDisplay.text = ""+player.GetComponent("EleManStats").element + "PlayerHitWood";
-        print(player.GetComponent("EleManStats").element);
-        
+        Debug.Log(""+player.GetComponent("EleManStats").element + "PlayerHitWood", this);
+        print(""+player.GetComponent("EleManStats").element + "PlayerHitWood");
     }
 }

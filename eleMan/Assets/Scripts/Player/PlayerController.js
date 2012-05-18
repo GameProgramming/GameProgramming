@@ -18,13 +18,13 @@ class ControllerMovement {
 	
 	//~ //Set how strongly the character is affected by slopes thus slowing down when going uphill and speeding up when going down
 	var slopeEffect = 1;
-	var slopeLimit = 45;
+//	var slopeLimit = 45;
 		
 	// How fast does the character slide on steep surfaces?
-	var slidingSpeed : float = 15;
+//	var slidingSpeed : float = 15;
 	// How much can the player influence the sliding speed?
 	// If the value is 0.5 the player can speed the sliding up to 150% or slow it down to 50%.
-	var slidingSpeedControl : float = 0.4;
+//	var slidingSpeedControl : float = 0.4;
 	
 	// How fast does the character change speeds?  Higher is faster.
 	var speedSmoothing = 5.0;
@@ -156,10 +156,21 @@ function Start () {
 }
 
 function Update () {
+	if (Input.GetButtonDown ("Shoot") && canControl) {
+		var projectileSP = GameObject.Find("BulletSpawnPoint");
+		if (projectileSP) { 
+			projectileSP.GetComponent(Projectile).SetInputFire();
+		}
+	}
+
 	if (Input.GetButtonDown ("Jump") && canControl) {
 		jump.lastButtonTime = Time.time;
 	}
 
+    if (Input.GetKeyDown (KeyCode.LeftControl)){
+        GetComponent("EleManStats").ResetNormalPlayerStats();
+        Debug.Log("Manual Element Reset.");
+    }
 	UpdateSmoothedMovementDirection();
 	
 	// Apply gravity
@@ -212,7 +223,7 @@ function Update () {
 		activeLocalPlatformPoint = activePlatform.InverseTransformPoint (transform.position);
 	}
 	
-	if (movement.direction.sqrMagnitude > 0.01 && !movement.grabbing) //do not rotate player when pulling an object
+	if (movement.direction.sqrMagnitude > 0.01)// && !movement.grabbing) //do not rotate player when pulling an object
 		// Set rotation to the move direction	
 		transform.rotation = Quaternion.Slerp (transform.rotation, Quaternion.LookRotation (movement.direction), Time.deltaTime * movement.rotationSmoothing);
 	
@@ -223,7 +234,8 @@ function Update () {
 			jump.jumping = false;
 			SendMessage ("DidLand", SendMessageOptions.DontRequireReceiver);
 
-			var jumpMoveDirection = movement.direction * movement.speed + movement.inAirVelocity;
+		//	var jumpMoveDirection = movement.direction * movement.speed + movement.inAirVelocity;
+			var jumpMoveDirection = movement.direction * movement.speed;
 			if (jumpMoveDirection.sqrMagnitude > 0.01)
 				movement.direction = jumpMoveDirection.normalized;
 		}
@@ -253,12 +265,10 @@ function UpdateSmoothedMovementDirection () {
 	
 	// Grounded controls
 	if (controller.isGrounded) {
-		// Smooth the speed based on the current target direction
-		
 		// Choose target speed
 		targetSpeed = Mathf.Min (Mathf.Abs(h), 1.0);
 			
-		if(!IsTooSteep()) {
+//		if(!IsTooSteep()) {
 			//~ Debug.DrawRay(Vector3(transform.position.x,transform.position.y+2,0), movement.contactNormal, Color.green);
 			SendMessage("Sliding", false, SendMessageOptions.DontRequireReceiver);
 			// Pick speed modifier
@@ -268,36 +278,35 @@ function UpdateSmoothedMovementDirection () {
 				targetSpeed *= movement.walkSpeed;
 				
 			targetSpeed = AdjustGroundVelocityToNormal(targetSpeed);
-		}
-		else { //Slide!!
-			SendMessage("Sliding", true, SendMessageOptions.DontRequireReceiver);
-			// The direction we're sliding in
-			var targetSpeedVector = Vector3(movement.contactNormal.x, 0, 0).normalized;
-			var oldTargetSpeed = targetSpeedVector;
-			// Find the input movement direction projected onto the sliding direction
-			var projectedMoveDir = Vector3.Project(movement.direction, targetSpeedVector);
-			// Add the sliding direction, the speed control, and the sideways control vectors
-			targetSpeedVector = targetSpeedVector + projectedMoveDir * movement.slidingSpeedControl;
-			// Multiply with the sliding speed
-			targetSpeedVector *= movement.slidingSpeed;
-			
-			if (movement.direction.x > 0.0)
-				targetSpeed = targetSpeedVector.x;
-			else
-				targetSpeed = -targetSpeedVector.x;
-		
-			var alpha = Vector3.Angle(movement.contactNormal, Vector3.up) * Mathf.Deg2Rad;
-			//~ movement.verticalSpeed = Mathf.Tan(alpha)*targetSpeedVector.x; //Make sure we stay grounded
-			movement.additionalVerticalSpeed = Mathf.Abs(Mathf.Tan(alpha)*targetSpeed); //Make sure we stay grounded
-			//~ Debug.DrawRay(Vector3(transform.position.x,transform.position.y+2,0), Vector3(targetSpeed,movement.additionalVerticalSpeed,0), Color.red);
-		}
+//		}
+//		else { //Slide!!
+//			SendMessage("Sliding", true, SendMessageOptions.DontRequireReceiver);
+//			// The direction we're sliding in
+//			var targetSpeedVector = Vector3(movement.contactNormal.x, 0, 0).normalized;
+//			var oldTargetSpeed = targetSpeedVector;
+//			// Find the input movement direction projected onto the sliding direction
+//			var projectedMoveDir = Vector3.Project(movement.direction, targetSpeedVector);
+//			// Add the sliding direction, the speed control, and the sideways control vectors
+//			targetSpeedVector = targetSpeedVector + projectedMoveDir * movement.slidingSpeedControl;
+//			// Multiply with the sliding speed
+//			targetSpeedVector *= movement.slidingSpeed;
+//			
+//			if (movement.direction.x > 0.0)
+//				targetSpeed = targetSpeedVector.x;
+//			else
+//				targetSpeed = -targetSpeedVector.x;
+//		
+//			var alpha = Vector3.Angle(movement.contactNormal, Vector3.up) * Mathf.Deg2Rad;
+//			//~ movement.verticalSpeed = Mathf.Tan(alpha)*targetSpeedVector.x; //Make sure we stay grounded
+//			movement.additionalVerticalSpeed = Mathf.Abs(Mathf.Tan(alpha)*targetSpeed); //Make sure we stay grounded
+//			//~ Debug.DrawRay(Vector3(transform.position.x,transform.position.y+2,0), Vector3(targetSpeed,movement.additionalVerticalSpeed,0), Color.red);
+//		}
 		
 		//make sure player never gets too fast and also that speed doesn't increase too quickly
 		var speedIncrease = targetSpeed - movement.speed;
 		if (speedIncrease > movement.runSpeed)
 			targetSpeed = movement.speed + movement.runSpeed;
-		if(targetSpeed > movement.maxHorizontalSpeed)
-			targetSpeed = movement.maxHorizontalSpeed;
+		targetSpeed = Mathf.Min(targetSpeed, movement.maxHorizontalSpeed);
 
 		movement.speed = targetSpeed;
 		movement.hangTime = 0.0;
@@ -306,7 +315,8 @@ function UpdateSmoothedMovementDirection () {
 		// In air controls
 		movement.hangTime += Time.deltaTime;
 		if (movement.isMoving)
-			movement.inAirVelocity += Vector3 (Mathf.Sign(h), 0, 0) * Time.deltaTime * movement.inAirControlAcceleration;
+			//movement.inAirVelocity += Vector3 (Mathf.Sign(h), 0, 0) * Time.deltaTime * movement.inAirControlAcceleration;
+			movement.inAirVelocity = Vector3 (Mathf.Sign(h), 0, 0) * movement.inAirControlAcceleration;
 	}
 }
 
@@ -332,7 +342,7 @@ function ApplyJumping () {
 }
 
  function ApplyRunning () {
-	if (controller.isGrounded && !IsTooSteep() && canControl) {
+	if (controller.isGrounded && canControl) {// && !IsTooSteep() ) {
 		//if (Input.GetButton ("Run") && !(movement.grabbing || movement.pushing || movement.crouching || IsTooSteep())) {
 		if (movement.pushing || movement.grabbing) { //only walk when pushing or pulling
 			movement.running = false;
@@ -476,9 +486,9 @@ function IsJumping () {
 	return jump.jumping;
 }
 
-function IsTooSteep () {
-	return (movement.contactNormal.y <= Mathf.Cos(movement.slopeLimit * Mathf.Deg2Rad));
-}
+//function IsTooSteep () {
+//	return (movement.contactNormal.y <= Mathf.Cos(movement.slopeLimit * Mathf.Deg2Rad));
+//}
 
 function IsGrounded () {
 	return controller.isGrounded;

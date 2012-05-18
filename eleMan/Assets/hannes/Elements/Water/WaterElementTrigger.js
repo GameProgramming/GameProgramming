@@ -19,7 +19,7 @@ function OnTriggerEnter(col : Collider) {
     	//set earth values
         player.GetComponent("EleManStats").element = "water";
 		textDisplay.text = "PlayerHit"+  player.GetComponent("EleManStats").element +"Element";
-		
+		Debug.Log("PlayerHit"+ player.GetComponent("EleManStats").element +"Element", this);
         //print("hit");
         
     }

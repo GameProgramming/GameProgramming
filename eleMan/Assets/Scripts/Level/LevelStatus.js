@@ -16,6 +16,7 @@ private var players: GameObject[];
 private var currentSpawnPoint : SpawnPoint;
 private var levelCompleted = false;
 
+var skin : GUISkin;
 private var labelText;
 private var labelTextTimeout = 0.0;
 
@@ -47,7 +48,7 @@ function Awake()
 	currentSpawnPoint.SetActive(true); //Activate initial spawn point
 	
 	SetPlayersSpawn ();
-}	
+}
 
 function ActivateNewSpawnPoint (sP : SpawnPoint) {
 	//~ Debug.Log("LevelStatus:  New Spawn Point");
@@ -74,7 +75,7 @@ function PlayerCompleted (player:PlayerStatus)
 	Debug.Log("Player completed: " + player.GetPlayerNumber(), this);
 	
 	//check if ALL players have rached the goal
-	var levelCompleted = true;
+	levelCompleted = true;
 	for (var i=0; i < players.Length; i++)  {
 		if (!players[i].GetComponent(PlayerStatus).GetLevelCompleted())
 			levelCompleted = false;
@@ -97,8 +98,8 @@ function LevelCompleted () {
 		players[i].gameObject.SendMessage ("SetControllable", false, SendMessageOptions.DontRequireReceiver);
 	}
 	
-	yield WaitForSeconds (2.0);
-	Application.LoadLevel(Application.loadedLevelName);
+	//yield WaitForSeconds (2.0);
+	//Application.LoadLevel(Application.loadedLevelName);
 }
 
 function GameOver () {
@@ -122,5 +123,25 @@ function Update () {
 		labelTextTimeout = 0;
 		
 		labelText = "";
+	}
+	
+	if (Input.GetButtonDown ("Restart")) {
+		Application.LoadLevel(Application.loadedLevelName);
+	}
+}
+
+function OnGUI() {
+
+	if (skin)
+		GUI.skin = skin;
+	else
+		Debug.Log("StartMenuGUI: GUI Skin object missing!");
+
+	
+	if (levelCompleted) {
+		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
+		GUI.Box(Rect(0,0,Screen.width,Screen.height),"");
+		GUI.Label (Rect (Screen.width/2, Screen.height/2-98, 80, 25), labelText, "winnerShadow");
+		GUI.Label (Rect (Screen.width/2, Screen.height/2-100, 80, 25), labelText, "winner");
 	}
 }

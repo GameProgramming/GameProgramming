@@ -87,11 +87,10 @@ function OnDeath ()
 
 	//~ }
 		
-//	lives--;
-	lives++;
+	lives--;
 	health = maxHealth;
 	
-//	Debug.Log("Died. Remaining lives: " + lives);
+	//Debug.Log("Died. Lives: " + lives);
 	
 	//Game Over!
 //	if(lives < 0)

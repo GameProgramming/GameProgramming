@@ -10,7 +10,7 @@ private var player : PlayerController;
 function Start() {
 	player = gameObject.GetComponent(PlayerController);
 		
-	element = "Normal";
+	element = "normal";
 	initialJumpHeight = player.jump.height;
 	// The speed when walking
 	initialWalkSpeed = player.movement.walkSpeed;
@@ -20,7 +20,7 @@ function Start() {
 }
 
 function ResetNormalPlayerStats() {
-    element = "Normal";
+    element = "normal";
 	player.jump.height = initialJumpHeight;
 	// The speed when walking
 	player.movement.walkSpeed = initialWalkSpeed;
