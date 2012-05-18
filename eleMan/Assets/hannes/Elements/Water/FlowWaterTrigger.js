@@ -14,15 +14,15 @@ function OnTriggerEnter(col : Collider) {
 	
 	
     if (col.gameObject.tag == "Player") {
-		player = col.gameObject;
-        if(player.GetComponent("EleManStats").element == "earth"){
+        if(col.gameObject.GetComponent("EleManStats").element == "earth"){
+			textDisplay.text = "EarthPlayerHitWood";
+			
 			Destroy (transform.parent.gameObject);
 		}
-		if(player.GetComponent("EleManStats").element == "Normal"){
-			
+		if(col.gameObject.GetComponent("EleManStats").element == "Normal"){
+			textDisplay.text = "NormalPlayerHitWood";
 		}
-		textDisplay.text = ""+player.GetComponent("EleManStats").element + "PlayerHitWood";
-        print(player.GetComponent("EleManStats").element);
+        print(col.gameObject.GetComponent("EleManStats").element);
         
     }
 }

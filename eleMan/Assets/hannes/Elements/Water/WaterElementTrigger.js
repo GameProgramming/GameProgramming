@@ -17,8 +17,8 @@ function OnTriggerEnter(col : Collider) {
     	//reset values that might habe been changed by other elements
     	player.GetComponent("EleManStats").ResetNormalPlayerStats();
     	//set earth values
-        player.GetComponent("EleManStats").element = "earth";
-		textDisplay.text = "PlayerHitEarthElement";
+        player.GetComponent("EleManStats").element = "water";
+		textDisplay.text = "PlayerHit"+  player.GetComponent("EleManStats").element +"Element";
 		
         //print("hit");
         
