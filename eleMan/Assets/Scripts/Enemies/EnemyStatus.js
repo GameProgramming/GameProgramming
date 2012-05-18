@@ -3,12 +3,13 @@
 //All those fields can be  manually set in the project view.
 //Indicates if the enemy is still alive.
 var alive : boolean;
-//The spawn Point of the enemy if the level loads.
+//The spawn Point of the enemy if the level loads/respawns.
+//I would suggest that the spawn point has the child enemy.
 var spawnPoint : SpawnPoint;
-//Furthermore we need 2 positions, where he walks between (how to do this?)
 
 function Start () {
 	alive = true;
+	Spawn();
 }
 
 function Update () {
@@ -21,16 +22,16 @@ function Update () {
 
 function OnCollisionEnter (collision : Collision) {
 	//Ask here for the right collision object, which we don't know right now.
-	if (collision.rigidbody.Equals("")) {
+	if (collision.rigidbody.Equals("Projectile")) {
 	   alive = false;
 	}
 	
 }
 
 function Spawn() {
-	//Insert Spawn/Respawn here.
+	transform.position = spawnPoint.transform.position;
 }
 
 function Die() {
-	//Remove object from the scene.
+	Destroy(transform.gameObject);
 }
