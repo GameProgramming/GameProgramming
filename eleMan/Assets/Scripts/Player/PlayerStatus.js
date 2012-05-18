@@ -5,7 +5,7 @@
 
 var health : int = 6;
 var maxHealth : int = 6;
-var lives = 4;
+var lives = 0;
 
 // sound effects.
 //~ var struckSound: AudioClip;
@@ -105,7 +105,7 @@ function OnDeath ()
 	lives--;
 	health = maxHealth;
 	
-	Debug.Log("Died. Remaining lives: " + lives);
+//	Debug.Log("Died. Remaining lives: " + lives);
 	
 	//Game Over!
 	if(lives < 0)

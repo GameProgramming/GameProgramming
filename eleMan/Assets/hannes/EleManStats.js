@@ -4,26 +4,26 @@ private var initialElement : String;
 private var initialJumpHeight : float;
 private var initialWalkSpeed :float;
 private var initialRunSpeed :float;
-private var player : ThirdPersonController;
+private var player : PlayerController;
 
 
 function Start() {
-	player = gameObject.GetComponent("PlayerController");
+	player = gameObject.GetComponent(PlayerController);
 		
 	element = "Normal";
-	initialJumpHeight = player.jumpHeight;
+	initialJumpHeight = player.jump.height;
 	// The speed when walking
-	initialWalkSpeed = player.walkSpeed;
+	initialWalkSpeed = player.movement.walkSpeed;
 	// when pressing "Fire3" button (cmd) we start running
-	initialRunSpeed = player.runSpeed;
+	initialRunSpeed = player.movement.runSpeed;
 
 }
 
 function ResetNormalPlayerStats() {
     element = "Normal";
-	player.jumpHeight = initialJumpHeight;
+	player.jump.height = initialJumpHeight;
 	// The speed when walking
-	player.walkSpeed = initialWalkSpeed;
+	player.movement.walkSpeed = initialWalkSpeed;
 	// when pressing "Fire3" button (cmd) we start running
-	player.runSpeed = initialRunSpeed;
+	player.movement.runSpeed = initialRunSpeed;
 }
