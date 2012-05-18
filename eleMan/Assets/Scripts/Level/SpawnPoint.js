@@ -35,7 +35,7 @@ function Awake()
 	RespawnState = 0;
 	
 	if (currentRespawn == this) {
-		Debug.Log("SpawnPoint:  Initial Spawn activated", this);
+		//Debug.Log("SpawnPoint:  Initial Spawn activated", this);
 		SetActive(true);
 	}
 }

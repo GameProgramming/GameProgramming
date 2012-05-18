@@ -18,7 +18,7 @@ function OnTriggerEnter(col : Collider) {
     	player.GetComponent("EleManStats").ResetNormalPlayerStats();
     	//set earth values
         player.GetComponent("EleManStats").element = "earth";
-        player.GetComponent(PlayerController).jumpHeight = 0.5;
+        player.GetComponent(PlayerController).jump.height = 0.5;
 		textDisplay.text = "PlayerHitEarthElement";
 		
         //print("hit");
