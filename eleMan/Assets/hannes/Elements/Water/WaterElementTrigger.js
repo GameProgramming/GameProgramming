@@ -18,8 +18,8 @@ function OnTriggerEnter(col : Collider) {
     	player.GetComponent("EleManStats").ResetNormalPlayerStats();
     	//set earth values
         player.GetComponent("EleManStats").element = "earth";
-		textDisplay.text = "PlayerHitEarthElement";
-		
+		//textDisplay.text = "PlayerHitEarthElement";
+		Debug.Log("PlayerHitEarthElement", this);
         //print("hit");
         
     }

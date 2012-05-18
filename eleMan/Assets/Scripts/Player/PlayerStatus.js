@@ -90,7 +90,7 @@ function OnDeath ()
 	lives--;
 	health = maxHealth;
 	
-	Debug.Log("Died. Lives: " + lives);
+	//Debug.Log("Died. Lives: " + lives);
 	
 	//Game Over!
 //	if(lives < 0)
