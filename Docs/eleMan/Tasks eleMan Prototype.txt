@@ -34,10 +34,10 @@ Level
 	  -> ??
 	- Feinde, die patrouillieren
 	  -> Andreas
-		- ... die auch sterben
+		- ... die auch sterben DONE
 		- ... die auch t�ten
 	- HUD (health, lives, aktuell getragenes element anzeigen)
-	  ->??
+	  -> Andreas
 
 Content
 	- Level Design
