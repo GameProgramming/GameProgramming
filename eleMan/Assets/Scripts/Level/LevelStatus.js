@@ -13,6 +13,8 @@ var initialSpawnPointIndex:int = 0;
 private var playerLink: GameObject;
 private var players: GameObject[];
 
+private var elapsedTime : float = 0.0;
+
 private var currentSpawnPoint : SpawnPoint;
 private var levelCompleted = false;
 
@@ -117,6 +119,8 @@ function GetLabelText () {
 }
 
 function Update () {
+
+	elapsedTime += Time.deltaTime;
 	labelTextTimeout -= 0.1;
 	
 	if (labelTextTimeout <= 0) {
@@ -137,6 +141,9 @@ function OnGUI() {
 	else
 		Debug.Log("StartMenuGUI: GUI Skin object missing!");
 
+	GUI.Label(Rect (100, 30, 100, 30), "Elapsed Time: ");
+	var time = Mathf.Round(elapsedTime * 10.0) / 10.0;
+	GUI.Label(Rect (200, 30, 80, 30), time.ToString());
 	
 	if (levelCompleted) {
 		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
