@@ -1,7 +1,4 @@
 var projectile : Rigidbody;
-var damage = 5;
-
-private var player : PlayerStatus;
 
 var reloadProgress = 0;
 
@@ -9,7 +6,6 @@ var reloadProgress = 0;
 var inputFire : boolean = false;
 
 function Start () {
-	player = transform.parent.GetComponent("PlayerStatus");
 }
 
 function Update () {
@@ -21,7 +17,8 @@ function Update () {
 		clone = Instantiate(projectile, SpawnVector, Spawnpoint.rotation);
 		
 		clone.velocity = Spawnpoint.TransformDirection (SpawnVector.forward*20);
-			
+		
+		//Debug.Log (clone.tag);	
 		inputFire = false;
 		reloadProgress = 50;
 	}
