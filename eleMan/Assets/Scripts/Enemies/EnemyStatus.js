@@ -24,6 +24,7 @@ function OnCollisionEnter (collision : Collision) {
 	//Ask here for the right collision object, which we don't know right now.
 	if (collision.rigidbody.Equals("Projectile")) {
 	   alive = false;
+	   Destroy(collision.transform.gameObject);
 	}
 	
 }
