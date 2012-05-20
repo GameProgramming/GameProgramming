@@ -107,6 +107,7 @@ function LevelCompleted () {
 function GameOver () {
 //	Debug.Log("Game Over.", this);
 	yield WaitForSeconds (2.0);
+	elapsedTime = 0.0;
 	Application.LoadLevel(Application.loadedLevelName);
 }
 
@@ -119,8 +120,11 @@ function GetLabelText () {
 }
 
 function Update () {
-
-	elapsedTime += Time.deltaTime;
+	
+	if (!levelCompleted) {
+		elapsedTime += Time.deltaTime;
+	}
+	
 	labelTextTimeout -= 0.1;
 	
 	if (labelTextTimeout <= 0) {
@@ -141,9 +145,9 @@ function OnGUI() {
 	else
 		Debug.Log("StartMenuGUI: GUI Skin object missing!");
 
-	GUI.Label(Rect (100, 30, 100, 30), "Elapsed Time: ");
+	GUI.Label(Rect (100, 30, 200, 50), "Elapsed Time: ");
 	var time = Mathf.Round(elapsedTime * 10.0) / 10.0;
-	GUI.Label(Rect (200, 30, 80, 30), time.ToString());
+	GUI.Label(Rect (300, 30, 80, 50), time.ToString());
 	
 	if (levelCompleted) {
 		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
