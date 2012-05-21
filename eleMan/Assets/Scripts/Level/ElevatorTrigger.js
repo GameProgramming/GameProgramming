@@ -10,7 +10,7 @@ function Update() {
 	}
 }
 
-function OnCollisionEnter (collision : Collider) {
+function OnCollisionEnter (collision : Collision) {
 	if (collision.gameObject.tag == "Playder") {
 		move = true;
 	}

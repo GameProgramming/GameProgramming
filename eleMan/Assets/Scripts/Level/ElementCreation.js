@@ -9,7 +9,7 @@ function Start () {
 }
 
 function Update () {
-	//We must move the spawn Point a little bit away from the player.
+	//Instantiate the right objects --> ask Hannes!
 	if (!currentElement.Equals("")) {
 		if (currentElement.Equals("water")) {
 		} else if (currentElement.Equals("fire")) {
