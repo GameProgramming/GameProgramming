@@ -17,7 +17,7 @@ function OnTriggerEnter(col : Collider) {
 		if(player.GetComponent("EleManStats").element == "normal")
 		{
     	    //reset values that might habe been changed by other elements
-    	 	player.GetComponent("EleManStats").ResetNormalPlayerStats();
+    	 	player.GetComponent("EleManStats").SetElement("normal");
     		player.GetComponent("PlayerStatus").Spawn();
         }
         
