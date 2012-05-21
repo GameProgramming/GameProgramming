@@ -168,6 +168,11 @@ function Update () {
 	}
 
     if (Input.GetKeyDown (KeyCode.LeftControl)){
+    	//We need to get the current element, so I can give it to the script.
+    	//var element = GameObject.Find("ElementSpawnPoint");
+    	//if (element) {
+    	//	element.GetComponent().SetElement("water");
+    	//}
         GetComponent("EleManStats").ResetNormalPlayerStats();
         Debug.Log("Manual Element Reset.");
     }
