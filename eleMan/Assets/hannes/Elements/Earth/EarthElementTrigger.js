@@ -1,6 +1,10 @@
 
 var textDisplay : GUIText;
-
+var jumpHeight = 0.5;
+var extraJumpHeight = 0;
+var gravity = 40;
+var speed = 5;
+var inAirControlAcceleration = 0.5;
 
 function Start() {
     if(GameObject.Find("Text Display")) {
@@ -18,7 +22,12 @@ function OnTriggerEnter(col : Collider) {
     	player.GetComponent("EleManStats").ResetNormalPlayerStats();
     	//set earth values
         player.GetComponent("EleManStats").element = "earth";
-        player.GetComponent(PlayerController).jump.height = 0.2;		
+        player.GetComponent(PlayerController).jump.height = jumpHeight;	
+        player.GetComponent(PlayerController).jump.extraHeight = extraJumpHeight;
+        player.GetComponent(PlayerController).movement.gravity = gravity;
+        player.GetComponent(PlayerController).movement.runSpeed = speed;
+        player.GetComponent(PlayerController).movement.inAirControlAcceleration = inAirControlAcceleration;	
+        
 		textDisplay.text = "PlayerHit"+ player.GetComponent("EleManStats").element +"Element";
 		Debug.Log("PlayerHit"+ player.GetComponent("EleManStats").element +"Element", this);
         //print("hit");

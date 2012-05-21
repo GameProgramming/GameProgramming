@@ -66,11 +66,6 @@ function SetPlayersSpawn () {
 	}
 }
 
-//function UnlockLevelExit()
-//{
-//	levelGoal.GetComponent(MeshCollider).isTrigger = true;
-//}
-
 function PlayerCompleted (player:PlayerStatus)
 {
 	//set status of calling player
@@ -94,7 +89,7 @@ function LevelCompleted () {
 	Awake();
 	
 	labelText = "Level completed";
-	yield WaitForSeconds (0.5);
+	yield WaitForSeconds (0.1);
 	
 	for (var i=0; i < players.Length; i++)  {
 		players[i].gameObject.SendMessage ("SetControllable", false, SendMessageOptions.DontRequireReceiver);
@@ -125,13 +120,13 @@ function Update () {
 		elapsedTime += Time.deltaTime;
 	}
 	
-	labelTextTimeout -= 0.1;
-	
-	if (labelTextTimeout <= 0) {
-		labelTextTimeout = 0;
-		
-		labelText = "";
-	}
+//	labelTextTimeout -= 0.1;
+//	
+//	if (labelTextTimeout <= 0) {
+//		labelTextTimeout = 0;
+//		
+//		labelText = "";
+//	}
 	
 	if (Input.GetButtonDown ("Restart")) {
 		Application.LoadLevel(Application.loadedLevelName);

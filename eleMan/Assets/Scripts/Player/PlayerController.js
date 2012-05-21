@@ -2,13 +2,16 @@
 // Does this script currently respond to Input?
 var canControl = true;
 
+@System.NonSerialized
+var displayDebug = false;
+
 class ControllerMovement {
 	// The speed when walking 
 	var walkSpeed = 3.0;
 	// when pressing "Run" button (control) we start running
 	var runSpeed = 8.0;
 	
-	var maxHorizontalSpeed = 10;
+	var maxHorizontalSpeed = 10; //new
 
 	var inAirControlAcceleration = 1.0;
 
@@ -17,7 +20,7 @@ class ControllerMovement {
 	var maxFallSpeed = 20.0;
 	
 	//~ //Set how strongly the character is affected by slopes thus slowing down when going uphill and speeding up when going down
-	var slopeEffect = 1;
+	var slopeEffect = 1; //new
 //	var slopeLimit = 45;
 		
 	// How fast does the character slide on steep surfaces?
@@ -53,18 +56,18 @@ class ControllerMovement {
 	var isMoving = false;
 	
 	@System.NonSerialized
-	var running = false;
+	var running = false; //new
+//	
+//	@System.NonSerialized
+//	var pushing = false;
+//	
+//	@System.NonSerialized
+//	var grabbing = false;
 	
 	@System.NonSerialized
-	var pushing = false;
+	var controllerSize = 0.0; //new
 	
-	@System.NonSerialized
-	var grabbing = false;
-	
-	@System.NonSerialized
-	var controllerSize = 0.0;
-	
-	// Average normal of the last touched geometry
+	// Average normal of the last touched geometry //new
 	@System.NonSerialized
 	var contactNormal : Vector3;
 	@System.NonSerialized
@@ -149,6 +152,7 @@ function Start () {
 	status = transform.GetComponent (PlayerStatus);
 	//Get size for collision check when ducking
 	movement.controllerSize = controller.height;
+	ResetSpeed();
 	
 	if(!status) {
 		Debug.Log("No link to player status.");
@@ -156,6 +160,13 @@ function Start () {
 }
 
 function Update () {
+	if (Input.GetButtonDown ("DisplayDebug")) {
+		displayDebug = !displayDebug;		
+	}
+	if (displayDebug)
+		Debug.Log("Speed: " + movement.speed + ", iAV: "  + movement.inAirVelocity + ", VS: " + movement.verticalSpeed, this);
+//		Debug.Log("VS: " + movement.verticalSpeed + ", AVS: "  + movement.additionalVerticalSpeed + ", Speed: " + movement.speed, this);
+
 	if (Input.GetButtonDown ("Shoot") && canControl) {
 		var projectileSP = GameObject.Find("BulletSpawnPoint");
 		if (projectileSP) { 
@@ -171,6 +182,8 @@ function Update () {
         GetComponent("EleManStats").ResetNormalPlayerStats();
         Debug.Log("Manual Element Reset.");
     }
+    
+    
 	UpdateSmoothedMovementDirection();
 	
 	// Apply gravity
@@ -270,7 +283,7 @@ function UpdateSmoothedMovementDirection () {
 			
 //		if(!IsTooSteep()) {
 			//~ Debug.DrawRay(Vector3(transform.position.x,transform.position.y+2,0), movement.contactNormal, Color.green);
-			SendMessage("Sliding", false, SendMessageOptions.DontRequireReceiver);
+			//SendMessage("Sliding", false, SendMessageOptions.DontRequireReceiver);
 			// Pick speed modifier
 			if (movement.running)
 				targetSpeed *= movement.runSpeed;
@@ -314,17 +327,16 @@ function UpdateSmoothedMovementDirection () {
 	else {
 		// In air controls
 		movement.hangTime += Time.deltaTime;
-		if (movement.isMoving)
+		
+		if (movement.isMoving){
 			//movement.inAirVelocity += Vector3 (Mathf.Sign(h), 0, 0) * Time.deltaTime * movement.inAirControlAcceleration;
+			movement.speed = Mathf.Min(movement.speed + movement.inAirControlAcceleration, movement.maxHorizontalSpeed);
 			movement.inAirVelocity = Vector3 (Mathf.Sign(h), 0, 0) * movement.inAirControlAcceleration;
+		}
 	}
 }
 
-function ApplyJumping () {
-	//disable jumping when grabbing another body
-	if (movement.grabbing)
-		return;
-		
+function ApplyJumping () {		
 	// Prevent jumping too fast after each other
 	if (jump.lastTime + jump.repeatTime > Time.time)
 		return;
@@ -372,7 +384,7 @@ function ApplyGravity () {
 	// * When jumping up we don't apply gravity for some time when the user is holding the jump button
 	//   This gives more control over jump height by pressing the button longer
 	//var extraPowerJump = jump.jumping && movement.verticalSpeed > 0.0 && jumpButton && transform.position.y < jump.lastStartHeight + jump.extraHeight;
-	var extraPowerJump = jump.jumping && !jump.reachedApex && jumpButton && transform.position.y < jump.lastStartHeight + jump.extraHeight;
+	var extraPowerJump = jump.jumping && !jump.reachedApex && jumpButton && transform.position.y < jump.lastStartHeight + jump.extraHeight && !IsTouchingCeiling ();
 
 	if (extraPowerJump)
 		return;
@@ -492,6 +504,10 @@ function IsJumping () {
 
 function IsGrounded () {
 	return controller.isGrounded;
+}
+
+function IsTouchingCeiling () {
+	return (movement.collisionFlags & CollisionFlags.CollidedAbove) != 0;
 }
 
 function ResetSpeed() {
