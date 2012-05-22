@@ -6,6 +6,8 @@ var right : boolean;
 var leftBoundary : float;
 var rightBoundary : float;
 var walkingSpeed : float;
+private var leftSpeed : Vector3 = Vector3(-3, 0, 0);
+private var rightSpeed : Vector3 = Vector3(3, 0, 0);
 
 function Start() {
 	//At the start walk whatever has been set.
@@ -19,6 +21,7 @@ function Start() {
 function Update() {
 	//If he moves out of boundary, change.
 	if (transform.position.x <= leftBoundary) {
+		Debug.Log("Test");
 		right = true;
 	} else if (transform.position.x >= rightBoundary) {
 		right = false;
@@ -31,9 +34,9 @@ function Update() {
 }
 
 function WalkRight() {
-	transform.position.x = transform.position.x + walkingSpeed;
+	rigidbody.MovePosition(rigidbody.position + rightSpeed * Time.deltaTime);
 }
 
 function WalkLeft() {
-	transform.position.x = transform.position.x - walkingSpeed;
+	rigidbody.MovePosition(rigidbody.position + leftSpeed * Time.deltaTime);
 }

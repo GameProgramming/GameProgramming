@@ -11,9 +11,9 @@ function Start () {
 function Update() {
 	if(activated){
 		if (moveDown) {
-			transform.position.y -= 0.01;
+			transform.position.y -= 0.05;
 		} else if (moveUp) {
-			transform.position.y += 0.01;
+			transform.position.y += 0.05;
 		}
 		if (transform.position.y <= lowestPositionY) {
 			moveUp = true;

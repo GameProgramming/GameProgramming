@@ -30,6 +30,7 @@ function OnTriggerEnter (collision : Collider) {
 
 function Spawn() {
 	transform.position = spawnPoint.transform.position;
+	transform.parent.position = spawnPoint.transform.position;
 }
 
 function Die() {
