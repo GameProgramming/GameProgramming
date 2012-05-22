@@ -46,10 +46,8 @@ function SetElement(elem :String) {
     
     switch (elem) {
     case "air":
-        //player.jump.height = 6;
         break;
     case "earth":
-    	//player.jump.height = 0.2;
     	break;
    	case "water":
     	break;

@@ -14,6 +14,9 @@ function OnTriggerEnter(col : Collider) {
 	
 	if (col.gameObject.tag == "Player") {
 		player = col.gameObject;
+		//reset values that might habe been changed by other elements
+    	player.GetComponent("EleManStats").ResetNormalPlayerStats();
+    	
         player.GetComponent("EleManStats").SetElement("water");
 		textDisplay.text = "PlayerHit"+  player.GetComponent("EleManStats").element +"Element";
 		Debug.Log("PlayerHit"+ player.GetComponent("EleManStats").element +"Element", this);
