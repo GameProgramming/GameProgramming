@@ -13,9 +13,7 @@ function OnTriggerEnter (col : Collider) {
 		player = col.gameObject;
 		//Check if he is water or air.
 		if (player.GetComponent("ElemanStats").element == "water" || player.GetComponent("ElemanStats").element == "air") {
-			//If yes he is dead.
-			player.GetComponent("ElemanStats").ResetNormalPlayerStats();
-			player.GetComponent("PlayerStatus").Spawn();
+			//Insert here that he falls through the grid
 		}
 		//Message text display.
 		textDisplay.text = player.GetComponent("ElemanStats").element + "Player Hit Grid";

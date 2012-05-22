@@ -1,5 +1,3 @@
-#pragma strict
-
 //All those fields can be  manually set in the project view.
 //Indicates if the enemy is still alive.
 var alive : boolean;
