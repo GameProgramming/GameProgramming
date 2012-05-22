@@ -29,6 +29,8 @@ function OnTriggerEnter(col : Collider) {
         player.GetComponent(PlayerController).movement.runSpeed = speed;
         player.GetComponent(PlayerController).movement.inAirControlAcceleration = inAirControlAcceleration;	
         
+        Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), true);
+        
 		textDisplay.text = "PlayerHit"+ player.GetComponent("EleManStats").element +"Element";
 		Debug.Log("PlayerHit"+ player.GetComponent("EleManStats").element +"Element", this);
         

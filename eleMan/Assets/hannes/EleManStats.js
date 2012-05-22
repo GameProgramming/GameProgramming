@@ -37,6 +37,8 @@ function ResetNormalPlayerStats() {
 	// when pressing "Fire3" button (cmd) we start running
 	player.movement.runSpeed = initialRunSpeed;
 	
+	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), false);
+	
 	SetElement(element);
 }
 
@@ -65,10 +67,20 @@ function SetElement(elem :String) {
 }
 
 function SetPlayerColor() {
-	var body :Transform = transform.FindChild("Body");
-    for (i = 0; i < body.GetChildCount(); i++) {
-    	body.GetChild(i).gameObject.active = false;
-    }
-    body.FindChild(element).gameObject.active = true;
-    body.FindChild("eyes").gameObject.active = true;
+
+	var meshRenderers = GetComponentsInChildren (MeshRenderer);
+	for (var rend : MeshRenderer in meshRenderers) {
+		if (rend.gameObject.name.Contains("eye") || rend.gameObject.name == element)
+			rend.enabled = true;
+		else
+			rend.enabled = false;
+	}
+	
+	var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
+	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
+		if (rend.gameObject.name.Contains("eye") || rend.gameObject.name == element)
+			rend.enabled = true;
+		else
+			rend.enabled = false;
+	}
 }

@@ -15,6 +15,9 @@ function OnTriggerEnter(col : Collider) {
 	if (col.gameObject.tag == "Player") {
 		player = col.gameObject;
         player.GetComponent("EleManStats").SetElement("water");
+        
+        Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), true);
+        
 		textDisplay.text = "PlayerHit"+  player.GetComponent("EleManStats").element +"Element";
 		Debug.Log("PlayerHit"+ player.GetComponent("EleManStats").element +"Element", this);
         //print("hit");
