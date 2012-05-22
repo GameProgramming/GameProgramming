@@ -138,6 +138,7 @@ var jump : ControllerJumping;
 
 private var controller : CharacterController;
 private var status : PlayerStatus;
+private var bodyT : Transform;
 
 // Moving platform support.
 private var activePlatform : Transform;
@@ -150,6 +151,7 @@ function Start () {
 	movement.direction = transform.TransformDirection (Vector3.forward);
 	controller = GetComponent (CharacterController);
 	status = transform.GetComponent (PlayerStatus);
+	bodyT = transform.FindChild("Body");
 	//Get size for collision check when ducking
 	movement.controllerSize = controller.height;
 	ResetSpeed();
@@ -179,12 +181,19 @@ function Update () {
 	}
 
     if (Input.GetKeyDown (KeyCode.LeftControl)){
+    	//var element = GameObject.Find("ElementSpawnPoint");
+    	//if (element) {
+    		//element.GetComponent(ElementCreation).SetElement("water");
+    	//}
         GetComponent("EleManStats").ResetNormalPlayerStats();
         Debug.Log("Manual Element Reset.");
     }
     
     
 	UpdateSmoothedMovementDirection();
+	
+	var scaling = new Vector3(1,1.0f+Mathf.Abs(controller.velocity.y)*0.01f,1);
+	bodyT.localScale = scaling;
 	
 	// Apply gravity
 	ApplyGravity ();

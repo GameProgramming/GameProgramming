@@ -19,7 +19,7 @@ function OnTriggerEnter(col : Collider) {
 			
 			Destroy (transform.parent.gameObject);
 		}
-		if(col.gameObject.GetComponent("EleManStats").element == "Normal"){
+		if(col.gameObject.GetComponent("EleManStats").element == "normal"){
 			textDisplay.text = "NormalPlayerHitWood";
 		}
         print(col.gameObject.GetComponent("EleManStats").element);
