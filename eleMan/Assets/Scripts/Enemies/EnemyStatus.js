@@ -11,20 +11,21 @@ function Start () {
 }
 
 function Update () {
-
 	if (!alive) {
 		Die();
 	}
-
 }
 
-function OnCollisionEnter (collision : Collision) {
+function OnTriggerEnter (collision : Collider) {
 	//Ask here for the right collision object, which we don't know right now.
-	if (collision.rigidbody.Equals("Projectile")) {
+	if (collision.gameObject.tag.Equals("Projectile")) {
 	   alive = false;
 	   Destroy(collision.transform.gameObject);
 	}
 	
+	if (collision.gameObject.tag.Equals("Player")) {
+		collision.gameObject.SendMessage("OnDeath", SendMessageOptions.DontRequireReceiver);
+	}
 }
 
 function Spawn() {
