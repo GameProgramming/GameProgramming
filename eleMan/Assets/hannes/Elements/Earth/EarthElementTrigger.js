@@ -33,6 +33,6 @@ function OnTriggerEnter(col : Collider) {
 		textDisplay.text = "PlayerHit"+ player.GetComponent("EleManStats").element +"Element";
 		Debug.Log("PlayerHit"+ player.GetComponent("EleManStats").element +"Element", this);
         //print("hit");
-        
+        Destroy(transform.parent.gameObject);
     }
 }

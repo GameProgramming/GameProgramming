@@ -3,7 +3,7 @@
 var alive : boolean;
 //The spawn Point of the enemy if the level loads/respawns.
 //I would suggest that the spawn point has the child enemy.
-var spawnPoint : SpawnPoint;
+var spawnPoint : Transform;
 
 function Start () {
 	alive = true;
@@ -22,7 +22,7 @@ function OnTriggerEnter (collision : Collider) {
 	   alive = false;
 	   Destroy(collision.transform.gameObject);
 	}
-	
+	Debug.Log("Test");
 	if (collision.gameObject.tag.Equals("Player")) {
 		collision.gameObject.SendMessage("OnDeath", SendMessageOptions.DontRequireReceiver);
 	}

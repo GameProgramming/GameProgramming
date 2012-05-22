@@ -19,7 +19,7 @@ function OnTriggerEnter(col : Collider) {
     	
         player.GetComponent("EleManStats").SetElement("fire");
         textDisplay.text = "PlayerHit"+ player.GetComponent("EleManStats").element +"Element";
-		
+		Destroy(transform.parent.gameObject);
         //print("hit");
         
     }
