@@ -23,6 +23,7 @@ function Start() {
 	// when pressing "Fire3" button (cmd) we start running
 	initialRunSpeed = player.movement.runSpeed;	
 
+	SetPlayerColor();
 }
 
 function ResetNormalPlayerStats() {
@@ -56,14 +57,18 @@ function SetElement(elem :String) {
     	break;
 	case "normal":
 		break;
-   	default:
+   	default: 
    		break;
     }
-    
-    var body :Transform = transform.FindChild("Body");
+    //Debug.Log("elem: " + elem, this);
+    SetPlayerColor();
+}
+
+function SetPlayerColor() {
+	var body :Transform = transform.FindChild("Body");
     for (i = 0; i < body.GetChildCount(); i++) {
     	body.GetChild(i).gameObject.active = false;
     }
-    body.FindChild(elem).gameObject.active = true;
+    body.FindChild(element).gameObject.active = true;
     body.FindChild("eyes").gameObject.active = true;
 }
