@@ -201,6 +201,7 @@ function Update () {
 	// Apply running when not pushing or pulling an object
 	ApplyRunning ();
 
+	ApplyFlying ();
 	
 	// Moving platform support
 	if (activePlatform != null) {
@@ -259,11 +260,7 @@ function Update () {
 				movement.direction = jumpMoveDirection.normalized;
 		}
 	}	
-	else {
-		if (jump.jumping) {
-					
-		}	
-	}
+
 
 	//this serves to freeze the camera for a while as happens when the player dies
 	if (status.cameraTimer > 0.0)
@@ -335,7 +332,7 @@ function UpdateSmoothedMovementDirection () {
 		movement.speed = targetSpeed;
 		movement.hangTime = 0.0;
 	}
-	else {
+	else if (!movement.flying){
 		// In air controls
 		movement.hangTime += Time.deltaTime;
 		
@@ -344,6 +341,18 @@ function UpdateSmoothedMovementDirection () {
 			movement.speed = Mathf.Min(movement.speed + movement.inAirControlAcceleration, movement.maxHorizontalSpeed);
 			movement.inAirVelocity = Vector3 (Mathf.Sign(h), 0, 0) * movement.inAirControlAcceleration;
 		}
+	}
+	else {
+		targetSpeed = Mathf.Min (Mathf.Abs(h), 1.0);
+		targetSpeed *= movement.runSpeed;
+		
+		speedIncrease = targetSpeed - movement.speed;
+		if (speedIncrease > movement.runSpeed)
+			targetSpeed = movement.speed + movement.runSpeed;
+		targetSpeed = Mathf.Min(targetSpeed, movement.maxHorizontalSpeed);
+
+		movement.speed = targetSpeed;
+		//movement.verticalSpeed += movement.speed/2; //always move up a little when moving to the sides
 	}
 }
 
@@ -420,7 +429,14 @@ function ApplyFlying () {
 	
 	// When we reach the apex of the jump we send out a message
 	if (jumpButton) {
-		movement.additionalVerticalSpeed = movement.runSpeed;
+		//movement.additionalVerticalSpeed = movement.runSpeed;
+		var curSmooth = movement.speedSmoothing * Time.deltaTime;
+		//Apply intertia: if character moved in opposite direction previously, slowly change to new direction
+		movement.verticalSpeed = Mathf.Lerp(movement.verticalSpeed, movement.runSpeed, curSmooth);
+
+	}
+	else { 
+		movement.verticalSpeed = 0;
 	}
 }
 
