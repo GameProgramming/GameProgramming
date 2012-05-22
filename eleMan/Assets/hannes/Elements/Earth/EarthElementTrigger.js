@@ -1,6 +1,6 @@
 
 var textDisplay : GUIText;
-var jumpHeight = 0.5;
+var jumpHeight = 1.0;
 var extraJumpHeight = 0;
 var gravity = 40;
 var speed = 5;
