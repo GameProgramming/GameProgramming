@@ -21,14 +21,14 @@ function OnTriggerEnter(col : Collider) {
     	//reset values that might habe been changed by other elements
     	player.GetComponent("EleManStats").ResetNormalPlayerStats();
     	//set earth values
-        player.GetComponent("EleManStats").element = "earth";
+    	player.GetComponent("EleManStats").SetElement("earth");
+    	
         player.GetComponent(PlayerController).jump.height = jumpHeight;	
         player.GetComponent(PlayerController).jump.extraHeight = extraJumpHeight;
         player.GetComponent(PlayerController).movement.gravity = gravity;
         player.GetComponent(PlayerController).movement.runSpeed = speed;
         player.GetComponent(PlayerController).movement.inAirControlAcceleration = inAirControlAcceleration;	
         
-    	player.GetComponent("EleManStats").SetElement("earth");
 		textDisplay.text = "PlayerHit"+ player.GetComponent("EleManStats").element +"Element";
 		Debug.Log("PlayerHit"+ player.GetComponent("EleManStats").element +"Element", this);
         //print("hit");

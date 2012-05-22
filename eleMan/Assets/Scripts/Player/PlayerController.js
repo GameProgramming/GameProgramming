@@ -262,6 +262,11 @@ function Update () {
 				movement.direction = jumpMoveDirection.normalized;
 		}
 	}	
+	else {
+		if (jump.jumping) {
+					
+		}	
+	}
 
 	//this serves to freeze the camera for a while as happens when the player dies
 	if (status.cameraTimer > 0.0)
