@@ -1,24 +1,27 @@
 var highestPositionY : float;
 var lowestPositionY : float;
-private var activated : boolean = false;
+var activated : boolean;
 private var moveDown : boolean = false;
 private var moveUp : boolean = false;
 
 function Start () {
+	Activate();
 }
 
 function Update() {
-	if (moveDown && activated) {
-		transform.position.y -= 0.01;
-	} else if (moveUp && activated) {
-		transform.position.y += 0.01;
-	}
-	if (transform.position.y <= lowestPositionY) {
-		moveUp = true;
-		moveDown = false;
-	} else if (transform.position.y >= highestPositionY) {
-		moveDown = true;
-		moveUp = false;
+	if(activated){
+		if (moveDown) {
+			transform.position.y -= 0.01;
+		} else if (moveUp) {
+			transform.position.y += 0.01;
+		}
+		if (transform.position.y <= lowestPositionY) {
+			moveUp = true;
+			moveDown = false;
+		} else if (transform.position.y >= highestPositionY) {
+			moveDown = true;
+			moveUp = false;
+		}
 	}
 }
 
