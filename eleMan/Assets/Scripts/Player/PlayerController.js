@@ -11,12 +11,12 @@ class ControllerMovement {
 	// when pressing "Run" button (control) we start running
 	var runSpeed = 8.0;
 	
-	var maxHorizontalSpeed = 10; //new
+	var maxHorizontalSpeed = 8; //new
 
 	var inAirControlAcceleration = 1.0;
 
 	// The gravity for the character
-	var gravity = 60.0;
+	var gravity = 50.0;
 	var maxFallSpeed = 20.0;
 	
 	//~ //Set how strongly the character is affected by slopes thus slowing down when going uphill and speeding up when going down
