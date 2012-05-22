@@ -8,9 +8,6 @@ var maxHealth : int = 6;
 @System.NonSerialized
 var lives = 0;
 
-// sound effects.
-//~ var struckSound: AudioClip;
-//~ var deathSound: AudioClip;
 @System.NonSerialized
 var levelStateMachine : LevelStatus;		// link to script that handles the level-complete sequence.
 private var playerNumber = 0;
@@ -43,25 +40,6 @@ function Start()
 	Spawn ();
 }
 
-// Utility function used by HUD script:
-//function GetRemainingItems() : int
-//{
-//	return remainingItems;
-//}
-
-//~ function ApplyDamage (damage : int)
-//~ {
-	//~ if (struckSound)
-		//~ AudioSource.PlayClipAtPoint(struckSound, transform.position);	// play the 'player was struck' sound.
-
-	//~ health -= damage;
-	//~ if (health <= 0)
-	//~ {
-		//~ SendMessage("Die");
-	//~ }
-//~ }
-
-
 function AddLife (powerUp : int)
 {
 	lives += powerUp;
@@ -80,13 +58,6 @@ function AddHealth (powerUp : int)
 
 function OnDeath ()
 {
-	// play the death sound if available.
-	//~ if (deathSound)
-	//~ {
-		//~ AudioSource.PlayClipAtPoint(deathSound, transform.position);
-
-	//~ }
-		
 	lives--;
 	health = maxHealth;
 	

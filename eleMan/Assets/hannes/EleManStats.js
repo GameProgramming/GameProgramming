@@ -36,6 +36,7 @@ function ResetNormalPlayerStats() {
 	player.movement.walkSpeed = initialWalkSpeed;
 	// when pressing "Fire3" button (cmd) we start running
 	player.movement.runSpeed = initialRunSpeed;
+	player.movement.flying = false;
 	
 	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), false);
 	

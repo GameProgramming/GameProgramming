@@ -56,13 +56,10 @@ class ControllerMovement {
 	var isMoving = false;
 	
 	@System.NonSerialized
-	var running = false; //new
-//	
-//	@System.NonSerialized
-//	var pushing = false;
-//	
-//	@System.NonSerialized
-//	var grabbing = false;
+	var running = false;
+	
+	@System.NonSerialized
+	var flying = false;
 	
 	@System.NonSerialized
 	var controllerSize = 0.0; //new
@@ -410,6 +407,21 @@ function ApplyGravity () {
 		
 	// Make sure we don't fall any faster than maxFallSpeed.  This gives our character a terminal velocity.
 	movement.verticalSpeed = Mathf.Max (movement.verticalSpeed, -movement.maxFallSpeed);
+}
+
+function ApplyFlying () {
+	if(!movement.flying) 
+		return;
+	
+	var jumpButton = Input.GetButton ("Jump");
+	
+	if (!canControl)
+		jumpButton = false;
+	
+	// When we reach the apex of the jump we send out a message
+	if (jumpButton) {
+		movement.additionalVerticalSpeed = movement.runSpeed;
+	}
 }
 
 function CalculateJumpVerticalSpeed (targetJumpHeight : float) {

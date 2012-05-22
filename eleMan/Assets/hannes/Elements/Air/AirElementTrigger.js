@@ -28,6 +28,7 @@ function OnTriggerEnter(col : Collider) {
         player.GetComponent(PlayerController).movement.gravity = gravity;
         player.GetComponent(PlayerController).movement.runSpeed = speed;
         player.GetComponent(PlayerController).movement.inAirControlAcceleration = inAirControlAcceleration;	
+        player.GetComponent(PlayerController).movement.flying = true;
         
         Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), true);
         
