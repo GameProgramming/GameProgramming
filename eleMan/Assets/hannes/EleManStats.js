@@ -8,6 +8,7 @@ private var initialRunSpeed :float;
 private var initialGravity : float;
 private var initialInAirControlAcc : float;
 private var initialSpeedSmooting : float;
+private var initiaSlopeLimit : float;
 private var player : PlayerController;
 
 
@@ -24,6 +25,7 @@ function Start() {
 	// when pressing "Fire3" button (cmd) we start running
 	initialRunSpeed = player.movement.runSpeed;	
 	initialSpeedSmooting = player.movement.speedSmoothing;
+	//initialSlopeLimit = player.movement.slopeLimit;
 
 	SetPlayerColor();
 	
@@ -42,6 +44,7 @@ function ResetNormalPlayerStats() {
 	player.movement.runSpeed = initialRunSpeed;
 	player.movement.flying = false;
 	player.movement.speedSmoothing = initialSpeedSmooting;
+	//player.movement.slopeLimit = initiaSlopeLimit;
 	
 	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), false);
 	
