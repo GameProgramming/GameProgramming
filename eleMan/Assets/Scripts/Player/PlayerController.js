@@ -21,13 +21,13 @@ class ControllerMovement {
 	
 	//~ //Set how strongly the character is affected by slopes thus slowing down when going uphill and speeding up when going down
 	var slopeEffect = 1; //new
-//	var slopeLimit = 45;
+	var slopeLimit = 45;
 		
 	// How fast does the character slide on steep surfaces?
-//	var slidingSpeed : float = 15;
+	var slidingSpeed : float = 15;
 	// How much can the player influence the sliding speed?
 	// If the value is 0.5 the player can speed the sliding up to 150% or slow it down to 50%.
-//	var slidingSpeedControl : float = 0.4;
+	var slidingSpeedControl : float = 0.4;
 	
 	// How fast does the character change speeds?  Higher is faster.
 	var speedSmoothing = 5.0;
@@ -289,7 +289,7 @@ function UpdateSmoothedMovementDirection () {
 		// Choose target speed
 		targetSpeed = Mathf.Min (Mathf.Abs(h), 1.0);
 			
-//		if(!IsTooSteep()) {
+		if(!IsTooSteep()) {
 			//~ Debug.DrawRay(Vector3(transform.position.x,transform.position.y+2,0), movement.contactNormal, Color.green);
 			//SendMessage("Sliding", false, SendMessageOptions.DontRequireReceiver);
 			// Pick speed modifier
@@ -299,29 +299,29 @@ function UpdateSmoothedMovementDirection () {
 				targetSpeed *= movement.walkSpeed;
 				
 			targetSpeed = AdjustGroundVelocityToNormal(targetSpeed);
-//		}
-//		else { //Slide!!
-//			SendMessage("Sliding", true, SendMessageOptions.DontRequireReceiver);
-//			// The direction we're sliding in
-//			var targetSpeedVector = Vector3(movement.contactNormal.x, 0, 0).normalized;
-//			var oldTargetSpeed = targetSpeedVector;
-//			// Find the input movement direction projected onto the sliding direction
-//			var projectedMoveDir = Vector3.Project(movement.direction, targetSpeedVector);
-//			// Add the sliding direction, the speed control, and the sideways control vectors
-//			targetSpeedVector = targetSpeedVector + projectedMoveDir * movement.slidingSpeedControl;
-//			// Multiply with the sliding speed
-//			targetSpeedVector *= movement.slidingSpeed;
-//			
-//			if (movement.direction.x > 0.0)
-//				targetSpeed = targetSpeedVector.x;
-//			else
-//				targetSpeed = -targetSpeedVector.x;
-//		
-//			var alpha = Vector3.Angle(movement.contactNormal, Vector3.up) * Mathf.Deg2Rad;
-//			//~ movement.verticalSpeed = Mathf.Tan(alpha)*targetSpeedVector.x; //Make sure we stay grounded
-//			movement.additionalVerticalSpeed = Mathf.Abs(Mathf.Tan(alpha)*targetSpeed); //Make sure we stay grounded
-//			//~ Debug.DrawRay(Vector3(transform.position.x,transform.position.y+2,0), Vector3(targetSpeed,movement.additionalVerticalSpeed,0), Color.red);
-//		}
+		}
+		else { //Slide!!
+			SendMessage("Sliding", true, SendMessageOptions.DontRequireReceiver);
+			// The direction we're sliding in
+			var targetSpeedVector = Vector3(movement.contactNormal.x, 0, 0).normalized;
+			var oldTargetSpeed = targetSpeedVector;
+			// Find the input movement direction projected onto the sliding direction
+			var projectedMoveDir = Vector3.Project(movement.direction, targetSpeedVector);
+			// Add the sliding direction, the speed control, and the sideways control vectors
+			targetSpeedVector = targetSpeedVector + projectedMoveDir * movement.slidingSpeedControl;
+			// Multiply with the sliding speed
+			targetSpeedVector *= movement.slidingSpeed;
+			
+			if (movement.direction.x > 0.0)
+				targetSpeed = targetSpeedVector.x;
+			else
+				targetSpeed = -targetSpeedVector.x;
+		
+			var alpha = Vector3.Angle(movement.contactNormal, Vector3.up) * Mathf.Deg2Rad;
+			//~ movement.verticalSpeed = Mathf.Tan(alpha)*targetSpeedVector.x; //Make sure we stay grounded
+			movement.additionalVerticalSpeed = Mathf.Abs(Mathf.Tan(alpha)*targetSpeed); //Make sure we stay grounded
+			//~ Debug.DrawRay(Vector3(transform.position.x,transform.position.y+2,0), Vector3(targetSpeed,movement.additionalVerticalSpeed,0), Color.red);
+		}
 		
 		//make sure player never gets too fast and also that speed doesn't increase too quickly
 		var speedIncrease = targetSpeed - movement.speed;
@@ -540,9 +540,9 @@ function IsJumping () {
 	return jump.jumping;
 }
 
-//function IsTooSteep () {
-//	return (movement.contactNormal.y <= Mathf.Cos(movement.slopeLimit * Mathf.Deg2Rad));
-//}
+function IsTooSteep () {
+	return (movement.contactNormal.y <= Mathf.Cos(movement.slopeLimit * Mathf.Deg2Rad));
+}
 
 function IsGrounded () {
 	return controller.isGrounded;
