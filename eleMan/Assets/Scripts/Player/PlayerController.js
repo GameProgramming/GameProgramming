@@ -178,10 +178,10 @@ function Update () {
 	}
 
     if (Input.GetKeyDown (KeyCode.LeftControl)){
-    	//var element = GameObject.Find("ElementSpawnPoint");
-    	//if (element) {
-    		//element.GetComponent(ElementCreation).SetElement("water");
-    	//}
+    	var element = GameObject.Find("ElementSpawnPoint");
+    	if (element && !transform.GetComponent("EleManStats").element.Equals("normal")) {
+    		element.GetComponent(ElementCreation).SetElement(transform.GetComponent("EleManStats").element);
+    	}
         GetComponent("EleManStats").ResetNormalPlayerStats();
         Debug.Log("Manual Element Reset.");
     }

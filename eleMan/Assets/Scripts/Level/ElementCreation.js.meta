@@ -2,6 +2,10 @@ fileFormatVersion: 2
 guid: 3506c22271efb1b449e81e53e69edbff
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - airElement: {fileID: 5400000, guid: 12b24d9068be61b429dab64931d3e5f0, type: 2}
+  - earthElement: {fileID: 5400000, guid: a94a6e1e00125b54a8aab810471c29b6, type: 2}
+  - fireElement: {fileID: 5400000, guid: 65976886fd027034391f7179b732e0f7, type: 2}
+  - waterElement: {fileID: 5400000, guid: f7d89560a89f3f24f9f45f2815e9d1d7, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
