@@ -24,6 +24,8 @@ function Start() {
 	initialRunSpeed = player.movement.runSpeed;	
 
 	SetPlayerColor();
+	
+	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("IgnoreAlways"), false);
 }
 
 function ResetNormalPlayerStats() {
@@ -38,6 +40,7 @@ function ResetNormalPlayerStats() {
 	player.movement.runSpeed = initialRunSpeed;
 	player.movement.flying = false;
 	
+	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("IgnoreAlways"), false);
 	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), false);
 	
 	SetElement(element);
