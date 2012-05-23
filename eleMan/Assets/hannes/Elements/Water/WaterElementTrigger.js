@@ -1,5 +1,6 @@
 
 var textDisplay : GUIText;
+var slopeLimit : float = 10;
 
 
 function Start() {
@@ -18,6 +19,8 @@ function OnTriggerEnter(col : Collider) {
     	player.GetComponent("EleManStats").ResetNormalPlayerStats();
     	
         player.GetComponent("EleManStats").SetElement("water");
+        
+        //player.GetComponent(PlayerController).movement.slopeLimit = slopeLimit;
         
         Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), true);
         
