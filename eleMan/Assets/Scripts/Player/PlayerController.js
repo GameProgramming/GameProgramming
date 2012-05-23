@@ -352,7 +352,6 @@ function UpdateSmoothedMovementDirection () {
 		targetSpeed = Mathf.Min(targetSpeed, movement.maxHorizontalSpeed);
 
 		movement.speed = targetSpeed;
-		//movement.verticalSpeed += movement.speed/2; //always move up a little when moving to the sides
 	}
 }
 
@@ -433,10 +432,13 @@ function ApplyFlying () {
 		var curSmooth = movement.speedSmoothing * Time.deltaTime;
 		//Apply intertia: if character moved in opposite direction previously, slowly change to new direction
 		movement.verticalSpeed = Mathf.Lerp(movement.verticalSpeed, movement.runSpeed, curSmooth);
+		//make sure we don't get too fast
+		movement.verticalSpeed = Mathf.Max(movement.verticalSpeed, movement.runSpeed);
 
 	}
 	else { 
-		movement.verticalSpeed = 0;
+		//movement.verticalSpeed = 0;
+		movement.verticalSpeed = movement.speed/5;
 	}
 }
 

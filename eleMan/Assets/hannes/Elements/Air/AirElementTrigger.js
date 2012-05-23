@@ -23,7 +23,7 @@ function OnTriggerEnter(col : Collider) {
     	//reset values that might habe been changed by other elements
     	player.GetComponent("EleManStats").ResetNormalPlayerStats();
     	
-    	yield(1.0);
+    	yield(2.0);
     	//set earth values
        	player.GetComponent("EleManStats").SetElement("air");
         player.GetComponent(PlayerController).jump.height = jumpHeight;

@@ -20,7 +20,7 @@ function OnTriggerEnter(col : Collider) {
     	
         player.GetComponent("EleManStats").SetElement("water");
         
-        //player.GetComponent(PlayerController).movement.slopeLimit = slopeLimit;
+        player.GetComponent(PlayerController).movement.slopeLimit = slopeLimit;
         
         Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), true);
         
