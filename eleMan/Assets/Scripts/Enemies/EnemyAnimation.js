@@ -1,32 +1,24 @@
-//Every enemy object has a left boundary and a right boundary.
-//That has to be set to give him the "x"-boundary, where he walks between.
 
-//Boolean indicating if he should move left or right.
 var right : boolean;
-var leftBoundary : float;
-var rightBoundary : float;
 var walkingSpeed : float;
-private var leftSpeed : Vector3 = Vector3(-3, 0, 0);
-private var rightSpeed : Vector3 = Vector3(3, 0, 0);
+private var leftSpeed : Vector3 = Vector3(-1, 0, 0);
+private var rightSpeed : Vector3 = Vector3(1, 0, 0);
+var progress :float =  0;
+var interval :float = 10;
 
 function Start() {
-	//At the start walk whatever has been set.
-	if (right) {
-		WalkRight();
-	} else {
-		WalkLeft();
-	}	
+	leftSpeed *= walkingSpeed;
+	rightSpeed *= walkingSpeed;
 }
 
 function Update() {
-	//If he moves out of boundary, change.
-	if (transform.position.x <= leftBoundary) {
-		//Debug.Log("Test");
-		right = true;
-	} else if (transform.position.x >= rightBoundary) {
-		right = false;
+	progress += Time.deltaTime;
+	
+	if (progress >= interval) {
+		progress = 0;
+		right = !right;
 	}
-	if (right == true) {
+	if (right) {
 		WalkRight();
 	} else {
 		WalkLeft();
