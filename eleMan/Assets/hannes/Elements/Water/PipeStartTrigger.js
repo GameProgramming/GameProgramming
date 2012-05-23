@@ -52,10 +52,11 @@ function OnTriggerEnter(col : Collider) {
 	
 	if (col.gameObject.tag == "Player") {
 		player = col.gameObject;
+		if (player.GetComponent("EleManStats").element == "water") {
         //Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), true);
-        Flow(player);
+        	Flow(player);
         
-        
+        }
 		//print("hit");
         
     }
