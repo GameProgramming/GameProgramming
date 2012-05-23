@@ -6,10 +6,10 @@ var gravity = 40;
 var speed = 5;
 var inAirControlAcceleration = 0.5;
 
-private var airElement : Rigidbody;
-private var earthElement : Rigidbody;
-private var waterElement : Rigidbody;
-private var fireElement : Rigidbody;
+var airElement : Rigidbody;
+var earthElement : Rigidbody;
+var waterElement : Rigidbody;
+var fireElement : Rigidbody;
 
 
 function Start() {
