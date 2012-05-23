@@ -1,24 +1,15 @@
 fileFormatVersion: 2
-guid: d45188247f1bd154a824f2fbb9fc34e8
+guid: 050c3f58225e6e242baae57a57a9a101
 ModelImporter:
   fileIDToRecycleName:
-    4300000: Curve_010
-    4300002: Curve_009
-    4300004: Curve_008
-    4300006: Curve_007
-    4300008: Curve_006
-    4300010: Curve_005
-    4300012: Curve_004
-    4300014: Curve
-    4300016: Curve_001
-    7400000: Default Take //// level01
+    4300000: Regroup00
   serializedVersion: 10
   materials:
     importMaterials: 1
     materialName: 0
     materialSearch: 1
   animations:
-    generateAnimations: 0
+    generateAnimations: 3
     bakeSimulation: 0
     splitAnimations: 1
     animationCompression: 1
@@ -29,10 +20,10 @@ ModelImporter:
     clipAnimations: []
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: .100000001
     meshCompression: 0
-    addColliders: 1
-    swapUVChannels: 1
+    addColliders: 0
+    swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMesh: 0
@@ -49,10 +40,10 @@ ModelImporter:
     //RootNode:
       data:
         first: 1
-        second: a6860100
+        second: a0860100
       data:
         first: 4
-        second: 861a0600
+        second: 801a0600
       data:
         first: 23
         second: 60182300
@@ -60,5 +51,5 @@ ModelImporter:
         first: 33
         second: a05a3200
       data:
-        first: 64
-        second: 00a86100
+        first: 111
+        second: 605fa900
