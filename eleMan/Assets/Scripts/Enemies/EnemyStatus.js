@@ -18,9 +18,9 @@ function Update () {
 
 function OnTriggerEnter (collision : Collider) {
 	//Ask here for the right collision object, which we don't know right now.
-	if (collision.gameObject.tag.Equals("Projectile")) {
+	if (collision.gameObject.tag.Equals("Mudball")) {
 	   alive = false;
-	   Destroy(collision.transform.gameObject);
+	   Destroy(transform.parent.gameObject);
 	}
 	Debug.Log("Test");
 	if (collision.gameObject.tag.Equals("Player")) {

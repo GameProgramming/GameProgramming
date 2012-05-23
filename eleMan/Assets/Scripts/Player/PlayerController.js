@@ -170,9 +170,12 @@ function Update () {
 //		Debug.Log("VS: " + movement.verticalSpeed + ", AVS: "  + movement.additionalVerticalSpeed + ", Speed: " + movement.speed, this);
 
 	if (Input.GetButtonDown ("Shoot") && canControl) {
-		var projectileSP = GameObject.Find("BulletSpawnPoint");
-		if (projectileSP) { 
-			projectileSP.GetComponent(Projectile).SetInputFire();
+		var currentElement = transform.GetComponent("EleManStats").element;
+		if (currentElement.Equals("earth")) {
+			var projectileSP = GameObject.Find("BulletSpawnPoint");
+			if (projectileSP) { 
+				projectileSP.GetComponent(Projectile).SetInputFire();
+			}
 		}
 	}
 
