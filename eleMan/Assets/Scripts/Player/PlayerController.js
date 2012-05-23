@@ -47,6 +47,9 @@ class ControllerMovement {
 	@System.NonSerialized
 	var additionalVerticalSpeed = 0.0;
 	
+	@System.NonSerialized
+	var riseFactor = 0.2;
+	
 	// The current movement speed.  This gets smoothed by speedSmoothing.
 	@System.NonSerialized
 	var speed = 0.0;
@@ -438,7 +441,7 @@ function ApplyFlying () {
 	}
 	else { 
 		//movement.verticalSpeed = 0;
-		movement.verticalSpeed = movement.speed/5;
+		movement.verticalSpeed = movement.speed * movement.riseFactor;
 	}
 }
 

@@ -2,10 +2,10 @@
 var textDisplay : GUIText;
 var slopeLimit : float = 10;
 
-var airElement : Rigidbody;
-var earthElement : Rigidbody;
-var fireElement : Rigidbody;
-var waterElement : Rigidbody;
+private var airElement : Rigidbody;
+private var earthElement : Rigidbody;
+private var fireElement : Rigidbody;
+private var waterElement : Rigidbody;
 
 function Start() {
     if(GameObject.Find("Text Display")) {

@@ -9,6 +9,7 @@ private var initialGravity : float;
 private var initialInAirControlAcc : float;
 private var initialSpeedSmooting : float;
 private var initialSlopeLimit : float;
+private var initialRiseFactor : float;
 private var player : PlayerController;
 
 
@@ -26,10 +27,13 @@ function Start() {
 	initialRunSpeed = player.movement.runSpeed;	
 	initialSpeedSmooting = player.movement.speedSmoothing;
 	initialSlopeLimit = player.movement.slopeLimit;
+	initialRiseFactor = player.movement.riseFactor;
 
 	SetPlayerColor();
 	
 	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("IgnoreAlways"), true);
+	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), false);
+	Debug.Log("Start Element: " + element);
 }
 
 function ResetNormalPlayerStats() {
@@ -45,6 +49,7 @@ function ResetNormalPlayerStats() {
 	player.movement.flying = false;
 	player.movement.speedSmoothing = initialSpeedSmooting;
 	player.movement.slopeLimit = initialSlopeLimit;
+	player.movement.riseFactor = initialRiseFactor;
 	
 	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), false);
 	
@@ -71,6 +76,8 @@ function SetElement(elem :String) {
     }
     //Debug.Log("elem: " + elem, this);
     SetPlayerColor();
+    
+    Debug.Log("Element: " + element);
 }
 
 function SetPlayerColor() {

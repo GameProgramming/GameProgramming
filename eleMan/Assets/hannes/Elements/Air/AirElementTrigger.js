@@ -5,11 +5,12 @@ var extraJumpHeight = 8;
 var gravity : float = 20;
 var speed = 5;
 var inAirControlAcceleration = 0.5;
+var riseFactor = 0.2;
 var speedSmoothing = 0.5;
-var airElement : Rigidbody;
-var earthElement : Rigidbody;
-var waterElement : Rigidbody;
-var fireElement : Rigidbody;
+private var airElement : Rigidbody;
+private var earthElement : Rigidbody;
+private var waterElement : Rigidbody;
+private var fireElement : Rigidbody;
 
 function Start() {
     if(GameObject.Find("Text Display")) {
@@ -53,6 +54,7 @@ function OnTriggerEnter(col : Collider) {
         player.GetComponent(PlayerController).movement.inAirControlAcceleration = inAirControlAcceleration;	
         player.GetComponent(PlayerController).movement.flying = true;
         player.GetComponent(PlayerController).movement.speedSmoothing = speedSmoothing;
+        player.GetComponent(PlayerController).movement.riseFactor = riseFactor;
         
         Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), true);
         
