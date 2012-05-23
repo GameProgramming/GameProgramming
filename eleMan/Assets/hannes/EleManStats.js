@@ -32,6 +32,7 @@ function Start() {
 	SetPlayerColor();
 	
 	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("IgnoreAlways"), true);
+	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("IgnoreAlways"), LayerMask.NameToLayer("IgnoreAlways"), true);
 	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Grid"), false);
 	Debug.Log("Start Element: " + element);
 }

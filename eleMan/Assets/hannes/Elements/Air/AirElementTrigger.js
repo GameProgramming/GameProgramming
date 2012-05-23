@@ -47,6 +47,9 @@ function OnTriggerEnter(col : Collider) {
     	yield(2.0);
     	//set earth values
        	player.GetComponent("EleManStats").SetElement("air");
+//       	player.GetComponent(PlayerController).movement.speed = 0;
+//       	player.GetComponent(PlayerController).movement.verticalSpeed = 0;
+//       	player.GetComponent(PlayerController).movement.velocity.x = 0;
         player.GetComponent(PlayerController).jump.height = jumpHeight;
         player.GetComponent(PlayerController).jump.extraHeight = extraJumpHeight;
         player.GetComponent(PlayerController).movement.gravity = gravity;
