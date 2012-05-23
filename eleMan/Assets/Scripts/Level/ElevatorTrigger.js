@@ -1,7 +1,7 @@
 var highestPositionY : float;
 var lowestPositionY : float;
 var activated : boolean;
-private var moveDown : boolean = false;
+private var moveDown : boolean = true;
 private var moveUp : boolean = false;
 
 function Start () {
@@ -11,9 +11,9 @@ function Start () {
 function Update() {
 	if(activated){
 		if (moveDown) {
-			transform.position.y -= 0.05;
+			transform.position.y -= 5 * Time.deltaTime;
 		} else if (moveUp) {
-			transform.position.y += 0.05;
+			transform.position.y += 5 * Time.deltaTime ;
 		}
 		if (transform.position.y <= lowestPositionY) {
 			moveUp = true;
