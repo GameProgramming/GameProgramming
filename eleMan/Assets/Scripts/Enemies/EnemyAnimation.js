@@ -21,7 +21,7 @@ function Start() {
 function Update() {
 	//If he moves out of boundary, change.
 	if (transform.position.x <= leftBoundary) {
-		Debug.Log("Test");
+		//Debug.Log("Test");
 		right = true;
 	} else if (transform.position.x >= rightBoundary) {
 		right = false;
