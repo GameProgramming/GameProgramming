@@ -2,6 +2,11 @@ fileFormatVersion: 2
 guid: dc53150a3b75a514494dd047968beaff
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - textDisplay: {instanceID: 0}
+  - airElement: {instanceID: 0}
+  - earthElement: {instanceID: 0}
+  - waterElement: {instanceID: 0}
+  - fireElement: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}

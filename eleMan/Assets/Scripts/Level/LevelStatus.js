@@ -101,7 +101,7 @@ function LevelCompleted () {
 
 function GameOver () {
 //	Debug.Log("Game Over.", this);
-	yield WaitForSeconds (2.0);
+	//yield WaitForSeconds (2.0);
 	elapsedTime = 0.0;
 	Application.LoadLevel(Application.loadedLevelName);
 }

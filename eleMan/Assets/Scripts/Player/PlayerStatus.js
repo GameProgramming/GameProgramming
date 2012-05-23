@@ -89,7 +89,7 @@ function Spawn () {
 	//this is actually only for multiplayer-mode
 	GameObject.FindWithTag("MainCamera").GetComponent(CameraFocus).setSwitch(playerNumber, false);
 
-	yield WaitForSeconds(2.0);	// give the sound time to complete. 
+	//yield WaitForSeconds(2.0);	// give the sound time to complete. 
 	
 	SendMessage("ShowPlayer");	// Show the player again, ready for...		
 }
