@@ -9,7 +9,7 @@ if(GameObject.Find("Text Display")) {
 }
 
 function Update () {
-	textDisplay.text = ""+transform.rotation.x;
+	//textDisplay.text = ""+transform.rotation.x;
 	
 	if (direction == "right")
 		transform.Rotate(Vector3.right * Time.deltaTime * degree);

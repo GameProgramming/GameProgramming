@@ -14,12 +14,7 @@ function OnTriggerEnter(col : Collider) {
 	
 	if (col.gameObject.tag == "Player") {
 		player = col.gameObject;
-		//if(player.GetComponent("EleManStats").element == "normal")
-		//{
-    	    //reset values that might habe been changed by other elements
-    	 	player.GetComponent("EleManStats").SetElement("normal");
-    		player.GetComponent("PlayerStatus").Spawn();
-        //}
+		player.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
         
         textDisplay.text = player.GetComponent("EleManStats").element + "PlayerHitLava";
 		//print("hit");
