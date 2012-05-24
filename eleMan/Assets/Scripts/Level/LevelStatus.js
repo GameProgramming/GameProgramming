@@ -148,11 +148,11 @@ function OnGUI() {
 	else
 		Debug.Log("StartMenuGUI: GUI Skin object missing!");
 
-	GUI.Label(Rect (100, 30, 200, 50), "");
+	//GUI.Label(Rect (50, 2, 200, 50), "");
 	var time = (Mathf.RoundToInt(elapsedTime * 10.0) / 10);
-	GUI.Label(Rect (300, 30, 80, 50), time.ToString());
+	GUI.Label(Rect (250, 2, 80, 50), "t: "+time.ToString());
 	
-	GUI.Label(Rect (100, 30, 200, 50), collectedStars.ToString() + "/" + existingStars.ToString());
+	GUI.Label(Rect (50, 2, 200, 50), "s: "+collectedStars.ToString() + "/" + existingStars.ToString());
 	
 	if (levelCompleted) {
 		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);

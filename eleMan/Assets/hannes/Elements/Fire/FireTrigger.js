@@ -1,21 +1,23 @@
 
 var textDisplay : GUIText;
-
+private var extinct : boolean = false;
 
 function Start() {
     if(GameObject.Find("Text Display")) {
 	    textDisplay = GameObject.Find("Text Display").guiText;
 	    textDisplay.text = "";
     } 
+    extinct = false;
 }
 
 
 function OnTriggerEnter(col : Collider) {
 	
-	if (col.gameObject.tag == "Player") {
+	if (!extinct && col.gameObject.tag == "Player") {
 		player = col.gameObject;
 		if(player.GetComponent("EleManStats").element == "water")
 		{
+			extinct = true;
     		for (var e : ParticleEmitter in GetComponentsInChildren(ParticleEmitter)) {
     			e.emit = false;
     		}

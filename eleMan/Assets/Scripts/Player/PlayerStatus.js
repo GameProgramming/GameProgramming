@@ -58,6 +58,12 @@ function AddHealth (powerUp : int)
 
 function OnDeath ()
 {
+	GetComponent("Detonator").Explode();
+    transform.FindChild("Body").gameObject.SetActiveRecursively(false);
+    GetComponent(PlayerController).enabled = false;
+    yield WaitForSeconds(2);
+    GetComponent(PlayerController).enabled = true;
+    transform.FindChild("Body").gameObject.active = true;
 	lives--;
 	health = maxHealth;
 	

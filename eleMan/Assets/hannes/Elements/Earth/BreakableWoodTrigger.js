@@ -16,6 +16,11 @@ function OnTriggerEnter(col : Collider) {
     if (col.gameObject.tag == "Player") {
 		player = col.gameObject;
         if(player.GetComponent("EleManStats").element == "earth"){
+			GetComponent("Detonator").Explode();
+//			transform.parent.gameObject.active = false;
+			transform.parent.FindChild("BreakableWoodObject").active = false;
+			transform.gameObject.active = false;
+			yield WaitForSeconds(5);
 			Destroy (transform.parent.gameObject);
 		}
 		if(player.GetComponent("EleManStats").element == "Normal"){
