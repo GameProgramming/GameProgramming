@@ -18,6 +18,8 @@ function Update() {
 		progress = 0;
 		right = !right;
 	}
+	transform.localScale.y = 1+0.18*Mathf.Sin(4*Mathf.PI * progress / interval);
+	transform.localScale.x = 1-0.12*Mathf.Sin(2*Mathf.PI * progress / interval);
 	if (right) {
 		WalkRight();
 	} else {
@@ -27,8 +29,10 @@ function Update() {
 
 function WalkRight() {
 	rigidbody.MovePosition(rigidbody.position + rightSpeed * Time.deltaTime);
+//			+ Vector3(0,5,0) * Mathf.Sin(Mathf.PI * progress / interval) * Time.deltaTime);
 }
 
 function WalkLeft() {
 	rigidbody.MovePosition(rigidbody.position + leftSpeed * Time.deltaTime);
+//			+ Vector3(0,5,0) * Mathf.Sin(Mathf.PI * progress / interval) * Time.deltaTime);
 }

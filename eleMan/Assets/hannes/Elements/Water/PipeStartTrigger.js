@@ -19,26 +19,30 @@ function Flow(player : GameObject) {
 			
 			}
 		}
-//		while(Round(player.transform.position.x) != stopX || Round(player.transform.position.y) != stopY ){//|| Round(playerPos.z) != stopZ){
-//		
+		player.collider.enabled = false;
+		while(Mathf.Abs(player.transform.position.x-stopX) + Mathf.Abs(player.transform.position.y - stopY) > 0.4 ){//|| Round(playerPos.z) != stopZ){
+		
+			player.transform.LookAt(Vector3(stopX, stopY, stopZ));
+			player.transform.position += player.transform.forward * Time.deltaTime*10;
 //			if (player.transform.position.x < stopX ){
-//				player.transform.position.x += 0.1;
+//				player.transform.position.x += Time.deltaTime*10;
 //			}
 //			else if (player.transform.position.x > stopX){
-//			  	player.transform.position.x -= 0.1;
+//			  	player.transform.position.x -= Time.deltaTime*10;
 //			}
 //			if (player.transform.position.y < stopY ){
-//				player.transform.position.y += 0.1;
+//				player.transform.position.y += Time.deltaTime*10;
 //			}
 //			else if (player.transform.position.y > stopY){
-//			  	player.transform.position.y -= 0.1;
+//			  	player.transform.position.y -= Time.deltaTime*10;
 //			}
-//			//Debug.Log(Round(player.transform.position.x));
-//		
-//			
-//		}
-				player.transform.position.x = stopX;
-				player.transform.position.y = stopY;
+			//Debug.Log(Round(player.transform.position.x));
+			yield;
+			
+		}
+		player.collider.enabled = true;
+//				player.transform.position.x = stopX;
+//				player.transform.position.y = stopY;
 		
 		textDisplay.text = "PlayerHit: "+  player.transform.position.x +" - Pipe start :"+ transform.position.x + " pipe end:  "+stopX ;
 }

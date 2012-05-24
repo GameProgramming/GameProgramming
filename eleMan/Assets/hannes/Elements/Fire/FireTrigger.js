@@ -16,6 +16,10 @@ function OnTriggerEnter(col : Collider) {
 		player = col.gameObject;
 		if(player.GetComponent("EleManStats").element == "water")
 		{
+    		for (var e : ParticleEmitter in GetComponentsInChildren(ParticleEmitter)) {
+    			e.emit = false;
+    		}
+    		yield WaitForSeconds(5);
     		Destroy (gameObject);
     	}
     	else if (player.GetComponent("EleManStats").element == "fire")
@@ -23,8 +27,7 @@ function OnTriggerEnter(col : Collider) {
         
         }
         else{//reset values that might habe been changed by other elements
-    	 	player.GetComponent("EleManStats").SetElement("normal");
-    		player.GetComponent("PlayerStatus").Spawn();
+    	 	player.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
         }
         
         textDisplay.text = player.GetComponent("EleManStats").element + "PlayerHitFire";
