@@ -183,7 +183,7 @@ function Update () {
 		jump.lastButtonTime = Time.time;
 	}
 
-    if (Input.GetKeyDown (KeyCode.LeftControl)){
+    if (Input.GetButtonDown ("DropElement")){
     	var element = GameObject.Find("ElementSpawnPoint");
     	if (element && !transform.GetComponent("EleManStats").element.Equals("normal")) {
     		element.GetComponent(ElementCreation).SetElement(transform.GetComponent("EleManStats").element);
