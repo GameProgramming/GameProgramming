@@ -1,10 +1,17 @@
 var teamNumber = 0;
 var tickets = 10;
 var teamName = "Team";
+private var color : Color;
 
 var playerSkin :Texture;
 
 function Start() {
+	if (teamNumber == 1) {
+		color = Color.blue;
+	}
+	if (teamNumber == 2) {
+		color = Color.red;
+	}
 
 }
 
@@ -49,4 +56,12 @@ function Friendly (otherTeam :Team) :boolean {
 
 function ToString () :String {
 	return teamName;
+}
+
+function GetTeamNumber () : int {
+	return teamNumber;
+}
+
+function GetColor () : Color {
+	return color;
 }
