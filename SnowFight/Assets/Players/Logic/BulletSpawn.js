@@ -17,7 +17,7 @@ function Start() {
 
 function Update () {
 	reloadProgress -= Time.deltaTime;
-	if(inputFire && reloadProgress <= 0){
+	if(inputFire && reloadProgress <= 0 && player.GetCurrentSnowballs() > 0){
 		player.SubtractSnowball();
 	    Spawnpoint = transform;
 	  	var clone : Rigidbody;	

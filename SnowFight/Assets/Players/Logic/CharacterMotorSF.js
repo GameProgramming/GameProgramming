@@ -207,7 +207,7 @@ private function UpdateFunction () {
 	
 	snowballSpawn.inputFire = false;
 	if (canControl && !GetComponent(PlayerStatus).IsDead()) {
-		if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0) {
+		if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0 && GetComponent(PlayerStatus).GetCurrentSnowballs() > 0) {
 			throwProgress = 1;
 		} else if (throwProgress > 0) {
 			throwProgress += Time.deltaTime * 4;
