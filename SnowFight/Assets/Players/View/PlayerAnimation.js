@@ -9,11 +9,13 @@ private var anim : Animation;
 
 private var playerStatus :PlayerStatus;
 private var motor :CharacterMotorSF;
+private var camSetup :Transform;
 
 function Start() {
 	playerStatus = GetComponent(PlayerStatus);
 	motor = GetComponent(CharacterMotorSF);
-
+	camSetup = transform.FindChild("CameraSetup");
+	
 	anim = transform.Find("Model").GetComponent(Animation);
 	
 	anim["hit"].speed = 10;
@@ -92,6 +94,8 @@ function Update () {
 		anim.Stop("throw1");
 		
 	}
+	
+	//camSetup.localEulerAngles = new Vector3(-motor.rotationY*.4, 0, 0);
 }
 
 function OnThrow () {

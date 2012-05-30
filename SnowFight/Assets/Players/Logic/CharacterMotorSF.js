@@ -30,8 +30,6 @@ var throwProgress = 0.0;
 var rotationY = 0.0;
 var rotationX = 0.0;
 
-private var camSetup :Transform;
-
 class CharacterMotorMovement {
 	// The maximum horizontal speed when moving
 	var maxForwardSpeed : float = 10.0;
@@ -193,7 +191,6 @@ private var controller : CharacterController;
 function Start () {
 	gameOver = false;
 	canControl = false;
-	camSetup = transform.FindChild("CameraSetup");
 }
 
 function Awake () {
@@ -361,7 +358,6 @@ function Rotate (x :float, y :float) {
 		rotationY += y;
 		rotationY = Mathf.Clamp (rotationY, -25, 10);
 		transform.localEulerAngles = new Vector3(0, rotationX, 0);
-		camSetup.localEulerAngles = new Vector3(-rotationY*.4, 0, 0);
 	}
 }
 

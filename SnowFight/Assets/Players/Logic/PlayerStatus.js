@@ -1,6 +1,10 @@
 var team :Team;
 var fullHp : int = 10;
 var respawnTimeout = 5.0;
+//The maximum number of snowballs a player can carry.
+var maximumSnowballCapacity : int = 10;
+//The current number of snowballs the player carries.
+private var currentSnowballs : int = 0;
 
 private var hp : int = fullHp;
 private var killTime = -respawnTimeout; // prevents "double spawn" at start
@@ -8,6 +12,7 @@ private var killTime = -respawnTimeout; // prevents "double spawn" at start
 private var died : boolean = true;
 private var respawning : boolean = false;
 private var gameOver = false;
+private var collectionSnowTime : float;
 
 //InvokeRepeating("Regenerate",5,10);
 //var damageSound : AudioClip;
@@ -22,6 +27,13 @@ function Start() {
 }
 
 function Update () {
+	//Every one second collect a snowball.
+	collectionSnowTime += Time.deltaTime;
+	if (collectionSnowTime >= 1.5) {
+		collectionSnowTime = 0.0;
+		//Collect snowball.
+		CollectSnow();
+	}
 	if (!gameOver) {
 
 		if (died && Time.time > killTime + respawnTimeout)
@@ -84,6 +96,12 @@ function Respawn () {
 	gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
 }
 
+function CollectSnow() {
+	if (currentSnowballs < maximumSnowballCapacity) {
+		currentSnowballs += 1;
+	}
+}
+
 function GetFullHp () : int {
 	return fullHp;
 }
@@ -98,4 +116,18 @@ function IsDead () : boolean {
 
 function GameOver () {
 	gameOver = true;
+}
+
+function SubtractSnowball() {
+	if (currentSnowballs > 0) {
+		currentSnowballs -= 1;
+	}
+}
+
+function GetMaximumSnowballs () : int  {
+	return maximumSnowballCapacity;
+}
+
+function GetCurrentSnowballs () : int {
+	return currentSnowballs;
 }
