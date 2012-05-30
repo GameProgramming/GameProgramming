@@ -64,7 +64,7 @@ Ansicht: (Andreas)
 D- schnee langsamer fallen lassen
 D- health display
 D- HUD erstellen bei TAB oder dauernd
-- simples terrain finalisieren
+D- simples terrain finalisieren
 - modifizierbares terrain: Terrain ändern wenns geht Schnee und paar Bäume
 D- skybox setzen (zum ändern einfach beim Game-Object eine andere skybox rein ziehen)
 D- death box unter terrain (FALLS man runter fällt ---> respawn)
