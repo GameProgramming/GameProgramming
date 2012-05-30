@@ -25,9 +25,9 @@ function OnGUI() {
 		
 		//Now create the boxes.
 		for (i=0; i<numberOfBoxes; i++) {
-			GUI.Box (Rect (j-1, 499, boxWidth+2, boxHeight+2), "");
+			GUI.Box (Rect (j-1, Screen.height-20, boxWidth+2, boxHeight+2), "");
 			if (i < numberOfSnowballs) {
-				GUI.Box(Rect (j, 500, boxWidth, boxHeight), "", style);
+				GUI.Box(Rect (j, Screen.height-20, boxWidth, boxHeight), "", style);
 			}
 			j += boxWidth;
 			
