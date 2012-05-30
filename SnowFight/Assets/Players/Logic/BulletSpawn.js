@@ -1,10 +1,9 @@
-//var projectile : Rigidbody;
+var projectile : Rigidbody;
 
 private var player : PlayerStatus;
 private var motor :CharacterMotorSF;
 
 private var weapon = "Snowball";
-
 
 var reloadProgress = 0;
 
@@ -14,17 +13,20 @@ var inputFire : boolean = false;
 function Start() {
 	player = transform.parent.GetComponent(PlayerStatus);
 	motor = transform.parent.GetComponent(CharacterMotorSF);
-	//weapon = "Snowball";
+	SetWeapon("Snowball");
 }
 
 function Update () {
 	if (Input.GetKeyDown (KeyCode.Alpha0))
-		weapon = "Snowrocket";  
+		SetWeapon("Snowrocket");  
 	if (Input.GetKeyDown (KeyCode.Alpha1))
-		weapon = "Snowball";  
-	projectile = AssetDatabase.LoadAssetAtPath("Assets/Weapons/" + weapon + ".prefab", typeof(Rigidbody));
+		SetWeapon("Snowball");  
+	
 	reloadProgress -= Time.deltaTime;
-	if(inputFire && reloadProgress <= 0 && player.GetCurrentSnowballs() > 0){
+}
+
+function Fire () {
+	if(reloadProgress <= 0 && player.GetCurrentSnowballs() > 0){
 		player.SubtractSnowball();
 	    Spawnpoint = transform;
 	  	var clone : Rigidbody;	
@@ -40,4 +42,9 @@ function Update () {
 		inputFire = false;
 		reloadProgress = clone.GetComponent("Projectile").reloadTime;
 	}
+}
+
+function SetWeapon (name :String) {
+	weapon = name;
+	projectile = AssetDatabase.LoadAssetAtPath("Assets/Weapons/" + weapon + ".prefab", typeof(Rigidbody));
 }

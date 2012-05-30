@@ -39,7 +39,7 @@ function OnTriggerStay(other : Collider) {
 			enterTimePlayer = 0.0;
 			var flagColor = transform.parent.GetComponentInChildren(TeamFlagColor).GetColor();
 			if (flagColor == Color.gray) {
-				var otherColor : Team = other.transform.parent.GetComponent("Team");
+				var otherColor : Team = other.transform.parent.GetComponent(Team);
 				var newColor : Color = otherColor.GetColor();
 				transform.parent.GetComponentInChildren(TeamFlagColor).SetColor(newColor);
 			}
