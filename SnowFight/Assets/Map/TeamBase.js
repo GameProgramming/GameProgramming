@@ -33,13 +33,15 @@ function OnTriggerStay(other : Collider) {
 	
 	//Check if player.
 	//If yes we want to check if he stays for 5 seconds inside the base 
-	if (other.tag.Equals("Player")) {
+	if (other.tag.Equals("Player") || other.tag.Equals("Bot")) {
 		enterTimePlayer += Time.deltaTime;
 		if (enterTimePlayer > 5.0) {
 			enterTimePlayer = 0.0;
 			var flagColor = transform.parent.GetComponentInChildren(TeamFlagColor).GetColor();
 			if (flagColor == Color.gray) {
-				transform.parent.GetComponentInChildren(TeamFlagColor).SetColor(Color.blue);
+				var otherColor : Team = other.transform.parent.GetComponent("Team");
+				var newColor : Color = otherColor.GetColor();
+				transform.parent.GetComponentInChildren(TeamFlagColor).SetColor(newColor);
 			}
 			if (flagColor == Color.blue || flagColor == Color.red) {
 				transform.parent.GetComponentInChildren(TeamFlagColor).SetColor(Color.gray);
@@ -49,7 +51,7 @@ function OnTriggerStay(other : Collider) {
 }
 
 function OnTriggerExit(other : Collider) {
-	if (other.tag.Equals("Player")) {
+	if (other.tag.Equals("Player") || other.tag.Equals("Bot")) {
 		enterTimePlayer = 0.0;
 	}
 }
