@@ -14,12 +14,15 @@ private var respawning : boolean = false;
 private var gameOver = false;
 private var collectionSnowTime : float;
 
+private var terrain :TerrainSnow;
+
 //InvokeRepeating("Regenerate",5,10);
 //var damageSound : AudioClip;
 
 function Start() {
 	gameOver = false;
-		
+	
+	terrain = GameObject.Find("/Terrain").GetComponent("TerrainSnow");
 	team = transform.parent.gameObject.GetComponent("Team");
 	if (team == null) {
 		Debug.LogError("Could not determine Player team. (Player object has to be child of Team object!)");
@@ -97,8 +100,9 @@ function Respawn () {
 }
 
 function CollectSnow() {
-	if (currentSnowballs < maximumSnowballCapacity) {
+	if (currentSnowballs < maximumSnowballCapacity && terrain.SnowAvailable(transform.position)) {
 		currentSnowballs += 1;
+		terrain.GrabSnow(transform.position);
 	}
 }
 

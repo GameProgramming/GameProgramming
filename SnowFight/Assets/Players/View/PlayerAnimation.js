@@ -10,11 +10,13 @@ private var anim : Animation;
 private var playerStatus :PlayerStatus;
 private var motor :CharacterMotorSF;
 private var camSetup :Transform;
+private var throwPreview :ThrowPreview;
 
 function Start() {
 	playerStatus = GetComponent(PlayerStatus);
 	motor = GetComponent(CharacterMotorSF);
 	camSetup = transform.FindChild("CameraSetup");
+	throwPreview = transform.FindChild("BulletSpawn").GetComponent(ThrowPreview);
 	
 	anim = transform.Find("Model").GetComponent(Animation);
 	
@@ -86,16 +88,13 @@ function Update () {
 		anim["jumping"].speed = 10;
 	}
 		
-	if (motor.throwProgress == 1) {
-		anim.Play("throw1");
-		anim["throw1"].speed = 20;
-		anim["throw1"].weight = 10;
-	} else if (motor.throwProgress == 0) {
+	if (motor.throwProgress == 0) {
 		anim.Stop("throw1");
 		
 	}
-	
-	//camSetup.localEulerAngles = new Vector3(-motor.rotationY*.4, 0, 0);
+	if (camSetup) {
+		camSetup.localEulerAngles = Vector3(-0.3*motor.rotationY,0,0);
+	}
 }
 
 function OnThrow () {
@@ -103,6 +102,26 @@ function OnThrow () {
 	anim.Play("throw2");
 	anim["throw2"].speed = 20;
 	anim["throw2"].weight = 10;
+	if (throwPreview) {
+		throwPreview.Deactivate();
+	}
+}
+
+function OnLoadThrow () {
+	anim.Play("throw1");
+	anim["throw1"].speed = 20;
+	anim["throw1"].weight = 10;
+	if (throwPreview) {
+		throwPreview.Activate();
+	}
+}
+
+function OnUnloadThrow () {
+	anim.Stop("throw1");
+	anim.Stop("throw2");
+	if (throwPreview) {
+		throwPreview.Deactivate();
+	}
 }
 
 function OnDeath () {

@@ -212,6 +212,7 @@ private function UpdateFunction () {
 	if(gameOver)
 		return;
 	
+<<<<<<< HEAD
 	snowballSpawn.inputFire = false;
 	if (!inputPush || IsBallTooFarAway() || IsMovingBackward()) {  //if button released or ball too far away, release it
 		pushing = false;
@@ -228,18 +229,21 @@ private function UpdateFunction () {
 			pushing = true;
 			pushedBall.SendMessage ("Roll", true);
 		}
-		else if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0) {
+		else if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0 
+			&& GetComponent(PlayerStatus).GetCurrentSnowballs() > 0) {
 			throwProgress = 1;
+			gameObject.SendMessage ("OnLoadThrow", SendMessageOptions.DontRequireReceiver);
 		} else if (throwProgress > 0) {
 			throwProgress += Time.deltaTime * 4;
 			if (!inputFire) {
 				if (throwProgress > 2) {
-					snowballSpawn.inputFire = true;
+					snowballSpawn.Fire();
 					gameObject.SendMessage ("OnThrow", SendMessageOptions.DontRequireReceiver);
 				}
 				throwProgress = 0;
 			}
 		} else {
+			gameObject.SendMessage ("OnUnloadThrow", SendMessageOptions.DontRequireReceiver);
 			throwProgress = 0;
 		}
 	} else {
@@ -381,7 +385,7 @@ function Rotate (x :float, y :float) {
 	if (canControl && !gameOver) {
 		rotationX = transform.localEulerAngles.y + x;
 		rotationY += y;
-		rotationY = Mathf.Clamp (rotationY, -25, 10);
+		rotationY = Mathf.Clamp (rotationY, -30, 20);
 		transform.localEulerAngles = new Vector3(0, rotationX, 0);
 	}
 }
