@@ -8,12 +8,22 @@ private var spawnTime = 0.0;
 private var meshRenderers :MeshRenderer[];
 private var skinnedRenderers :SkinnedMeshRenderer[];
 
+private var rollBall : boolean;
+private var lastPosition : Vector3;
+private var radius : float;
+private var perimeter : float;
+var ballTurnSpeed = 200;
+
 function Start () {
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
 	
 	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
 	Respawn();
+	
+	lastPosition = transform.position;
+	radius = GetComponent(Renderer).bounds.size.x/2;
+	perimeter =  2 * radius * Mathf.PI;
 }
 
 function Update () {
@@ -28,6 +38,18 @@ function Update () {
 		}
 		respawning = false;
 	}
+	
+	if (rollBall) {
+		var dir = transform.position - lastPosition;
+		var rotAxis = Vector3.Cross(dir, Vector3.up);
+		rotAxis.Normalize();
+		var angle : float = -perimeter/36*dir.magnitude * ballTurnSpeed;
+		transform.Rotate(rotAxis, angle, Space.World);
+	}
+}
+
+function LateUpdate () {
+	lastPosition = transform.position;
 }
 
 function Respawn () {
@@ -47,4 +69,8 @@ function Respawn () {
 		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length-1)].transform.position;
 		transform.position.y += 5;
 	}
+}
+
+function Roll (rolling:boolean) {
+	rollBall = rolling;
 }

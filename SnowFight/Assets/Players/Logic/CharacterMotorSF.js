@@ -213,9 +213,10 @@ private function UpdateFunction () {
 		return;
 	
 	snowballSpawn.inputFire = false;
-	if (!inputPush || IsBallTooFarAway()) {// || IsMovingBackward()) {  //if button released or ball too far away, release it
+	if (!inputPush || IsBallTooFarAway() || IsMovingBackward()) {  //if button released or ball too far away, release it
 		pushing = false;
-		if (pushedBall) { 
+		if (pushedBall) {
+			pushedBall.SendMessage ("Roll", false);
 			pushedBall.transform.parent = null;
 			pushedBall = null;
 		}
@@ -225,6 +226,7 @@ private function UpdateFunction () {
 	
 		if (inputPush && pushedBall) {
 			pushing = true;
+			pushedBall.SendMessage ("Roll", true);
 		}
 		else if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0) {
 			throwProgress = 1;
@@ -691,8 +693,8 @@ function AdjustInitialBallPosition (hit : ControllerColliderHit) {
 //	var newPosition : Vector3 = transform.LookAt * Vector3.Distance(transform.position, hit.transform.position);
 }
 
-function IsMovingBackward () {
-	return Input.GetAxis("Vertical");// (movement.velocity.z < 0);
+function IsMovingBackward () : boolean {
+	return (Input.GetAxis("Vertical") < 0);
 }
 
 function GameOver() {
