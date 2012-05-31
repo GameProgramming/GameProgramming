@@ -212,7 +212,6 @@ private function UpdateFunction () {
 	if(gameOver)
 		return;
 	
-<<<<<<< HEAD
 	snowballSpawn.inputFire = false;
 	if (!inputPush || IsBallTooFarAway() || IsMovingBackward()) {  //if button released or ball too far away, release it
 		pushing = false;
