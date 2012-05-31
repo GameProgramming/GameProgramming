@@ -97,11 +97,12 @@ function RollBall ()
 		var movePos : Vector3 = target.transform.position - 2*baseDir;
 		var pos = transform.position;
 		var dist = (pos - movePos).sqrMagnitude;
+		motor.inputPush = false;
 		
 		if (Random.value > 0.95 && BallOfFriend(target.transform))
 			return;
 		
-		if (dist > 1.3) {
+		if (dist > 0.1) {
 			// needs to approach...
 			angle = Mathf.Abs(RotateTowardsPosition(movePos, rotateSpeed));
 			if (Mathf.Abs(angle) > 2)
@@ -138,10 +139,12 @@ function RollBall ()
 				move = Mathf.Clamp01((90 - angle) / 90);
 				
 				// depending on the angle, start moving
+				motor.inputPush = true;
 				direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
 				motor.inputMoveDirection = Vector3.zero;
 			} else {
-				motor.inputFire = true;
+				//motor.inputFire = true;
+				motor.inputPush = true;
 				motor.inputMoveDirection = Vector3.zero;
 			}
 			

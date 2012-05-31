@@ -4,6 +4,7 @@
 
 private var snowballSpawn : BulletSpawn;
 private var pushedBall : GameObject;
+var maxBallDistance : float = 2.0;
 private var pushing : boolean = false;
 private var gameOver = false;
 private var gameOverTime = 0.0;
@@ -679,7 +680,12 @@ function SetVelocity (velocity : Vector3) {
 }
 
 function IsBallTooFarAway () : boolean {
-	return false;
+	if (pushedBall) {
+		Debug.Log("Distance: " + Vector3.Distance(transform.position, pushedBall.transform.position), this);
+		return (Vector3.Distance(transform.position, pushedBall.transform.position) > maxBallDistance);
+	}
+	else
+		return false;
 }
 
 function RotatePlayerForPushing (hit : ControllerColliderHit) {
