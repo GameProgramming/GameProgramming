@@ -3,6 +3,8 @@
 #pragma downcast
 
 private var snowballSpawn : BulletSpawn;
+private var pushedBall : GameObject;
+private var pushing : boolean = false;
 private var gameOver = false;
 private var gameOverTime = 0.0;
 
@@ -22,6 +24,9 @@ var inputMoveDirection : Vector3 = Vector3.zero;
 // for the jump button directly so this script can also be used by AIs.
 @System.NonSerialized
 var inputJump : boolean = false;
+
+@System.NonSerialized
+var inputPush : boolean = false;
 
 @System.NonSerialized
 var inputFire : boolean = false;
@@ -199,6 +204,8 @@ function Awake () {
 	tr = transform;
 	
 	snowballSpawn = transform.Find("BulletSpawn").GetComponent(BulletSpawn);
+	pushing = false;
+	pushedBall = null;
 }
 
 private function UpdateFunction () {
@@ -206,8 +213,20 @@ private function UpdateFunction () {
 		return;
 	
 	snowballSpawn.inputFire = false;
+	if (!inputPush || IsBallTooFarAway()) {// || IsMovingBackward()) {  //if button released or ball too far away, release it
+		pushing = false;
+		if (pushedBall) { 
+			pushedBall.transform.parent = null;
+			pushedBall = null;
+		}
+	}
+		
 	if (canControl && !GetComponent(PlayerStatus).IsDead()) {
-		if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0) {
+	
+		if (inputPush && pushedBall) {
+			pushing = true;
+		}
+		else if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0) {
 			throwProgress = 1;
 		} else if (throwProgress > 0) {
 			throwProgress += Time.deltaTime * 4;
@@ -269,6 +288,10 @@ private function UpdateFunction () {
 	movingPlatform.hitPlatform = null;
 	groundNormal = Vector3.zero;
 	
+	//if we're pushing a ball, first push the ball
+	if (pushedBall)
+		pushedBall.transform.Translate(currentMovementOffset, Space.World);
+		//pushedBall.GetComponent(Rigidbody).AddForce (velocity * Time.deltaTime, ForceMode.VelocityChange); 
    	// Move our character!
 	movement.collisionFlags = controller.Move (currentMovementOffset);
 	
@@ -452,7 +475,7 @@ private function ApplyGravityAndJumping (velocity : Vector3) {
 		jumping.lastButtonDownTime = -100;
 	}
 	
-	if (inputJump && jumping.lastButtonDownTime < 0 && canControl)
+	if (!inputPush && inputJump && jumping.lastButtonDownTime < 0 && canControl)
 		jumping.lastButtonDownTime = Time.time;
 	
 	if (grounded)
@@ -528,6 +551,14 @@ function OnControllerColliderHit (hit : ControllerColliderHit) {
 		movingPlatform.hitPlatform = hit.collider.transform;
 		movement.hitPoint = hit.point;
 		movement.frameVelocity = Vector3.zero;
+	}
+	
+	if (inputPush && !pushedBall && hit.collider.gameObject.CompareTag("BigSnowball")) {
+		//pushing = true;
+		pushedBall = hit.collider.gameObject;
+		//RotatePlayerForPushing(hit);
+		//AdjustInitialBallPosition(hit);
+		pushedBall.transform.parent = transform;
 	}
 }
 
@@ -640,6 +671,28 @@ function SetVelocity (velocity : Vector3) {
 	movement.velocity = velocity;
 	movement.frameVelocity = Vector3.zero;
 	SendMessage("OnExternalVelocity");
+}
+
+function IsBallTooFarAway () : boolean {
+	return false;
+}
+
+function RotatePlayerForPushing (hit : ControllerColliderHit) {
+	//Rotate (hit.moveDirection.y, hit.moveDirection.x);
+	//var direction : Vector3 = Vector3.RotateTowards (transform.forward, hit.transform.position, 0.1, 0.1);
+	//transform.localEulerAngles = new Vector3(0, direction.x, 0);
+	
+	transform.LookAt( Vector3.Slerp(transform.forward, hit.transform.position, Time.time));
+	//transform.LookAt(direction);
+	//Debug.Log("ROTATE by " + hit.moveDirection.x + "," + hit.moveDirection.y, this);
+}
+
+function AdjustInitialBallPosition (hit : ControllerColliderHit) {
+//	var newPosition : Vector3 = transform.LookAt * Vector3.Distance(transform.position, hit.transform.position);
+}
+
+function IsMovingBackward () {
+	return Input.GetAxis("Vertical");// (movement.velocity.z < 0);
 }
 
 function GameOver() {
