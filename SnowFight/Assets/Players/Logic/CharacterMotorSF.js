@@ -216,11 +216,7 @@ private function UpdateFunction () {
 	snowballSpawn.inputFire = false;
 	if (!inputPush || IsBallTooFarAway() || IsMovingBackward()) {  //if button released or ball too far away, release it
 		pushing = false;
-		if (pushedBall) {
-			pushedBall.SendMessage ("Roll", false);
-			pushedBall.transform.parent = null;
-			pushedBall = null;
-		}
+		ReleaseBall();
 	}
 		
 	if (canControl && !GetComponent(PlayerStatus).IsDead()) {
@@ -679,15 +675,6 @@ function SetVelocity (velocity : Vector3) {
 	SendMessage("OnExternalVelocity");
 }
 
-function IsBallTooFarAway () : boolean {
-	if (pushedBall) {
-		Debug.Log("Distance: " + Vector3.Distance(transform.position, pushedBall.transform.position), this);
-		return (Vector3.Distance(transform.position, pushedBall.transform.position) > maxBallDistance);
-	}
-	else
-		return false;
-}
-
 function RotatePlayerForPushing (hit : ControllerColliderHit) {
 	//Rotate (hit.moveDirection.y, hit.moveDirection.x);
 	//var direction : Vector3 = Vector3.RotateTowards (transform.forward, hit.transform.position, 0.1, 0.1);
@@ -702,8 +689,25 @@ function AdjustInitialBallPosition (hit : ControllerColliderHit) {
 //	var newPosition : Vector3 = transform.LookAt * Vector3.Distance(transform.position, hit.transform.position);
 }
 
+function IsBallTooFarAway () : boolean {
+	if (pushedBall) {
+		return (Vector3.Distance(transform.position, pushedBall.transform.position) > maxBallDistance);
+	}
+	else
+		return false;
+}
+
 function IsMovingBackward () : boolean {
 	return (Input.GetAxis("Vertical") < 0);
+}
+
+function ReleaseBall () {
+	if (pushedBall) {
+		pushedBall.SendMessage ("Roll", false);
+		pushedBall.transform.parent = null;
+		pushedBall = null;
+		Debug.Log("release ball", this);
+	}
 }
 
 function GameOver() {

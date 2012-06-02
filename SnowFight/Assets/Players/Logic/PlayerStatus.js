@@ -62,6 +62,7 @@ function OnCollisionEnter (collision : Collision) {
 		}
 		
 		gameObject.SendMessage ("OnHit", SendMessageOptions.DontRequireReceiver);										
+		gameObject.SendMessage ("ReleaseBall", SendMessageOptions.DontRequireReceiver);
 		
 		if (hp <= 0) {
 			Die(ball);
