@@ -21,7 +21,7 @@ function Start () {
 function Update () {
 	if (activated) {
 		var clone : Rigidbody;	
-		clone = Instantiate(bulletSpawn.projectile);
+		clone = Instantiate(bulletSpawn.GetProjectile());
 		var speed = clone.GetComponent("Projectile").speed * 
 					((matFade * Vector3.forward) + new Vector3(0, 0.03+motor.rotationY*.015,0) );
 		var curPos = Vector3(0,0,0)-speed/8.0;

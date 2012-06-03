@@ -18,6 +18,8 @@ private var collectionSnowTime : float;
 
 private var terrain :TerrainSnow;
 
+private var weapon = "Snowball";
+
 //InvokeRepeating("Regenerate",5,10);
 //var damageSound : AudioClip;
 
@@ -44,8 +46,6 @@ function Update () {
 		if (died && Time.time > killTime + respawnTimeout)
 			Respawn();
 	}
-	
-	
 }
 
 function Regenerate () {
@@ -55,9 +55,20 @@ function Regenerate () {
 	}
 }
 
-function OnCollisionEnter (collision : Collision) {
+function OnControllerColliderHit(hit : ControllerColliderHit){
+  var body : Rigidbody = hit.collider.attachedRigidbody;
+  
+  	if(body && body.tag.Equals("Weapon") ){
+		Debug.Log(body.tag);
+		weapon = body.transform.GetComponent("Weapon").weapon;
+		
+	}
+	
+}
 
+function OnCollisionEnter (collision : Collision) {
 	if(collision.rigidbody && collision.rigidbody.tag.Equals("Projectile")){
+		Debug.Log("collisionProjectile");
 		var ball :Damage = collision.transform.GetComponent("Damage");
 		
 		if (ball) {
@@ -109,6 +120,10 @@ function CollectSnow() {
 		currentSnowballs += 1;
 		terrain.GrabSnow(transform.position);
 	}
+}
+
+function GetWeapon () : String {
+	return weapon;
 }
 
 function GetFullHp () : int {
