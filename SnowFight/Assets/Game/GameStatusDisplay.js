@@ -3,6 +3,7 @@
 var tabFade = 3.0;
 var skyBox : UnityEngine.Material;
 
+@System.NonSerialized
 var status :GameStatus;
 
 var skin : GUISkin;

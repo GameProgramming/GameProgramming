@@ -44,11 +44,14 @@ function Update () {
 			TeamWins(winCandidate);
 		}
 	}
+	
+	if (Input.GetButtonDown ("Restart")) {
+		Restart();
+	}
 }
 
 function Restart() {
-	var levelName : String = Application.loadedLevelName;
-	Application.LoadLevel(levelName);
+	Application.LoadLevel(Application.loadedLevelName);
 }
 
 function TeamWins (t :Team) {

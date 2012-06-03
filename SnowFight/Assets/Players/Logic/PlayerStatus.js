@@ -1,4 +1,6 @@
+@System.NonSerialized
 var team :Team;
+
 var fullHp : int = 10;
 var respawnTimeout = 5.0;
 //The maximum number of snowballs a player can carry.
@@ -42,6 +44,8 @@ function Update () {
 		if (died && Time.time > killTime + respawnTimeout)
 			Respawn();
 	}
+	
+	
 }
 
 function Regenerate () {

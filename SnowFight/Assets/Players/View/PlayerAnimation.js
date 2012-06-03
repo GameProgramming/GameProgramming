@@ -65,12 +65,13 @@ function Update () {
 	
 		//color damaged player back to white
 		for (var rend : MeshRenderer in meshRenderers) {
-			//if (!rend.GetComponent(GameObject).CompareTag("BigSnowBall"))
+			if(!rend.CompareTag("BigSnowball"))
 				rend.material.color = Color.white;
 		}
 
 		for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-			rend.material.color = Color.white;
+			if(!rend.CompareTag("BigSnowball"))
+				rend.material.color = Color.white;
 		}
 		goRed = false;
 	}
@@ -155,13 +156,13 @@ function OnHit () {
 	redTime = Time.time;
 	var meshRenderers = GetComponentsInChildren (MeshRenderer);
 	for (var rend : MeshRenderer in meshRenderers) {
-		//if (!rend.GetComponent(GameObject).CompareTag("BigSnowBall"))
+		if(!rend.CompareTag("BigSnowball")) //avoid the ball from turning red
 			rend.material.color = new Color(0.9,0.2,0.2,1);
 	}
 	
 	var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
 	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-		//if (!rend.GetComponent(GameObject).CompareTag("BigSnowBall"))
+		if(!rend.CompareTag("BigSnowball")) //avoid the ball from turning red
 			rend.material.color = new Color(0.9,0.2,0.2,1);
 	}
 }
