@@ -5,7 +5,7 @@
 private var snowballSpawn : BulletSpawn;
 private var pushedBall : GameObject;
 var maxBallDistance : float = 3.0;
-var pushSpeed : float = 5.0;
+var ballCorrectionSpeed : float = 5.0;
 private var pushing : boolean = false;
 private var gameOver = false;
 private var gameOverTime = 0.0;
@@ -42,6 +42,14 @@ class CharacterMotorMovement {
 	var maxForwardSpeed : float = 10.0;
 	var maxSidewaysSpeed : float = 10.0;
 	var maxBackwardsSpeed : float = 10.0;
+	
+	var maxPushForwardSpeed : float = 8.0;
+	var maxPushSidewaysSpeed : float = 8.0;
+	
+	@System.NonSerialized
+	var tempMaxPushForwardSpeed : float;
+	@System.NonSerialized
+	var tempMaxPushSidewaysSpeed : float;
 	
 	// Curve for multiplying speed based on slope (negative = downwards)
 	var slopeSpeedMultiplier : AnimationCurve = AnimationCurve(Keyframe(-90, 1), Keyframe(0, 1), Keyframe(90, 0));
@@ -201,7 +209,9 @@ function Start () {
 }
 
 function Awake () {
-
+	movement.tempMaxPushForwardSpeed = movement.maxForwardSpeed;
+	movement.tempMaxPushSidewaysSpeed = movement.maxSidewaysSpeed;
+	
 	controller = GetComponent (CharacterController);
 	tr = transform;
 	
@@ -247,6 +257,8 @@ private function UpdateFunction () {
 		inputFire = false;
 	}
 	
+	AdjustPlayerSpeed();
+	
 	// We copy the actual velocity into a temporary variable that we can manipulate.
 	var velocity : Vector3 = movement.velocity;
 	
@@ -279,7 +291,7 @@ private function UpdateFunction () {
 	var lastPosition : Vector3 = tr.position;
 	
 	// We always want the movement to be framerate independent.  Multiplying by Time.deltaTime does this.
-	var currentMovementOffset : Vector3 = velocity * Time.deltaTime;
+	var currentMovementOffset = velocity * Time.deltaTime;
 	
 	// Find out how much we need to push towards the ground to avoid loosing grouning
 	// when walking down a step or over a sharp change in slope.
@@ -560,8 +572,6 @@ function OnControllerColliderHit (hit : ControllerColliderHit) {
 	if (inputPush && !pushedBall && hit.collider.gameObject.CompareTag("BigSnowball")) {
 		//pushing = true;
 		pushedBall = hit.collider.gameObject;
-		//RotatePlayerForPushing(hit);
-		//AdjustInitialBallPosition(hit);
 		pushedBall.transform.parent = transform;
 	}
 }
@@ -677,14 +687,15 @@ function SetVelocity (velocity : Vector3) {
 	SendMessage("OnExternalVelocity");
 }
 
-function RotatePlayerForPushing (hit : ControllerColliderHit) {
-	//Rotate (hit.moveDirection.y, hit.moveDirection.x);
-	//var direction : Vector3 = Vector3.RotateTowards (transform.forward, hit.transform.position, 0.1, 0.1);
-	//transform.localEulerAngles = new Vector3(0, direction.x, 0);
-	
-	transform.LookAt( Vector3.Slerp(transform.forward, hit.transform.position, Time.time));
-	//transform.LookAt(direction);
-	//Debug.Log("ROTATE by " + hit.moveDirection.x + "," + hit.moveDirection.y, this);
+function AdjustPlayerSpeed () {
+	if (pushing) {
+		movement.maxForwardSpeed = movement.maxPushForwardSpeed;
+		movement.maxSidewaysSpeed = movement.maxPushSidewaysSpeed;
+	}
+	else {
+		movement.maxForwardSpeed = movement.tempMaxPushForwardSpeed;
+		movement.maxSidewaysSpeed = movement.tempMaxPushSidewaysSpeed;
+	}
 }
 
 function MoveBall (pushedBall : GameObject, offset : Vector3) {
@@ -694,7 +705,7 @@ function MoveBall (pushedBall : GameObject, offset : Vector3) {
 	var desiredPos : Vector3 = tr.position + tr.forward * minDistance;
 	var correctionVector : Vector3 = pushedBall.transform.position - desiredPos;
 	correctionVector.Normalize();
-	correctionVector *= pushSpeed;
+	correctionVector *= ballCorrectionSpeed;
 	correctionVector *= Time.deltaTime;
 	//offset.x = Vector3.Slerp(offset, tr.forward * minDistance * Time.deltaTime, 0.1);
 	
