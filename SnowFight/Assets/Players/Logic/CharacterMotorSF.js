@@ -6,7 +6,8 @@ private var snowballSpawn : BulletSpawn;
 private var pushedBall : GameObject;
 var maxBallDistance : float = 3.0;
 var ballCorrectionSpeed : float = 5.0;
-private var pushing : boolean = false;
+@System.NonSerialized
+var pushing : boolean = false;
 private var gameOver = false;
 private var gameOverTime = 0.0;
 
@@ -568,9 +569,8 @@ function OnControllerColliderHit (hit : ControllerColliderHit) {
 		movement.hitPoint = hit.point;
 		movement.frameVelocity = Vector3.zero;
 	}
-	
+
 	if (inputPush && !pushedBall && hit.collider.gameObject.CompareTag("BigSnowball")) {
-		//pushing = true;
 		pushedBall = hit.collider.gameObject;
 		pushedBall.transform.parent = transform;
 	}
@@ -707,14 +707,7 @@ function MoveBall (pushedBall : GameObject, offset : Vector3) {
 	correctionVector.Normalize();
 	correctionVector *= ballCorrectionSpeed;
 	correctionVector *= Time.deltaTime;
-	//offset.x = Vector3.Slerp(offset, tr.forward * minDistance * Time.deltaTime, 0.1);
-	
 	pushedBall.transform.Translate(offset -  correctionVector, Space.World);
-	//pushedBall.transform.Translate(offset, Space.World);
-	
-//	var correctOffset : Vector3 = pushedBall.transform.position - (tr.position + tr.forward * minDistance);
-//	correctOffset.x = 0; correctOffset.y = 0;
-//	pushedBall.transform.Translate(correctOffset * Time.deltaTime, Space.Self);
 }
 
 function IsBallTooFarAway () : boolean {
@@ -738,6 +731,10 @@ function ReleaseBall () {
 		pushedBall.transform.parent = null;
 		pushedBall = null;
 	}
+}
+
+function GetBall () {
+	return pushedBall;
 }
 
 function GameOver() {

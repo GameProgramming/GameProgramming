@@ -33,14 +33,20 @@ function Start ()
 	groundBase = pStatus.team.GetBase();
 		
 	// Just attack for now
-	while (true)	
-	{
-		// Don't do anything when idle. And wait for player to be in range!
-		// This is the perfect time for the player to attack us
+//	while (true)	
+//	{
+//		// Don't do anything when idle. And wait for player to be in range!
+//		// This is the perfect time for the player to attack us
 		yield Idle();
-	}
+//	}
 }
 
+function Update () {
+	motor.inputMoveDirection = Vector3.zero;
+		yield WaitForSeconds(0.2);
+		
+		
+}
 
 function Idle ()
 {
@@ -90,6 +96,7 @@ function RollBall ()
 	var angle : float;
 	angle = 180.0;
 	var direction : Vector3;
+	var ball : GameObject;
 	
 	while (true) {
 		//TODO: HIER ABBRECHEN, FALLS DIE KUGEL BEREITS AM ZIEL IST!!
@@ -97,15 +104,24 @@ function RollBall ()
 		var movePos : Vector3 = target.transform.position - 2*baseDir;
 		var pos = transform.position;
 		var dist = (pos - movePos).sqrMagnitude;
-		motor.inputPush = false;
+		var tar;
 		
 		if (Random.value > 0.95 && BallOfFriend(target.transform))
 			return;
 		
-		if (dist > 0.1) {
+		motor.inputPush = true;
+		ball = motor.GetBall();
+		
+		if (!ball) {
+			if (!target.CompareTag("BigSnowball")) { //we've lost the ball somewhere on the way
+				tar = FindBestBigSnowball();//FindClosestEnemy();
+				if (tar)
+					target = tar;
+			}
+				
 			// needs to approach...
 			angle = Mathf.Abs(RotateTowardsPosition(movePos, rotateSpeed));
-			if (Mathf.Abs(angle) > 2)
+			if (Mathf.Abs(angle) > 2) //rotate towards ball
 			{
 				move = Mathf.Clamp01((90 - angle) / 90);
 				// depending on the angle, start moving
@@ -116,14 +132,15 @@ function RollBall ()
 				direction = transform.TransformDirection(Vector3.forward * attackSpeed);
 				motor.inputMoveDirection = direction;
 			}
-			if (dist < 20) {
-				var off : Vector3 = (pos - movePos).normalized;
-				if ((off - baseDir).sqrMagnitude < 0.3) {
-					motor.inputJump = true;
-				}
-			}
+//			if (dist < 20) { //jump over ball
+//				var off : Vector3 = (pos - movePos).normalized;
+//				if ((off - baseDir).sqrMagnitude < 0.3) {
+//					motor.inputJump = true;
+//				}
+//			}
 			if (Random.value > 0.9) {
-				var tar = FindClosestEnemy();
+				motor.inputPush = false;
+				tar = FindClosestEnemy();
 				var oldTar = target;
 				if (tar != null && (tar.transform.position - pos).magnitude < attackDistance) {
 					target = tar;
@@ -131,24 +148,29 @@ function RollBall ()
 					target = oldTar;
 				}
 			}
-		} else {
+		} else if (ball && motor.pushing) {
 			// needs to push!
+			//set base as target
+			target = groundBase.gameObject;
+			
 			angle = Mathf.Abs(RotateTowardsPosition(target.transform.position, rotateSpeed));
-			if (Mathf.Abs(angle) > 2)
-			{
+			if (Mathf.Abs(angle) > 2) {
 				move = Mathf.Clamp01((90 - angle) / 90);
 				
 				// depending on the angle, start moving
-				motor.inputPush = true;
 				direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
 				motor.inputMoveDirection = Vector3.zero;
-			} else {
+			}
+			else {
 				//motor.inputFire = true;
-				motor.inputPush = true;
+//				motor.inputPush = true;
+				direction = transform.TransformDirection(Vector3.forward * attackSpeed);
 				motor.inputMoveDirection = Vector3.zero;
+				//motor.inputMoveDirection = direction;
 			}
 			
 			if (Random.value > 0.9) {
+				motor.inputPush = false;
 				tar = FindClosestEnemy();
 				oldTar = target;
 				if (tar != null && (tar.transform.position - pos).magnitude < attackDistance / 2) {
@@ -158,7 +180,7 @@ function RollBall ()
 				}
 			}
 			
-		}	
+		}
 		// We are not actually moving forward.
 		// This probably means we ran into a wall or something. Stop attacking the player.
 //		if (motor.movement.velocity.magnitude < attackSpeed * 0.3)
@@ -177,6 +199,7 @@ function RollBall ()
 
 function Attack ()
 {
+	motor.inputPush = false;
 	isAttacking = true;
 	
 	// First we wait for a bit so the player can prepare while we turn around
