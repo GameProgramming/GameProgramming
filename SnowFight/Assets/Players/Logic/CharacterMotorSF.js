@@ -4,7 +4,8 @@
 
 private var snowballSpawn : BulletSpawn;
 private var pushedBall : GameObject;
-var maxBallDistance : float = 2.0;
+var maxBallDistance : float = 3.0;
+var pushSpeed : float = 5.0;
 private var pushing : boolean = false;
 private var gameOver = false;
 private var gameOverTime = 0.0;
@@ -291,8 +292,9 @@ private function UpdateFunction () {
 	groundNormal = Vector3.zero;
 	
 	//if we're pushing a ball, first push the ball
-	if (pushedBall)
-		pushedBall.transform.Translate(currentMovementOffset, Space.World);
+	if (pushedBall) {
+		MoveBall(pushedBall, currentMovementOffset); //try to make sure the ball is infront of the player
+	}
 		//pushedBall.GetComponent(Rigidbody).AddForce (velocity * Time.deltaTime, ForceMode.VelocityChange); 
    	// Move our character!
 	movement.collisionFlags = controller.Move (currentMovementOffset);
@@ -685,13 +687,31 @@ function RotatePlayerForPushing (hit : ControllerColliderHit) {
 	//Debug.Log("ROTATE by " + hit.moveDirection.x + "," + hit.moveDirection.y, this);
 }
 
-function AdjustInitialBallPosition (hit : ControllerColliderHit) {
-//	var newPosition : Vector3 = transform.LookAt * Vector3.Distance(transform.position, hit.transform.position);
+function MoveBall (pushedBall : GameObject, offset : Vector3) {
+	
+	//try to make sure the ball is infront of the player
+	var minDistance = controller.radius + pushedBall.gameObject.collider.bounds.size.x;
+	var desiredPos : Vector3 = tr.position + tr.forward * minDistance;
+	var correctionVector : Vector3 = pushedBall.transform.position - desiredPos;
+	correctionVector.Normalize();
+	correctionVector *= pushSpeed;
+	correctionVector *= Time.deltaTime;
+	//offset.x = Vector3.Slerp(offset, tr.forward * minDistance * Time.deltaTime, 0.1);
+	
+	pushedBall.transform.Translate(offset -  correctionVector, Space.World);
+	//pushedBall.transform.Translate(offset, Space.World);
+	
+//	var correctOffset : Vector3 = pushedBall.transform.position - (tr.position + tr.forward * minDistance);
+//	correctOffset.x = 0; correctOffset.y = 0;
+//	pushedBall.transform.Translate(correctOffset * Time.deltaTime, Space.Self);
 }
 
 function IsBallTooFarAway () : boolean {
 	if (pushedBall) {
-		return (Vector3.Distance(transform.position, pushedBall.transform.position) > maxBallDistance);
+		var maxAllowedDist = Mathf.Max(maxBallDistance, controller.radius + pushedBall.collider.bounds.size.x);
+		if (Vector3.Distance(transform.position, pushedBall.transform.position) > maxAllowedDist)
+			Debug.Log("too far away!", this);
+		return (Vector3.Distance(transform.position, pushedBall.transform.position) > maxAllowedDist);
 	}
 	else
 		return false;
@@ -706,7 +726,6 @@ function ReleaseBall () {
 		pushedBall.SendMessage ("Roll", false);
 		pushedBall.transform.parent = null;
 		pushedBall = null;
-		Debug.Log("release ball", this);
 	}
 }
 
