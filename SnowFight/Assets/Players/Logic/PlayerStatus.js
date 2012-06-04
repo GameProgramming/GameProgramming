@@ -67,12 +67,32 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 }
 
 function OnCollisionEnter (collision : Collision) {
+	//Get all required positions.
+	var ballPosition = collision.transform.position;
+	var playerPosition = gameObject.transform.position;
+	var inversePosition = gameObject.transform.InverseTransformPoint(collision.transform.position);
 	if(collision.rigidbody && collision.rigidbody.tag.Equals("Projectile")){
-		Debug.Log("collisionProjectile");
-		var ball :Damage = collision.transform.GetComponent("Damage");
+		//Get the damage Object
+		var damageObject : Damage = collision.transform.GetComponent("Damage");
+		var damage = 0;
+		//If the ball hits the player in the head.
+		if (inversePosition.y > 0.9) {
+			damage = damageObject.GetHeadDamage();
+			//Debug.Log("Hit in the head.");
+			//Debug.Log(damage);
+		//He hits the player from behind.
+		} else if (inversePosition.z < -0.3) {
+			damage = damageObject.GetBehindDamage();
+			//Debug.Log("Hit from behind.");
+			//Debug.Log(damage);
+		} else {
+			damage = damageObject.GetFrontDamage();
+			//Debug.Log("Hit from side or front.");
+			//Debug.Log(damage);
+		}
 		
-		if (ball) {
-			hp -= ball.GetDamage();
+		if (damage > 0) {
+			hp -= damage;
 			hp = Mathf.Max(0, hp);
 		}
 		
@@ -80,7 +100,7 @@ function OnCollisionEnter (collision : Collision) {
 		gameObject.SendMessage ("ReleaseBall", SendMessageOptions.DontRequireReceiver);
 		
 		if (hp <= 0) {
-			Die(ball);
+			Die(damageObject);
 		}
 	}
 }

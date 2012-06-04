@@ -31,10 +31,10 @@ function Fire () {
 		
 		clone.velocity = clone.GetComponent("Projectile").speed * Spawnpoint.TransformDirection (Vector3.forward
 								+ new Vector3(0, 0.03+motor.rotationY*.015,0) );
-		if(clone.GetComponent("Damage")) {
-			clone.GetComponent("Damage").dmg = clone.GetComponent("Projectile").dmg;
-			clone.GetComponent("Damage").team = player.team;
-		}
+		//if(clone.GetComponent("Damage")) {
+			//clone.GetComponent("Damage").dmg = clone.GetComponent("Projectile").dmg;
+			//clone.GetComponent("Damage").team = player.team;
+		//}
 		
 		inputFire = false;
 		reloadProgress = clone.GetComponent("Projectile").reloadTime;
