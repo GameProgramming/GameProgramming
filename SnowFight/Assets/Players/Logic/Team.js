@@ -29,9 +29,9 @@ function HasLost () {
 function GetSpawnPoints () :Transform[] {
 	var spawns :Transform[] = [];
 	
-	for (var b :Transform in transform) {
+	for (var b : Transform in transform) {
 		if (b.tag == "Base") {
-			for (var t :Transform in b.transform) {
+			for (var t : Transform in b.transform) {
 				if (t.tag == "PlayerSpawn") {
 					spawns += [t];
 				}
