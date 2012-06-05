@@ -6,6 +6,9 @@ private var color : Color;
 var playerSkin :Texture;
 
 function Start() {
+	if (teamNumber == 0) {
+		color = Color.gray;
+	}
 	if (teamNumber == 1) {
 		color = Color.blue;
 	}
