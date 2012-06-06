@@ -34,7 +34,7 @@ function Update () {
 	
 	motor.inputFire = Input.GetButton("Fire1");
 	
-	motor.Rotate(Input.GetAxis("Mouse X") * 5, Input.GetAxis("Mouse Y") * 3);
+	motor.Rotate(Input.GetAxis("Mouse X") * 3, Input.GetAxis("Mouse Y") * 2);
 }
 
 // Require a character controller to be attached to the same game object
