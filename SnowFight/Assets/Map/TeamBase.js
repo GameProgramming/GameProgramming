@@ -1,11 +1,19 @@
 #pragma strict
 
-private var enterTime = 0.0;
-private var enterTimePlayer = 0.0;
-private var team : Team;
-private var color : Color;
+private var enterTime :float = 0;
+
+@System.NonSerialized
+var team : Team;
+@System.NonSerialized
+var neutralTeam : Team;
+
 var points : int = 3;
 
+var takeOverRadius :int = 30;
+var takeOverTime :float = 5.0;
+var takeOverProgress :float = 0.0;
+@System.NonSerialized
+var takeOverCurrTeam :Team = null;
 
 function Start () {
 	team = transform.parent.gameObject.GetComponent(Team);
@@ -13,10 +21,57 @@ function Start () {
 		Debug.LogError("Could not determine TeamBase team. "+
 			"(TeamBase object has to be child of Team object!)");
 	}
+	neutralTeam = GameObject.FindGameObjectWithTag("TeamNeutral").GetComponent(Team);
+	SetTeam(team);
 }
 
 function Update () {
+	var takeOverDist = takeOverRadius * takeOverRadius;
 	
+	var gos : GameObject[];
+    gos = GameObject.FindGameObjectsWithTag("Bot");  
+    var player = GameObject.FindGameObjectWithTag("Player");
+    gos = gos + [player];
+	
+	var teamTakingOver :Team = null;
+	
+	for (var go : GameObject in gos)  {
+		if ((go.transform.position - transform.position).sqrMagnitude < takeOverDist) {
+	    	var status :PlayerStatus = go.GetComponent(PlayerStatus);
+    		if (!status.IsDead() && status.team != teamTakingOver) {
+    			if (teamTakingOver == null) {
+    				teamTakingOver = status.team;
+    			} else {
+    				teamTakingOver = neutralTeam;
+    			}
+    		}
+    	}
+	}
+	
+//	Debug.Log("taking over "+teamTakingOver);
+	if (teamTakingOver != team && team != neutralTeam && teamTakingOver != null) {
+		teamTakingOver = neutralTeam;
+	}
+	
+	if (teamTakingOver == null || teamTakingOver != takeOverCurrTeam) {
+		//Debug.Log("takeOverReset");
+		takeOverProgress = 0;
+		takeOverCurrTeam = null;
+	} else if (teamTakingOver != team) {
+		takeOverProgress += Time.deltaTime / takeOverTime;
+//		Debug.Log("taking over "+takeOverProgress);
+		if (takeOverProgress >= 1) {
+//			Debug.Log("takeOverFinished");
+			SetTeam(teamTakingOver);
+		}
+	} 
+	takeOverCurrTeam = teamTakingOver;
+}
+
+function SetTeam (t :Team) {
+	transform.parent = t.transform;
+	team = t;
+	transform.parent.GetComponentInChildren(TeamFlagColor).SetColor(team.color);
 }
 
 function OnTriggerStay(other : Collider) {
@@ -29,29 +84,5 @@ function OnTriggerStay(other : Collider) {
 			other.GetComponent(BigSnowBall).Respawn();
 			enterTime = 0.0;
 		}
-	}
-	
-	//Check if player.
-	//If yes we want to check if he stays for 5 seconds inside the base 
-	if (other.tag.Equals("Player") || other.tag.Equals("Bot")) {
-		enterTimePlayer += Time.deltaTime;
-		if (enterTimePlayer > 5.0) {
-			enterTimePlayer = 0.0;
-			var flagColor = transform.parent.GetComponentInChildren(TeamFlagColor).GetColor();
-			if (flagColor == Color.gray) {
-				var otherColor : Team = other.transform.parent.GetComponent(Team);
-				var newColor : Color = otherColor.GetColor();
-				transform.parent.GetComponentInChildren(TeamFlagColor).SetColor(newColor);
-			}
-			if (flagColor == Color.blue || flagColor == Color.red) {
-				transform.parent.GetComponentInChildren(TeamFlagColor).SetColor(Color.gray);
-			}
-		}
-	}
-}
-
-function OnTriggerExit(other : Collider) {
-	if (other.tag.Equals("Player") || other.tag.Equals("Bot")) {
-		enterTimePlayer = 0.0;
 	}
 }

@@ -1,21 +1,12 @@
 var teamNumber = 0;
 var tickets = 10;
 var teamName = "Team";
-private var color : Color;
+var color : Color = Color.gray;
 
 var playerSkin :Texture;
 
 function Start() {
-	if (teamNumber == 0) {
-		color = Color.gray;
-	}
-	if (teamNumber == 1) {
-		color = Color.blue;
-	}
-	if (teamNumber == 2) {
-		color = Color.red;
-	}
-
+	
 }
 
 function Update () {
