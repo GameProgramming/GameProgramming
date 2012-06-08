@@ -225,7 +225,7 @@ private function UpdateFunction () {
 		return;
 	
 	snowballSpawn.inputFire = false;
-	if (!inputPush || IsBallTooFarAway() || IsMovingBackward()) {  //if button released or ball too far away, release it
+	if (inputPush || IsBallTooFarAway() || IsMovingBackward()) {  //if button released or ball too far away, release it
 		pushing = false;
 		ReleaseBall();
 	}
