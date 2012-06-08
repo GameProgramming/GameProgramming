@@ -46,6 +46,15 @@ function Update () {
 		if (died && Time.time > killTime + respawnTimeout)
 			Respawn();
 	}
+	if(Input.GetKey ("q")){
+		if(weapon != "Snowball"){
+			  GameObject.Find("Weapon"+weapon).GetComponent("Weapon").ResetWeapon();
+			Debug.Log("reset weapon"+weapon);
+			weapon = "Snowball";
+			
+			
+		}
+	}
 }
 
 function Regenerate () {
@@ -58,10 +67,15 @@ function Regenerate () {
 function OnControllerColliderHit(hit : ControllerColliderHit){
   var body : Rigidbody = hit.collider.attachedRigidbody;
   
-  	if(body && body.tag.Equals("Weapon") ){
-		Debug.Log(body.tag);
+  	if(body && body.tag.Equals("Weapon") && Input.GetKey ("e") && body.GetComponent("Weapon").weapon != weapon ){
 		weapon = body.transform.GetComponent("Weapon").weapon;
-		
+		Debug.Log(body.tag);
+		var clone : Rigidbody;	
+		clone = Instantiate(body, body.position, body.rotation);
+		//clone.transform.parent = gameObject.transform;
+		//clone.rigidbody.freezeRotation = true;
+		clone.rigidbody.constraints = RigidbodyConstraints.FreezePositionX || RigidbodyConstraints.FreezePositionY || RigidbodyConstraints.FreezePositionZ;
+		Destroy (body);
 	}
 	
 }
