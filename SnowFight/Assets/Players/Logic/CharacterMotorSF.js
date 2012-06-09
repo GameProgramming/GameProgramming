@@ -265,7 +265,7 @@ private function UpdateFunction () {
 	
 	// Update velocity based on input
 	velocity = ApplyInputVelocityChange(velocity);
-	
+		
 	// Apply gravity and jumping force
 	velocity = ApplyGravityAndJumping (velocity);
 	
@@ -439,6 +439,7 @@ private function ApplyInputVelocityChange (velocity : Vector3) {
 		inputJump = false;
 	}
 	
+	//Debug.Log("vector: " + inputMoveDirection, this);
 	// Find desired velocity
 	var desiredVelocity : Vector3;
 	if (grounded && TooSteep()) {
@@ -711,14 +712,14 @@ function MoveBall (pushedBall : GameObject, offset : Vector3) {
 }
 
 function IsBallTooFarAway () : boolean {
+	var tooFar = false;
 	if (pushedBall) {
 		var maxAllowedDist = Mathf.Max(maxBallDistance, controller.radius + pushedBall.collider.bounds.size.x);
 		if (Vector3.Distance(transform.position, pushedBall.transform.position) > maxAllowedDist)
-			Debug.Log("too far away!", this);
-		return (Vector3.Distance(transform.position, pushedBall.transform.position) > maxAllowedDist);
+			//Debug.Log("too far away!", this);
+		tooFar = (Vector3.Distance(transform.position, pushedBall.transform.position) > maxAllowedDist);
 	}
-	else
-		return false;
+	return tooFar;
 }
 
 function IsMovingBackward () : boolean {

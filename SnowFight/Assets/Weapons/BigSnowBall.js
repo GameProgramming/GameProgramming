@@ -53,6 +53,10 @@ function LateUpdate () {
 }
 
 function Respawn () {
+	if (transform.parent && transform.parent.GetComponent(PushBall)) { //tell the bot that his ball has reached the base
+			transform.parent.GetComponent(PushBall).ballReachedBase = true;
+	}
+	
 	respawning = true;
 	spawnTime = Time.time;
 	

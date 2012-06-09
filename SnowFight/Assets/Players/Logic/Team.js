@@ -38,12 +38,14 @@ function GetSpawnPoints () :Transform[] {
 	return spawns;
 }
 
-function GetBase () :Transform {
+function GetBase () : Transform {
+	var base : Transform = null;
 	for (var t :Transform in transform) {
 		if (t.tag == "Base") {
-			return t;
+			base = t;
 		}
 	}
+	return base;
 }
 
 function LoseTickets (count :int) {
