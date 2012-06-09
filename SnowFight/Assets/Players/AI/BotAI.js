@@ -69,11 +69,8 @@ function Idle ()
 	// unless we're dying, in which case we just keep idling.
 	while (true)
 	{
-		//ATTENTION!! setting Direction to 0 always
 		moveDir = Vector3.zero;
 		itemManager.ReleaseItem();
-		//motor.inputMoveDirection = Vector3.zero;
-		//ATTENTION!! might not want to wait here
 		yield WaitForSeconds(0.2);
 		
 		var tar = FindBestBigSnowball();//FindClosestEnemy();
@@ -94,6 +91,7 @@ function Idle ()
 function RollBall ()
 {
 	while (true) {
+		motor.inputAction = false;
 		//if target is a ball
 		if (target && target.CompareTag("BigSnowball")) {
 			if (Random.value > 0.95 && BallOfFriend(target.transform))
@@ -110,12 +108,12 @@ function RollBall ()
 			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
 				MoveTowardsPosition(groundBase.position);
 				if (ballReachedBase) {
-					motor.inputAction = false;
+					motor.inputAction = true;
 					ballReachedBase = false; //is set to true in BigSnowBall when it has reached the base and respawns
 					target = null;
+					return;
 				}
 			}
-			//motor.inputMoveDirection = Vector3.zero;
 			
 			if (Random.value > 0.9) {
 				motor.inputAction = false;
@@ -129,9 +127,6 @@ function RollBall ()
 				}
 			}
 		}
-//		else {
-//			moveDir = Vector3.zero;
-//		}
 		yield;
 	}
 }

@@ -110,7 +110,7 @@ function PickItem(player:GameObject) {
 
 function Respawn () {
 	if (pushingPlayer) { //tell the bot that his ball has reached the base
-			pushingPlayer.SendMessage("BallReachedBase", null, SendMessageOptions.DontRequireReceiver);
+			pushingPlayer.SendMessage("BallReachedBase", true, SendMessageOptions.DontRequireReceiver);
 	}
 	
 	Release ();
