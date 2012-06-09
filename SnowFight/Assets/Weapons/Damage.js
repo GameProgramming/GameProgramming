@@ -1,9 +1,27 @@
-var dmg : int = 5;
+var frontDamage : int;
+var behindDamage : int;
+var headDamage : int; 
+var dmg : int;
 
 private var team : Team; //team who shot and will get score increase
 
-function GetDamage () : int {
-	return dmg;
+function Start(){
+	dmg = gameObject.GetComponent("Projectile").dmg;
+	frontDamage = dmg;
+	behindDamage = dmg * 1.5;
+ 	headDamage = dmg * 3;
+}
+
+function GetFrontDamage () : int {
+	return frontDamage;
+}
+
+function GetBehindDamage() : int {
+	return behindDamage;
+}
+
+function GetHeadDamage() : int {
+	return headDamage;
 }
 
 function GetShootingTeam () : Team {

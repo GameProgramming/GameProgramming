@@ -1,18 +1,12 @@
 var teamNumber = 0;
 var tickets = 10;
 var teamName = "Team";
-private var color : Color;
+var color : Color = Color.gray;
 
 var playerSkin :Texture;
 
 function Start() {
-	if (teamNumber == 1) {
-		color = Color.blue;
-	}
-	if (teamNumber == 2) {
-		color = Color.red;
-	}
-
+	
 }
 
 function Update () {
@@ -26,9 +20,9 @@ function HasLost () {
 function GetSpawnPoints () :Transform[] {
 	var spawns :Transform[] = [];
 	
-	for (var b :Transform in transform) {
+	for (var b : Transform in transform) {
 		if (b.tag == "Base") {
-			for (var t :Transform in b.transform) {
+			for (var t : Transform in b.transform) {
 				if (t.tag == "PlayerSpawn") {
 					spawns += [t];
 				}

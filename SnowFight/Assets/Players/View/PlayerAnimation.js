@@ -25,7 +25,7 @@ function Start() {
 	anim["hit"].wrapMode = WrapMode.Once;
 	anim["hit"].blendMode = AnimationBlendMode.Additive;
 	
-	anim["die"].speed = 10;
+	anim["die"].speed = 20;
 	anim["die"].layer = 3;
 	anim["die"].wrapMode = WrapMode.ClampForever;
 	anim["die"].weight = 100;

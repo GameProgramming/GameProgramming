@@ -1,9 +1,11 @@
-var projectile : Rigidbody;
+private var projectile : Rigidbody;
+var bullet : Rigidbody;
+var rocket : Rigidbody;
 
 private var player : PlayerStatus;
 private var motor :CharacterMotorSF;
 
-private var weapon = "Snowball";
+
 
 var reloadProgress = 0;
 
@@ -13,15 +15,9 @@ var inputFire : boolean = false;
 function Start() {
 	player = transform.parent.GetComponent(PlayerStatus);
 	motor = transform.parent.GetComponent(CharacterMotorSF);
-	SetWeapon("Snowball");
 }
 
 function Update () {
-	if (Input.GetKeyDown (KeyCode.Alpha0))
-		SetWeapon("Snowrocket");  
-	if (Input.GetKeyDown (KeyCode.Alpha1))
-		SetWeapon("Snowball");  
-	
 	reloadProgress -= Time.deltaTime;
 }
 
@@ -29,22 +25,64 @@ function Fire () {
 	if(reloadProgress <= 0 && player.GetCurrentSnowballs() > 0){
 		player.SubtractSnowball();
 	    Spawnpoint = transform;
+	  	GetProjectile();
 	  	var clone : Rigidbody;	
 		clone = Instantiate(projectile, Spawnpoint.position, Spawnpoint.rotation);
 		
 		clone.velocity = clone.GetComponent("Projectile").speed * Spawnpoint.TransformDirection (Vector3.forward
 								+ new Vector3(0, 0.03+motor.rotationY*.015,0) );
-		if(clone.GetComponent("Damage")) {
-			clone.GetComponent("Damage").dmg = clone.GetComponent("Projectile").dmg;
-			clone.GetComponent("Damage").team = player.team;
-		}
+		//if(clone.GetComponent("Damage")) {
+			//clone.GetComponent("Damage").dmg = clone.GetComponent("Projectile").dmg;
+			//clone.GetComponent("Damage").team = player.team;
+		//}
 		
 		inputFire = false;
 		reloadProgress = clone.GetComponent("Projectile").reloadTime;
 	}
 }
 
-function SetWeapon (name :String) {
-	weapon = name;
-	projectile = AssetDatabase.LoadAssetAtPath("Assets/Weapons/" + weapon + ".prefab", typeof(Rigidbody));
+function GetProjectile(){
+	if(player.GetWeapon() == "Snowball")
+		projectile = bullet;
+	if(player.GetWeapon() == "Snowrocket")
+		projectile = rocket;
+	return projectile;
+}
+
+function OnGUI() {
+	
+	if (transform.parent.tag.Equals("Player")) {
+		var texture : Texture2D = new Texture2D(1, 1);
+		var style = new GUIStyle();
+		var totalWidth = Screen.width/4; 
+		var boxWidth;
+		var color;
+		var text;
+		var projectile = GetProjectile().GetComponent("Projectile");
+		var maxReload = projectile.reloadTime;
+		
+		var reloadPercent : float = parseFloat(reloadProgress) / parseFloat(maxReload);
+		
+	    if(player.GetCurrentSnowballs() <= 0){
+			boxWidth = (Screen.width/4);
+			color = new Color(1, 0, 0,0.5);
+			text = "RELOAD";
+		}else{
+			boxWidth = reloadPercent * (Screen.width/4);
+			color = new Color(reloadPercent, 1-reloadPercent, 0,0.5);
+			text = "Loading";
+		}
+		
+		var boxHeight = 20;
+		
+		
+		texture.SetPixel(0, 0, color);
+		texture.Apply();
+		style.normal.background = texture;
+		
+		
+		GUI.Box (Rect (Screen.width/1.4-1, 29, totalWidth+2, boxHeight+2), "");
+		GUI.Box (Rect (Screen.width/1.4, 30, boxWidth, boxHeight), text,style);
+		//GUI.Box (Rect (Screen.width/1.4 + (totalWidth-boxWidth), 10, boxWidth, boxHeight), "",style);
+	}
 }

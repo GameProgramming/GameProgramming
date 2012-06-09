@@ -18,6 +18,8 @@ private var collectionSnowTime : float;
 
 private var terrain :TerrainSnow;
 
+private var weapon = "Snowball";
+
 //InvokeRepeating("Regenerate",5,10);
 //var damageSound : AudioClip;
 
@@ -44,8 +46,15 @@ function Update () {
 		if (died && Time.time > killTime + respawnTimeout)
 			Respawn();
 	}
-	
-	
+	if(Input.GetKey ("q")){
+		if(weapon != "Snowball"){
+			  GameObject.Find("Weapon"+weapon).GetComponent("Weapon").ResetWeapon();
+			Debug.Log("reset weapon"+weapon);
+			weapon = "Snowball";
+			
+			
+		}
+	}
 }
 
 function Regenerate () {
@@ -55,13 +64,49 @@ function Regenerate () {
 	}
 }
 
-function OnCollisionEnter (collision : Collision) {
+function OnControllerColliderHit(hit : ControllerColliderHit){
+  var body : Rigidbody = hit.collider.attachedRigidbody;
+  
+  	if(body && body.tag.Equals("Weapon") && Input.GetKey ("e") && body.GetComponent("Weapon").weapon != weapon ){
+		weapon = body.transform.GetComponent("Weapon").weapon;
+		Debug.Log(body.tag);
+		var clone : Rigidbody;	
+		clone = Instantiate(body, body.position, body.rotation);
+		//clone.transform.parent = gameObject.transform;
+		//clone.rigidbody.freezeRotation = true;
+		clone.rigidbody.constraints = RigidbodyConstraints.FreezePositionX || RigidbodyConstraints.FreezePositionY || RigidbodyConstraints.FreezePositionZ;
+		Destroy (body);
+	}
+	
+}
 
+function OnCollisionEnter (collision : Collision) {
+	//Get all required positions.
+	var ballPosition = collision.transform.position;
+	var playerPosition = gameObject.transform.position;
+	var inversePosition = gameObject.transform.InverseTransformPoint(collision.transform.position);
 	if(collision.rigidbody && collision.rigidbody.tag.Equals("Projectile")){
-		var ball :Damage = collision.transform.GetComponent("Damage");
+		//Get the damage Object
+		var damageObject : Damage = collision.transform.GetComponent("Damage");
+		var damage = 0;
+		//If the ball hits the player in the head.
+		if (inversePosition.y > 0.9) {
+			damage = damageObject.GetHeadDamage();
+			//Debug.Log("Hit in the head.");
+			//Debug.Log(damage);
+		//He hits the player from behind.
+		} else if (inversePosition.z < -0.3) {
+			damage = damageObject.GetBehindDamage();
+			//Debug.Log("Hit from behind.");
+			//Debug.Log(damage);
+		} else {
+			damage = damageObject.GetFrontDamage();
+			//Debug.Log("Hit from side or front.");
+			//Debug.Log(damage);
+		}
 		
-		if (ball) {
-			hp -= ball.GetDamage();
+		if (damage > 0) {
+			hp -= damage;
 			hp = Mathf.Max(0, hp);
 		}
 		
@@ -69,7 +114,7 @@ function OnCollisionEnter (collision : Collision) {
 		gameObject.SendMessage ("ReleaseBall", SendMessageOptions.DontRequireReceiver);
 		
 		if (hp <= 0) {
-			Die(ball);
+			Die(damageObject);
 		}
 	}
 }
@@ -109,6 +154,10 @@ function CollectSnow() {
 		currentSnowballs += 1;
 		terrain.GrabSnow(transform.position);
 	}
+}
+
+function GetWeapon () : String {
+	return weapon;
 }
 
 function GetFullHp () : int {

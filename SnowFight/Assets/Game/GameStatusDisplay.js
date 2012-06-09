@@ -11,56 +11,87 @@ private var fade = 0.0;
 
 var distFromTop = 20;
 
+var styleTeam1 : GUIStyle;
+var styleTeam2 : GUIStyle;
+var neutralStyle : GUIStyle;
+var styleTeam1Tab : GUIStyle;
+var styleTeam2Tab : GUIStyle;
+var neutralStyleTab : GUIStyle;
+
 function Awake () {
 	status = GetComponent(GameStatus);
 	
 	if (skyBox && !RenderSettings.skybox) {
 		RenderSettings.skybox = skyBox;
 	}
+	
 }
 
 function OnGUI() {
 
+	//Set the colors.
+	for (var t : Team in status.teams) {
+		if (t.GetTeamNumber() == 1) {
+			styleTeam1.normal.textColor = t.GetColor();
+			styleTeam1Tab.normal.textColor = t.GetColor();
+		}
+		if (t.GetTeamNumber() == 2) {
+			styleTeam2.normal.textColor = t.GetColor();
+			styleTeam2Tab.normal.textColor = t.GetColor();
+		}
+	}
+	neutralStyle.normal.textColor = Color.white;
+	neutralStyleTab.normal.textColor = Color.white;
+	
 	if (skin)
 		GUI.skin = skin;
 	else
 		Debug.Log("StartMenuGUI: GUI Skin object missing!");
 
-	var j : int = 0;
-		
-	var scoreText : String = "";
-	for (var t :Team in status.teams) {
-		if (scoreText != "") {
-			scoreText += " : ";
+	//Get tickets of team.
+	var scoreTeam1 : String = "";
+	var scoreTeam2 : String = "";
+	for (var t : Team in status.teams) {
+		if (t.GetTeamNumber() == 1) {
+			scoreTeam1 = t.tickets.ToString();
+		} else if (t.GetTeamNumber() == 2) {
+			scoreTeam2 = t.tickets.ToString();
 		}
-		scoreText = scoreText + t.tickets.ToString();
 	}
-	GUI.Label (Rect (5, 0, 100, 35), scoreText, "winnerShadow");
-	GUI.Label (Rect (5, 0, 100, 35), scoreText);
 	
+	//Show the tickets in the upper left corner.
+	GUI.Label (Rect (20, 15, 35, 25), scoreTeam1, styleTeam1);
+	GUI.Label (Rect (55, 15, 20, 25), " : ", neutralStyle);
+	GUI.Label (Rect (77, 15, 35, 25), scoreTeam2, styleTeam2);
+	
+	//Show the points tab.
 	if (Time.time < fade) {
-		GUI.Box (Rect (10, 10, 220, 50+status.teams.length*20), "Team Frags");
+		GUI.Box (Rect (120, 15, 240, 110), "Team Frags");
 		var i : int = 0;
-		for (var t :Team in status.teams) {
-			var teamScore :String  = t.tickets.ToString();
-			GUI.Label (Rect (10, distFromTop + 20*i, 180, 25), "Team " + t.ToString() + ": ", "tickets");
-			GUI.Label (Rect (200, distFromTop + 20*i, 30, 25), teamScore, "tickets");
+		for (var t : Team in status.teams) {
+			GUI.Label (Rect (120, 45 + 30*i, 200, 30), "Team " + t.ToString() + " : ", neutralStyleTab);
+			if (t.GetTeamNumber() == 1) {
+				GUI.Label (Rect (320, 45 + 30*i, 30, 30), scoreTeam1, styleTeam1Tab);
+			}
+			if (t.GetTeamNumber() == 2) {
+				GUI.Label (Rect (320, 45 + 30*i, 30, 30), scoreTeam2, styleTeam2Tab);
+			}
 			i++;
 		}
 	}
 		
+	//Show the win message.
 	if (status.gameOver && Time.time > status.gameOverTime + 2) {
 		var winText : String;
 		winText = "Team "+ status.winner.ToString() + " wins!";
 		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
-		GUI.Box(Rect(0,0,Screen.width,Screen.height),"");
-		GUI.Label (Rect (Screen.width/2, Screen.height/2-98, 80, 25), winText, "winnerShadow");
-		GUI.Label (Rect (Screen.width/2, Screen.height/2-100, 80, 25), winText, "winner");
-			
-		GUI.Box(Rect(0,0,Screen.width,Screen.height),"");
-		
-		GUI.Label (Rect (Screen.width/2, Screen.height/2-73, 80, 35), scoreText, "winnerShadow");
-		GUI.Label (Rect (Screen.width/2, Screen.height/2-75, 80, 35), scoreText, "winner");
+		GUI.Box(Rect(0, 0, Screen.width, Screen.height), "");
+		if (status.winner.GetTeamNumber() == 1) {
+			GUI.Label (Rect (Screen.width/2 - 200, Screen.height/2-40, 350, 30), winText, styleTeam1);
+		}
+		if (status.winner.GetTeamNumber() == 2) {
+			GUI.Label (Rect (Screen.width/2 - 200, Screen.height/2-40, 350, 30), winText, styleTeam2);
+		}		
 	}
 }
 

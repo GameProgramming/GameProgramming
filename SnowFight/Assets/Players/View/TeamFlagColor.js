@@ -1,11 +1,5 @@
 private var color;
 function Start () {
-	if (transform.parent.GetComponent("Team").GetTeamNumber() == 1) {
-		color = Color.blue;
-	}
-	if (transform.parent.GetComponent("Team").GetTeamNumber() == 2) {
-		color = Color.red;
-	}
 }
 
 function Update () {
@@ -15,6 +9,10 @@ function Update () {
 
 function SetColor(newColor : Color) {
 	color = newColor;
+
+	var light : Light = transform.FindChild("Spotlight").GetComponent("Light");
+	light.color = newColor;
+
 }
 
 function GetColor () : Color {
