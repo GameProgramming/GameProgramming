@@ -17,10 +17,8 @@ private var target : GameObject;
 
 // Cache a reference to the motor
 private var motor : CharacterMotorSF;
-motor = GetComponent(CharacterMotorSF);
-
 private var pStatus : PlayerStatus;
-pStatus = GetComponent(PlayerStatus);
+private var itemManager : ItemManager;
 
 private var groundBase :Transform;
 
@@ -29,12 +27,13 @@ private var moveDir = Vector3.zero;
 
 private var ball : GameObject;
 @System.NonSerialized
-var ballReachedBase : boolean;
+var ballReachedBase : boolean = false;
 
 function Start ()
 {
 	yield WaitForSeconds(Random.value);
 	var game : GameStatus = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+	
 	groundBase = pStatus.team.GetBase();
 		
 	// Just attack for now
@@ -44,6 +43,12 @@ function Start ()
 //		// This is the perfect time for the player to attack us
 		yield Idle();
 //	}
+}
+
+function Awake () {
+	motor = GetComponent(CharacterMotorSF);
+	pStatus = GetComponent(PlayerStatus);
+	itemManager = GetComponent(ItemManager);
 }
 
 function Update () {
@@ -66,7 +71,7 @@ function Idle ()
 	{
 		//ATTENTION!! setting Direction to 0 always
 		moveDir = Vector3.zero;
-		motor.ReleaseBall();
+		itemManager.ReleaseItem();
 		//motor.inputMoveDirection = Vector3.zero;
 		//ATTENTION!! might not want to wait here
 		yield WaitForSeconds(0.2);
@@ -95,17 +100,17 @@ function RollBall ()
 				return;
 			
 			isAttacking = false;
-			ball = motor.GetBall();
+			ball = itemManager.GetItem();
 			//if we don't have a ball go get it
 			if (!ball) {
-				motor.inputPush = true; //try to get a hold of it
+				motor.inputAction = true; //try to get a hold of it
 				MoveTowardsPosition(target.transform.position);
 			}
 			//if we have a ball run to base
-			else if (groundBase) { //but make sure we have a base
+			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
 				MoveTowardsPosition(groundBase.position);
 				if (ballReachedBase) {
-					motor.inputPush = false;
+					motor.inputAction = false;
 					ballReachedBase = false; //is set to true in BigSnowBall when it has reached the base and respawns
 					target = null;
 				}
@@ -113,7 +118,7 @@ function RollBall ()
 			//motor.inputMoveDirection = Vector3.zero;
 			
 			if (Random.value > 0.9) {
-				motor.inputPush = false;
+				motor.inputAction = false;
 				tar = FindClosestEnemy();
 				var oldTar = target;
 				if (tar && (tar.transform.position - transform.position).magnitude < attackDistance) {
@@ -186,6 +191,9 @@ function FindBestBigSnowball () : GameObject {
 	        }
 	    }
     } 
+    
+    if (closest)
+    	BallReachedBase (false);
   
     return closest;    
 }
@@ -218,7 +226,7 @@ function BallOfFriend ( t : Transform ) : boolean {
 
 function Attack ()
 {
-	motor.inputPush = false;
+	motor.inputAction = false;
 	isAttacking = true;
 	
 	// First we wait for a bit so the player can prepare while we turn around
@@ -343,9 +351,13 @@ function FindClosestEnemy () : GameObject {
     }
     
     if (closest)
-    	motor.ReleaseBall();
+    	itemManager.ReleaseItem();
     	
     return closest;    
+}
+
+function BallReachedBase (reached : boolean) {
+	ballReachedBase = reached;
 }
 
 function OnDrawGizmosSelected ()
@@ -357,3 +369,4 @@ function OnDrawGizmosSelected ()
 }
 
 @script RequireComponent (CharacterMotorSF)
+@script RequireComponent (ItemManager)

@@ -2,12 +2,8 @@
 #pragma implicit
 #pragma downcast
 
+private var itemManager : ItemManager;
 private var snowballSpawn : BulletSpawn;
-private var pushedBall : GameObject;
-var maxBallDistance : float = 3.0;
-var ballCorrectionSpeed : float = 5.0;
-@System.NonSerialized
-var pushing : boolean = false;
 private var gameOver = false;
 private var gameOverTime = 0.0;
 
@@ -27,10 +23,8 @@ var inputMoveDirection : Vector3 = Vector3.zero;
 // for the jump button directly so this script can also be used by AIs.
 @System.NonSerialized
 var inputJump : boolean = false;
-
 @System.NonSerialized
-var inputPush : boolean = false;
-
+var inputAction : boolean = false;
 @System.NonSerialized
 var inputFire : boolean = false;
 var throwProgress = 0.0;
@@ -214,11 +208,10 @@ function Awake () {
 	movement.tempMaxPushSidewaysSpeed = movement.maxSidewaysSpeed;
 	
 	controller = GetComponent (CharacterController);
+	itemManager = GetComponent (ItemManager);
 	tr = transform;
 	
 	snowballSpawn = transform.Find("BulletSpawn").GetComponent(BulletSpawn);
-	pushing = false;
-	pushedBall = null;
 }
 
 private function UpdateFunction () {
@@ -226,18 +219,10 @@ private function UpdateFunction () {
 		return;
 	
 	snowballSpawn.inputFire = false;
-	if (inputPush || IsBallTooFarAway() || IsMovingBackward()) {  //if button released or ball too far away, release it
-		pushing = false;
-		ReleaseBall();
-	}
+	itemManager.inputAction = inputAction;
 		
-	if (canControl && !GetComponent(PlayerStatus).IsDead()) {
-	
-		if (inputPush && pushedBall) {
-			pushing = true;
-			pushedBall.SendMessage ("Roll", true);
-		}
-		else if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0 
+	if (canControl && !itemManager.GetItem() && !GetComponent(PlayerStatus).IsDead()) {
+		if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0 
 			&& GetComponent(PlayerStatus).GetCurrentSnowballs() > 0) {
 			throwProgress = 1;
 			gameObject.SendMessage ("OnLoadThrow", SendMessageOptions.DontRequireReceiver);
@@ -304,11 +289,9 @@ private function UpdateFunction () {
 	movingPlatform.hitPlatform = null;
 	groundNormal = Vector3.zero;
 	
-	//if we're pushing a ball, first push the ball
-	if (pushedBall) {
-		MoveBall(pushedBall, currentMovementOffset); //try to make sure the ball is infront of the player
-	}
-		//pushedBall.GetComponent(Rigidbody).AddForce (velocity * Time.deltaTime, ForceMode.VelocityChange); 
+	//make sure any children we have move with us
+	itemManager.PassOnMovementOffset (currentMovementOffset);
+
    	// Move our character!
 	movement.collisionFlags = controller.Move (currentMovementOffset);
 	
@@ -493,7 +476,7 @@ private function ApplyGravityAndJumping (velocity : Vector3) {
 		jumping.lastButtonDownTime = -100;
 	}
 	
-	if (!inputPush && inputJump && jumping.lastButtonDownTime < 0 && canControl)
+	if (inputJump && jumping.lastButtonDownTime < 0 && canControl)
 		jumping.lastButtonDownTime = Time.time;
 	
 	if (grounded)
@@ -569,11 +552,6 @@ function OnControllerColliderHit (hit : ControllerColliderHit) {
 		movingPlatform.hitPlatform = hit.collider.transform;
 		movement.hitPoint = hit.point;
 		movement.frameVelocity = Vector3.zero;
-	}
-
-	if (inputPush && !pushedBall && hit.collider.gameObject.CompareTag("BigSnowball") && hit.collider.transform.parent == null) {
-		pushedBall = hit.collider.gameObject;
-		pushedBall.transform.parent = transform;
 	}
 }
 
@@ -689,7 +667,7 @@ function SetVelocity (velocity : Vector3) {
 }
 
 function AdjustPlayerSpeed () {
-	if (pushing) {
+	if (itemManager.GetItem() && itemManager.GetItem().CompareTag("BigSnowball")) {
 		movement.maxForwardSpeed = movement.maxPushForwardSpeed;
 		movement.maxSidewaysSpeed = movement.maxPushSidewaysSpeed;
 	}
@@ -699,43 +677,8 @@ function AdjustPlayerSpeed () {
 	}
 }
 
-function MoveBall (pushedBall : GameObject, offset : Vector3) {
-	
-	//try to make sure the ball is infront of the player
-	var minDistance = controller.radius + pushedBall.gameObject.collider.bounds.size.x;
-	var desiredPos : Vector3 = tr.position + tr.forward * minDistance;
-	var correctionVector : Vector3 = pushedBall.transform.position - desiredPos;
-	correctionVector.Normalize();
-	correctionVector *= ballCorrectionSpeed;
-	correctionVector *= Time.deltaTime;
-	pushedBall.transform.Translate(offset -  correctionVector, Space.World);
-}
-
-function IsBallTooFarAway () : boolean {
-	var tooFar = false;
-	if (pushedBall) {
-		var maxAllowedDist = Mathf.Max(maxBallDistance, controller.radius + pushedBall.collider.bounds.size.x);
-		if (Vector3.Distance(transform.position, pushedBall.transform.position) > maxAllowedDist)
-			//Debug.Log("too far away!", this);
-		tooFar = (Vector3.Distance(transform.position, pushedBall.transform.position) > maxAllowedDist);
-	}
-	return tooFar;
-}
-
 function IsMovingBackward () : boolean {
 	return (Input.GetAxis("Vertical") < 0);
-}
-
-function ReleaseBall () {
-	if (pushedBall) {
-		pushedBall.SendMessage ("Roll", false);
-		pushedBall.transform.parent = null;
-		pushedBall = null;
-	}
-}
-
-function GetBall () {
-	return pushedBall;
 }
 
 function GameOver() {
@@ -757,3 +700,4 @@ function OnRespawn () {
 
 // Require a character controller to be attached to the same game object
 @script RequireComponent (CharacterController)
+@script RequireComponent (ItemManager)

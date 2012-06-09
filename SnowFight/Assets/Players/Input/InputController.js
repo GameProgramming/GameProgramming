@@ -29,7 +29,7 @@ function Update () {
 	
 	// Apply the direction to the CharacterMotor
 	motor.inputMoveDirection = transform.rotation * directionVector;
-	motor.inputPush = Input.GetButtonUp("Push");
+	motor.inputAction = Input.GetButtonUp("Action");
 	motor.inputJump = Input.GetButton("Jump");
 	
 	motor.inputFire = Input.GetButton("Fire1");
