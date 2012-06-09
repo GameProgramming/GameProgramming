@@ -571,7 +571,7 @@ function OnControllerColliderHit (hit : ControllerColliderHit) {
 		movement.frameVelocity = Vector3.zero;
 	}
 
-	if (inputPush && !pushedBall && hit.collider.gameObject.CompareTag("BigSnowball")) {
+	if (inputPush && !pushedBall && hit.collider.gameObject.CompareTag("BigSnowball") && hit.collider.transform.parent == null) {
 		pushedBall = hit.collider.gameObject;
 		pushedBall.transform.parent = transform;
 	}
