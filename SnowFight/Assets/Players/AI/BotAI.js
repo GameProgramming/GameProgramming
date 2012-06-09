@@ -119,7 +119,8 @@ function RollBall ()
 				if (tar && (tar.transform.position - transform.position).magnitude < attackDistance) {
 					target = tar;
 					Attack();
-					target = oldTar;
+					if(target.GetComponent(PlayerStatus).IsDead())
+						target = oldTar;
 				}
 			}
 		}
