@@ -25,8 +25,7 @@ function Update () {
 			progress += Time.deltaTime * 4;
 			if (!playerMotor.inputFire) {
 				if (progress > 2) {
-					bulletSpawn.GetComponent(BulletSpawn).Fire();
-					//gameObject.SendMessage ("OnThrow", SendMessageOptions.DontRequireReceiver);
+					bulletSpawn.GetComponent(BulletSpawn).Fire();;
 				}
 				progress = 0;
 			}

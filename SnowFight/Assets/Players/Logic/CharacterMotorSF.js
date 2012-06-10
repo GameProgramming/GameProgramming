@@ -223,6 +223,7 @@ private function UpdateFunction () {
 	
 	snowballSpawn.inputFire = false;
 	itemManager.inputAction = inputAction;
+	snowballSpawn.startYSpeed = 0.03+rotationY*.015;
 		
 	if (canControl && !itemManager.GetItem() && !GetComponent(PlayerStatus).IsDead()) {
 		if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0 

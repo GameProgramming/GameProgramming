@@ -1,7 +1,14 @@
 
 var mode = false;
+var playerCam :Transform;
+var camFollow :SmoothFollow;
 
 function Awake () {
+}
+
+function Start () {
+	camFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent(SmoothFollow);
+	ResetPlayerCam();
 }
 
 function Update () {
@@ -13,11 +20,19 @@ function Update () {
 
 function SetMode ( m :boolean ) {
 	mode = m;
-	var camFollow :SmoothFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent(SmoothFollow);
+	
 	if (m) {
 		camFollow.target = transform;
 	} else {
-		camFollow.target = gameObject.Find("CameraTarget").transform;
+		camFollow.target = playerCam;
 	}
-	
+}
+
+function SetPlayerCam ( c :Transform ) {
+	playerCam = c;
+	camFollow.target = playerCam;
+}
+
+function ResetPlayerCam () {
+	SetPlayerCam(gameObject.Find("CameraTarget").transform);
 }

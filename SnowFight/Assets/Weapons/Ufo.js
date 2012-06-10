@@ -18,13 +18,21 @@ function Start () {
 	terrain = Terrain.activeTerrain;
 }
 
+function Update () {
+	if (owner) {
+		if (playerMotor.inputFire && progress == 0 && bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0) {
+			bulletSpawn.GetComponent(BulletSpawn).Fire();
+		}
+	}
+}
+
 function FixedUpdate () {
-	var terrH :float = terrain.SampleHeight(transform.position) + 3.0 + 0.5 * Mathf.Sin(Time.time*2);
+	var terrH :float = terrain.SampleHeight(transform.position) + 2.0 + 0.5 * Mathf.Sin(Time.time*2);
 	if (owner) {
 		velo += Time.deltaTime * playerMotor.inputMoveDirection;
 		terrH += 10.0;
 	}
-	velo.y = 0.1*(terrH - transform.position.y);
+	velo.y = 0.03*(terrH - transform.position.y);
 	velo *= 0.95;
 	if (owner) {
 		owner.transform.position += velo;
@@ -43,6 +51,8 @@ function Release () {
 	transform.parent = null;
 	//collider.enabled = true;
 	playerMotor.SetFloating(false);
+	GameObject.FindGameObjectWithTag("OverviewCam")
+		.GetComponent(MapOverview).ResetPlayerCam();
 }
 
 function PickItem(player :GameObject) {
@@ -56,4 +66,7 @@ function PickItem(player :GameObject) {
 	transform.localRotation = Quaternion.identity;
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer (player.transform);
 	playerMotor.SetFloating(true);
+	
+	GameObject.FindGameObjectWithTag("OverviewCam")
+		.GetComponent(MapOverview).SetPlayerCam(transform.Find("UfoCam"));
 }

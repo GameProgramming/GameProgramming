@@ -90,9 +90,9 @@ function Update () {
 		anim["jumping"].speed = 10;
 	}
 	
-	if (throwPreview && throwPreview.IsActivated()) {
-		throwPreview.startYSpeed = 0.03+motor.rotationY*.015;
-	}
+//	if (throwPreview && throwPreview.IsActivated()) {
+//		throwPreview.startYSpeed = 0.03+motor.rotationY*.015;
+//	}
 	
 	if (motor.throwProgress == 0) {
 		anim.Stop("throw1");

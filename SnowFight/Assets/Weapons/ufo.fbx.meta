@@ -3,6 +3,7 @@ guid: 4ca297025a78c0e40aaa176186fe94fc
 ModelImporter:
   fileIDToRecycleName:
     4300000: Sphere04
+    4300002: ufo
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -33,9 +34,9 @@ ModelImporter:
     secondaryUVPackMargin: 4
   tangentSpace:
     normalSmoothAngle: 60
-    splitTangentsAcrossUV: 1
+    splitTangentsAcrossUV: 0
     normalImportMode: 0
-    tangentImportMode: 1
+    tangentImportMode: 0
   textMetaNamesToFileIDs:
     //RootNode:
       data:

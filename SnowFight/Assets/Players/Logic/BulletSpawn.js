@@ -6,11 +6,16 @@ private var motor :CharacterMotorSF;
 
 var reloadProgress = 0;
 
+var startYSpeed :float = 0.0;
+
 @System.NonSerialized
 var inputFire : boolean = false;
 
+var snowCosts :int = 1;
+
 function Start() {
 	ConnectToPlayer(transform.parent);
+	startYSpeed = 0.0;
 }
 
 function ConnectToPlayer (t :Transform) {
@@ -24,14 +29,16 @@ function Update () {
 
 function Fire () {
 	if(reloadProgress <= 0 && player.GetCurrentSnowballs() > 0){
-		player.SubtractSnowball();
+		if (snowCosts > 0) {
+			player.SubtractSnowball();
+		}
 	    Spawnpoint = transform;
 	  	projectile = GetProjectile();
 	  	var clone : Rigidbody;	
 		clone = Instantiate(projectile, Spawnpoint.position, Spawnpoint.rotation);
 		
 		clone.velocity = clone.GetComponent("Projectile").speed * Spawnpoint.TransformDirection (Vector3.forward
-								+ new Vector3(0, 0.03+motor.rotationY*.015,0) );
+								+ new Vector3(0, startYSpeed, 0) );
 		//if(clone.GetComponent("Damage")) {
 			//clone.GetComponent("Damage").dmg = clone.GetComponent("Projectile").dmg;
 			//clone.GetComponent("Damage").team = player.team;
