@@ -1,6 +1,5 @@
 private var projectile : Rigidbody;
 var bullet : Rigidbody;
-var rocket : Rigidbody;
 
 private var player : PlayerStatus;
 private var motor :CharacterMotorSF;
@@ -11,8 +10,12 @@ var reloadProgress = 0;
 var inputFire : boolean = false;
 
 function Start() {
-	player = transform.parent.GetComponent(PlayerStatus);
-	motor = transform.parent.GetComponent(CharacterMotorSF);
+	ConnectToPlayer(transform.parent);
+}
+
+function ConnectToPlayer (t :Transform) {
+	player = t.GetComponent(PlayerStatus);
+	motor = t.GetComponent(CharacterMotorSF);
 }
 
 function Update () {
