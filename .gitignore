@@ -11,6 +11,7 @@ Assembly-*
 #WINDOWS
 # Windows image file caches
 Thumbs.db 
+WindowsLockFile
 
 # Folder config file
 Desktop.ini

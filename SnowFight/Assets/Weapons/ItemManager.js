@@ -33,12 +33,19 @@ function Update () {
 
 	else if (inputAction && candidateItem && !CandidateTooFarAway() && motor.IsGrounded()) {
 		item = candidateItem;
+		if (item.layer != LayerMask.NameToLayer("Item")
+			&& item.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
+			item = item.transform.parent.gameObject;
+		}
 		item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 	}
 }
 
 function OnControllerColliderHit (hit : ControllerColliderHit) {
 	if (hit.gameObject.layer == LayerMask.NameToLayer("Item")) {
+		candidateItem = hit.gameObject;
+	} else if (hit.transform.parent
+		&& hit.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
 		candidateItem = hit.gameObject;
 	}
 }
@@ -52,11 +59,13 @@ function PassOnMovementOffset (offset : Vector3) {
 function ReleaseItem () {
 	if(item) {
 		item = null;
+		candidateItem = null;
 	}
 }
 
 function CandidateTooFarAway() {
-	var totalDistance = GetComponent(CharacterController).radius + candidateItem.collider.bounds.size.x + maxCandidateDistance;
+	var totalDistance = GetComponent(CharacterController).radius
+			+ candidateItem.collider.bounds.size.x + maxCandidateDistance;
 	if (Vector3.Distance(candidateItem.transform.position, transform.position) > totalDistance) {
 		candidateItem = null;
 		item = null;
