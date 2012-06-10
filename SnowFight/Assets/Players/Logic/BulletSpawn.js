@@ -5,8 +5,6 @@ var rocket : Rigidbody;
 private var player : PlayerStatus;
 private var motor :CharacterMotorSF;
 
-
-
 var reloadProgress = 0;
 
 @System.NonSerialized
@@ -25,7 +23,7 @@ function Fire () {
 	if(reloadProgress <= 0 && player.GetCurrentSnowballs() > 0){
 		player.SubtractSnowball();
 	    Spawnpoint = transform;
-	  	GetProjectile();
+	  	projectile = GetProjectile();
 	  	var clone : Rigidbody;	
 		clone = Instantiate(projectile, Spawnpoint.position, Spawnpoint.rotation);
 		
@@ -42,11 +40,7 @@ function Fire () {
 }
 
 function GetProjectile(){
-	if(player.GetWeapon() == "Snowball")
-		projectile = bullet;
-	if(player.GetWeapon() == "Snowrocket")
-		projectile = rocket;
-	return projectile;
+	return bullet;
 }
 
 function OnGUI() {
