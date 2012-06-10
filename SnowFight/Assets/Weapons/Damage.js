@@ -27,3 +27,12 @@ function GetHeadDamage() : int {
 function GetShootingTeam () : Team {
 	return team;
 }
+
+
+function GetShooter () : GameObject {
+	var parent = transform.parent;
+	if (parent != null)
+		return parent.gameObject;
+	else
+		return null;
+}

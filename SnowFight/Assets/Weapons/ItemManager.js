@@ -4,6 +4,8 @@ private var pStatus : PlayerStatus;
 
 @System.NonSerialized
 var inputAction : boolean = false;
+@System.NonSerialized
+var inputAltFire : boolean = false;
 
 private var item : GameObject;
 private var candidateItem : GameObject;
@@ -17,6 +19,12 @@ function Start () {
 }
 
 function Update () {
+	if (item && inputAltFire) {//do  not take  a leap into the water
+		//destroy
+		Destroy(item.gameObject);
+	
+	}
+	
 	//player releases action button or dies
 	if (item && (inputAction || pStatus.IsDead())) {
 		item.SendMessage("Release", null, SendMessageOptions.DontRequireReceiver);

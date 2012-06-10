@@ -6,6 +6,7 @@ var numBigSnowBalls = 3;
 var bigSnowBallPrefab : GameObject;
 var ballSpawnPoints : GameObject[];
 
+@System.NonSerialized 
 var winner :Team;
 var gameOver : boolean;
 var gameOverTime = 0.0;

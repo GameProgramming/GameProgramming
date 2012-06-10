@@ -2,6 +2,7 @@
 var respawnTimeout = 2.0;
 var maxBallDistance : float = 3.0;
 var ballCorrectionSpeed : float = 5.0;
+private var groundNormal : Vector3 = Vector3.zero;
 
 private var spawnPoints : GameObject[]; 
 private var respawning : boolean;
@@ -16,6 +17,8 @@ private var perimeter : float;
 var ballTurnSpeed = 200;
 
 private var pushingPlayer : GameObject;
+private var isGrounded : boolean;
+var fallSpeed : float = 20;
 
 function Start () {
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
@@ -62,6 +65,18 @@ function LateUpdate () {
 	lastPosition = transform.position;
 }
 
+function FixedUpdate () {
+	//ApplyGravity
+	if (Physics.Raycast (transform.position, -Vector3.up, gameObject.collider.bounds.size.x*0.6)) {
+        isGrounded = true;
+    }
+    else { //we're not grounded, move us down a bit
+    	isGrounded = false; 
+    	var gravityVector = Vector3.down * fallSpeed * Time.deltaTime;
+    	transform.Translate(gravityVector, Space.World);	
+    }
+}
+
 //ATTENTION!! newwwwwww
 function Move (offset : Vector3) {
 	if (pushingPlayer) {
@@ -72,6 +87,8 @@ function Move (offset : Vector3) {
 		var desiredPos : Vector3 = playerTransform.position + playerTransform.forward * minDistance;
 		var correctionVector : Vector3 = transform.position - desiredPos;
 		correctionVector.Normalize();
+		correctionVector.y = 0.0;
+		offset.y = 0;
 		correctionVector *= ballCorrectionSpeed;
 		correctionVector *= Time.deltaTime;
 		transform.Translate(offset -  correctionVector, Space.World);		
@@ -85,9 +102,13 @@ function IsBallTooFarAway () : boolean {
 		var playerController = pushingPlayer.GetComponent(CharacterController);
 		var playerTransform = pushingPlayer.GetComponent(Transform);
 		var maxAllowedDist = Mathf.Max(maxBallDistance, playerController.radius + gameObject.collider.bounds.size.x);
-		tooFar = (Vector3.Distance(transform.position, playerController.transform.position) > maxAllowedDist);
+		tooFar = (Vector3.Distance(transform.position , playerController.transform.position) > maxAllowedDist);
 	}
 	return tooFar;
+}
+
+private function IsGrounded () {
+	return isGrounded;
 }
 
 

@@ -27,6 +27,8 @@ var inputJump : boolean = false;
 var inputAction : boolean = false;
 @System.NonSerialized
 var inputFire : boolean = false;
+@System.NonSerialized
+var inputAltFire : boolean = false;
 var throwProgress = 0.0;
 
 var rotationY = 0.0;
@@ -220,6 +222,7 @@ private function UpdateFunction () {
 	
 	snowballSpawn.inputFire = false;
 	itemManager.inputAction = inputAction;
+	itemManager.inputAltFire = inputAltFire;
 		
 	if (canControl && !itemManager.GetItem() && !GetComponent(PlayerStatus).IsDead()) {
 		if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0 

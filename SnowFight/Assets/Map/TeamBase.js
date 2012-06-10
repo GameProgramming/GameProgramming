@@ -80,7 +80,7 @@ function OnTriggerStay(other : Collider) {
 		if (enterTime > 2.0 && other.GetComponent(BigSnowBall)) {
 			// TODO:
 			// ... spezialwaffe erzeugen oder so
-			Debug.Log("Ball kam bei Basis von "+team.ToString()+" an.");
+//			Debug.Log("Ball kam bei Basis von "+team.ToString()+" an.");
 			other.GetComponent(BigSnowBall).Respawn();
 			enterTime = 0.0;
 		}

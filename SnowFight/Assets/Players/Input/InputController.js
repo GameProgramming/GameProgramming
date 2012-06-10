@@ -33,6 +33,7 @@ function Update () {
 	motor.inputJump = Input.GetButton("Jump");
 	
 	motor.inputFire = Input.GetButton("Fire1");
+	motor.inputAltFire = Input.GetButton("Fire2");
 	
 	motor.Rotate(Input.GetAxis("Mouse X") * 3, Input.GetAxis("Mouse Y") * 2);
 }
