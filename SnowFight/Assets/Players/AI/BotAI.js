@@ -17,30 +17,45 @@ private var target : GameObject;
 
 // Cache a reference to the motor
 private var motor : CharacterMotorSF;
-motor = GetComponent(CharacterMotorSF);
-
 private var pStatus : PlayerStatus;
-pStatus = GetComponent(PlayerStatus);
+private var itemManager : ItemManager;
 
 private var groundBase :Transform;
 
 private var strafing = 0.0;
+private var moveDir = Vector3.zero;
+
+private var ball : GameObject;
+@System.NonSerialized
+var ballReachedBase : boolean = false;
 
 function Start ()
 {
 	yield WaitForSeconds(Random.value);
 	var game : GameStatus = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+	
 	groundBase = pStatus.team.GetBase();
 		
 	// Just attack for now
-	while (true)	
-	{
-		// Don't do anything when idle. And wait for player to be in range!
-		// This is the perfect time for the player to attack us
+//	while (true)	
+//	{
+//		// Don't do anything when idle. And wait for player to be in range!
+//		// This is the perfect time for the player to attack us
 		yield Idle();
-	}
+//	}
 }
 
+function Awake () {
+	motor = GetComponent(CharacterMotorSF);
+	pStatus = GetComponent(PlayerStatus);
+	itemManager = GetComponent(ItemManager);
+}
+
+function Update () {
+	//if (target && target.CompareTag("BigSnowball"))
+		motor.inputMoveDirection = moveDir;
+	
+}
 
 function Idle ()
 {
@@ -54,14 +69,16 @@ function Idle ()
 	// unless we're dying, in which case we just keep idling.
 	while (true)
 	{
-		motor.inputMoveDirection = Vector3.zero;
+		moveDir = Vector3.zero;
+		itemManager.ReleaseItem();
 		yield WaitForSeconds(0.2);
 		
 		var tar = FindBestBigSnowball();//FindClosestEnemy();
 		if (tar != null) {
 			target = tar;
 			yield RollBall();
-		} else {
+		}
+		else {
 			tar = FindClosestEnemy();
 			if (tar != null) {
 				target = tar;
@@ -70,6 +87,49 @@ function Idle ()
 		}
 	}
 } 
+
+function RollBall ()
+{
+	while (true) {
+		motor.inputAction = false;
+		//if target is a ball
+		if (target && target.CompareTag("BigSnowball")) {
+			if (Random.value > 0.95 && BallOfFriend(target.transform))
+				return;
+			
+			isAttacking = false;
+			ball = itemManager.GetItem();
+			//if we don't have a ball go get it
+			if (!ball) {
+				motor.inputAction = true; //try to get a hold of it
+				MoveTowardsPosition(target.transform.position);
+			}
+			//if we have a ball run to base
+			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
+				MoveTowardsPosition(groundBase.position);
+				if (ballReachedBase) {
+					motor.inputAction = true;
+					ballReachedBase = false; //is set to true in BigSnowBall when it has reached the base and respawns
+					target = null;
+					return;
+				}
+			}
+			
+			if (Random.value > 0.9) {
+				motor.inputAction = false;
+				tar = FindClosestEnemy();
+				var oldTar = target;
+				if (tar && (tar.transform.position - transform.position).magnitude < attackDistance) {
+					target = tar;
+					Attack();
+					if(target.GetComponent(PlayerStatus).IsDead())
+						target = oldTar;
+				}
+			}
+		}
+		yield;
+	}
+}
 
 function RotateTowardsPosition (targetPos : Vector3, rotateSpeed : float) : float
 {
@@ -85,98 +145,83 @@ function RotateTowardsPosition (targetPos : Vector3, rotateSpeed : float) : floa
 	return angle;
 }
 
-function RollBall ()
-{
-	var angle : float;
-	angle = 180.0;
-	var direction : Vector3;
+function MoveTowardsPosition (position : Vector3) {
+	var direction = position - transform.position;
+	var dist = (direction).sqrMagnitude;
 	
-	while (true) {
-		//TODO: HIER ABBRECHEN, FALLS DIE KUGEL BEREITS AM ZIEL IST!!
-		var baseDir : Vector3 = (groundBase.transform.position - target.transform.position).normalized;
-		var movePos : Vector3 = target.transform.position - 2*baseDir;
-		var pos = transform.position;
-		var dist = (pos - movePos).sqrMagnitude;
-		motor.inputPush = false;
-		
-		if (Random.value > 0.95 && BallOfFriend(target.transform))
-			return;
-		
-		if (dist > 0.1) {
-			// needs to approach...
-			angle = Mathf.Abs(RotateTowardsPosition(movePos, rotateSpeed));
-			if (Mathf.Abs(angle) > 2)
-			{
-				move = Mathf.Clamp01((90 - angle) / 90);
-				// depending on the angle, start moving
-				direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
-				motor.inputMoveDirection = Vector3.zero;
-			} else {
-				// Just move forward at constant speed
-				direction = transform.TransformDirection(Vector3.forward * attackSpeed);
-				motor.inputMoveDirection = direction;
-			}
-			if (dist < 20) {
-				var off : Vector3 = (pos - movePos).normalized;
-				if ((off - baseDir).sqrMagnitude < 0.3) {
-					motor.inputJump = true;
-				}
-			}
-			if (Random.value > 0.9) {
-				var tar = FindClosestEnemy();
-				var oldTar = target;
-				if (tar != null && (tar.transform.position - pos).magnitude < attackDistance) {
-					target = tar;
-					yield Attack();
-					target = oldTar;
-				}
-			}
-		} else {
-			// needs to push!
-			angle = Mathf.Abs(RotateTowardsPosition(target.transform.position, rotateSpeed));
-			if (Mathf.Abs(angle) > 2)
-			{
-				move = Mathf.Clamp01((90 - angle) / 90);
-				
-				// depending on the angle, start moving
-				motor.inputPush = true;
-				direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
-				motor.inputMoveDirection = Vector3.zero;
-			} else {
-				//motor.inputFire = true;
-				motor.inputPush = true;
-				motor.inputMoveDirection = Vector3.zero;
-			}
-			
-			if (Random.value > 0.9) {
-				tar = FindClosestEnemy();
-				oldTar = target;
-				if (tar != null && (tar.transform.position - pos).magnitude < attackDistance / 2) {
-					target = tar;
-					yield Attack();
-					target = oldTar;
-				}
-			}
-			
-		}	
-		// We are not actually moving forward.
-		// This probably means we ran into a wall or something. Stop attacking the player.
-//		if (motor.movement.velocity.magnitude < attackSpeed * 0.3)
-//			break;
-		
-		// yield for one frame
-		yield;
+	var angle = Mathf.Abs(RotateTowardsPosition(position, rotateSpeed));
+	if (Mathf.Abs(angle) > 2) //rotate towards ball
+	{
+		move = Mathf.Clamp01((90 - angle) / 90);
+		// depending on the angle, start moving
+		direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
+		//direction = Vector3.zero;
+	} else {
+		// Just move forward at constant speed
+		direction = transform.TransformDirection(Vector3.forward * attackSpeed);
 	}
-	
-
-	isAttacking = false;
-	motor.inputMoveDirection = Vector3.zero;
-	
+	moveDir = direction;
 }
 
+function FindBestBigSnowball () : GameObject {
+    // Find all game objects with tag Enemy
+    var gos : GameObject[];
+    gos = GameObject.FindGameObjectsWithTag("BigSnowball"); 
+    
+    var closest : GameObject;
+    var distance = Mathf.Infinity; 
+    var position = transform.position; 
+    var diff;
+	var curDistance;
+	        
+    // Iterate through them and find the closest one
+    for (var go : GameObject in gos)  { 
+    	diff1 = (go.transform.position - position);
+    	diff2 = (go.transform.position - groundBase.position);
+	    curDistance = diff1.sqrMagnitude + diff2.sqrMagnitude; 
+	    if (curDistance < distance) {
+	    	if (!BallOfFriend(go.transform)) { 
+		        closest = go; 
+		        distance = curDistance; 
+	        }
+	    }
+    } 
+    
+    if (closest)
+    	BallReachedBase (false);
+  
+    return closest;    
+}
+
+function BallOfFriend ( t : Transform ) : boolean {
+    // Find all game objects with tag Enemy
+    var gos : GameObject[];
+    gos = GameObject.FindGameObjectsWithTag("Bot");  
+    var player = GameObject.FindGameObjectWithTag("Player");
+    gos = gos + [player];
+
+    var position = t.position; 
+    var diff;
+	var curDistance;
+	        
+    // Iterate through them and find the closest one
+    for (var go : GameObject in gos)  {
+    	var status = go.GetComponent(PlayerStatus);
+    	//get closest bot
+    	if (go != gameObject && status != null && status.team.Friendly(pStatus.team)) {
+	        diff = (go.transform.position - position);
+	        curDistance = diff.sqrMagnitude; 
+	        if (curDistance < 5) { 
+	            return true;
+	        } 
+        }
+    }
+    return false;
+}
 
 function Attack ()
 {
+	motor.inputAction = false;
 	isAttacking = true;
 	
 	// First we wait for a bit so the player can prepare while we turn around
@@ -207,7 +252,8 @@ function Attack ()
 			
 			// depending on the angle, start moving
 			direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
-			motor.inputMoveDirection = Vector3.zero;
+			//motor.inputMoveDirection = Vector3.zero;
+			moveDir = Vector3.zero;
 		} else {
 			// The angle of our forward direction and the player position is larger than 100 degrees
 			// That means he is out of sight
@@ -239,7 +285,8 @@ function Attack ()
 			}
 			if (lostSight) direction = Vector3.zero;
 			
-			motor.inputMoveDirection = direction;
+//			motor.inputMoveDirection = direction;
+			moveDir = direction;
 		}
 		// We are not actually moving forward.
 		// This probably means we ran into a wall or something. Stop attacking the player.
@@ -252,21 +299,14 @@ function Attack ()
 	
 
 	isAttacking = false;
-	motor.inputMoveDirection = Vector3.zero;
+	//motor.inputMoveDirection = Vector3.zero;
+	moveDir = Vector3.zero;
 	
 }
 
 function ApplyDamage ()
 {
 	
-}
-
-function OnDrawGizmosSelected ()
-{
-	Gizmos.color = Color.yellow;
-	Gizmos.DrawWireSphere (transform.position, punchRadius);
-	Gizmos.color = Color.red;
-	Gizmos.DrawWireSphere (transform.position, attackDistance);
 }
 
 // Find the name of the closest enemy within distance
@@ -304,62 +344,24 @@ function FindClosestEnemy () : GameObject {
             distance = curDistance; 
         } 
     }
-    return closest;    
-}
-
-
-function FindBestBigSnowball () : GameObject {
-    // Find all game objects with tag Enemy
-    var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("BigSnowball"); 
     
-    var closest : GameObject;
-    var distance = Mathf.Infinity; 
-    var position = transform.position; 
-    var diff;
-	var curDistance;
-	        
-    // Iterate through them and find the closest one
-    for (var go : GameObject in gos)  { 
-    	diff1 = (go.transform.position - position);
-    	diff2 = (go.transform.position - groundBase.position);
-	    curDistance = diff1.sqrMagnitude + diff2.sqrMagnitude; 
-	    if (curDistance < distance) {
-	    	if (!BallOfFriend(go.transform)) { 
-		        closest = go; 
-		        distance = curDistance; 
-	        }
-	    }
-    } 
-  
+    if (closest)
+    	itemManager.ReleaseItem();
+    	
     return closest;    
 }
 
-function BallOfFriend ( t : Transform ) : boolean {
-    // Find all game objects with tag Enemy
-    var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("Bot");  
-    var player = GameObject.FindGameObjectWithTag("Player");
-    gos = gos + [player];
-
-    var position = t.position; 
-    var diff;
-	var curDistance;
-	        
-    // Iterate through them and find the closest one
-    for (var go : GameObject in gos)  {
-    	var status = go.GetComponent(PlayerStatus);
-    	//get closest bot
-    	if (go != gameObject && status != null && status.team.Friendly(pStatus.team)) {
-	        diff = (go.transform.position - position);
-	        curDistance = diff.sqrMagnitude; 
-	        if (curDistance < 5) { 
-	            return true;
-	        } 
-        }
-    }
-    return false;
+function BallReachedBase (reached : boolean) {
+	ballReachedBase = reached;
 }
 
+function OnDrawGizmosSelected ()
+{
+	Gizmos.color = Color.yellow;
+	Gizmos.DrawWireSphere (transform.position, punchRadius);
+	Gizmos.color = Color.red;
+	Gizmos.DrawWireSphere (transform.position, attackDistance);
+}
 
 @script RequireComponent (CharacterMotorSF)
+@script RequireComponent (ItemManager)
