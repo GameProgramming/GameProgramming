@@ -23,7 +23,7 @@ function Update () {
 		ReleaseItem();
 	}
 
-	else if (inputAction && candidateItem && !CandidateTooFarAway()) {//TODO: also check if nobody else has the ball etc.
+	else if (inputAction && candidateItem && !CandidateTooFarAway() && motor.IsGrounded()) {
 		item = candidateItem;
 		item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 	}
@@ -58,6 +58,10 @@ function CandidateTooFarAway() {
 		return false;
 }
 
+//Check if another player might already hold the item
+function ItemNotHeld(it : GameObject) : boolean {
+	return (it.transform.parent == null);
+}
 
 function GetItem () {
 	return item;
