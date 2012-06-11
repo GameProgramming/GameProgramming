@@ -26,8 +26,8 @@ private var strafing = 0.0;
 private var moveDir = Vector3.zero;
 
 private var ball : GameObject;
-@System.NonSerialized
-var ballReachedBase : boolean = false;
+//@System.NonSerialized
+//var ballReachedBase : boolean = false;
 
 function Start ()
 {
@@ -92,6 +92,10 @@ function RollBall ()
 {
 	while (true) {
 		motor.inputAction = false;
+		
+		if (!target)
+			return;
+			
 		//if target is a ball
 		if (target && target.CompareTag("BigSnowball")) {
 			if (Random.value > 0.95 && BallOfFriend(target.transform))
@@ -107,12 +111,12 @@ function RollBall ()
 			//if we have a ball run to base
 			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
 				MoveTowardsPosition(groundBase.position);
-				if (ballReachedBase) {
-					motor.inputAction = true;
-					ballReachedBase = false; //is set to true in BigSnowBall when it has reached the base and respawns
-					target = null;
-					return;
-				}
+//				if (ballReachedBase) {
+//					motor.inputAction = true;
+//					ballReachedBase = false; //is set to true in BigSnowBall when it has reached the base and respawns
+//					target = null;
+//					return;
+//				}
 			}
 			
 			if (Random.value > 0.9) {
@@ -122,7 +126,7 @@ function RollBall ()
 				if (tar && (tar.transform.position - transform.position).magnitude < attackDistance) {
 					target = tar;
 					Attack();
-					if(target.GetComponent(PlayerStatus).IsDead())
+					if(!target || target.GetComponent(PlayerStatus).IsDead())
 						target = oldTar;
 				}
 			}
@@ -187,8 +191,8 @@ function FindBestBigSnowball () : GameObject {
 	    }
     } 
     
-    if (closest)
-    	BallReachedBase (false);
+//    if (closest)
+//    	BallReachedBase (false);
   
     return closest;    
 }
@@ -222,6 +226,7 @@ function BallOfFriend ( t : Transform ) : boolean {
 function Attack ()
 {
 	motor.inputAction = false;
+			
 	isAttacking = true;
 	
 	// First we wait for a bit so the player can prepare while we turn around
@@ -240,8 +245,10 @@ function Attack ()
 	var lostSight = false;
 	
 	while (true) {
+		if (!target)
+			return;
 	
-		if (targetPlayer.IsDead()) return;
+		//if (targetPlayer.IsDead()) return;
 	
 		angle = Mathf.Abs(RotateTowardsPosition(target.transform.position, rotateSpeed));
 		if (Mathf.Abs(angle) > 5)
@@ -287,6 +294,20 @@ function Attack ()
 			
 //			motor.inputMoveDirection = direction;
 			moveDir = direction;
+		}
+		
+		if (Random.value > 0.99) {
+			target = null;
+			return;
+//			motor.inputAction = false;
+//			tar = FindClosestEnemy();
+//			var oldTar = target;
+//			if (tar && (tar.transform.position - transform.position).magnitude < attackDistance) {
+//				target = tar;
+//				Attack();
+//				if(target.GetComponent(PlayerStatus).IsDead())
+//					target = oldTar;
+//			}
 		}
 		// We are not actually moving forward.
 		// This probably means we ran into a wall or something. Stop attacking the player.
@@ -351,8 +372,12 @@ function FindClosestEnemy () : GameObject {
     return closest;    
 }
 
-function BallReachedBase (reached : boolean) {
-	ballReachedBase = reached;
+//function BallReachedBase (reached : boolean) {
+//	ballReachedBase = reached;
+//}
+
+function RemoveTarget () {
+	target = null;
 }
 
 function OnDrawGizmosSelected ()

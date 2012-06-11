@@ -59,18 +59,20 @@ function Start() {
 
 function Update () {
 	if (goRed && Time.time > redTime + redDuration) {
-		//get renderers for showing/hiding or coloring player and bots
-		var meshRenderers = GetComponentsInChildren (MeshRenderer);
-		var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
+		//get the body first
+		var body = transform.Find("Model");
+		//then get renderers for showing/hiding or coloring player and bots
+		var meshRenderers = body.GetComponentsInChildren (MeshRenderer);
+		var skinnedRenderers = body.GetComponentsInChildren (SkinnedMeshRenderer);
 	
 		//color damaged player back to white
 		for (var rend : MeshRenderer in meshRenderers) {
-			if(!rend.CompareTag("BigSnowball"))
+			//if(!rend.CompareTag("BigSnowball"))
 				rend.material.color = Color.white;
 		}
 
 		for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-			if(!rend.CompareTag("BigSnowball"))
+			//if(!rend.CompareTag("BigSnowball"))
 				rend.material.color = Color.white;
 		}
 		goRed = false;
@@ -156,17 +158,19 @@ function OnHit () {
 	anim.CrossFade("hit");
 	
 	//color player red when hit
+	var body = transform.Find("Model");
+	var meshRenderers = body.GetComponentsInChildren (MeshRenderer);
+	var skinnedRenderers = body.GetComponentsInChildren (SkinnedMeshRenderer);
+		
 	goRed = true;
 	redTime = Time.time;
-	var meshRenderers = GetComponentsInChildren (MeshRenderer);
 	for (var rend : MeshRenderer in meshRenderers) {
-		if(!rend.CompareTag("BigSnowball")) //avoid the ball from turning red
+	//	if(!rend.CompareTag("BigSnowball")) //avoid the ball from turning red
 			rend.material.color = new Color(0.9,0.2,0.2,1);
 	}
 	
-	var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
 	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-		if(!rend.CompareTag("BigSnowball")) //avoid the ball from turning red
+	//	if(!rend.CompareTag("BigSnowball")) //avoid the ball from turning red
 			rend.material.color = new Color(0.9,0.2,0.2,1);
 	}
 }

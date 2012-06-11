@@ -18,9 +18,12 @@ var ballTurnSpeed = 200;
 
 private var pushingPlayer : GameObject;
 private var isGrounded : boolean;
-var fallSpeed : float = 20;
+var fallSpeed : float = 9.81;
 
 function Start () {
+	collider.attachedRigidbody.useGravity = false;
+	isGrounded = false;
+	
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
 	
@@ -35,7 +38,7 @@ function Start () {
 function Update () {
 	if (pushingPlayer) {
 		var playerMotor = pushingPlayer.GetComponent(CharacterMotorSF);
-		if (playerMotor.IsMovingBackward() || playerMotor.IsJumping()) {
+		if (playerMotor.IsMovingBackward() || playerMotor.IsJumping() || IsBallTooFarAway ()) {
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			Release();
 		}
@@ -66,16 +69,38 @@ function LateUpdate () {
 }
 
 function FixedUpdate () {
+	//if (!collider.attachedRigidbody.useGravity) {
+//	Debug.DrawRay(transform.position, Vector3.up * gameObject.collider.bounds.size.x*0.51, Color.red);
+//	if (!isGrounded) {
+//		var gravityVector = Vector3.down * fallSpeed * Time.deltaTime;
+//    	transform.Translate(gravityVector, Space.World);
+//	}
+		
 	//ApplyGravity
-	if (Physics.Raycast (transform.position, -Vector3.up, gameObject.collider.bounds.size.x*0.6)) {
+	if (Physics.Raycast (transform.position, -Vector3.up, gameObject.collider.bounds.size.x*0.55)) {
         isGrounded = true;
     }
     else { //we're not grounded, move us down a bit
     	isGrounded = false; 
-    	var gravityVector = Vector3.down * fallSpeed * Time.deltaTime;
-    	transform.Translate(gravityVector, Space.World);	
+    	rigidbody.velocity.y += -1 * fallSpeed * Time.deltaTime;
+    	//var gravityVector = Vector3.down * fallSpeed * Time.deltaTime;
+    	//transform.Translate(gravityVector, Space.World);	
     }
+   // }
 }
+
+//function OnCollisionEnter(collisionInfo : Collision) {
+//	isGrounded = false;
+//	for (var contact : ContactPoint in collisionInfo.contacts) {
+//		if (contact.normal.y > 0.01)
+//			isGrounded = true;
+////        Debug.DrawRay(contact.point, contact.normal * 10, Color.white);
+//    }
+//}
+//
+//function OnCollisionExit(collisionInfo : Collision) {
+//	isGrounded = false;
+//}
 
 //ATTENTION!! newwwwwww
 function Move (offset : Vector3) {
@@ -91,7 +116,8 @@ function Move (offset : Vector3) {
 		offset.y = 0;
 		correctionVector *= ballCorrectionSpeed;
 		correctionVector *= Time.deltaTime;
-		transform.Translate(offset -  correctionVector, Space.World);		
+		//transform.Translate(offset -  correctionVector, Space.World);		
+		rigidbody.MovePosition(transform.position + (offset -  correctionVector));
 		Roll(true);
 	}
 }
@@ -107,9 +133,9 @@ function IsBallTooFarAway () : boolean {
 	return tooFar;
 }
 
-private function IsGrounded () {
-	return isGrounded;
-}
+//private function IsGrounded () {
+//	return isGrounded;
+//}
 
 
 function Release () {
@@ -117,7 +143,7 @@ function Release () {
 		Roll(false);
 		transform.parent = null;
 		pushingPlayer = null;
-		collider.attachedRigidbody.useGravity = true;
+		//collider.attachedRigidbody.useGravity = true;
 	}
 }
 
@@ -125,13 +151,14 @@ function PickItem(player:GameObject) {
 	pushingPlayer = player;
 	transform.parent = pushingPlayer.transform;
 	//turn off gravity
-	collider.attachedRigidbody.useGravity = false;
+	//collider.attachedRigidbody.useGravity = false;
 }
 //---------------------------------------------------------
 
 function Respawn () {
 	if (pushingPlayer) { //tell the bot that his ball has reached the base
-			pushingPlayer.SendMessage("BallReachedBase", true, SendMessageOptions.DontRequireReceiver);
+//			pushingPlayer.SendMessage("BallReachedBase", true, SendMessageOptions.DontRequireReceiver);
+			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 	}
 	
 	Release ();

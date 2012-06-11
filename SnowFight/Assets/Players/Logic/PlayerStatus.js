@@ -108,6 +108,7 @@ function Die (ball : Damage) {
 	killTime = Time.time;
 	
 	gameObject.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
+	gameObject.SendMessage ("RemoveTarget", SendMessageOptions.DontRequireReceiver);
 }
 
 function Respawn () {
