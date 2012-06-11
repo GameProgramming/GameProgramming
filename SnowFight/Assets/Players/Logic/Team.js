@@ -32,6 +32,20 @@ function GetSpawnPoints () :Transform[] {
 	return spawns;
 }
 
+function GetSpawnPoint(spawnPointID : int) : Vector3 {
+	var position : Vector3; 
+	for (var b : Transform in transform) {
+		if (b.tag == "Base") {
+			var base = b.GetComponent(TeamBase);
+			if (base.GetID() == spawnPointID) {
+				position = base.GetSpawnPoint();
+				break;
+			}
+		}	
+	}
+	return position;
+}
+
 function GetBase () : Transform {
 	var base : Transform = null;
 	for (var t :Transform in transform) {

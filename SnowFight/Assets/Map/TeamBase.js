@@ -2,6 +2,8 @@
 
 private var enterTime :float = 0;
 
+var baseID : int;
+
 @System.NonSerialized
 var team : Team;
 @System.NonSerialized
@@ -14,6 +16,18 @@ var takeOverTime :float = 5.0;
 var takeOverProgress :float = 0.0;
 @System.NonSerialized
 var takeOverCurrTeam :Team = null;
+
+function GetSpawnPoint() : Vector3 {
+	for (var t : Transform in transform) {
+		if (t.tag == "PlayerSpawn") {
+			var spawnScript = t.GetComponent(SpawnScript);
+			if (!spawnScript.IsOccupied() && !spawnScript.IsPlayerInSpawn()) {
+				spawnScript.SetOccupied(true);
+				return t.position;
+			}
+		}
+	}
+}
 
 function Start () {
 	team = transform.parent.gameObject.GetComponent(Team);
@@ -85,4 +99,12 @@ function OnTriggerStay(other : Collider) {
 			enterTime = 0.0;
 		}
 	}
+}
+
+function SetID (newId : int) {
+	baseID = newId;
+}
+
+function GetID () : int {
+	return baseID;
 }
