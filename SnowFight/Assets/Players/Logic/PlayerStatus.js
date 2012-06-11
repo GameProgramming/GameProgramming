@@ -18,6 +18,9 @@ private var collectionSnowTime : float;
 
 private var terrain :TerrainSnow;
 
+//This ID should be set when he wants to spawn at a certain base.
+private var spawnBaseID;
+
 //InvokeRepeating("Regenerate",5,10);
 //var damageSound : AudioClip;
 
@@ -119,6 +122,8 @@ function Respawn () {
 		transform.position = teamSpawnPoints[Random.Range(0,teamSpawnPoints.Length-1)].position;
 		transform.position.y += 5;
 	}
+	//This would be the new code
+	//transform.position = team.GetSpawnPoint(spawnPointID);
 	
 	hp = fullHp;
 	died = false;
@@ -161,4 +166,12 @@ function GetMaximumSnowballs () : int  {
 
 function GetCurrentSnowballs () : int {
 	return currentSnowballs;
+}
+
+function GetSpawnBaseID () : int {
+	return spawnBaseID;
+}
+
+function SetSpawnBaseID (newSpawnBaseID : int) {
+	spawnBaseID = newSpawnBaseID;
 }
