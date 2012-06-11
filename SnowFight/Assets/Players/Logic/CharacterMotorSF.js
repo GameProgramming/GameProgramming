@@ -232,7 +232,7 @@ private function UpdateFunction () {
 	if (canControl && !itemManager.GetItem() && !GetComponent(PlayerStatus).IsDead()) {
 		if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0 
 			&& GetComponent(PlayerStatus).GetCurrentSnowballs() > 0) {
-			throwProgress = 1;
+			throwProgress = 2;
 			gameObject.SendMessage ("OnLoadThrow", SendMessageOptions.DontRequireReceiver);
 		} else if (throwProgress > 0) {
 			throwProgress += Time.deltaTime * 4;
