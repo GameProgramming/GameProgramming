@@ -44,7 +44,7 @@ function Update () {
 	}
 	if (!gameOver) {
 
-		if (died && Time.time > killTime + respawnTimeout)
+		if (died && Time.time > killTime + respawnTimeout && spawnBaseID > 0)
 			Respawn();
 	}
 }
@@ -103,15 +103,30 @@ function Die (ball : Damage) {
 	if (died) //we're already dead
 		return;
 	
+	if (transform.tag.Equals("Player")) {
+		var mapOverview = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+		mapOverview.SetMode(true);
+	}
+	
+	if (transform.tag.Equals("Player")) {
+		spawnBaseID = 0;
+	}
+	
 	if (ball) {
 		team.LoseTickets(1);
 	}
+	
+
 	
 	died = true;
 	killTime = Time.time;
 	
 	gameObject.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
 	gameObject.SendMessage ("RemoveTarget", SendMessageOptions.DontRequireReceiver);
+	
+
+	
+
 }
 
 function Respawn () {
@@ -131,6 +146,8 @@ function Respawn () {
 	died = false;
 	
 	gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
+	var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+	overviewCam.SetMode(false);
 }
 
 function CollectSnow() {
@@ -176,4 +193,5 @@ function GetSpawnBaseID () : int {
 
 function SetSpawnBaseID (newSpawnBaseID : int) {
 	spawnBaseID = newSpawnBaseID;
+	killTime = Time.time;
 }
