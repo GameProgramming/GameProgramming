@@ -157,6 +157,19 @@ function CollectSnow() {
 	}
 }
 
+function Restock() {
+	if (currentSnowballs < maximumSnowballCapacity) {
+		currentSnowballs += 1;
+	}
+}
+
+function RestockPossible() : boolean {
+	if (currentSnowballs < maximumSnowballCapacity) {
+		return true;
+	}
+	return false;
+}
+
 function GetFullHp () : int {
 	return fullHp;
 }
