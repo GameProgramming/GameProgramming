@@ -22,9 +22,10 @@ function SetColor(newColor : Color) {
 }
 
 function OnMouseOver() {
-	mouseOver = true;
+	
 	var playerStatus = GameObject.FindGameObjectWithTag("Player").GetComponent(PlayerStatus);
 	if (playerStatus.IsDead()) {
+		mouseOver = true;
 		var rend = GetComponent(MeshRenderer);
 		rend.material.color = Color.white;
 	}

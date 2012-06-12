@@ -17,6 +17,9 @@ var takeOverProgress :float = 0.0;
 @System.NonSerialized
 var takeOverCurrTeam :Team = null;
 
+private var currentTeamTakingOver : Team;
+private var progress : float;
+
 function GetSpawnPoint() : Vector3 {
 	for (var t : Transform in transform) {
 		if (t.tag == "PlayerSpawn") {
@@ -37,58 +40,64 @@ function Start () {
 	}
 	neutralTeam = GameObject.FindGameObjectWithTag("TeamNeutral").GetComponent(Team);
 	SetTeam(team);
+	currentTeamTakingOver = null;
+	progress = 0.0;
 }
 
 function Update () {
-	var takeOverDist = takeOverRadius * takeOverRadius;
-	
-	var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("Bot");  
-    var player = GameObject.FindGameObjectWithTag("Player");
-    gos = gos + [player];
-	
-	var teamTakingOver :Team = null;
-	
-	for (var go : GameObject in gos)  {
-		if ((go.transform.position - transform.position).sqrMagnitude < takeOverDist) {
-	    	var status :PlayerStatus = go.GetComponent(PlayerStatus);
-    		if (!status.IsDead() && status.team != teamTakingOver) {
-    			if (teamTakingOver == null) {
-    				teamTakingOver = status.team;
-    			} else {
-    				teamTakingOver = neutralTeam;
-    			}
-    		}
-    	}
-	}
-	
-//	Debug.Log("taking over "+teamTakingOver);
-	if (teamTakingOver != team && team != neutralTeam && teamTakingOver != null) {
-		teamTakingOver = neutralTeam;
-	}
-	
-	if (teamTakingOver == null || teamTakingOver != takeOverCurrTeam) {
-		//Debug.Log("takeOverReset");
-		takeOverProgress = 0;
-		takeOverCurrTeam = null;
-	} else if (teamTakingOver != team) {
-		takeOverProgress += Time.deltaTime / takeOverTime;
-//		Debug.Log("taking over "+takeOverProgress);
-		if (takeOverProgress >= 1) {
-//			Debug.Log("takeOverFinished");
-			SetTeam(teamTakingOver);
-		}
-	} 
-	takeOverCurrTeam = teamTakingOver;
+//	var takeOverDist = 20;
+//	
+//	var gos : GameObject[];
+//    gos = GameObject.FindGameObjectsWithTag("Bot");  
+//    var player = GameObject.FindGameObjectWithTag("Player");
+//    gos = gos + [player];
+//	
+//	var teamTakingOver :Team = null;
+//	
+//	for (var go : GameObject in gos)  {
+//		if ((go.transform.position - transform.position).sqrMagnitude < takeOverDist) {
+//	    	var status :PlayerStatus = go.GetComponent(PlayerStatus);
+//    		if (!status.IsDead() && status.team != teamTakingOver) {
+//    			if (teamTakingOver == null) {
+//    				teamTakingOver = status.team;
+//    			} else {
+//    				teamTakingOver = neutralTeam;
+//    			}
+//    		}
+//    	}
+//	};
+//	
+////	Debug.Log("taking over "+teamTakingOver);
+////	if (teamTakingOver != team && team != neutralTeam && teamTakingOver != null) {
+////		teamTakingOver = neutralTeam;
+////	}
+//	
+//	
+//	
+//	if (teamTakingOver == null || teamTakingOver != takeOverCurrTeam) {
+//		//Debug.Log("takeOverReset");
+//		takeOverProgress = 0;
+//		takeOverCurrTeam = null;
+//	} else if (teamTakingOver != team) {
+//		takeOverProgress += Time.deltaTime / takeOverTime;
+////		Debug.Log("taking over "+takeOverProgress);
+//		if (takeOverProgress >= 1) {
+////			Debug.Log("takeOverFinished");
+//			SetTeam(teamTakingOver);
+//		}
+//	} 
+//	takeOverCurrTeam = teamTakingOver;
 }
 
 function SetTeam (t :Team) {
 	transform.parent = t.transform;
 	team = t;
-	transform.parent.GetComponentInChildren(TeamFlagColor).SetColor(team.color);
+	Debug.Log(t.GetTeamNumber());
+	transform.GetComponentInChildren(TeamFlagColor).SetColor(team.color);
 }
 
 function OnTriggerStay(other : Collider) {
+
 	if (other.tag.Equals("BigSnowball")) {
 		enterTime += Time.deltaTime;
 		if (enterTime > 2.0 && other.GetComponent(BigSnowBall)) {
@@ -97,6 +106,32 @@ function OnTriggerStay(other : Collider) {
 //			Debug.Log("Ball kam bei Basis von "+team.ToString()+" an.");
 			other.GetComponent(BigSnowBall).Respawn();
 			enterTime = 0.0;
+		}
+	}
+	
+	if (other.tag.Equals("Player") || other.tag.Equals("Bot")) {
+	
+		var otherTeam : Team = other.transform.parent.transform.GetComponent(Team);
+		if (currentTeamTakingOver == null) {
+			if (team.GetTeamNumber() != otherTeam.GetTeamNumber()) {
+				currentTeamTakingOver = other.transform.parent.transform.GetComponent(Team);
+			}
+		} else {		
+			if (currentTeamTakingOver.GetTeamNumber() != otherTeam.GetTeamNumber()) {
+				currentTeamTakingOver = null;
+			}			
+		}
+	
+		if (currentTeamTakingOver != null) {
+			progress += Time.deltaTime;
+			if (progress > 5.0) {
+				SetTeam(currentTeamTakingOver);
+				progress = 0.0;
+				currentTeamTakingOver = null;
+			}
+		} else {
+			
+			progress = 0.0;
 		}
 	}
 }
