@@ -19,7 +19,7 @@ private var collectionSnowTime : float;
 private var terrain :TerrainSnow;
 
 //This ID should be set when he wants to spawn at a certain base.
-private var spawnBaseID;
+var spawnBaseID : int;
 
 //InvokeRepeating("Regenerate",5,10);
 //var damageSound : AudioClip;
@@ -117,14 +117,15 @@ function Die (ball : Damage) {
 function Respawn () {
 	respawning = true;
 	
-	var teamSpawnPoints = team.GetSpawnPoints();
-	
-	if (teamSpawnPoints && teamSpawnPoints.Length > 0) {
-		transform.position = teamSpawnPoints[Random.Range(0,teamSpawnPoints.Length-1)].position;
-		transform.position.y += 5;
-	}
+//	var teamSpawnPoints = team.GetSpawnPoints();
+//	
+//	if (teamSpawnPoints && teamSpawnPoints.Length > 0) {
+//		transform.position = teamSpawnPoints[Random.Range(0,teamSpawnPoints.Length-1)].position;
+//		transform.position.y += 5;
+//	}
 	//This would be the new code
-	//transform.position = team.GetSpawnPoint(spawnPointID);
+	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
+	transform.position = newPosition;
 	
 	hp = fullHp;
 	died = false;
