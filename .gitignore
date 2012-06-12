@@ -5,8 +5,10 @@ Temp
 #Unnecessary Unity files
 Assembly-*
 *.sln
+*.suo
 *.userprefs
 */*/output_log.txt
+*/obj/
 
 #WINDOWS
 # Windows image file caches
