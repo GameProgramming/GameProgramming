@@ -17,8 +17,6 @@ private var gameOver = false;
 var maxCollectionSnowTime : float;
 private var collectionSnowTime : float;
 
-
-
 //This ID should be set when he wants to spawn at a certain base.
 var spawnBaseID : int;
 

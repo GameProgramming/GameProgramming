@@ -17,6 +17,7 @@ function Start () {
 
 function Update () {
 	if (owner) {
+		transform.eulerAngles.x = -playerMotor.rotationY-10;
 		if (playerMotor.inputFire && progress == 0 && bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0 
 			&& owner.GetComponent(PlayerStatus).GetCurrentSnowballs() > 0) {
 			progress = 1;
