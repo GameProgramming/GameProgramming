@@ -16,8 +16,6 @@ private var respawning : boolean = false;
 private var gameOver = false;
 private var collectionSnowTime : float;
 
-private var terrain :TerrainSnow;
-
 //This ID should be set when he wants to spawn at a certain base.
 var spawnBaseID : int;
 
@@ -27,7 +25,6 @@ var spawnBaseID : int;
 function Start() {
 	gameOver = false;
 	
-	terrain = GameObject.Find("/Terrain").GetComponent("TerrainSnow");
 	team = transform.parent.gameObject.GetComponent("Team");
 	if (team == null) {
 		Debug.LogError("Could not determine Player team. (Player object has to be child of Team object!)");
@@ -100,6 +97,9 @@ function OnCollisionEnter (collision : Collision) {
 }
 
 function Die (ball : Damage) {
+	// ATTENTION: ball can be null, because there are special ways of dieing.
+	
+	
 	if (died) //we're already dead
 		return;
 	
@@ -151,9 +151,12 @@ function Respawn () {
 }
 
 function CollectSnow() {
-	if (currentSnowballs < maximumSnowballCapacity && terrain.SnowAvailable(transform.position)) {
+	if (currentSnowballs < maximumSnowballCapacity
+		// REMOVED: && terrain.SnowAvailable(transform.position)
+		// TODO: neuer mechanismus.
+		) {
 		currentSnowballs += 1;
-		terrain.GrabSnow(transform.position);
+		//terrain.GrabSnow(transform.position);
 	}
 }
 
