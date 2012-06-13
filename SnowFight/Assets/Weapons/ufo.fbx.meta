@@ -46,8 +46,25 @@ ModelImporter:
         first: 4
         second: 801a0600
       data:
+        first: 111
+        second: 605fa900
+    ufo:
+      data:
+        first: 1
+        second: a2860100
+      data:
+        first: 4
+        second: 821a0600
+      data:
         first: 23
         second: 60182300
       data:
         first: 33
         second: a05a3200
+    ufojoint:
+      data:
+        first: 1
+        second: a4860100
+      data:
+        first: 4
+        second: 841a0600

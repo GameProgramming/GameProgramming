@@ -17,33 +17,16 @@ private var snowballRessource : Transform;
 function Start () {
 	currentSnowballs = maxSnowballs;
 	snowballRessource = transform.Find("SnowballRessource");
-	var renderer : MeshRenderer = snowballRessource.GetComponent(MeshRenderer);
-	renderer.material.color = Color.green;
+//	var renderer : MeshRenderer = snowballRessource.GetComponent(MeshRenderer);
+//	renderer.material.color = Color.green;
 
 }
 
 function Update () {	
 	currentRestockTime += Time.deltaTime;
 	
-	//Scaling issues.
-	if (currentSnowballs >= 80) {
-		snowballRessource.localScale = Vector3(0.2, 10, 0.2);
-		snowballRessource.localPosition.y = 5;
-	} else if (currentSnowballs >= 60) {
-		snowballRessource.localScale = Vector3(0.2, 8, 0.2);
-		snowballRessource.localPosition.y = 4;
-	} else if (currentSnowballs >= 40) {
-		snowballRessource.localScale = Vector3(0.2, 6, 0.2);
-		snowballRessource.localPosition.y = 3;
-	} else if (currentSnowballs >= 20) {
-		snowballRessource.localScale = Vector3(0.2, 4, 0.2);
-		snowballRessource.localPosition.y = 2;
-	} else if (currentSnowballs > 0) {
-		snowballRessource.localScale = Vector3(0.2, 2, 0.2);
-		snowballRessource.localPosition.y = 1;
-	} else if (currentSnowballs == 0) {
-		snowballRessource.localScale = Vector3(0.01, 0.01, 0.01);
-	}
+	snowballRessource.localPosition = Vector3(0, currentSnowballs*0.01-2, 0);
+
 	//Restock every 3 seconds.
 	if (currentRestockTime >= restockTime) {
 		Restock();
@@ -68,7 +51,7 @@ function Restock() {
 }
 
 //This function will be called when a player want to create a big snowball.
-function GrabBigSnowball(playerPos : Vector3) {
+function GrabBigSnowball(playerPos : Vector3) :GameObject {
 	currentSnowballs -= bigSnowballAmount;
 	//var bigSnowballSpawn = transform.FindChild("BigSnowballSpawn");
 	//Debug.Log(bigSnowballSpawn.position);
@@ -76,7 +59,7 @@ function GrabBigSnowball(playerPos : Vector3) {
 	spawnPos.x += (transform.position.x-playerPos.x);
 	spawnPos.z += (transform.position.z-playerPos.z);
 	spawnPos.y += 5;
-	Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity);
+	return Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity);
 	//bigSnowballPrefab.GetComponent(BigSnowBall).Respawn(spawnPos);
 }
 
@@ -87,31 +70,23 @@ function Restart() {
 
 //Should be called before grabbing.
 function IsGrabPossible() : boolean {
-	if (currentSnowballs > 0) {
-		return true;
-	}
-	return false;
+	return (currentSnowballs > 0);
 }
 
 //Should be called before grabbing bigSnowball.
 function IsGrabBigSnowballPossible() : boolean {
-	if (currentSnowballs >= bigSnowballAmount) {
-		return true;
-	}
-	return false;
+	return (currentSnowballs >= bigSnowballAmount);
 }
 
 function OnTriggerStay(other : Collider) {
 	if (other.CompareTag("Player") || other.CompareTag("Bot")) {
 		if (IsGrabPossible()) {
 			var playerStatus : PlayerStatus = other.transform.GetComponent(PlayerStatus);
+			other.transform.GetComponent(ItemManager).SetSnowfieldCandidate(gameObject);
 			if (playerStatus.CollectSnowPossible()) {
 				Grab();
-				playerStatus.CollectSnow();				
+				playerStatus.CollectSnow();
 			}
-		}
-		if (IsGrabBigSnowballPossible() && other.CompareTag("Player") && Input.GetMouseButtonDown(1)) {
-			GrabBigSnowball(other.transform.position);
 		}
 	}
 }
