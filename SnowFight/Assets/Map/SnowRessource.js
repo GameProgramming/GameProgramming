@@ -5,7 +5,7 @@ var restockTime : float;
 private var currentRestockTime : float; 
 
 //The variable containing a big Snowball prefab.
-var bigSnowball : Rigidbody;
+var bigSnowballPrefab : GameObject;
 
 //The amount a big snowball represents.
 var bigSnowballAmount : int;
@@ -18,7 +18,7 @@ function Start () {
 	currentSnowballs = maxSnowballs;
 	snowballRessource = transform.Find("SnowballRessource");
 	var renderer : MeshRenderer = snowballRessource.GetComponent(MeshRenderer);
-	renderer.material.color = Color.white;
+	renderer.material.color = Color.green;
 
 }
 
@@ -71,8 +71,8 @@ function Restock() {
 function GrabBigSnowball() {
 	currentSnowballs -= bigSnowballAmount;
 	var bigSnowballSpawn = transform.FindChild("BigSnowballSpawn");
-	var bigSnowball : Rigidbody;
-	bigSnowball = Instantiate(bigSnowball, bigSnowballSpawn.position, bigSnowballSpawn.rotation);
+	Debug.Log(bigSnowballSpawn.position);
+	Instantiate(bigSnowballPrefab, Vector3(0, -50, 0), Quaternion.identity);
 }
 
 //We need to restore all balls when restarting the level.

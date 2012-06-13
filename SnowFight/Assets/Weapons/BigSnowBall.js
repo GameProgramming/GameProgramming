@@ -39,7 +39,7 @@ function Start () {
 	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
 	Respawn();
 	
-	lastPosition = transform.position;
+	//lastPosition = transform.position;
 	radius = GetComponent(Renderer).bounds.size.x*0.5;
 }
 
