@@ -17,6 +17,7 @@ private var radius : float;
 var ballTurnSpeed = 150;
 
 private var pushingPlayer : GameObject;
+private var playerMotor : CharacterMotorSF;
 private var isGrounded : boolean;
 var fallSpeed : float = 9.81;
 
@@ -28,6 +29,8 @@ var sizeIncreaseRate : float = 0.05;
 //private var damage : Damage;
 //private var damageDone : int;
 
+var snowRessource : GameObject;
+
 function Start () {
 	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
@@ -36,9 +39,9 @@ function Start () {
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
 	
 	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
-	Respawn();
+//	Respawn(Vector3.zero);
 	
-	lastPosition = transform.position;
+	//lastPosition = transform.position;
 	radius = GetComponent(Renderer).bounds.size.x*0.5;
 }
 
@@ -55,7 +58,6 @@ function Awake () {
 
 function Update () {
 	if (pushingPlayer) {
-		var playerMotor = pushingPlayer.GetComponent(CharacterMotorSF);
 		if (playerMotor.IsMovingBackward() || playerMotor.IsJumping() || IsBallTooFarAway ()) {
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			Release();
@@ -93,9 +95,19 @@ function Update () {
 					rend.material.color = new Color(0.4,0.4,0.9,1);
 			}
 		}
+		if (playerMotor.inputAltFire) {
+			// player destroys snowball
+			pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
+			transform.parent = null;
+			transform.position.y = 0.8; //TODO: don't hardcode this value!!
+			Instantiate(snowRessource, transform.position, Quaternion.identity);
+			snowRessource.GetComponent(SnowRessource).FromBallSizeToSnowballs(radius, maxBallSize);
+			Destroy(gameObject);
+		}
 	}
 	
 	//upon respawn make visible after hide time
+	//TODO: get rid of the respawning mechanism
 	if (respawning && Time.time > spawnTime + respawnTimeout) {
 		for (var rend : MeshRenderer in meshRenderers) {
 			rend.enabled = true;
@@ -197,15 +209,14 @@ function Release () {
 function PickItem(player:GameObject) {
 	pushingPlayer = player;
 	transform.parent = pushingPlayer.transform;
+	playerMotor = player.GetComponent(CharacterMotorSF);
 //	damage.SetShootingTeam (pushingPlayer.GetComponent(PlayerStatus).team);
 }
 
-function Respawn () {
+function Respawn (spawnPosition : Vector3) {
 	if (pushingPlayer) { //tell the bot that his ball has reached the base
-//			pushingPlayer.SendMessage("BallReachedBase", true, SendMessageOptions.DontRequireReceiver);
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 	}
-	
 	Release ();
 	
 //	deadly = false;
@@ -231,8 +242,10 @@ function Respawn () {
 		rend.enabled = false;
 	}
 	
-	if (spawnPoints && spawnPoints.Length > 0) {
-		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length-1)].transform.position;
+	if (spawnPosition != Vector3.zero)
+		transform.position = spawnPosition;
+	else if (spawnPoints && spawnPoints.Length > 0) {
+		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length)].transform.position;
 		transform.position.y += 5;
 	}
 }

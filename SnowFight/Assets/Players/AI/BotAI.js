@@ -105,18 +105,24 @@ function RollBall ()
 			ball = itemManager.GetItem();
 			//if we don't have a ball go get it
 			if (!ball) {
-				motor.inputAction = true; //try to get a hold of it
+				if (BallRolledByFriend ())
+					return;
+				
+				var ballSize = target.GetComponent(Renderer).bounds.size.x;
+				 //if we're close enough, try to get a hold of it
+				if (Vector3.Distance(transform.position, target.transform.position) < ballSize + 2)
+					motor.inputAction = true;
+				else
+					motor.inputAction = false;
+					
 				MoveTowardsPosition(target.transform.position);
 			}
 			//if we have a ball run to base
 			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
-				MoveTowardsPosition(groundBase.position);
-//				if (ballReachedBase) {
-//					motor.inputAction = true;
-//					ballReachedBase = false; //is set to true in BigSnowBall when it has reached the base and respawns
-//					target = null;
-//					return;
-//				}
+				if(BallAtBase(groundBase.position))
+					moveDir = Vector3.zero;
+				else
+					MoveTowardsPosition(groundBase.position);
 			}
 			
 			if (Random.value > 0.9) {
@@ -147,6 +153,10 @@ function RotateTowardsPosition (targetPos : Vector3, rotateSpeed : float) : floa
 	transform.Rotate(0, clampedAngle, 0);
 	// Return the current angle
 	return angle;
+}
+
+function BallAtBase(basePos : Vector3) {
+	return (Vector3.Distance(transform.position, basePos) < target.GetComponent(Renderer).bounds.size.x+2);
 }
 
 function MoveTowardsPosition (position : Vector3) {
@@ -191,9 +201,6 @@ function FindBestBigSnowball () : GameObject {
 	    }
     } 
     
-//    if (closest)
-//    	BallReachedBase (false);
-  
     return closest;    
 }
 
@@ -223,7 +230,12 @@ function BallOfFriend ( t : Transform ) : boolean {
     return false;
 }
 
-function BallRolledByFriend () {
+function BallRolledByFriend () : boolean {
+	var parent = target.transform.parent;
+	if (parent && parent.GetComponent(PlayerStatus) && parent.GetComponent(PlayerStatus).team == pStatus.team)
+		return true;
+	else
+		return false;
 }
 
 function Attack ()
