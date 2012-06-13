@@ -145,6 +145,7 @@ function Respawn () {
 	transform.position = newPosition;
 	
 	hp = fullHp;
+	currentSnowballs = maximumSnowballCapacity;
 	died = false;
 	
 	gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
@@ -164,7 +165,7 @@ function CollectSnow() {
 }
 
 function CollectSnowPossible() : boolean {
-	if (currentSnowballs < maximumSnowballCapacity && collectionSnowTime >= maxCollectionSnowTime) {
+	if (currentSnowballs < maximumSnowballCapacity && collectionSnowTime >= maxCollectionSnowTime && !died) {
 		return true;
 	}
 	return false;
