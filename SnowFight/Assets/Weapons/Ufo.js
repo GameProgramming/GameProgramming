@@ -49,6 +49,11 @@ function Move (offset : Vector3) {
 function Release () {
 	owner = null;
 	transform.parent = null;
+	
+	var parent = GameObject.Find("Items");
+	if (parent)
+		transform.parent = parent.transform;
+		
 	//collider.enabled = true;
 	playerMotor.SetFloating(false);
 	GameObject.FindGameObjectWithTag("OverviewCam")

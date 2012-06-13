@@ -223,6 +223,9 @@ function BallOfFriend ( t : Transform ) : boolean {
     return false;
 }
 
+function BallRolledByFriend () {
+}
+
 function Attack ()
 {
 	motor.inputAction = false;

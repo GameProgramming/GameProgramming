@@ -31,7 +31,7 @@ function Update () {
 		ReleaseItem();
 	}
 
-	else if (inputAction && candidateItem && ItemNotHeld(candidateItem) && !CandidateTooFarAway() && motor.IsGrounded()) {
+	else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem) && !CandidateTooFarAway() && motor.IsGrounded()) {
 		item = candidateItem;
 		if (item.layer != LayerMask.NameToLayer("Item")
 			&& item.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
@@ -58,7 +58,8 @@ function PassOnMovementOffset (offset : Vector3) {
 
 function ReleaseItem () {
 	if(item) {
-		item.transform.parent = null;
+		if (item.CompareTag("BigSnowball"))
+			item.transform.parent = null;
 		item = null;
 		candidateItem = null;
 		inputAction = false;
@@ -79,8 +80,7 @@ function CandidateTooFarAway() {
 
 //Check if another player might already hold the item
 function ItemNotHeld(it : GameObject) : boolean {
-	var parent = it.transform.parent;
-	if (parent && (parent.CompareTag("Player") || parent.CompareTag("Bot")))
+	if (it.CompareTag("BigSnowball") && it.transform.parent)
 		return false;
 	else 
 		return true;
