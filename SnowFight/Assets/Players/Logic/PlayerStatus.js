@@ -14,7 +14,10 @@ private var killTime = -respawnTimeout; // prevents "double spawn" at start
 private var died : boolean = true;
 private var respawning : boolean = false;
 private var gameOver = false;
+var maxCollectionSnowTime : float;
 private var collectionSnowTime : float;
+
+
 
 //This ID should be set when he wants to spawn at a certain base.
 var spawnBaseID : int;
@@ -34,11 +37,10 @@ function Start() {
 function Update () {
 	//Every one second collect a snowball.
 	collectionSnowTime += Time.deltaTime;
-	if (collectionSnowTime >= 1.5) {
-		collectionSnowTime = 0.0;
-		//Collect snowball.
-		CollectSnow();
-	}
+//	if (CollectSnowPossible()) {
+//		//Collect snowball.
+//		CollectSnow();
+//	}
 	if (!gameOver) {
 
 		if (died && Time.time > killTime + respawnTimeout && spawnBaseID > 0)
@@ -151,23 +153,18 @@ function Respawn () {
 }
 
 function CollectSnow() {
-	if (currentSnowballs < maximumSnowballCapacity
+//	if (currentSnowballs < maximumSnowballCapacity
 		// REMOVED: && terrain.SnowAvailable(transform.position)
 		// TODO: neuer mechanismus.
-		) {
+//		) {
+		collectionSnowTime = 0.0;
 		currentSnowballs += 1;
 		//terrain.GrabSnow(transform.position);
-	}
+//	}
 }
 
-function Restock() {
-	if (currentSnowballs < maximumSnowballCapacity) {
-		currentSnowballs += 1;
-	}
-}
-
-function RestockPossible() : boolean {
-	if (currentSnowballs < maximumSnowballCapacity) {
+function CollectSnowPossible() : boolean {
+	if (currentSnowballs < maximumSnowballCapacity && collectionSnowTime >= maxCollectionSnowTime) {
 		return true;
 	}
 	return false;

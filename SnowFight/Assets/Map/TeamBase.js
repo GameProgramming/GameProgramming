@@ -92,7 +92,6 @@ function Update () {
 function SetTeam (t :Team) {
 	transform.parent = t.transform;
 	team = t;
-	Debug.Log(t.GetTeamNumber());
 	transform.GetComponentInChildren(TeamFlagColor).SetColor(team.color);
 }
 
