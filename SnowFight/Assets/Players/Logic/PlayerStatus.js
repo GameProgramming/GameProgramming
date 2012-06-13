@@ -19,7 +19,7 @@ private var collectionSnowTime : float;
 private var terrain :TerrainSnow;
 
 //This ID should be set when he wants to spawn at a certain base.
-private var spawnBaseID;
+var spawnBaseID : int;
 
 //InvokeRepeating("Regenerate",5,10);
 //var damageSound : AudioClip;
@@ -44,7 +44,7 @@ function Update () {
 	}
 	if (!gameOver) {
 
-		if (died && Time.time > killTime + respawnTimeout)
+		if (died && Time.time > killTime + respawnTimeout && spawnBaseID > 0)
 			Respawn();
 	}
 }
@@ -103,33 +103,51 @@ function Die (ball : Damage) {
 	if (died) //we're already dead
 		return;
 	
+	if (transform.tag.Equals("Player")) {
+		var mapOverview = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+		mapOverview.SetMode(true);
+	}
+	
+	if (transform.tag.Equals("Player")) {
+		spawnBaseID = 0;
+	}
+	
 	if (ball) {
 		team.LoseTickets(1);
 	}
+	
+
 	
 	died = true;
 	killTime = Time.time;
 	
 	gameObject.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
 	gameObject.SendMessage ("RemoveTarget", SendMessageOptions.DontRequireReceiver);
+	
+
+	
+
 }
 
 function Respawn () {
 	respawning = true;
 	
-	var teamSpawnPoints = team.GetSpawnPoints();
-	
-	if (teamSpawnPoints && teamSpawnPoints.Length > 0) {
-		transform.position = teamSpawnPoints[Random.Range(0,teamSpawnPoints.Length-1)].position;
-		transform.position.y += 5;
-	}
+//	var teamSpawnPoints = team.GetSpawnPoints();
+//	
+//	if (teamSpawnPoints && teamSpawnPoints.Length > 0) {
+//		transform.position = teamSpawnPoints[Random.Range(0,teamSpawnPoints.Length-1)].position;
+//		transform.position.y += 5;
+//	}
 	//This would be the new code
-	//transform.position = team.GetSpawnPoint(spawnPointID);
+	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
+	transform.position = newPosition;
 	
 	hp = fullHp;
 	died = false;
 	
 	gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
+	var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+	overviewCam.SetMode(false);
 }
 
 function CollectSnow() {
@@ -137,6 +155,19 @@ function CollectSnow() {
 		currentSnowballs += 1;
 		terrain.GrabSnow(transform.position);
 	}
+}
+
+function Restock() {
+	if (currentSnowballs < maximumSnowballCapacity) {
+		currentSnowballs += 1;
+	}
+}
+
+function RestockPossible() : boolean {
+	if (currentSnowballs < maximumSnowballCapacity) {
+		return true;
+	}
+	return false;
 }
 
 function GetFullHp () : int {
@@ -175,4 +206,5 @@ function GetSpawnBaseID () : int {
 
 function SetSpawnBaseID (newSpawnBaseID : int) {
 	spawnBaseID = newSpawnBaseID;
+	killTime = Time.time;
 }

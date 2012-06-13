@@ -84,3 +84,16 @@ function IsGrabBigSnowballPossible() : boolean {
 	}
 	return false;
 }
+
+function OnTriggerEnter(other : Collider) {
+	if (other.CompareTag("Player") || other.CompareTag("Bot")) {
+		if (IsGrabPossible()) {
+			var playerStatus : PlayerStatus = other.transform.GetComponent(PlayerStatus);
+			if (playerStatus.RestockPossible()) {
+				playerStatus.Restock();
+				Grab();
+			}
+			
+		}
+	}
+}

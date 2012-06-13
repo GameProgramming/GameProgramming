@@ -72,6 +72,9 @@ function PickItem(player :GameObject) {
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer (player.transform);
 	playerMotor.SetFloating(true);
 	
-	GameObject.FindGameObjectWithTag("OverviewCam")
+	if (player.CompareTag("Player")) {
+		GameObject.FindGameObjectWithTag("OverviewCam")
 		.GetComponent(MapOverview).SetPlayerCam(transform.Find("UfoCam"));
+	}
+
 }

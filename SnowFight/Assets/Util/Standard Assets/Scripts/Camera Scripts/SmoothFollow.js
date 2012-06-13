@@ -25,8 +25,17 @@ var rotationDamping = 3.0;
 
 function LateUpdate () {
 	// Early out if we don't have a target
-	if (!target)
+	if (!target) {
 		return;
+	} else {
+		if (target.CompareTag("Player")) {
+			var playerStatus = target.GetComponent(PlayerStatus);
+			if (target.IsDead()) {
+				return;
+			}
+		}
+	}
+	
 	
 	// Calculate the current rotation angles
 	var wantedRotationAngle = target.eulerAngles.y;
