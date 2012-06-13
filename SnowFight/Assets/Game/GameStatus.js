@@ -76,7 +76,7 @@ function OnTriggerEnter (other : Collider) {
 		Destroy(other.gameObject);
 	}
 	else //otherwise tell the player to die
-		other.gameObject.SendMessage ("Die", SendMessageOptions.DontRequireReceiver);
+		other.gameObject.SendMessage ("Die", null, SendMessageOptions.DontRequireReceiver);
 }
 
 function GetSnowBallSpawns() : GameObject[] {

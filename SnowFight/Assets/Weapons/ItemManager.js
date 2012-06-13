@@ -19,12 +19,6 @@ function Start () {
 }
 
 function Update () {
-	if (item && inputAltFire) {//do  not take  a leap into the water
-		//destroy
-		Destroy(item.gameObject);
-	
-	}
-	
 	//player releases action button or dies
 	if (item && (inputAction || pStatus.IsDead())) {
 		item.SendMessage("Release", null, SendMessageOptions.DontRequireReceiver);
@@ -63,6 +57,12 @@ function ReleaseItem () {
 		item = null;
 		candidateItem = null;
 		inputAction = false;
+	}
+}
+
+function OnItemDestruction ( destructedItem : GameObject) {
+	if (destructedItem == item) {
+		item = null;
 	}
 }
 

@@ -17,6 +17,7 @@ private var radius : float;
 var ballTurnSpeed = 150;
 
 private var pushingPlayer : GameObject;
+private var playerMotor : CharacterMotorSF;
 private var isGrounded : boolean;
 var fallSpeed : float = 9.81;
 
@@ -55,7 +56,6 @@ function Awake () {
 
 function Update () {
 	if (pushingPlayer) {
-		var playerMotor = pushingPlayer.GetComponent(CharacterMotorSF);
 		if (playerMotor.IsMovingBackward() || playerMotor.IsJumping() || IsBallTooFarAway ()) {
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			Release();
@@ -93,9 +93,16 @@ function Update () {
 					rend.material.color = new Color(0.4,0.4,0.9,1);
 			}
 		}
+		if (playerMotor.inputAltFire) {
+			// player destroys snowball
+			// TODO: create snow collection area.
+			pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
+			Destroy(gameObject);
+		}
 	}
 	
 	//upon respawn make visible after hide time
+	//TODO: get rid of the respawning mechanism
 	if (respawning && Time.time > spawnTime + respawnTimeout) {
 		for (var rend : MeshRenderer in meshRenderers) {
 			rend.enabled = true;
@@ -197,6 +204,7 @@ function Release () {
 function PickItem(player:GameObject) {
 	pushingPlayer = player;
 	transform.parent = pushingPlayer.transform;
+	playerMotor = player.GetComponent(CharacterMotorSF);
 //	damage.SetShootingTeam (pushingPlayer.GetComponent(PlayerStatus).team);
 }
 
