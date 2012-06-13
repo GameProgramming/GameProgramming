@@ -68,11 +68,16 @@ function Restock() {
 }
 
 //This function will be called when a player want to create a big snowball.
-function GrabBigSnowball() {
+function GrabBigSnowball(playerPos : Vector3) {
 	currentSnowballs -= bigSnowballAmount;
-	var bigSnowballSpawn = transform.FindChild("BigSnowballSpawn");
-	Debug.Log(bigSnowballSpawn.position);
-	Instantiate(bigSnowballPrefab, Vector3(0, -50, 0), Quaternion.identity);
+	//var bigSnowballSpawn = transform.FindChild("BigSnowballSpawn");
+	//Debug.Log(bigSnowballSpawn.position);
+	var spawnPos = transform.position;
+	spawnPos.x += (transform.position.x-playerPos.x);
+	spawnPos.z += (transform.position.z-playerPos.z);
+	spawnPos.y += 5;
+	Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity);
+	//bigSnowballPrefab.GetComponent(BigSnowBall).Respawn(spawnPos);
 }
 
 //We need to restore all balls when restarting the level.
@@ -106,7 +111,13 @@ function OnTriggerStay(other : Collider) {
 			}
 		}
 		if (IsGrabBigSnowballPossible() && other.CompareTag("Player") && Input.GetMouseButtonDown(1)) {
-			GrabBigSnowball();
+			GrabBigSnowball(other.transform.position);
 		}
 	}
+}
+
+function FromBallSizeToSnowballs(ballSize : float, maxBallSize : float) {
+	currentSnowballs = Mathf.Max(Mathf.Round(maxSnowballs * ballSize/maxBallSize), maxSnowballs);
+	Debug.Log ("Current Snowballs: " + currentSnowballs, this);
+	
 }

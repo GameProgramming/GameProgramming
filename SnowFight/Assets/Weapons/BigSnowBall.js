@@ -29,6 +29,8 @@ var sizeIncreaseRate : float = 0.05;
 //private var damage : Damage;
 //private var damageDone : int;
 
+var snowRessource : GameObject;
+
 function Start () {
 	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
@@ -37,7 +39,7 @@ function Start () {
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
 	
 	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
-	Respawn();
+//	Respawn(Vector3.zero);
 	
 	//lastPosition = transform.position;
 	radius = GetComponent(Renderer).bounds.size.x*0.5;
@@ -95,8 +97,11 @@ function Update () {
 		}
 		if (playerMotor.inputAltFire) {
 			// player destroys snowball
-			// TODO: create snow collection area.
 			pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
+			transform.parent = null;
+			transform.position.y = 0.8; //TODO: don't hardcode this value!!
+			Instantiate(snowRessource, transform.position, Quaternion.identity);
+			snowRessource.GetComponent(SnowRessource).FromBallSizeToSnowballs(radius, maxBallSize);
 			Destroy(gameObject);
 		}
 	}
@@ -208,12 +213,10 @@ function PickItem(player:GameObject) {
 //	damage.SetShootingTeam (pushingPlayer.GetComponent(PlayerStatus).team);
 }
 
-function Respawn () {
+function Respawn (spawnPosition : Vector3) {
 	if (pushingPlayer) { //tell the bot that his ball has reached the base
-//			pushingPlayer.SendMessage("BallReachedBase", true, SendMessageOptions.DontRequireReceiver);
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 	}
-	
 	Release ();
 	
 //	deadly = false;
@@ -239,7 +242,9 @@ function Respawn () {
 		rend.enabled = false;
 	}
 	
-	if (spawnPoints && spawnPoints.Length > 0) {
+	if (spawnPosition != Vector3.zero)
+		transform.position = spawnPosition;
+	else if (spawnPoints && spawnPoints.Length > 0) {
 		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length-1)].transform.position;
 		transform.position.y += 5;
 	}

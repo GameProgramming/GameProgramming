@@ -20,6 +20,8 @@ var takeOverCurrTeam :Team = null;
 private var currentTeamTakingOver : Team;
 private var progress : float;
 
+var specialWeapons : GameObject[];
+
 function GetSpawnPoint() : Vector3 {
 	for (var t : Transform in transform) {
 		if (t.tag == "PlayerSpawn") {
@@ -102,8 +104,13 @@ function OnTriggerStay(other : Collider) {
 		if (enterTime > 2.0 && other.GetComponent(BigSnowBall)) {
 			// TODO:
 			// ... spezialwaffe erzeugen oder so
-//			Debug.Log("Ball kam bei Basis von "+team.ToString()+" an.");
-			other.GetComponent(BigSnowBall).Respawn();
+			//other.GetComponent(BigSnowBall).Respawn(null);
+			other.transform.parent = null;
+			other.transform.position.y += 5; //TODO: don't hardcode this value!!
+			var weapon = specialWeapons[Random.Range(0,specialWeapons.Length-1)];
+			Instantiate(weapon, transform.position, Quaternion.identity);
+			
+			Destroy(other.gameObject);
 			enterTime = 0.0;
 		}
 	}
