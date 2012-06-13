@@ -13,9 +13,14 @@ var bigSnowballAmount : int;
 private var currentSnowballs : int;
 
 private var snowballRessource : Transform;
+private var creationTime : float = 0.0;
+var activationTimeout : float = 5.0;
 
 function Start () {
 	currentSnowballs = maxSnowballs;
+	
+	GetComponent(Collider).isTrigger = true;
+	
 	snowballRessource = transform.Find("SnowballRessource");
 	var renderer : MeshRenderer = snowballRessource.GetComponent(MeshRenderer);
 	renderer.material.color = Color.green;
@@ -23,27 +28,11 @@ function Start () {
 }
 
 function Update () {	
-	currentRestockTime += Time.deltaTime;
 	
 	//Scaling issues.
-	if (currentSnowballs >= 80) {
-		snowballRessource.localScale = Vector3(0.2, 10, 0.2);
-		snowballRessource.localPosition.y = 5;
-	} else if (currentSnowballs >= 60) {
-		snowballRessource.localScale = Vector3(0.2, 8, 0.2);
-		snowballRessource.localPosition.y = 4;
-	} else if (currentSnowballs >= 40) {
-		snowballRessource.localScale = Vector3(0.2, 6, 0.2);
-		snowballRessource.localPosition.y = 3;
-	} else if (currentSnowballs >= 20) {
-		snowballRessource.localScale = Vector3(0.2, 4, 0.2);
-		snowballRessource.localPosition.y = 2;
-	} else if (currentSnowballs > 0) {
-		snowballRessource.localScale = Vector3(0.2, 2, 0.2);
-		snowballRessource.localPosition.y = 1;
-	} else if (currentSnowballs == 0) {
-		snowballRessource.localScale = Vector3(0.01, 0.01, 0.01);
-	}
+	Rescale ();
+	
+	currentRestockTime += Time.deltaTime;
 	//Restock every 3 seconds.
 	if (currentRestockTime >= restockTime) {
 		Restock();
@@ -65,6 +54,27 @@ function Restock() {
 		currentSnowballs += 1;
 	}
 	
+}
+
+function Rescale () {
+	if (currentSnowballs >= 80) {
+		snowballRessource.localScale = Vector3(0.2, 10, 0.2);
+		snowballRessource.localPosition.y = 5;
+	} else if (currentSnowballs >= 60) {
+		snowballRessource.localScale = Vector3(0.2, 8, 0.2);
+		snowballRessource.localPosition.y = 4;
+	} else if (currentSnowballs >= 40) {
+		snowballRessource.localScale = Vector3(0.2, 6, 0.2);
+		snowballRessource.localPosition.y = 3;
+	} else if (currentSnowballs >= 20) {
+		snowballRessource.localScale = Vector3(0.2, 4, 0.2);
+		snowballRessource.localPosition.y = 2;
+	} else if (currentSnowballs > 0) {
+		snowballRessource.localScale = Vector3(0.2, 2, 0.2);
+		snowballRessource.localPosition.y = 1;
+	} else if (currentSnowballs == 0) {
+		snowballRessource.localScale = Vector3(0.01, 0.01, 0.01);
+	}
 }
 
 //This function will be called when a player want to create a big snowball.
@@ -102,6 +112,11 @@ function IsGrabBigSnowballPossible() : boolean {
 }
 
 function OnTriggerStay(other : Collider) {
+	//Debug.Log("triggering " + Time.time, this);
+	//Wait a while, when ressource is created, before it is active
+	if (Time.time < creationTime + activationTimeout)
+		return;
+
 	if (other.CompareTag("Player") || other.CompareTag("Bot")) {
 		if (IsGrabPossible()) {
 			var playerStatus : PlayerStatus = other.transform.GetComponent(PlayerStatus);
@@ -116,6 +131,12 @@ function OnTriggerStay(other : Collider) {
 	}
 }
 
-function FromBallSizeToSnowballs(ballSize : float, maxBallSize : float) {
-	currentSnowballs = Mathf.Min(Mathf.Round(maxSnowballs * ballSize/maxBallSize), maxSnowballs);	
+function CreateResourceFromSnowball(ballSize : float, maxBallSize : float) {
+	creationTime = Time.time;
+	currentSnowballs = Mathf.Min(Mathf.Round(maxSnowballs * ballSize/maxBallSize), maxSnowballs);
+	
+	//Do some other important stuff	
+	snowballRessource = transform.Find("SnowballRessource");
+	GetComponent(Collider).isTrigger = true;
+	Rescale ();
 }
