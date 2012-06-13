@@ -99,9 +99,10 @@ function Update () {
 			// player destroys snowball
 			pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
 			transform.parent = null;
-			transform.position.y = 0.8; //TODO: don't hardcode this value!!
+			transform.position.y -= radius ; //TODO: don't hardcode this value!!
+			transform.position.y += 1;
 			Instantiate(snowRessource, transform.position, Quaternion.identity);
-			snowRessource.GetComponent(SnowRessource).FromBallSizeToSnowballs(radius, maxBallSize);
+			snowRessource.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
 			Destroy(gameObject);
 		}
 	}
