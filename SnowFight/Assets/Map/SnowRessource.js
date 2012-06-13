@@ -118,6 +118,6 @@ function OnTriggerStay(other : Collider) {
 
 function FromBallSizeToSnowballs(ballSize : float, maxBallSize : float) {
 	currentSnowballs = Mathf.Max(Mathf.Round(maxSnowballs * ballSize/maxBallSize), maxSnowballs);
-	Debug.Log ("Current Snowballs: " + currentSnowballs, this);
+	Debug.Log ("Current Snowballs: " + currentSnowballs + "(" + ballSize + "," + maxBallSize + ")", this);
 	
 }
