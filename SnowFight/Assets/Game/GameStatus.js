@@ -75,7 +75,7 @@ function OnTriggerEnter (other : Collider) {
 		//destroy the object
 		Destroy(other.gameObject);
 	}
-	else //otherwise tell the player to die
+	else  //otherwise tell the player to die
 		other.gameObject.SendMessage ("Die", null, SendMessageOptions.DontRequireReceiver);
 }
 
