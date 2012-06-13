@@ -245,7 +245,7 @@ function Respawn (spawnPosition : Vector3) {
 	if (spawnPosition != Vector3.zero)
 		transform.position = spawnPosition;
 	else if (spawnPoints && spawnPoints.Length > 0) {
-		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length-1)].transform.position;
+		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length)].transform.position;
 		transform.position.y += 5;
 	}
 }

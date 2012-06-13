@@ -107,7 +107,7 @@ function OnTriggerStay(other : Collider) {
 			//other.GetComponent(BigSnowBall).Respawn(null);
 			other.transform.parent = null;
 			other.transform.position.y += 1; //TODO: don't hardcode this value!!
-			var weapon = specialWeapons[Random.Range(0,specialWeapons.Length-1)];
+			var weapon = specialWeapons[Random.Range(0,specialWeapons.Length)];
 			Instantiate(weapon, other.transform.position, Quaternion.identity);
 			Destroy(other.gameObject);
 			
