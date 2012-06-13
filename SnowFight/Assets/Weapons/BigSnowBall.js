@@ -22,7 +22,8 @@ private var isGrounded : boolean;
 var fallSpeed : float = 9.81;
 
 //variables to increase ball size when rolling
-private var startSize : Vector3;
+@System.NonSerialized
+var startSize : Vector3;
 var maxBallSize : float = 3.0;
 var sizeIncreaseRate : float = 0.05;
 //private var deadly : boolean = false; 
@@ -134,7 +135,7 @@ function FixedUpdate () {
 //	}
 		
 	//ApplyGravity
-	if (Physics.Raycast (transform.position, -Vector3.up, radius + 0.1)) {
+	if (Physics.Raycast (transform.position, -Vector3.up, radius + 0.1, LayerMask.NameToLayer("Ground"))) {
         isGrounded = true;
     }
     else { //we're not grounded, move us down a bit
