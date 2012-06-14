@@ -47,7 +47,7 @@ function Update () {
 }
 
 function Regenerate () {
-	if (!gameOver && hp < fullHp) {
+	if (!died && !gameOver && hp < fullHp) {
 		hp += 5;
 		hp = Mathf.Min(hp, fullHp);
 	}
@@ -56,6 +56,9 @@ function Regenerate () {
 function OnControllerColliderHit(hit : ControllerColliderHit){
 //	if(hit.gameObject.CompareTag("BigSnowball"))
 //		Debug.Log("Hit by snowball");
+	if (died) {
+		return;
+	}
 	
 	var ballPosition = hit.transform.position;
 	var playerPosition = gameObject.transform.position;
@@ -96,6 +99,9 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 }
 
 function OnCollisionEnter (collision : Collision) {
+	if (died) {
+		return;
+	}
 	//Get all required positions.
 	var ballPosition = collision.transform.position;
 	var playerPosition = gameObject.transform.position;
