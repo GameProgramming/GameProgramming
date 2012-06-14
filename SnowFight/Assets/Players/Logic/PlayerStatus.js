@@ -54,7 +54,45 @@ function Regenerate () {
 }
 
 function OnControllerColliderHit(hit : ControllerColliderHit){
+//	if(hit.gameObject.CompareTag("BigSnowball"))
+//		Debug.Log("Hit by snowball");
 	
+	var ballPosition = hit.transform.position;
+	var playerPosition = gameObject.transform.position;
+	var inversePosition = gameObject.transform.InverseTransformPoint(hit.transform.position);
+	var damageObject : Damage = hit.gameObject.GetComponent("Damage");
+	
+	if(hit.gameObject.CompareTag("BigSnowball") && damageObject.enabled){
+		//Get the damage Object
+		var damage = 0;
+		//If the ball hits the player in the head.
+		if (inversePosition.y > 0.9) {
+			damage = damageObject.GetHeadDamage();
+			//Debug.Log("Hit in the head.");
+			//Debug.Log(damage);
+		//He hits the player from behind.
+		} else if (inversePosition.z < -0.3) {
+			damage = damageObject.GetBehindDamage();
+			//Debug.Log("Hit from behind.");
+			//Debug.Log(damage);
+		} else {
+			damage = damageObject.GetFrontDamage();
+			//Debug.Log("Hit from side or front.");
+			//Debug.Log(damage);
+		}
+		
+		if (damage > 0) {
+			hp -= damage;
+			hp = Mathf.Max(0, hp);
+		}
+		
+		gameObject.SendMessage ("OnHit", SendMessageOptions.DontRequireReceiver);										
+		gameObject.SendMessage ("ReleaseBall", SendMessageOptions.DontRequireReceiver);
+		
+		if (hp <= 0) {
+			Die(damageObject);
+		}
+	}
 }
 
 function OnCollisionEnter (collision : Collision) {
@@ -62,7 +100,8 @@ function OnCollisionEnter (collision : Collision) {
 	var ballPosition = collision.transform.position;
 	var playerPosition = gameObject.transform.position;
 	var inversePosition = gameObject.transform.InverseTransformPoint(collision.transform.position);
-	if(collision.rigidbody && collision.rigidbody.tag.Equals("Projectile")){
+	
+	if(collision.rigidbody && collision.rigidbody.CompareTag("Projectile")){
 		//Get the damage Object
 		var damageObject : Damage = collision.transform.GetComponent("Damage");
 		var damage = 0;
@@ -97,7 +136,7 @@ function OnCollisionEnter (collision : Collision) {
 }
 
 function Die (ball : Damage) {
-	// ATTENTION: ball can be null, because there are special ways of dieing.
+	// ATTENTION: ball can be null, because there are special ways of dying.
 	
 	
 	if (died) //we're already dead

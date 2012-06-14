@@ -10,7 +10,7 @@ private var spawnTime = 0.0;
 private var meshRenderers :MeshRenderer[];
 private var skinnedRenderers :SkinnedMeshRenderer[];
 
-private var rollBall : boolean;
+//private var rollBall : boolean;
 private var lastPosition : Vector3;
 private var radius : float;
 //private var perimeter : float;
@@ -26,15 +26,17 @@ var fallSpeed : float = 9.81;
 var startSize : Vector3;
 var maxBallSize : float = 3.0;
 var sizeIncreaseRate : float = 0.05;
-//private var deadly : boolean = false; 
-//private var damage : Damage;
-//private var damageDone : int;
+private var shot : boolean = false; 
+private var damage : Damage;
+private var projectile : Projectile;
+private var shootDirection : Vector3;
 
 var snowRessource : GameObject;
 
 function Start () {
 	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
+	shot = false;
 	
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
@@ -47,12 +49,12 @@ function Start () {
 }
 
 function Awake () {
-//	damage = GetComponent(Damage);
-//	damageDone = damage.dmg;
-//	damage.dmg = 0;
-//	damage.frontDamage = 0;
-//	damage.behindDamage = 0;
-// 	damage.headDamage = 0;
+	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Item"), LayerMask.NameToLayer("Projectile"), true);
+	
+	damage = GetComponent(Damage);
+	projectile = GetComponent(Projectile);
+	damage.enabled = false;
+	projectile.enabled = false;
  	
  	startSize = transform.localScale;
 }
@@ -63,53 +65,79 @@ function Update () {
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			Release();
 		}
-		else if (rollBall) {	
-			radius = GetComponent(Renderer).bounds.size.x*0.5;
-		
-			//rotate ball while rolling
-			var dir = transform.position - lastPosition;
-			var rotAxis = Vector3.Cross(dir, Vector3.up);
-			rotAxis.Normalize();
-			var angle : float = -(2*radius*Mathf.PI)/36*dir.magnitude * ballTurnSpeed;
-			transform.Rotate(rotAxis, angle, Space.World);
-			
-			//increase ball size when rolling
-//			if (!deadly && radius <= maxBallSize) {
-			if (radius <= maxBallSize) {
-				var parent = transform.parent;
+		else {
+			if (playerMotor.inputAltFire) {
+				// player destroys snowball
+				pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
 				transform.parent = null;
-				transform.localScale.x += sizeIncreaseRate * dir.magnitude;
-				transform.localScale.y += sizeIncreaseRate * dir.magnitude;
-				transform.localScale.z += sizeIncreaseRate * dir.magnitude;
-				transform.parent = parent;
+				transform.position.y -= radius ; //TODO: don't hardcode this value!!
+				transform.position.y += 1;
+				Instantiate(snowRessource, transform.position, Quaternion.identity);
+				snowRessource.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
+				Destroy(gameObject);
 			}
-			else {
-//				deadly = true;
-//				damage.dmg = damageDone;
-//				damage.frontDamage = damageDone;
-//				damage.behindDamage = damageDone;
-//			 	damage.headDamage = damageDone;
-	 	
-				for (var rend : MeshRenderer in meshRenderers)
-					rend.material.color = new Color(0.4,0.4,0.9,1);
-				for (var rend : SkinnedMeshRenderer in skinnedRenderers)
-					rend.material.color = new Color(0.4,0.4,0.9,1);
+			
+			if (playerMotor.inputFire) {
+				shot = true;
+				damage.enabled = true;
+				projectile.enabled = true;
+				damage.SetShootingTeam(pushingPlayer.GetComponent(PlayerStatus).team);
+				//GetComponent(Collider).rigidbody.tag = "Projectile";
+				rigidbody.velocity = shootDirection * GetComponent(Projectile).speed * 10;
+				//Roll(true);
+				Release();
+				
+//				for (var rend : MeshRenderer in meshRenderers)
+//					rend.material.color = Color.red;
+//				for (var rend : SkinnedMeshRenderer in skinnedRenderers)
+//					rend.material.color = Color.red;
 			}
 		}
-		if (playerMotor.inputAltFire) {
-			// player destroys snowball
-			pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
-			transform.parent = null;
-			transform.position.y -= radius ; //TODO: don't hardcode this value!!
-			transform.position.y += 1;
-			Instantiate(snowRessource, transform.position, Quaternion.identity);
-			snowRessource.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
-			Destroy(gameObject);
-		}
+	}
+		
+	//else if (rollBall) {	
+	radius = GetComponent(Renderer).bounds.size.x*0.5;
+
+	//rotate ball while rolling
+	var dir = transform.position - lastPosition;
+	var rotAxis = Vector3.Cross(dir, Vector3.up);
+	rotAxis.Normalize();
+	var angle : float = -(2*radius*Mathf.PI)/36*dir.magnitude * ballTurnSpeed;
+	transform.Rotate(rotAxis, angle, Space.World);
+	
+	//increase ball size when rolling
+//			if (!deadly && radius <= maxBallSize) {
+	if (radius <= maxBallSize) {
+		var parent = transform.parent;
+		transform.parent = null;
+		transform.localScale.x += sizeIncreaseRate * dir.magnitude;
+		transform.localScale.y += sizeIncreaseRate * dir.magnitude;
+		transform.localScale.z += sizeIncreaseRate * dir.magnitude;
+		transform.parent = parent;
+	}
+//	else {
+//
+//		for (var rend : MeshRenderer in meshRenderers)
+//			rend.material.color = Color.blue;
+//		for (var rend : SkinnedMeshRenderer in skinnedRenderers)
+//			rend.material.color = Color.blue;
+//	}
+		
+	if (shot && dir.magnitude < 0.05) {
+//		Debug.Log("Back to normal" , this);
+		shot = false;
+		damage.enabled = false;
+		projectile.enabled = false;
+		//gameObject.tag = "BigSnowball";
+		//Roll(false);	
+//		for (var rend : MeshRenderer in meshRenderers)
+//			rend.material.color = Color.white;
+//		for (var rend : SkinnedMeshRenderer in skinnedRenderers)
+//			rend.material.color = Color.white;
+		
 	}
 	
 	//upon respawn make visible after hide time
-	//TODO: get rid of the respawning mechanism
 	if (respawning && Time.time > spawnTime + respawnTimeout) {
 		for (var rend : MeshRenderer in meshRenderers) {
 			rend.enabled = true;
@@ -135,15 +163,15 @@ function FixedUpdate () {
 //	}
 		
 	//ApplyGravity
-	if (Physics.Raycast (transform.position, -Vector3.up, radius + 0.1, LayerMask.NameToLayer("Ground"))) {
-        isGrounded = true;
-    }
-    else { //we're not grounded, move us down a bit
-    	isGrounded = false; 
+//	if (Physics.Raycast (transform.position, -Vector3.up, radius + 0.05, LayerMask.NameToLayer("Ground"))) {
+//        isGrounded = true;
+//    }
+//    else { //we're not grounded, move us down a bit
+//    	isGrounded = false; 
     	rigidbody.velocity.y += -1 * fallSpeed * Time.deltaTime;
     	//var gravityVector = Vector3.down * fallSpeed * Time.deltaTime;
     	//transform.Translate(gravityVector, Space.World);	
-    }
+//    }
    // }
 }
 
@@ -165,8 +193,8 @@ function FixedUpdate () {
 //}
 
 function Move (offset : Vector3) {
-	if (pushingPlayer) {
-		Roll(true);
+	if (pushingPlayer && !shot) {
+		//Roll(true);
 		var playerController = pushingPlayer.GetComponent(CharacterController);
 		var playerTransform = pushingPlayer.GetComponent(Transform);
 		//try to make sure the ball is infront of the player
@@ -174,12 +202,17 @@ function Move (offset : Vector3) {
 		var desiredPos : Vector3 = playerTransform.position + playerTransform.forward * minDistance;
 		var correctionVector : Vector3 = transform.position - desiredPos;
 		correctionVector.Normalize();
-		correctionVector.y = 0.0;
-		offset.y = 0;
 		correctionVector *= ballCorrectionSpeed;
 		correctionVector *= Time.deltaTime;
+		
+		//save this in case we wanna shoot
+		shootDirection = (offset -  correctionVector);
+
+		correctionVector.y = 0.0;
+		offset.y = 0;
 		//transform.Translate(offset -  correctionVector, Space.World);		
 		rigidbody.MovePosition(transform.position + (offset -  correctionVector));
+
 	}
 }
 
@@ -201,8 +234,8 @@ function IsBallTooFarAway () : boolean {
 
 function Release () {
 	if (pushingPlayer) {
-		Roll(false);
-		rigidbody.velocity = Vector3.zero;
+		if (!shot)
+			rigidbody.velocity = Vector3.zero;
 		transform.parent = null;
 		pushingPlayer = null;
 	}
@@ -212,7 +245,7 @@ function PickItem(player:GameObject) {
 	pushingPlayer = player;
 	transform.parent = pushingPlayer.transform;
 	playerMotor = player.GetComponent(CharacterMotorSF);
-//	damage.SetShootingTeam (pushingPlayer.GetComponent(PlayerStatus).team);
+	shot = false;
 }
 
 function Respawn (spawnPosition : Vector3) {
@@ -221,11 +254,6 @@ function Respawn (spawnPosition : Vector3) {
 	}
 	Release ();
 	
-//	deadly = false;
-//	damage.dmg = 0;
-//	damage.frontDamage = 0;
-//	damage.behindDamage = 0;
-// 	damage.headDamage = 0;
 	transform.localScale = startSize;
 	for (var rend : MeshRenderer in meshRenderers)
 		rend.material.color = Color.white;
@@ -252,8 +280,4 @@ function Respawn (spawnPosition : Vector3) {
 	}
 }
 
-function Roll (rolling:boolean) {
-	rollBall = rolling;
-}
-
-//@script RequireComponent (Damage)
+@script RequireComponent (Damage)

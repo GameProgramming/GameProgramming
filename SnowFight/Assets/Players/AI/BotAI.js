@@ -63,6 +63,7 @@ function Idle ()
 	// Don't do anything when idle
 	// The perfect time for the player to attack us
 	yield WaitForSeconds(idleTime);
+	var tar : GameObject;
 
 	// And if the player is really far away.
 	// We just idle around until he comes back
@@ -73,20 +74,139 @@ function Idle ()
 		itemManager.ReleaseItem();
 		yield WaitForSeconds(0.2);
 		
-		var tar = FindBestBigSnowball();//FindClosestEnemy();
-		if (tar != null) {
-			target = tar;
-			yield RollBall();
+		if (pStatus.GetHp() == 0) { //RELOAD
+			tar = FindSnowResource();//FindClosestEnemy();
+			if (tar) {
+				target = tar;
+				yield GetAmmo();
+			}
 		}
 		else {
-			tar = FindClosestEnemy();
-			if (tar != null) {
+			tar = FindBestBigSnowball();//FindClosestEnemy();
+			if (tar) {
 				target = tar;
-				yield Attack();
+				yield RollBall();
+			}
+			else {
+				tar = FindClosestEnemy();
+				if (tar) {
+					target = tar;
+					yield Attack();
+				}
 			}
 		}
 	}
 } 
+
+// Find the name of the closest enemy within distance
+function FindClosestEnemy () : GameObject {
+    // Find all game objects with tag Enemy
+    var gos : GameObject[];
+    gos = GameObject.FindGameObjectsWithTag("Bot"); 
+    var player = GameObject.FindGameObjectWithTag("Player");
+    var closest : GameObject;
+    var distance = Mathf.Infinity; 
+    var position = transform.position; 
+    var diff;
+	var curDistance;
+	        
+    // Iterate through them and find the closest one
+    for (var go : GameObject in gos)  { 
+    	var status = go.GetComponent(PlayerStatus);
+    	//get closest bot
+    	if (status != null && !status.team.Friendly(pStatus.team)) {
+	        diff = (go.transform.position - position);
+	        curDistance = diff.sqrMagnitude; 
+	        if (curDistance < distance) { 
+	            closest = go; 
+	            distance = curDistance; 
+	        } 
+        }
+    } 
+    
+    //check if player might be enemy and is closer
+    if (player.GetComponent(PlayerStatus) && !player.GetComponent(PlayerStatus).team.Friendly(pStatus.team)) {
+    		diff = (player.transform.position - position);
+        	curDistance = diff.sqrMagnitude; 
+        if (curDistance < distance) { 
+            closest = player; 
+            distance = curDistance; 
+        } 
+    }
+    
+    if (closest)
+    	itemManager.ReleaseItem();
+    	
+    return closest;    
+}
+
+function FindBestBigSnowball () : GameObject {
+    // Find all game objects with tag BigSnowball
+    var gos : GameObject[];
+    gos = GameObject.FindGameObjectsWithTag("BigSnowball"); 
+    
+    var closest : GameObject;
+    var distance = Mathf.Infinity; 
+    var position = transform.position; 
+    var diff;
+	var curDistance;
+	        
+    // Iterate through them and find the closest one
+    for (var go : GameObject in gos)  { 
+    	diff1 = (go.transform.position - position);
+    	diff2 = (go.transform.position - groundBase.position);
+	    curDistance = diff1.sqrMagnitude + diff2.sqrMagnitude; 
+	    if (curDistance < distance) {
+	    	if (!BallOfFriend(go.transform)) { 
+		        closest = go; 
+		        distance = curDistance; 
+	        }
+	    }
+    } 
+    
+    return closest;    
+}
+
+function FindSnowResource () : GameObject {
+	var gos : GameObject[];
+    gos = GameObject.FindGameObjectsWithTag("SnowballRessource"); 
+    
+    var closest : GameObject;
+    var distance = Mathf.Infinity; 
+    var position = transform.position; 
+    var diff;
+	var curDistance;
+	        
+    // Iterate through them and find the closest one
+    for (var go : GameObject in gos)  { 
+    	diff1 = (go.transform.position - position);
+    	diff2 = (go.transform.position - groundBase.position);
+	    curDistance = diff1.sqrMagnitude + diff2.sqrMagnitude; 
+	    if (curDistance < distance) { 
+	        closest = go; 
+	        distance = curDistance; 
+	    }
+    } 
+    return closest;  
+}
+
+function GetAmmo () {
+	//Debug.Log("Get ammo", this);
+	while (true) {
+		if (!target)
+			return;
+			
+		MoveTowardsPosition(target.transform.position);
+		
+//		Debug.Log(" ammo.. " + (target!=null), this);
+		if (pStatus.GetHp() == pStatus.GetFullHp()) {
+//		if (Random.value > 0.9 || pStatus.GetHp() == pStatus.GetFullHp()) {
+			//Debug.Log("returning: " + pStatus.GetHp() + ", " + pStatus.GetFullHp() , this);
+			return;
+		}
+		yield;
+	}
+}
 
 function RollBall ()
 {
@@ -105,13 +225,23 @@ function RollBall ()
 			ball = itemManager.GetItem();
 			//if we don't have a ball go get it
 			if (!ball) {
-				if (BallRolledByFriend ())
+				if (BallRolledByFriend () || pStatus.GetHp() == 0) //RELOAD
 					return;
+					
+				if (pStatus.GetHp() == 0) {
+					var tar = FindSnowResource();//FindClosestEnemy();
+					if (tar) {
+						target = tar;
+						yield GetAmmo();
+					}
+				}
 				
 				var ballSize = target.GetComponent(Renderer).bounds.size.x;
 				 //if we're close enough, try to get a hold of it
-				if (Vector3.Distance(transform.position, target.transform.position) < ballSize + 2)
+				if (Vector3.Distance(transform.position, target.transform.position) < ballSize + 2) {
 					motor.inputAction = true;
+					motor.inputAltFire = false;
+				}
 				else
 					motor.inputAction = false;
 					
@@ -119,6 +249,10 @@ function RollBall ()
 			}
 			//if we have a ball run to base
 			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
+				//if you're out of ammo, just create a snow seource with mouse click
+				if (pStatus.GetHp() == 0) //RELOAD
+					motor.inputAltFire = true;
+					
 				if(BallAtBase(groundBase.position))
 					moveDir = Vector3.zero;
 				else
@@ -177,33 +311,6 @@ function MoveTowardsPosition (position : Vector3) {
 	moveDir = direction;
 }
 
-function FindBestBigSnowball () : GameObject {
-    // Find all game objects with tag Enemy
-    var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("BigSnowball"); 
-    
-    var closest : GameObject;
-    var distance = Mathf.Infinity; 
-    var position = transform.position; 
-    var diff;
-	var curDistance;
-	        
-    // Iterate through them and find the closest one
-    for (var go : GameObject in gos)  { 
-    	diff1 = (go.transform.position - position);
-    	diff2 = (go.transform.position - groundBase.position);
-	    curDistance = diff1.sqrMagnitude + diff2.sqrMagnitude; 
-	    if (curDistance < distance) {
-	    	if (!BallOfFriend(go.transform)) { 
-		        closest = go; 
-		        distance = curDistance; 
-	        }
-	    }
-    } 
-    
-    return closest;    
-}
-
 function BallOfFriend ( t : Transform ) : boolean {
     // Find all game objects with tag Enemy
     var gos : GameObject[];
@@ -260,8 +367,9 @@ function Attack ()
 	var lostSight = false;
 	
 	while (true) {
-		if (!target)
+		if (!target || pStatus.GetHp() == 0) //RELOAD
 			return;
+
 	
 		//if (targetPlayer.IsDead()) return;
 	
@@ -338,53 +446,6 @@ function Attack ()
 	//motor.inputMoveDirection = Vector3.zero;
 	moveDir = Vector3.zero;
 	
-}
-
-function ApplyDamage ()
-{
-	
-}
-
-// Find the name of the closest enemy within distance
-function FindClosestEnemy () : GameObject {
-    // Find all game objects with tag Enemy
-    var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("Bot"); 
-    var player = GameObject.FindGameObjectWithTag("Player");
-    var closest : GameObject;
-    var distance = Mathf.Infinity; 
-    var position = transform.position; 
-    var diff;
-	var curDistance;
-	        
-    // Iterate through them and find the closest one
-    for (var go : GameObject in gos)  { 
-    	var status = go.GetComponent(PlayerStatus);
-    	//get closest bot
-    	if (status != null && !status.team.Friendly(pStatus.team)) {
-	        diff = (go.transform.position - position);
-	        curDistance = diff.sqrMagnitude; 
-	        if (curDistance < distance) { 
-	            closest = go; 
-	            distance = curDistance; 
-	        } 
-        }
-    } 
-    
-    //check if player might be enemy and is closer
-    if (player.GetComponent(PlayerStatus) && !player.GetComponent(PlayerStatus).team.Friendly(pStatus.team)) {
-    		diff = (player.transform.position - position);
-        	curDistance = diff.sqrMagnitude; 
-        if (curDistance < distance) { 
-            closest = player; 
-            distance = curDistance; 
-        } 
-    }
-    
-    if (closest)
-    	itemManager.ReleaseItem();
-    	
-    return closest;    
 }
 
 //function BallReachedBase (reached : boolean) {
