@@ -1,6 +1,6 @@
 #pragma strict
 var respawnTimeout = 2.0;
-var maxBallDistance : float = 3.0;
+var maxBallDistance : float = 2.0;
 var ballCorrectionSpeed : float = 5.0;
 private var groundNormal : Vector3 = Vector3.zero;
 
@@ -66,7 +66,7 @@ function Update () {
 			Release();
 		}
 		else {
-			if (playerMotor.inputAltFire && isGrounded) {
+			if (playerMotor.inputAltFire) {// && isGrounded) {
 				// player destroys snowball
 				pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
 				transform.parent = null;

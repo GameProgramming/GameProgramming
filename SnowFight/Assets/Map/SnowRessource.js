@@ -65,8 +65,8 @@ function GrabBigSnowball(playerPos : Vector3) :GameObject {
 	//var bigSnowballSpawn = transform.FindChild("BigSnowballSpawn");
 	//Debug.Log(bigSnowballSpawn.position);
 	var spawnPos = transform.position;
-//	spawnPos.x += (transform.position.x-playerPos.x);
-//	spawnPos.z += (transform.position.z-playerPos.z);
+	spawnPos.x += (transform.position.x-playerPos.x);
+	spawnPos.z += (transform.position.z-playerPos.z);
 	spawnPos.y += 5;
 	return Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity);
 	//bigSnowballPrefab.GetComponent(BigSnowBall).Respawn(spawnPos);
@@ -84,10 +84,11 @@ function IsGrabPossible() : boolean {
 
 //Should be called before grabbing bigSnowball.
 function IsGrabBigSnowballPossible() : boolean {
-	if (Time.time < ballCreationTime + activationTimeout)
-		Debug.Log("Can't create " + Time.time, this);
-	return (Time.time > ballCreationTime + activationTimeout && currentSnowballs >= bigSnowballAmount);
-//	return currentSnowballs >= bigSnowballAmount;
+	Debug.Log("Attempt to create" + Time.time, this);
+//	if (Time.time < ballCreationTime + activationTimeout)
+//		Debug.Log("Can't create " + Time.time, this);
+//	return (Time.time > ballCreationTime + activationTimeout && currentSnowballs >= bigSnowballAmount);
+	return currentSnowballs >= bigSnowballAmount;
 }
 
 function OnTriggerStay(other : Collider) {
@@ -95,15 +96,24 @@ function OnTriggerStay(other : Collider) {
 	//Wait a while, when ressource is created, before it is active
 	if (Time.time < creationTime + activationTimeout)
 		return;
-
+	var playerStatus : PlayerStatus;
+	var playerMotor : CharacterMotorSF;
+	
 	if (other.CompareTag("Player") || other.CompareTag("Bot")) {
+		playerStatus = other.transform.GetComponent(PlayerStatus);
+		playerMotor = other.gameObject.GetComponent(CharacterMotorSF);
 		if (IsGrabPossible()) {
-			var playerStatus : PlayerStatus = other.transform.GetComponent(PlayerStatus);
-			other.transform.GetComponent(ItemManager).SetSnowfieldCandidate(gameObject);
+			//other.transform.GetComponent(ItemManager).SetSnowfieldCandidate(gameObject);
 			if (playerStatus.CollectSnowPossible()) {
 				Grab();
 				playerStatus.CollectSnow();
 			}
+		}
+		
+//		var playerStatus = other.gameObject.GetComponen(PlayerStatus);
+		if(playerMotor.inputAction && !playerStatus.IsDead() && IsGrabBigSnowballPossible()) {
+				Debug.Log("Grab big snowball " + Time.time, this);
+				GrabBigSnowball(transform.position);
 		}
 	}
 }

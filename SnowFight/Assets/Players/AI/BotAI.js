@@ -186,7 +186,7 @@ function FindSnowResource () : GameObject {
     
     var snowBall = FindBestBigSnowball();
     if (snowBall && FirstCloserToBot(snowBall.transform.position,  closest.transform.position))
-    	return null;
+    	return null; //don't return the snowfield, cause we want to skip this step and get to chasing snowballs
     		
     return closest;  
 }
@@ -206,6 +206,7 @@ function GetAmmo () {
 		
 		if (alreadyThere) {
 			if (Random.value > 0.6) {
+				Debug.Log("Create" + Time.time, this);
 				motor.inputAction = true;
 				return;
 			}
@@ -213,7 +214,6 @@ function GetAmmo () {
 			if (pStatus.GetCurrentSnowballs() == pStatus.GetMaximumSnowballs() || Time.time > arrivalTime+reloadTime) {
 				alreadyThere = false;
 				RemoveTarget();
-			//	Debug.Log("Leaving", this);
 				return;
 			}
 		}
