@@ -5,8 +5,6 @@ private var pStatus : PlayerStatus;
 @System.NonSerialized
 var inputAction : boolean = false;
 @System.NonSerialized
-var lastInputAction : boolean = false;
-@System.NonSerialized
 var inputAltFire : boolean = false;
 
 private var item : GameObject;
@@ -14,54 +12,26 @@ private var candidateItem : GameObject;
 private var movementOffset : Vector3;
 var maxCandidateDistance : float = 1.0;
 
-private var snowResourcePick :SnowRessource; // typo im typnamen, ach mensch...
-private var srPickProgress : float = 0;
-var srPickTime : float = 0;
-
 function Start () {
 	motor = GetComponent(CharacterMotorSF);
 	pStatus = GetComponent(PlayerStatus);
 	item = null;
-	snowResourcePick = null;
 }
 
 function Update () {
-	if (candidateItem && CandidateTooFarAway()) {
-		candidateItem = null;
-	}
-	var inputActionUp = !lastInputAction && inputAction;
-	lastInputAction = inputAction;
-	
-	if (snowResourcePick) {
-		if (snowResourcePick.IsGrabBigSnowballPossible() 
-				&& inputAction && !pStatus.IsDead()) {
-			srPickProgress += Time.deltaTime;
-			if (srPickProgress > srPickTime) {
-				item = snowResourcePick.GrabBigSnowball(transform.position);
-				snowResourcePick = null;
-				srPickProgress = 0;
-				item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
-			}
-		} else {
-			srPickProgress = 0;
-			snowResourcePick = null;
-		}
-	} else if (item && (inputActionUp || pStatus.IsDead())) {
+	//player releases action button or dies
+	if (item && (inputAction || pStatus.IsDead())) {
 		item.SendMessage("Release", null, SendMessageOptions.DontRequireReceiver);
 		ReleaseItem();
-	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem)
-			  && motor.IsGrounded()) {
-		if (candidateItem.CompareTag("SnowballRessource")) {
-			snowResourcePick = candidateItem.GetComponent(SnowRessource);
-			srPickProgress = 0;
-		} else {
-			item = candidateItem;
-			if (item.layer != LayerMask.NameToLayer("Item")
-				&& item.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
-				item = item.transform.parent.gameObject;
-			}
-			item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
+	}
+
+	else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem) && !CandidateTooFarAway() && motor.IsGrounded()) {
+		item = candidateItem;
+		if (item.layer != LayerMask.NameToLayer("Item")
+			&& item.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
+			item = item.transform.parent.gameObject;
 		}
+		item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 	}
 }
 
@@ -69,7 +39,7 @@ function OnControllerColliderHit (hit : ControllerColliderHit) {
 	if (hit.gameObject.layer == LayerMask.NameToLayer("Item")) {
 		candidateItem = hit.gameObject;
 	} else if (hit.transform.parent
-			&& hit.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
+		&& hit.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
 		candidateItem = hit.gameObject;
 	}
 }
@@ -86,6 +56,7 @@ function ReleaseItem () {
 			item.transform.parent = null;
 		item = null;
 		candidateItem = null;
+		inputAction = false;
 	}
 }
 
@@ -117,12 +88,6 @@ function ItemNotHeld(it : GameObject) : boolean {
 
 function GetItem () {
 	return item;
-}
-
-function SetSnowfieldCandidate(sf :GameObject) {
-	if (!candidateItem) {
-		candidateItem = sf;
-	}
 }
 
 @script RequireComponent (CharacterMotorSF)
