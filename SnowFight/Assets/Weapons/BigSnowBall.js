@@ -66,7 +66,7 @@ function Update () {
 			Release();
 		}
 		else {
-			if (playerMotor.inputAltFire) {
+			if (playerMotor.inputAltFire && isGrounded) {
 				// player destroys snowball
 				pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
 				transform.parent = null;
@@ -236,6 +236,9 @@ function Release () {
 	if (pushingPlayer) {
 		if (!shot)
 			rigidbody.velocity = Vector3.zero;
+			
+		pushingPlayer.SendMessage("Remove Target", null, SendMessageOptions.DontRequireReceiver);
+		Debug.Log("Player has shot", this);
 		transform.parent = null;
 		pushingPlayer = null;
 	}

@@ -16,6 +16,8 @@ private var snowballRessource : Transform;
 private var creationTime : float = 0.0;
 var activationTimeout : float = 5.0;
 
+private var ballCreationTime : float = 0.0;
+
 function Start () {
 	currentSnowballs = maxSnowballs;
 	
@@ -58,12 +60,13 @@ function Restock() {
 
 //This function will be called when a player want to create a big snowball.
 function GrabBigSnowball(playerPos : Vector3) :GameObject {
+	ballCreationTime = Time.time;
 	currentSnowballs -= bigSnowballAmount;
 	//var bigSnowballSpawn = transform.FindChild("BigSnowballSpawn");
 	//Debug.Log(bigSnowballSpawn.position);
 	var spawnPos = transform.position;
-	spawnPos.x += (transform.position.x-playerPos.x);
-	spawnPos.z += (transform.position.z-playerPos.z);
+//	spawnPos.x += (transform.position.x-playerPos.x);
+//	spawnPos.z += (transform.position.z-playerPos.z);
 	spawnPos.y += 5;
 	return Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity);
 	//bigSnowballPrefab.GetComponent(BigSnowBall).Respawn(spawnPos);
@@ -81,7 +84,10 @@ function IsGrabPossible() : boolean {
 
 //Should be called before grabbing bigSnowball.
 function IsGrabBigSnowballPossible() : boolean {
-	return (currentSnowballs >= bigSnowballAmount);
+	if (Time.time < ballCreationTime + activationTimeout)
+		Debug.Log("Can't create " + Time.time, this);
+	return (Time.time > ballCreationTime + activationTimeout && currentSnowballs >= bigSnowballAmount);
+//	return currentSnowballs >= bigSnowballAmount;
 }
 
 function OnTriggerStay(other : Collider) {

@@ -26,8 +26,6 @@ private var strafing = 0.0;
 private var moveDir = Vector3.zero;
 
 private var ball : GameObject;
-//@System.NonSerialized
-//var ballReachedBase : boolean = false;
 
 function Start ()
 {
@@ -52,8 +50,7 @@ function Awake () {
 }
 
 function Update () {
-	//if (target && target.CompareTag("BigSnowball"))
-		motor.inputMoveDirection = moveDir;
+	motor.inputMoveDirection = moveDir;
 	
 }
 
@@ -74,25 +71,24 @@ function Idle ()
 		itemManager.ReleaseItem();
 		yield WaitForSeconds(0.2);
 		
-		if (pStatus.GetHp() == 0) { //RELOAD
-			tar = FindSnowResource();//FindClosestEnemy();
+		if (pStatus.GetCurrentSnowballs() == 0) {
+			tar = FindSnowResource();
 			if (tar) {
 				target = tar;
 				yield GetAmmo();
 			}
 		}
+			
+		tar = FindBestBigSnowball();
+		if (tar) {
+			target = tar;
+			yield RollBall();
+		}
 		else {
-			tar = FindBestBigSnowball();//FindClosestEnemy();
+			tar = FindClosestEnemy();
 			if (tar) {
 				target = tar;
-				yield RollBall();
-			}
-			else {
-				tar = FindClosestEnemy();
-				if (tar) {
-					target = tar;
-					yield Attack();
-				}
+				yield Attack();
 			}
 		}
 	}
@@ -186,24 +182,53 @@ function FindSnowResource () : GameObject {
 	        closest = go; 
 	        distance = curDistance; 
 	    }
-    } 
+    }
+    
+    var snowBall = FindBestBigSnowball();
+    if (snowBall && FirstCloserToBot(snowBall.transform.position,  closest.transform.position))
+    	return null;
+    		
     return closest;  
 }
 
 function GetAmmo () {
-	//Debug.Log("Get ammo", this);
+	var alreadyThere : boolean = false;
+	var arrivalTime : float;
+	var reloadTime : float;
+	
+	itemManager.ReleaseItem();
+	
 	while (true) {
+		motor.inputAction = false;
+		
 		if (!target)
 			return;
-			
-		MoveTowardsPosition(target.transform.position);
 		
-//		Debug.Log(" ammo.. " + (target!=null), this);
-		if (pStatus.GetHp() == pStatus.GetFullHp()) {
-//		if (Random.value > 0.9 || pStatus.GetHp() == pStatus.GetFullHp()) {
-			//Debug.Log("returning: " + pStatus.GetHp() + ", " + pStatus.GetFullHp() , this);
-			return;
+		if (alreadyThere) {
+			if (Random.value > 0.6) {
+				motor.inputAction = true;
+				return;
+			}
+			
+			if (pStatus.GetCurrentSnowballs() == pStatus.GetMaximumSnowballs() || Time.time > arrivalTime+reloadTime) {
+				alreadyThere = false;
+				RemoveTarget();
+			//	Debug.Log("Leaving", this);
+				return;
+			}
 		}
+		else {
+			if (Vector3.Distance(transform.position, target.transform.position) >= 1)
+				MoveTowardsPosition(target.transform.position);
+			else {
+				//wait for a while
+				alreadyThere = true;
+				arrivalTime = Time.time;
+				reloadTime = Random.Range(1.0,2.0);
+				moveDir = Vector3.zero;
+			}
+		}
+		
 		yield;
 	}
 }
@@ -225,16 +250,17 @@ function RollBall ()
 			ball = itemManager.GetItem();
 			//if we don't have a ball go get it
 			if (!ball) {
-				if (BallRolledByFriend () || pStatus.GetHp() == 0) //RELOAD
+				if (BallRolledByFriend ())// || pStatus.GetCurrentSnowballs() == 0) //RELOAD
 					return;
 					
-				if (pStatus.GetHp() == 0) {
-					var tar = FindSnowResource();//FindClosestEnemy();
-					if (tar) {
-						target = tar;
-						yield GetAmmo();
-					}
-				}
+//				if (pStatus.GetHp() == 0) {
+//					var tar = FindSnowResource();
+//					if (tar && FirstCloserToBot(tar.transform.position, target.transform.position)) {
+//						target = tar;
+//						yield GetAmmo();
+//						return;
+//					}
+//				}
 				
 				var ballSize = target.GetComponent(Renderer).bounds.size.x;
 				 //if we're close enough, try to get a hold of it
@@ -250,9 +276,13 @@ function RollBall ()
 			//if we have a ball run to base
 			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
 				//if you're out of ammo, just create a snow seource with mouse click
-				if (pStatus.GetHp() == 0) //RELOAD
+				if (pStatus.GetCurrentSnowballs() == 0) { //RELOAD
 					motor.inputAltFire = true;
-					
+					motor.inputAction = false;
+					Debug.Log("Destroy ball for snow");
+					return;
+				}
+				
 				if(BallAtBase(groundBase.position))
 					moveDir = Vector3.zero;
 				else
@@ -275,24 +305,6 @@ function RollBall ()
 	}
 }
 
-function RotateTowardsPosition (targetPos : Vector3, rotateSpeed : float) : float
-{
-	// Compute relative point and get the angle towards it
-	var relative = transform.InverseTransformPoint(targetPos);
-	var angle = Mathf.Atan2 (relative.x, relative.z) * Mathf.Rad2Deg;
-	// Clamp it with the max rotation speed
-	var maxRotation = rotateSpeed * Time.deltaTime;
-	var clampedAngle = Mathf.Clamp(angle, -maxRotation, maxRotation);
-	// Rotate
-	transform.Rotate(0, clampedAngle, 0);
-	// Return the current angle
-	return angle;
-}
-
-function BallAtBase(basePos : Vector3) {
-	return (Vector3.Distance(transform.position, basePos) < target.GetComponent(Renderer).bounds.size.x+2);
-}
-
 function MoveTowardsPosition (position : Vector3) {
 	var direction = position - transform.position;
 	var dist = (direction).sqrMagnitude;
@@ -309,6 +321,27 @@ function MoveTowardsPosition (position : Vector3) {
 		direction = transform.TransformDirection(Vector3.forward * attackSpeed);
 	}
 	moveDir = direction;
+}
+
+function RotateTowardsPosition (targetPos : Vector3, rotateSpeed : float) : float {
+	// Compute relative point and get the angle towards it
+	var relative = transform.InverseTransformPoint(targetPos);
+	var angle = Mathf.Atan2 (relative.x, relative.z) * Mathf.Rad2Deg;
+	// Clamp it with the max rotation speed
+	var maxRotation = rotateSpeed * Time.deltaTime;
+	var clampedAngle = Mathf.Clamp(angle, -maxRotation, maxRotation);
+	// Rotate
+	transform.Rotate(0, clampedAngle, 0);
+	// Return the current angle
+	return angle;
+}
+
+function FirstCloserToBot (first : Vector3, second : Vector3) {
+	return (Vector3.Distance(transform.position, first) <= Vector3.Distance(transform.position, second));
+}
+
+function BallAtBase(basePos : Vector3) {
+	return (Vector3.Distance(transform.position, basePos) < target.GetComponent(Renderer).bounds.size.x+2);
 }
 
 function BallOfFriend ( t : Transform ) : boolean {
@@ -366,10 +399,19 @@ function Attack ()
 	var timer = 0.0;
 	var lostSight = false;
 	
-	while (true) {
-		if (!target || pStatus.GetHp() == 0) //RELOAD
+	while (true) {			
+		if (!target || pStatus.GetCurrentSnowballs() == 0)
 			return;
-
+		
+//		if(pStatus.GetCurrentSnowballs() == 0) {
+//			Debug.Log("Attacking but out of ammo", this);
+//			tar = FindSnowResource();
+//			if (tar) {
+//				target = tar;
+//				yield GetAmmo();
+//				return;
+//			}
+//		}
 	
 		//if (targetPlayer.IsDead()) return;
 	
@@ -420,7 +462,7 @@ function Attack ()
 		}
 		
 		if (Random.value > 0.99) {
-			target = null;
+			RemoveTarget();
 			return;
 //			motor.inputAction = false;
 //			tar = FindClosestEnemy();

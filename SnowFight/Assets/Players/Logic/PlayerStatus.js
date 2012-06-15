@@ -187,7 +187,7 @@ function Respawn () {
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
 	transform.position = newPosition;
 	
-	hp = fullHp;
+	//hp = fullHp; //TODO: uncomment me!
 	currentSnowballs = maximumSnowballCapacity;
 	died = false;
 	
