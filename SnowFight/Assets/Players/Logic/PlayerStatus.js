@@ -192,8 +192,11 @@ function Respawn () {
 	died = false;
 	
 	gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
-	var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
-	overviewCam.SetMode(false);
+	if (transform.tag.Equals("Player")) {
+		var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+		overviewCam.SetMode(false);
+	}
+
 }
 
 function CollectSnow() {
