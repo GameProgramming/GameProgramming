@@ -16,7 +16,7 @@ var maxCandidateDistance : float = 1.0;
 
 private var snowResourcePick :SnowRessource; // typo im typnamen, ach mensch...
 private var srPickProgress : float = 0;
-var srPickTime : float = 0;
+var srPickTime : float = 3;
 
 function Start () {
 	motor = GetComponent(CharacterMotorSF);
@@ -36,8 +36,11 @@ function Update () {
 		if (snowResourcePick.IsGrabBigSnowballPossible() 
 				&& inputAction && !pStatus.IsDead()) {
 			srPickProgress += Time.deltaTime;
+			Debug.Log("Building ball " + srPickProgress, this);
+			
 			if (srPickProgress > srPickTime) {
-				item = snowResourcePick.GrabBigSnowball(transform.position);
+				Debug.Log("Ball built", this);
+				item = snowResourcePick.GrabBigSnowball(gameObject);
 				snowResourcePick = null;
 				srPickProgress = 0;
 				item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
@@ -49,7 +52,8 @@ function Update () {
 	} else if (item && (inputActionUp || pStatus.IsDead())) {
 		item.SendMessage("Release", null, SendMessageOptions.DontRequireReceiver);
 		ReleaseItem();
-	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem)
+	//} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem)
+	} else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem)
 			  && motor.IsGrounded()) {
 		if (candidateItem.CompareTag("SnowballRessource")) {
 			snowResourcePick = candidateItem.GetComponent(SnowRessource);

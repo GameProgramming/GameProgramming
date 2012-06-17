@@ -57,14 +57,15 @@ function Restock() {
 }
 
 //This function will be called when a player want to create a big snowball.
-function GrabBigSnowball(playerPos : Vector3) :GameObject {
+function GrabBigSnowball(player : GameObject) :GameObject {
 	currentSnowballs -= bigSnowballAmount;
 	//var bigSnowballSpawn = transform.FindChild("BigSnowballSpawn");
 	//Debug.Log(bigSnowballSpawn.position);
-	var spawnPos = transform.position;
-	spawnPos.x += (transform.position.x-playerPos.x);
-	spawnPos.z += (transform.position.z-playerPos.z);
-	spawnPos.y += 5;
+//	var spawnPos = transform.position;
+//	spawnPos.x += (transform.position.x-playerPos.x);
+//	spawnPos.z += (transform.position.z-playerPos.z);
+//	spawnPos.y += 5;
+	var spawnPos = player.transform.position + player.transform.forward;
 	return Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity);
 	//bigSnowballPrefab.GetComponent(BigSnowBall).Respawn(spawnPos);
 }

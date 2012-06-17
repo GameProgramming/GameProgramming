@@ -26,8 +26,6 @@ private var strafing = 0.0;
 private var moveDir = Vector3.zero;
 
 private var ball : GameObject;
-//@System.NonSerialized
-//var ballReachedBase : boolean = false;
 
 function Start ()
 {
@@ -212,8 +210,9 @@ function GetAmmo () {
 		
 		if (alreadyThere) {
 			if (Random.value > 0.9) {
-				Debug.Log("Create" + Time.time, this);
 				motor.inputAction = true;
+				buildingBall = Time.time;
+				yield WaitForSeconds(GetComponent(ItemManager).srPickTime);
 				return;
 			}
 			
