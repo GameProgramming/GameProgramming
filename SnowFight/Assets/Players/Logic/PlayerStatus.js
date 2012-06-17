@@ -184,7 +184,9 @@ function Respawn () {
 //		transform.position.y += 5;
 //	}
 	//This would be the new code
+
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
+	newPosition.y += 5;
 	transform.position = newPosition;
 	
 	hp = fullHp;
