@@ -75,7 +75,7 @@ function Idle ()
 		yield WaitForSeconds(0.2);
 		
 		if (pStatus.GetCurrentSnowballs() == 0) { //RELOAD
-			tar = FindSnowResource();//FindClosestEnemy();
+			tar = FindSnowResource();
 			if (tar) {
 				target = tar;
 				yield GetAmmo();
@@ -187,7 +187,16 @@ function FindSnowResource () : GameObject {
 	        distance = curDistance; 
 	    }
     } 
+    
+    var snowBall = FindBestBigSnowball();
+    if (snowBall && FirstCloserThanSecond(snowBall.transform.position,  closest.transform.position))
+    	closest = null; //don't return the snowfield, cause we want to skip this step and get to chasing snowballs
+    	
     return closest;  
+}
+
+function FirstCloserThanSecond (first : Vector3, second : Vector3) {
+	return (Vector3.Distance(transform.position, first) <= Vector3.Distance(transform.position, second));
 }
 
 function GetAmmo () {
@@ -202,7 +211,7 @@ function GetAmmo () {
 			return;
 		
 		if (alreadyThere) {
-			if (Random.value > 0.6) {
+			if (Random.value > 0.9) {
 				Debug.Log("Create" + Time.time, this);
 				motor.inputAction = true;
 				return;
@@ -271,8 +280,10 @@ function RollBall ()
 			//if we have a ball run to base
 			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
 				//if you're out of ammo, just create a snow seource with mouse click
-				if (pStatus.GetCurrentSnowballs() == 0) //RELOAD
+				if (pStatus.GetCurrentSnowballs() == 0) { //RELOAD
 					motor.inputAltFire = true;
+					Debug.Log("Destroy ball for ammo", this);
+				}
 					
 				if(BallAtBase(groundBase.position))
 					moveDir = Vector3.zero;
