@@ -11,12 +11,18 @@ private var playerStatus :PlayerStatus;
 private var motor :CharacterMotorSF;
 private var camSetup :Transform;
 private var throwPreview :ThrowPreview;
+private var frost :Transform;
+
+private var body :Transform;
+private var meshRenderers :Component[];
+private var skinnedRenderers :Component[];
 
 function Start() {
 	playerStatus = GetComponent(PlayerStatus);
 	motor = GetComponent(CharacterMotorSF);
-	camSetup = transform.FindChild("CameraSetup");
-	throwPreview = transform.FindChild("BulletSpawn").GetComponent(ThrowPreview);
+	camSetup = transform.Find("CameraSetup");
+	throwPreview = transform.Find("BulletSpawn").GetComponent(ThrowPreview);
+	frost = transform.Find("Frost");
 	
 	anim = transform.Find("Model").GetComponent(Animation);
 	
@@ -42,15 +48,17 @@ function Start() {
 	if (team == null) {
 		Debug.LogError("Could not determine Player team. (Player object has to be child of Team object!)");
 	}
+	
+	body = transform.Find("Model");
+	meshRenderers = body.GetComponentsInChildren (MeshRenderer);
+	skinnedRenderers = body.GetComponentsInChildren (SkinnedMeshRenderer);
 
 	//make sure the player is visible on start
-	var meshRenderers = GetComponentsInChildren (MeshRenderer);
 	for (var rend : MeshRenderer in meshRenderers) {
 		rend.enabled = true;
 		rend.material.SetTexture("_MainTex",team.playerSkin);
 	}
 	
-	var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
 	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
 		rend.enabled = true;
 		rend.material.SetTexture("_MainTex",team.playerSkin);
@@ -59,12 +67,6 @@ function Start() {
 
 function Update () {
 	if (goRed && Time.time > redTime + redDuration) {
-		//get the body first
-		var body = transform.Find("Model");
-		//then get renderers for showing/hiding or coloring player and bots
-		var meshRenderers = body.GetComponentsInChildren (MeshRenderer);
-		var skinnedRenderers = body.GetComponentsInChildren (SkinnedMeshRenderer);
-	
 		//color damaged player back to white
 		for (var rend : MeshRenderer in meshRenderers) {
 			//if(!rend.CompareTag("BigSnowball"))
@@ -137,13 +139,12 @@ function OnDeath () {
 }
 
 function OnRespawn () {
+	frost.renderer.enabled = false;
 	//show player
-	var meshRenderers = GetComponentsInChildren (MeshRenderer);
 	for (var rend : MeshRenderer in meshRenderers) {
 		rend.enabled = true;
 	}
 	
-	var skinnedRenderers = GetComponentsInChildren (SkinnedMeshRenderer);
 	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
 		rend.enabled = true;
 	}
@@ -156,11 +157,6 @@ function OnRespawn () {
 
 function OnHit () {
 	anim.CrossFade("hit");
-	
-	//color player red when hit
-	var body = transform.Find("Model");
-	var meshRenderers = body.GetComponentsInChildren (MeshRenderer);
-	var skinnedRenderers = body.GetComponentsInChildren (SkinnedMeshRenderer);
 		
 	goRed = true;
 	redTime = Time.time;
@@ -173,6 +169,14 @@ function OnHit () {
 	//	if(!rend.CompareTag("BigSnowball")) //avoid the ball from turning red
 			rend.material.color = new Color(0.9,0.2,0.2,1);
 	}
+}
+
+function Freeze (s: float) {
+	frost.renderer.enabled = true;
+}
+
+function OnDefrost () {
+	frost.renderer.enabled = false;
 }
 
 function GameOver () {

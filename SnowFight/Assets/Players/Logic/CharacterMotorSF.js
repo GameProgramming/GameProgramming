@@ -201,11 +201,13 @@ private var tr : Transform;
 private var controller : CharacterController;
 
 private var floating = false;
+private var frozen = false;
 
 function Start () {
 	gameOver = false;
 	canControl = false;
 	floating = false;
+	frozen = false;
 }
 
 function Awake () {
@@ -253,7 +255,7 @@ private function UpdateFunction () {
 		}
 	}
 	
-	if (!floating) {
+	if (!floating && !frozen) {
 		AdjustPlayerSpeed();
 		
 		// We copy the actual velocity into a temporary variable that we can manipulate.
@@ -707,10 +709,18 @@ function OnDeath() {
 	canControl = false;
 }
 
+function Freeze( s :float ) {
+	frozen = true;
+}
+
+function OnDefrost() {
+	frozen = false;
+}
 
 function OnRespawn () {
 	canControl = true;
 	inputFire = false;
+	frozen = false;
 }
 
 
