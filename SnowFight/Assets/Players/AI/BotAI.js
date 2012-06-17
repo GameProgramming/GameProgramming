@@ -74,7 +74,7 @@ function Idle ()
 		itemManager.ReleaseItem();
 		yield WaitForSeconds(0.2);
 		
-		if (pStatus.GetHp() == 0) { //RELOAD
+		if (pStatus.GetCurrentSnowballs() == 0) { //RELOAD
 			tar = FindSnowResource();//FindClosestEnemy();
 			if (tar) {
 				target = tar;
@@ -199,9 +199,9 @@ function GetAmmo () {
 		MoveTowardsPosition(target.transform.position);
 		
 //		Debug.Log(" ammo.. " + (target!=null), this);
-		if (pStatus.GetHp() == pStatus.GetFullHp()) {
-//		if (Random.value > 0.9 || pStatus.GetHp() == pStatus.GetFullHp()) {
-			//Debug.Log("returning: " + pStatus.GetHp() + ", " + pStatus.GetFullHp() , this);
+		if (pStatus.GetCurrentSnowballs() == pStatus.GetMaximumSnowballs()) {
+//		if (Random.value > 0.9 || pStatus.GetCurrentSnowballs() == pStatus.GetFullHp()) {
+			//Debug.Log("returning: " + pStatus.GetCurrentSnowballs() + ", " + pStatus.GetFullHp() , this);
 			return;
 		}
 		yield;
@@ -225,10 +225,10 @@ function RollBall ()
 			ball = itemManager.GetItem();
 			//if we don't have a ball go get it
 			if (!ball) {
-				if (BallRolledByFriend () || pStatus.GetHp() == 0) //RELOAD
+				if (BallRolledByFriend () || pStatus.GetCurrentSnowballs() == 0) //RELOAD
 					return;
 					
-				if (pStatus.GetHp() == 0) {
+				if (pStatus.GetCurrentSnowballs() == 0) {
 					var tar = FindSnowResource();//FindClosestEnemy();
 					if (tar) {
 						target = tar;
@@ -250,7 +250,7 @@ function RollBall ()
 			//if we have a ball run to base
 			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
 				//if you're out of ammo, just create a snow seource with mouse click
-				if (pStatus.GetHp() == 0) //RELOAD
+				if (pStatus.GetCurrentSnowballs() == 0) //RELOAD
 					motor.inputAltFire = true;
 					
 				if(BallAtBase(groundBase.position))
@@ -367,7 +367,7 @@ function Attack ()
 	var lostSight = false;
 	
 	while (true) {
-		if (!target || pStatus.GetHp() == 0) //RELOAD
+		if (!target || pStatus.GetCurrentSnowballs() == 0) //RELOAD
 			return;
 
 	
