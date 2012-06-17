@@ -22,6 +22,8 @@ function OnMouseDown() {
 			var spawnBaseID = teamBase.GetID();
 			playerStatus.SetSpawnBaseID(spawnBaseID);
 		}
-
+		var showSpawn = GameObject.FindGameObjectWithTag("Game").GetComponent(ShowRespawn);
+		showSpawn.ActivateRespawn();
 	}
+	
 }
