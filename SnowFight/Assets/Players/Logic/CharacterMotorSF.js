@@ -390,6 +390,7 @@ private function UpdateFunction () {
 }
 
 function SetFloating ( f :boolean ) {
+	SetVelocity(Vector3.zero);
 	floating = f;
 }
 
@@ -681,7 +682,7 @@ function SetVelocity (velocity : Vector3) {
 	grounded = false;
 	movement.velocity = velocity;
 	movement.frameVelocity = Vector3.zero;
-	SendMessage("OnExternalVelocity");
+	SendMessage("OnExternalVelocity", null, SendMessageOptions.DontRequireReceiver);
 }
 
 function AdjustPlayerSpeed () {
