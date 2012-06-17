@@ -11,6 +11,7 @@ private var currentSnowballs : int = 0;
 private var hp : int = fullHp;
 private var killTime = -respawnTimeout; // prevents "double spawn" at start
 
+private var frozen : float = 0;
 private var died : boolean = true;
 private var respawning : boolean = false;
 private var gameOver = false;
@@ -35,14 +36,19 @@ function Start() {
 function Update () {
 	//Every one second collect a snowball.
 	collectionSnowTime += Time.deltaTime;
-//	if (CollectSnowPossible()) {
-//		//Collect snowball.
-//		CollectSnow();
-//	}
-	if (!gameOver) {
 
-		if (died && Time.time > killTime + respawnTimeout && spawnBaseID > 0)
+	if (frozen > 0 && frozen <= Time.deltaTime) {
+		gameObject.SendMessage ("OnDefrost", SendMessageOptions.DontRequireReceiver);
+	}
+	frozen -= Time.deltaTime;
+	frozen = Mathf.Clamp(frozen, 0, 100);
+
+	if (!gameOver) {
+		if (!died && hp <= 0) {
+  			Die(null);
+		} else if (died && Time.time > killTime + respawnTimeout && spawnBaseID > 0) {
 			Respawn();
+		}
 	}
 }
 
@@ -89,12 +95,8 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 			hp = Mathf.Max(0, hp);
 		}
 		
-		gameObject.SendMessage ("OnHit", SendMessageOptions.DontRequireReceiver);										
+		gameObject.SendMessage ("OnHit", SendMessageOptions.DontRequireReceiver);							
 		gameObject.SendMessage ("ReleaseBall", SendMessageOptions.DontRequireReceiver);
-		
-		if (hp <= 0) {
-			Die(damageObject);
-		}
 	}
 }
 
@@ -169,9 +171,16 @@ function Die (ball : Damage) {
 	gameObject.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
 	gameObject.SendMessage ("RemoveTarget", SendMessageOptions.DontRequireReceiver);
 	
+}
 
-	
+function Freeze (strength :float) {
+	if (!died) {
+		frozen = strength;
+	}
+}
 
+function IsFrozen () :boolean {
+	return frozen > 0.0001;
 }
 
 function Respawn () {
@@ -184,16 +193,22 @@ function Respawn () {
 //		transform.position.y += 5;
 //	}
 	//This would be the new code
+
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
+	newPosition.y += 5;
 	transform.position = newPosition;
 	
 	hp = fullHp;
 	currentSnowballs = maximumSnowballCapacity;
 	died = false;
+	frozen = 0;
 	
 	gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
-	var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
-	overviewCam.SetMode(false);
+	if (transform.tag.Equals("Player")) {
+		var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+		overviewCam.SetMode(false);
+	}
+
 }
 
 function CollectSnow() {
