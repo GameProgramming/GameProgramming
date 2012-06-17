@@ -191,18 +191,39 @@ function FindSnowResource () : GameObject {
 }
 
 function GetAmmo () {
-	//Debug.Log("Get ammo", this);
+	var alreadyThere : boolean = false;
+	var arrivalTime : float;
+	var reloadTime : float;
+	
+	itemManager.ReleaseItem();
+	
 	while (true) {
 		if (!target)
 			return;
-			
-		MoveTowardsPosition(target.transform.position);
 		
-//		Debug.Log(" ammo.. " + (target!=null), this);
-		if (pStatus.GetCurrentSnowballs() == pStatus.GetMaximumSnowballs()) {
-//		if (Random.value > 0.9 || pStatus.GetCurrentSnowballs() == pStatus.GetFullHp()) {
-			//Debug.Log("returning: " + pStatus.GetCurrentSnowballs() + ", " + pStatus.GetFullHp() , this);
-			return;
+		if (alreadyThere) {
+			if (Random.value > 0.6) {
+				Debug.Log("Create" + Time.time, this);
+				motor.inputAction = true;
+				return;
+			}
+			
+			if (pStatus.GetCurrentSnowballs() == pStatus.GetMaximumSnowballs() || Time.time > arrivalTime+reloadTime) {
+				alreadyThere = false;
+				RemoveTarget();
+				return;
+			}
+		}
+		else {
+			if (Vector3.Distance(transform.position, target.transform.position) >= 1)
+				MoveTowardsPosition(target.transform.position);
+			else {
+				//wait for a while
+				alreadyThere = true;
+				arrivalTime = Time.time;
+				reloadTime = Random.Range(1.0,2.0);
+				moveDir = Vector3.zero;
+			}
 		}
 		yield;
 	}
