@@ -4,6 +4,7 @@ function Update () {
 
 }
 function OnCollisionEnter(collision : Collision){
+
 	var explosionClone = Instantiate(explosion,transform.position,transform.rotation);
 	
 //	if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Bot")) {

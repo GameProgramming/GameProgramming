@@ -183,6 +183,10 @@ function IsFrozen () :boolean {
 	return frozen > 0.0001;
 }
 
+function GetTeam () {
+	return team;
+}
+
 function Respawn () {
 	respawning = true;
 	
@@ -248,6 +252,12 @@ function GameOver () {
 function SubtractSnowball() {
 	if (currentSnowballs > 0) {
 		currentSnowballs -= 1;
+	}
+}
+
+function SubtractSnowball(x) {
+	if (currentSnowballs > 0) {
+		currentSnowballs -= x;
 	}
 }
 
