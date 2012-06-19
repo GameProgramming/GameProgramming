@@ -28,7 +28,9 @@ function Update () {
 	if (freezingCurr && inputFire) {
 		freezingProgress += Time.deltaTime;
 		if (freezingProgress >= freezingTime) {
-			freezingCurr.gameObject.SendMessage("Freeze", freezingStrength,
+			var attack = new Attack();
+			attack.damage = freezingStrength;
+			freezingCurr.gameObject.SendMessage("Freeze", attack,
 									SendMessageOptions.DontRequireReceiver);
 		}
 	}

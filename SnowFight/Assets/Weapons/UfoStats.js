@@ -1,5 +1,5 @@
 
-var life : int = 100;
+
 
 function Start () {
 	Debug.Log("ufostart");
@@ -13,44 +13,24 @@ function Update () {
 }
 
 function OnCollisionEnter (collision : Collision) {
-	//Get all required positions.
-	Debug.Log("ufo on colission");
 	var ballPosition = collision.transform.position;
 	var ufoPosition = gameObject.transform.position;
 	var inversePosition = gameObject.transform.InverseTransformPoint(collision.transform.position);
 	if(collision.rigidbody && collision.rigidbody.tag.Equals("Projectile")){
-		//Get the damage Object
 		var damageObject : Damage = collision.transform.GetComponent("Damage");
-		var damage = 0;
-		//If the ball hits the player in the head.
+		var attack :Attack = new Attack();
+		attack.damage = 0;
+		// TODO: Macht das hier beim UFO irgendeinen Sinn???
 		if (inversePosition.y > 0.9) {
-			damage = damageObject.GetHeadDamage();
-			//Debug.Log("Hit in the head.");
-			//Debug.Log(damage);
-		//He hits the player from behind.
+			attack.damage = damageObject.GetHeadDamage();
 		} else if (inversePosition.z < -0.3) {
-			damage = damageObject.GetBehindDamage();
-			//Debug.Log("Hit from behind.");
-			//Debug.Log(damage);
+			attack.damage = damageObject.GetBehindDamage();
 		} else {
-			damage = damageObject.GetFrontDamage();
-			//Debug.Log("Hit from side or front.");
-			//Debug.Log(damage);
+			attack.damage = damageObject.GetFrontDamage();
 		}
 		
-		if (damage > 0) {
-			life -= damage;
-			life = Mathf.Max(0, life);
-		}
-		Debug.Log("ufo life:"+life);
+		Debug.Log("ufo dmg");
 		
-					
-		if (life <= 0) {
-			if (transform.parent.transform.parent.transform.tag == "Player"){
-				player = transform.parent.transform.parent.transform;
-				player.GetComponent(PlayerStatus).Die(damageObject);
-			}
-			Destroy (gameObject);
-		}
+		transform.parent.gameObject.SendMessage("ApplyDamage", attack);
 	}
 }

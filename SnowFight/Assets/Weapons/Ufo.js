@@ -10,6 +10,9 @@ private var velo :Vector3 = Vector3.zero;
 @System.NonSerialized
 private var terrain :Terrain;
 
+var hp : int = 10;
+private var lastAttack :Attack;
+
 function Start () {
 	mesh = transform.Find("Ufo");
 	bulletSpawn = transform.Find("Ufo/BulletSpawn");
@@ -57,7 +60,6 @@ function Release () {
 	if (parent)
 		transform.parent = parent.transform;
 	
-	playerMotor.SetFloating(false);
 	GameObject.FindGameObjectWithTag("OverviewCam")
 		.GetComponent(MapOverview).ResetPlayerCam();
 }
@@ -72,11 +74,29 @@ function PickItem(player :GameObject) {
 	transform.localPosition = Vector3.zero;
 	transform.localRotation = Quaternion.identity;
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer (player.transform);
-	playerMotor.SetFloating(true);
 	
 	if (player.CompareTag("Player")) {
 		GameObject.FindGameObjectWithTag("OverviewCam")
 		.GetComponent(MapOverview).SetPlayerCam(transform.Find("UfoCam"));
 	}
 
+}
+
+function ApplyDamage (attack :Attack) {
+	lastAttack = attack;
+	hp -= attack.damage;
+	hp = Mathf.Max(0, hp);
+	
+	if (hp <= 0) {
+		Crash();
+	}
+}
+
+function Crash () {
+	var attack = new Attack();
+	attack.damageType = DamageType.Crash;
+	attack.damage = 10000; // lethal, i hope ;)
+	attack.attacker = lastAttack ? lastAttack.attacker : null;
+	owner.SendMessage("ApplyDamage", attack);
+	Destroy (gameObject);
 }

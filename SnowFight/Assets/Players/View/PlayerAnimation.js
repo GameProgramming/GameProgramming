@@ -7,6 +7,7 @@ private var redTime = 0.0;
 
 private var anim : Animation;
 
+private var playerState :PlayerState;
 private var playerStatus :PlayerStatus;
 private var motor :CharacterMotorSF;
 private var camSetup :Transform;
@@ -171,12 +172,26 @@ function OnHit () {
 	}
 }
 
-function Freeze (s: float) {
-	frost.renderer.enabled = true;
-}
+//function Freeze (s: float) {
+//	frost.renderer.enabled = true;
+//}
+//
+//function OnDefrost () {
+//	frost.renderer.enabled = false;
+//}
 
-function OnDefrost () {
-	frost.renderer.enabled = false;
+function OnPlayerStateChange (newState :PlayerState) {
+	playerState = newState;
+	switch (playerState) {
+	case PlayerState.Dead:
+	case PlayerState.Alive:
+	case PlayerState.InVehicle:
+		if (frost) frost.renderer.enabled = false;
+		break;
+	case PlayerState.Frozen:
+		if (frost) frost.renderer.enabled = true;
+		break;
+	}
 }
 
 function GameOver () {

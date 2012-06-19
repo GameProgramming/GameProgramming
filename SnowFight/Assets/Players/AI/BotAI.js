@@ -315,7 +315,7 @@ function RotateTowardsPosition (targetPos : Vector3, rotateSpeed : float) : floa
 	var maxRotation = rotateSpeed * Time.deltaTime;
 	var clampedAngle = Mathf.Clamp(angle, -maxRotation, maxRotation);
 	// Rotate
-	transform.Rotate(0, clampedAngle, 0);
+	motor.Rotate(clampedAngle, 0);
 	// Return the current angle
 	return angle;
 }
