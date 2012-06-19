@@ -28,11 +28,7 @@ var startSize : Vector3;
 var maxBallSize : float = 3.0;
 var sizeIncreaseRate : float = 0.05;
 private var shot : boolean = false; 
-<<<<<<< HEAD
-//private var damage : Damage;
-//private var projectile : Projectile;
-=======
->>>>>>> 13282f5bdb94cf710a9083e4c213de0b8e40647c
+
 private var shootDirection : Vector3;
 
 var snowRessource : GameObject;
@@ -53,16 +49,7 @@ function Start () {
 }
 
 function Awake () {
-	//Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Item"), LayerMask.NameToLayer("Projectile"), true);
-	
-<<<<<<< HEAD
-//	damage = GetComponent(Damage);
-//	projectile = GetComponent(Projectile);
-//	damage.enabled = false;
-//	projectile.enabled = false;
- 	
-=======
->>>>>>> 13282f5bdb94cf710a9083e4c213de0b8e40647c
+
  	startSize = transform.localScale;
 }
 
@@ -86,16 +73,10 @@ function Update () {
 			
 			if (playerMotor.inputFire) {
 				shot = true;
-<<<<<<< HEAD
-//				damage.enabled = true;
-//				projectile.enabled = true;
-//				damage.SetShootingTeam(pushingPlayer.GetComponent(PlayerStatus).team);
-				//GetComponent(Collider).rigidbody.tag = "Projectile";
+
 				rigidbody.velocity = shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
-=======
-				rigidbody.velocity = shootDirection * 10;
 				lastOwner = pushingPlayer;
->>>>>>> 13282f5bdb94cf710a9083e4c213de0b8e40647c
+
 				//Roll(true);
 				Release();
 				
@@ -138,11 +119,6 @@ function Update () {
 	if (shot && dir.magnitude < 0.05) {
 //		Debug.Log("Back to normal" , this);
 		shot = false;
-<<<<<<< HEAD
-//		damage.enabled = false;
-//		projectile.enabled = false;
-=======
->>>>>>> 13282f5bdb94cf710a9083e4c213de0b8e40647c
 		//gameObject.tag = "BigSnowball";
 		//Roll(false);	
 //		for (var rend : MeshRenderer in meshRenderers)
@@ -295,10 +271,9 @@ function Respawn (spawnPosition : Vector3) {
 	}
 }
 
-<<<<<<< HEAD
-@script RequireComponent (BigSnowBallDamage)
-=======
 function GetLastOwner() {
 	return lastOwner;
 }
->>>>>>> 13282f5bdb94cf710a9083e4c213de0b8e40647c
+
+@script RequireComponent (BigSnowBallDamage)
+
