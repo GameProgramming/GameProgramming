@@ -36,7 +36,7 @@ function Update () {
 		if (snowResourcePick.IsGrabBigSnowballPossible() 
 				&& inputAction && !pStatus.IsDead()) {
 			srPickProgress += Time.deltaTime;
-			Debug.Log("Building ball " + srPickProgress, this);
+//			Debug.Log("Building ball " + srPickProgress, this);
 			
 			if (srPickProgress > srPickTime) {
 				Debug.Log("Ball built", this);
@@ -64,6 +64,7 @@ function Update () {
 				&& item.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
 				item = item.transform.parent.gameObject;
 			}
+			SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 			item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 		}
 	}
@@ -90,12 +91,14 @@ function ReleaseItem () {
 			item.transform.parent = null;
 		item = null;
 		candidateItem = null;
+		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	}
 }
 
 function OnItemDestruction ( destructedItem : GameObject) {
 	if (destructedItem == item) {
 		item = null;
+		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	}
 }
 

@@ -17,6 +17,7 @@ private var radius : float;
 var ballTurnSpeed = 150;
 
 private var pushingPlayer : GameObject;
+private var lastOwner : GameObject;
 private var playerMotor : CharacterMotorSF;
 private var isGrounded : boolean;
 var fallSpeed : float = 9.81;
@@ -27,8 +28,6 @@ var startSize : Vector3;
 var maxBallSize : float = 3.0;
 var sizeIncreaseRate : float = 0.05;
 private var shot : boolean = false; 
-private var damage : Damage;
-private var projectile : Projectile;
 private var shootDirection : Vector3;
 
 var snowRessource : GameObject;
@@ -51,11 +50,6 @@ function Start () {
 function Awake () {
 	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Item"), LayerMask.NameToLayer("Projectile"), true);
 	
-	damage = GetComponent(Damage);
-	projectile = GetComponent(Projectile);
-	damage.enabled = false;
-	projectile.enabled = false;
- 	
  	startSize = transform.localScale;
 }
 
@@ -79,11 +73,8 @@ function Update () {
 			
 			if (playerMotor.inputFire) {
 				shot = true;
-				damage.enabled = true;
-				projectile.enabled = true;
-				damage.SetShootingTeam(pushingPlayer.GetComponent(PlayerStatus).team);
-				//GetComponent(Collider).rigidbody.tag = "Projectile";
-				rigidbody.velocity = shootDirection * GetComponent(Projectile).speed * 10;
+				rigidbody.velocity = shootDirection * 10;
+				lastOwner = pushingPlayer;
 				//Roll(true);
 				Release();
 				
@@ -126,8 +117,6 @@ function Update () {
 	if (shot && dir.magnitude < 0.05) {
 //		Debug.Log("Back to normal" , this);
 		shot = false;
-		damage.enabled = false;
-		projectile.enabled = false;
 		//gameObject.tag = "BigSnowball";
 		//Roll(false);	
 //		for (var rend : MeshRenderer in meshRenderers)
@@ -280,4 +269,6 @@ function Respawn (spawnPosition : Vector3) {
 	}
 }
 
-@script RequireComponent (Damage)
+function GetLastOwner() {
+	return lastOwner;
+}

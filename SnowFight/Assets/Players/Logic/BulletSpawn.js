@@ -33,8 +33,7 @@ function Fire () {
 	  	projectile = GetProjectile();
 	  	var clone : Rigidbody;	
 		clone = Instantiate(projectile, Spawnpoint.position, Spawnpoint.rotation);
-		clone.GetComponent(Projectile).team = player.GetTeam();
-		if (projectile.name == "Snowball"){
+		if (!projectile.GetComponent(HeatSeeking)){
 			clone.velocity = clone.GetComponent("Projectile").speed * Spawnpoint.TransformDirection (Vector3.forward
 								+ new Vector3(0, startYSpeed, 0) );
 		}
@@ -44,12 +43,6 @@ function Fire () {
 		if (snowCosts > 0) {
 			player.SubtractSnowball(snowCosts);
 		}
-	    
-		//if(clone.GetComponent("Damage")) {
-			//clone.GetComponent("Damage").dmg = clone.GetComponent("Projectile").dmg;
-			//clone.GetComponent("Damage").team = player.team;
-		//}
-		
 		
 		inputFire = false;
 		reloadProgress = clone.GetComponent("Projectile").reloadTime;

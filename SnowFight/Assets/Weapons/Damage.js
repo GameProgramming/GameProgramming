@@ -3,16 +3,19 @@ var behindDamage : int;
 var headDamage : int; 
 var dmg : int = 2;
 
-private var team : Team; //team who shot and will get score increase
+enum DamageType {Direct, Area, Physical, Crash}
+// direct - schneeball, area - ??, physical - schneeball, crash - ufo.
+
+var type : DamageType;
 
 function Start(){
+	type = DamageType.Direct;
 	if (gameObject.GetComponent("Projectile")) {
 		dmg = gameObject.GetComponent("Projectile").dmg;
 		frontDamage = dmg;
 		behindDamage = dmg * 1.5;
 	 	headDamage = dmg * 3;
- 	}
- 	else {
+ 	} else {
 		frontDamage = dmg;
 		behindDamage = dmg;
 	 	headDamage = dmg;
@@ -29,14 +32,6 @@ function GetBehindDamage() : int {
 
 function GetHeadDamage() : int {
 	return headDamage;
-}
-
-function GetShootingTeam () : Team {
-	return team;
-}
-
-function SetShootingTeam (t : Team) {
-	team = t;
 }
 
 function GetShooter () : GameObject {
