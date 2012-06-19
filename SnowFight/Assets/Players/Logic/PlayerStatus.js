@@ -72,24 +72,6 @@ function Update () {
 }
 
 function OnControllerColliderHit(hit : ControllerColliderHit){
-<<<<<<< HEAD
-	var damageObject;
-	var damage = 0;
-	 if (hit.rigidbody && hit.rigidbody.CompareTag("BigSnowball")) {
-		damageObject = hit.transform.GetComponent("BigSnowBallDamage");
-		damage = damageObject.GetDamage();
-		
-		if (damage > 0) {
-			hp -= damage;
-			hp = Mathf.Max(0, hp);
-			
-			gameObject.SendMessage ("OnHit", SendMessageOptions.DontRequireReceiver);							
-			gameObject.SendMessage ("ReleaseBall", SendMessageOptions.DontRequireReceiver);
-			
-			if (hp <= 0) {
-				Die(null);
-			}
-=======
 	if (!IsHittable()) {
 		return;
 	}
@@ -100,13 +82,13 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 		var playerPosition = gameObject.transform.position;
 		var inversePosition = gameObject.transform.InverseTransformPoint(hit.transform.position);
 		var ball :BigSnowBall = hit.gameObject.GetComponent(BigSnowBall);
+		var damageObject :BigSnowBallDamage = hit.transform.GetComponent(BigSnowBallDamage);
 		
 		if (hit.rigidbody.velocity.sqrMagnitude > 0.04) {
 			var attack = new Attack();
-			attack.damage = hit.rigidbody.velocity.sqrMagnitude;
+			attack.damage = damageObject.GetDamage();
 			// todo: die groesse vielleicht noch mit rein.
 			attack.attacker = ball.GetLastOwner();
->>>>>>> 13282f5bdb94cf710a9083e4c213de0b8e40647c
 		}
 	}
 }
@@ -119,19 +101,11 @@ function OnCollisionEnter (collision : Collision) {
 	var ballPosition = collision.transform.position;
 	var playerPosition = gameObject.transform.position;
 	var inversePosition = gameObject.transform.InverseTransformPoint(collision.transform.position);
-	var damageObject;
 	
 	if(collision.rigidbody && collision.rigidbody.CompareTag("Projectile")){
-<<<<<<< HEAD
-		//Get the damage Object
-		damageObject = collision.transform.GetComponent("Damage");
-		var damage = 0;
-		//If the ball hits the player in the head.
-=======
-		
 		var damageObject : Damage = collision.transform.GetComponent(Damage);
 		var attack = new Attack();
->>>>>>> 13282f5bdb94cf710a9083e4c213de0b8e40647c
+		
 		if (inversePosition.y > 0.9) {
 			attack.damage = damageObject.GetHeadDamage();
 		} else if (inversePosition.z < -0.3) {
@@ -157,15 +131,7 @@ function Die () {
 	if (transform.tag.Equals("Player")) {
 		spawnBaseID = 0;
 	}
-<<<<<<< HEAD
 	
-//	if (ball) {
-		team.LoseTickets(1);
-//	}
-	
-=======
->>>>>>> 13282f5bdb94cf710a9083e4c213de0b8e40647c
-
 	team.LoseTickets(1);
 	
 	SetState(PlayerState.Dead);
