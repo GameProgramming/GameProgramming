@@ -90,6 +90,8 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 			attack.damage = damageObject.GetDamage();
 			// todo: die groesse vielleicht noch mit rein.
 			attack.attacker = ball.GetLastOwner();
+			ApplyDamage(attack);
+			ball.SmashBallToSnowfield();
 		}
 	}
 }

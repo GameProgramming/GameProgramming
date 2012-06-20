@@ -63,12 +63,7 @@ function Update () {
 			if (playerMotor.inputAltFire) {
 				// player destroys snowball
 				pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
-				transform.parent = null;
-				transform.position.y -= radius ; //TODO: don't hardcode this value!!
-				transform.position.y += 1;
-				Instantiate(snowRessource, transform.position, Quaternion.identity);
-				snowRessource.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
-				Destroy(gameObject);
+				SmashBallToSnowfield();
 			}
 			
 			if (playerMotor.inputFire) {
@@ -269,6 +264,15 @@ function Respawn (spawnPosition : Vector3) {
 //		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length)].transform.position;
 //		transform.position.y += 5;
 //	}
+}
+
+function SmashBallToSnowfield () {
+	transform.parent = null;
+	transform.position.y -= radius ; //TODO: don't hardcode this value!!
+	transform.position.y += 1;
+	Instantiate(snowRessource, transform.position, Quaternion.identity);
+	snowRessource.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
+	Destroy(gameObject);
 }
 
 function GetLastOwner() {
