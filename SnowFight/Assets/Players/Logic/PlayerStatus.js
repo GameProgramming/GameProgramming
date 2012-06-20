@@ -84,12 +84,13 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 		var inversePosition = gameObject.transform.InverseTransformPoint(hit.transform.position);
 		var ball :BigSnowBall = hit.gameObject.GetComponent(BigSnowBall);
 		var damageObject :BigSnowBallDamage = hit.transform.GetComponent(BigSnowBallDamage);
+		var lastOwner : GameObject = ball.GetLastOwner();
 		
-		if (hit.rigidbody.velocity.sqrMagnitude > 0.04) {
+		if (hit.rigidbody.velocity.sqrMagnitude > 0.04 && lastOwner != gameObject) {
 			var attack = new Attack();
 			attack.damage = damageObject.GetDamage();
 			// todo: die groesse vielleicht noch mit rein.
-			attack.attacker = ball.GetLastOwner();
+			attack.attacker = lastOwner;
 			ApplyDamage(attack);
 			ball.SmashBallToSnowfield();
 		}

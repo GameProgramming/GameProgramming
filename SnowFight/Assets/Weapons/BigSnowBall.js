@@ -275,7 +275,7 @@ function SmashBallToSnowfield () {
 	Destroy(gameObject);
 }
 
-function GetLastOwner() {
+function GetLastOwner() : GameObject {
 	return lastOwner;
 }
 
