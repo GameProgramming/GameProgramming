@@ -4,7 +4,7 @@ var maxBallDistance : float = 3.0;
 var ballCorrectionSpeed : float = 5.0;
 private var groundNormal : Vector3 = Vector3.zero;
 
-private var spawnPoints : GameObject[]; 
+//private var spawnPoints : GameObject[]; 
 private var respawning : boolean;
 private var spawnTime = 0.0;
 private var meshRenderers :MeshRenderer[];
@@ -41,7 +41,7 @@ function Start () {
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
 	
-	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
+//	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
 //	Respawn(Vector3.zero);
 	
 	//lastPosition = transform.position;
@@ -263,12 +263,12 @@ function Respawn (spawnPosition : Vector3) {
 		rend.enabled = false;
 	}
 	
-	if (spawnPosition != Vector3.zero)
-		transform.position = spawnPosition;
-	else if (spawnPoints && spawnPoints.Length > 0) {
-		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length)].transform.position;
-		transform.position.y += 5;
-	}
+//	if (spawnPosition != Vector3.zero)
+//		transform.position = spawnPosition;
+//	else if (spawnPoints && spawnPoints.Length > 0) {
+//		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length)].transform.position;
+//		transform.position.y += 5;
+//	}
 }
 
 function GetLastOwner() {

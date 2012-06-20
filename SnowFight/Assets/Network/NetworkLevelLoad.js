@@ -1,6 +1,8 @@
 var supportedNetworkLevels : String[] = [ "mylevel" ];
 var disconnectedLevel : String = "loader";
 
+//var game : GameStatus
+
 // Keep track of the last level prefix (increment each time a new level loads)
 private var lastLevelPrefix = 0;
 
@@ -17,7 +19,7 @@ function OnGUI ()
 	// When network is running (server or client) then display the levels
 	// configured in the supportedNetworkLevels array and allow them to be loaded
 	// at the push of a button
-	if (Network.peerType != NetworkPeerType.Disconnected)
+	if (Network.peerType != NetworkPeerType.Disconnected && Network.isServer)
 	{
 		GUILayout.BeginArea(Rect(0, Screen.height - 30, Screen.width, 30));
 		GUILayout.BeginHorizontal();
@@ -74,5 +76,19 @@ function OnDisconnectedFromServer ()
 {
 	Application.LoadLevel(disconnectedLevel);
 }
+
+function OnNetworkLoadedLevel ()
+{
+//	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+//	var player = Network.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, 0);
+}
+
+function OnPlayerDisconnected (player : NetworkPlayer)
+{
+	Debug.Log("Server destroying player "+player.ToString());
+	Network.RemoveRPCs(player, 0);
+	Network.DestroyPlayerObjects(player);
+}
+
 
 @script RequireComponent(NetworkView)
