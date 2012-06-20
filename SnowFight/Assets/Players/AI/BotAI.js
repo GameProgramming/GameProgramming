@@ -264,14 +264,15 @@ function GetAmmo () {
 			return;
 		
 		if (alreadyThere) {
-			if (Random.value > 0.9) {
+			if (Random.value > 0.9 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
 				motor.inputAction = true;
 				buildingBall = Time.time;
 				yield WaitForSeconds(GetComponent(ItemManager).srPickTime);
 				return;
 			}
 			
-			if (pStatus.GetCurrentSnowballs() == pStatus.GetMaximumSnowballs() || Time.time > arrivalTime+reloadTime) {
+			if (pStatus.GetCurrentSnowballs() == pStatus.GetMaximumSnowballs() || Time.time > arrivalTime+reloadTime
+				|| target.GetComponent(SnowRessource).IsGrabPossible()) {
 				alreadyThere = false;
 				RemoveTarget();
 				return;
@@ -560,7 +561,7 @@ function AboveTarget() {
 	var botPos = transform.position;
 	var enemyPos = target.transform.position;
 	botPos.y = enemyPos.y;
-//	Debug.Log("Distance " + Vector3.Distance(botPos,enemyPos), this);
+	Debug.Log("Distance " + Vector3.Distance(botPos,enemyPos), this);
 	return (Vector3.Distance(botPos,enemyPos) < freezeRadius);
 }
 
