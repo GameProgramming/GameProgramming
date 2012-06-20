@@ -94,7 +94,7 @@ function Update () {
 }
 
 function Restart() {
-	Application.LoadLevel(Application.loadedLevelName);
+	Application.LoadLevel("Main");//Application.loadedLevelName);
 }
 
 function TeamWins (t :Team) {
