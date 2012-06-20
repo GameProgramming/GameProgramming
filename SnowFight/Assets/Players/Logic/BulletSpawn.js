@@ -39,7 +39,7 @@ function Fire () {
 		}
 		
 		snowCosts = projectile.GetComponent(Projectile).snowCosts;
-		Debug.Log(snowCosts);
+//		Debug.Log(snowCosts);
 		if (snowCosts > 0) {
 			player.SubtractSnowball(snowCosts);
 		}

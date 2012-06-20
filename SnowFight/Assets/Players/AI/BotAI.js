@@ -9,6 +9,7 @@ var attackRotateSpeed = 20.0;
 var idleTime = 1.6;
 
 var punchRadius = 7.1;
+var freezeRadius = 5.0;
 
 private var attackAngle = 10.0;
 private var isAttacking = false;
@@ -72,7 +73,7 @@ function Idle ()
 		itemManager.ReleaseItem();
 		yield WaitForSeconds(0.2);
 		
-		if (pStatus.GetCurrentSnowballs() == 0) { //RELOAD
+		if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
 			tar = FindSnowResource();
 			if (tar) {
 				target = tar;
@@ -80,6 +81,13 @@ function Idle ()
 			}
 		}
 		else {
+			//TODO: first of all head towards a free base if there is one
+			tar = FindFreeBase();
+			if (tar) {
+				target = tar;
+				yield ConquerBase();
+			}
+			//otherwise just do business as usual
 			tar = FindBestBigSnowball();//FindClosestEnemy();
 			if (tar) {
 				target = tar;
@@ -95,6 +103,15 @@ function Idle ()
 		}
 	}
 } 
+
+function FindFreeBase() : GameObject{
+	var base = null;
+	for (var t in GameObject.FindObjectsOfType(Team)) {
+		if (t.GetComponent(Team).GetTeamNumber() == 0)
+			base = t.gameObject;
+	}
+	return base;
+}
 
 // Find the name of the closest enemy within distance
 function FindClosestEnemy () : GameObject {
@@ -193,8 +210,46 @@ function FindSnowResource () : GameObject {
     return closest;  
 }
 
-function FirstCloserThanSecond (first : Vector3, second : Vector3) {
-	return (Vector3.Distance(transform.position, first) <= Vector3.Distance(transform.position, second));
+function ConquerBase() {
+	var alreadyThere : boolean = false;
+	var arrivalTime : float;
+	var patience : float;
+	var flagPosition : Vector3;
+	
+	while (true) {
+		
+		if (pStatus.IsRidingUfo() || !target || !target.transform.Find("TeamBase") || 
+			target.GetComponent(Team).GetTeamNumber() == pStatus.GetTeamNumber()) //leave once the base is conquered
+			return;
+		
+		flagPosition = target.transform.Find("TeamBase").transform.position;
+		
+		if (alreadyThere) {
+			if (Time.time > arrivalTime+patience) {
+				alreadyThere = false;
+				RemoveTarget();
+				return;
+			}
+		}
+		else {
+			if (Vector3.Distance(transform.position, flagPosition) >= 5)
+				MoveTowardsPosition(flagPosition);
+			else {
+				//wait for a while
+				alreadyThere = true;
+				arrivalTime = Time.time;
+				patience = Random.Range(0.0,3.0);
+				moveDir = Vector3.zero;
+			}
+		}
+
+		if (Random.value > 0.99) {
+			RemoveTarget();
+			return;
+		}
+			
+		yield;
+	}
 }
 
 function GetAmmo () {
@@ -205,7 +260,7 @@ function GetAmmo () {
 	itemManager.ReleaseItem();
 	
 	while (true) {
-		if (!target)
+		if (!target || pStatus.IsRidingUfo())
 			return;
 		
 		if (alreadyThere) {
@@ -242,7 +297,7 @@ function RollBall ()
 	while (true) {
 		motor.inputAction = false;
 		
-		if (!target)
+		if (!target || pStatus.IsRidingUfo())
 			return;
 			
 		//if target is a ball
@@ -282,7 +337,7 @@ function RollBall ()
 						target = tar;
 						yield GetAmmo();
 					}
-					target = null;
+					RemoveTarget();
 					return;
 				}
 					
@@ -307,6 +362,128 @@ function RollBall ()
 		}
 		yield;
 	}
+}
+
+function Attack ()
+{
+	motor.inputAction = false;
+			
+	isAttacking = true;
+	
+	// First we wait for a bit so the player can prepare while we turn around
+	// As we near an angle of 0, we will begin to move
+	var angle : float;
+	angle = 180.0;
+	var time : float;
+	time = 0.0;
+	var direction : Vector3;
+	
+	var targetPlayer : PlayerStatus;
+	targetPlayer = target.GetComponent(PlayerStatus);
+	
+	// Run towards player
+	var timer = 0.0;
+	var lostSight = false;
+	
+	while (true) {
+		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) //RELOAD
+			return;
+
+		angle = Mathf.Abs(RotateTowardsPosition(target.transform.position, rotateSpeed));
+		if (Mathf.Abs(angle) > 5)
+		{
+			time += Time.deltaTime;
+			
+			move = Mathf.Clamp01((90 - angle) / 90);
+			
+			// depending on the angle, start moving
+			direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
+			//motor.inputMoveDirection = Vector3.zero;
+			moveDir = Vector3.zero;
+		} else {
+			// The angle of our forward direction and the player position is larger than 100 degrees
+			// That means he is out of sight
+			if (Mathf.Abs(angle) > 150)
+				lostSight = true;
+				
+			// If we lost sight then we keep running for some more time (extraRunTime). 
+			// then stop attacking 
+			if (lostSight)
+				timer += Time.deltaTime;	
+			
+			// Just move forward at constant speed
+			direction = transform.TransformDirection(Vector3.forward * attackSpeed);
+	
+			//if a bot is in a ufo and above an enemy, make him use the freeze ray
+		 	if (pStatus.IsRidingUfo() && AboveTarget()) {
+		 		Debug.Log("In Ufo!!", this);
+		 		motor.inputAltFire = true;
+		 	}
+		 	//else motor.inputAltFire = false;
+		 	
+		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo()) {
+		 		//TODO:
+		 		//if there's a bazooka close, go get it! and then shoot :)
+		 		//otherwise forget about it
+		 		target == null;
+		 		return;
+		 	}
+			
+			var pos = transform.position;
+			// Keep looking if we are hitting our target
+			// If we are, knock them out of the way dealing damage
+			if(!lostSight && (pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius)
+			{
+				motor.inputFire = !motor.inputFire;
+				direction = Vector3.left * strafing;
+				if (Random.value > 0.9) {
+					strafing = 0;
+					var x = Random.value;
+					if (x > 0.7) strafing = 1;
+					if (x < 0.3) strafing = -1;
+					if (x > 0.95) motor.inputJump = true;
+				}
+			}
+			if (lostSight) {
+		 		direction = Vector3.zero;
+		 		return;
+		 	}
+			
+//			motor.inputMoveDirection = direction;
+			moveDir = direction;
+		}
+		
+		if (Random.value > 0.99) {
+			RemoveTarget();
+			return;
+//			motor.inputAction = false;
+//			tar = FindClosestEnemy();
+//			var oldTar = target;
+//			if (tar && (tar.transform.position - transform.position).magnitude < attackDistance) {
+//				target = tar;
+//				Attack();
+//				if(target.GetComponent(PlayerStatus).IsDead())
+//					target = oldTar;
+//			}
+		}
+		// We are not actually moving forward.
+		// This probably means we ran into a wall or something. Stop attacking the player.
+//		if (motor.movement.velocity.magnitude < attackSpeed * 0.3)
+//			break;
+		
+		// yield for one frame
+		yield;
+	}
+	
+
+	isAttacking = false;
+	//motor.inputMoveDirection = Vector3.zero;
+	moveDir = Vector3.zero;
+	
+}
+
+function FirstCloserThanSecond (first : Vector3, second : Vector3) {
+	return (Vector3.Distance(transform.position, first) <= Vector3.Distance(transform.position, second));
 }
 
 function RotateTowardsPosition (targetPos : Vector3, rotateSpeed : float) : float
@@ -379,112 +556,13 @@ function BallRolledByFriend () : boolean {
 		return false;
 }
 
-function Attack ()
-{
-	motor.inputAction = false;
-			
-	isAttacking = true;
-	
-	// First we wait for a bit so the player can prepare while we turn around
-	// As we near an angle of 0, we will begin to move
-	var angle : float;
-	angle = 180.0;
-	var time : float;
-	time = 0.0;
-	var direction : Vector3;
-	
-	var targetPlayer : PlayerStatus;
-	targetPlayer = target.GetComponent(PlayerStatus);
-	
-	// Run towards player
-	var timer = 0.0;
-	var lostSight = false;
-	
-	while (true) {
-		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) //RELOAD
-			return;
-
-	
-		//if (targetPlayer.IsDead()) return;
-	
-		angle = Mathf.Abs(RotateTowardsPosition(target.transform.position, rotateSpeed));
-		if (Mathf.Abs(angle) > 5)
-		{
-			time += Time.deltaTime;
-			
-			move = Mathf.Clamp01((90 - angle) / 90);
-			
-			// depending on the angle, start moving
-			direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
-			//motor.inputMoveDirection = Vector3.zero;
-			moveDir = Vector3.zero;
-		} else {
-			// The angle of our forward direction and the player position is larger than 100 degrees
-			// That means he is out of sight
-			if (Mathf.Abs(angle) > 150)
-				lostSight = true;
-				
-			// If we lost sight then we keep running for some more time (extraRunTime). 
-			// then stop attacking 
-			if (lostSight)
-				timer += Time.deltaTime;	
-			
-			// Just move forward at constant speed
-			direction = transform.TransformDirection(Vector3.forward * attackSpeed);
-	
-			// Keep looking if we are hitting our target
-			// If we are, knock them out of the way dealing damage
-			var pos = transform.position;
-			if(!lostSight && (pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius)
-			{
-				motor.inputFire = !motor.inputFire;
-				direction = Vector3.left * strafing;
-				if (Random.value > 0.9) {
-					strafing = 0;
-					var x = Random.value;
-					if (x > 0.7) strafing = 1;
-					if (x < 0.3) strafing = -1;
-					if (x > 0.95) motor.inputJump = true;
-				}
-			}
-			if (lostSight) direction = Vector3.zero;
-			
-//			motor.inputMoveDirection = direction;
-			moveDir = direction;
-		}
-		
-		if (Random.value > 0.99) {
-			target = null;
-			return;
-//			motor.inputAction = false;
-//			tar = FindClosestEnemy();
-//			var oldTar = target;
-//			if (tar && (tar.transform.position - transform.position).magnitude < attackDistance) {
-//				target = tar;
-//				Attack();
-//				if(target.GetComponent(PlayerStatus).IsDead())
-//					target = oldTar;
-//			}
-		}
-		// We are not actually moving forward.
-		// This probably means we ran into a wall or something. Stop attacking the player.
-//		if (motor.movement.velocity.magnitude < attackSpeed * 0.3)
-//			break;
-		
-		// yield for one frame
-		yield;
-	}
-	
-
-	isAttacking = false;
-	//motor.inputMoveDirection = Vector3.zero;
-	moveDir = Vector3.zero;
-	
+function AboveTarget() {
+	var botPos = transform.position;
+	var enemyPos = target.transform.position;
+	botPos.y = enemyPos.y;
+//	Debug.Log("Distance " + Vector3.Distance(botPos,enemyPos), this);
+	return (Vector3.Distance(botPos,enemyPos) < freezeRadius);
 }
-
-//function BallReachedBase (reached : boolean) {
-//	ballReachedBase = reached;
-//}
 
 function RemoveTarget () {
 	target = null;

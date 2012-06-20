@@ -1,6 +1,7 @@
 
 @System.NonSerialized
 var team :Team;
+private var teamNumber : int;
 
 //This ID should be set when he wants to spawn at a certain base.
 @System.NonSerialized
@@ -272,4 +273,12 @@ function SetSpawnBaseID (newSpawnBaseID : int) {
 private function SetState (s :PlayerState) {
 	state = s;
 	SendMessage("OnPlayerStateChange", state, SendMessageOptions.DontRequireReceiver);
+}
+
+function IsRidingUfo () : boolean {
+	return (state == PlayerState.InVehicle);
+}
+
+function GetTeamNumber () : int {
+	return team.GetTeamNumber();
 }
