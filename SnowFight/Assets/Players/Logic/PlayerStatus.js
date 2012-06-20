@@ -3,6 +3,7 @@
 var team :Team;
 
 //This ID should be set when he wants to spawn at a certain base.
+@System.NonSerialized
 var spawnBaseID : int;
 var respawnTimeout = 5.0;
 

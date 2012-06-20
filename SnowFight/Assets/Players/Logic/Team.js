@@ -83,6 +83,10 @@ function GetColor () : Color {
 
 function AddPlayer (p :GameObject) {
 	p.transform.parent = transform;
+	var pStatus : PlayerStatus = p.GetComponent(PlayerStatus);
+	var base : TeamBase = GetBase().GetComponent(TeamBase);
+	pStatus.spawnBaseID = base.GetID();
+	
 	size++;
 }
 
