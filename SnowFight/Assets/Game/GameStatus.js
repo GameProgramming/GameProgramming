@@ -21,7 +21,8 @@ function Awake () {
 	gameOver = false;
 	
 	for (var t in GameObject.FindObjectsOfType(Team)) {
-		teams += [t.GetComponent(Team)];
+		if (t.GetComponent(Team).GetTeamNumber() != 0)
+			teams += [t.GetComponent(Team)];
 	}
 
 	overviewCam = transform.FindChild("OverviewCam").GetComponent(MapOverview);
