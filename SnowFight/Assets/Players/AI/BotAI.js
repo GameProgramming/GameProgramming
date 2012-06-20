@@ -256,14 +256,6 @@ function RollBall ()
 			if (!ball) {
 				if (BallRolledByFriend () || pStatus.GetCurrentSnowballs() == 0) //RELOAD
 					return;
-					
-				if (pStatus.GetCurrentSnowballs() == 0) {
-					var tar = FindSnowResource();//FindClosestEnemy();
-					if (tar) {
-						target = tar;
-						yield GetAmmo();
-					}
-				}
 				
 				var ballSize = target.GetComponent(Renderer).bounds.size.x;
 				 //if we're close enough, try to get a hold of it
@@ -278,10 +270,20 @@ function RollBall ()
 			}
 			//if we have a ball run to base
 			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
-				//if you're out of ammo, just create a snow seource with mouse click
+				//if you're out of ammo, just create a snow seurce with right mouse click
+				if (ball.GetComponent(BigSnowBall).IsBallTooFarAway (gameObject))
+					return;
+					
 				if (pStatus.GetCurrentSnowballs() == 0) { //RELOAD
 					motor.inputAltFire = true;
 					Debug.Log("Destroy ball for ammo", this);
+					var tar = FindSnowResource();//FindClosestEnemy();
+					if (tar) {
+						target = tar;
+						yield GetAmmo();
+					}
+					target = null;
+					return;
 				}
 					
 				if(BallAtBase(groundBase.position))
@@ -293,12 +295,13 @@ function RollBall ()
 			if (Random.value > 0.9) {
 				motor.inputAction = false;
 				tar = FindClosestEnemy();
-				var oldTar = target;
+				//var oldTar = target;
 				if (tar && (tar.transform.position - transform.position).magnitude < attackDistance) {
 					target = tar;
 					Attack();
-					if(!target || target.GetComponent(PlayerStatus).IsDead())
-						target = oldTar;
+//					if(!target || target.GetComponent(PlayerStatus).IsDead())
+//						target = oldTar;
+					return;
 				}
 			}
 		}
@@ -398,7 +401,7 @@ function Attack ()
 	var lostSight = false;
 	
 	while (true) {
-		if (!target || pStatus.GetCurrentSnowballs() == 0) //RELOAD
+		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) //RELOAD
 			return;
 
 	

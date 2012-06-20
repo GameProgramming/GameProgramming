@@ -55,7 +55,7 @@ function Awake () {
 
 function Update () {
 	if (pushingPlayer) {
-		if (playerMotor.IsMovingBackward() || playerMotor.IsJumping() || IsBallTooFarAway ()) {
+		if (playerMotor.IsMovingBackward() || playerMotor.IsJumping() || IsBallTooFarAway (pushingPlayer)) {
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			Release();
 		}
@@ -202,11 +202,11 @@ function Move (offset : Vector3) {
 	}
 }
 
-function IsBallTooFarAway () : boolean {
+function IsBallTooFarAway (player : GameObject) : boolean {
 	var tooFar = false;
-	if (pushingPlayer) {
-		var playerController = pushingPlayer.GetComponent(CharacterController);
-		var playerTransform = pushingPlayer.GetComponent(Transform);
+	if (player) {
+		var playerController = player.GetComponent(CharacterController);
+		var playerTransform = player.GetComponent(Transform);
 		var maxAllowedDist = Mathf.Max(maxBallDistance, playerController.radius + radius*2);
 		tooFar = (Vector3.Distance(transform.position , playerController.transform.position) > maxAllowedDist);
 	}
