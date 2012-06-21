@@ -11,8 +11,8 @@ function Start () {
 	itemMesh = transform.Find("Item");
 	weaponMesh = transform.Find("Weapon");
 	bulletSpawn = transform.Find("Weapon/BulletSpawn");
-	weaponMesh.renderer.enabled = false;
-	itemMesh.renderer.enabled = true;
+	//weaponMesh.renderer.enabled = false;
+	//itemMesh.renderer.enabled = true;
 }
 
 function Update () {
