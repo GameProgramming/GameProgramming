@@ -1,5 +1,6 @@
 
 var mode = false;
+var player :Transform;
 var playerCam :Transform;
 var camFollow :SmoothFollow;
 
@@ -34,5 +35,11 @@ function SetPlayerCam ( c :Transform ) {
 }
 
 function ResetPlayerCam () {
-	SetPlayerCam(gameObject.Find("CameraTarget").transform);
+	if (player) {
+		SetPlayerCam(player.Find("CameraSetup/CameraTarget"));
+	}
+}
+
+function SetPlayer ( p :Transform ) {
+	player = p;
 }

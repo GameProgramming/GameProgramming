@@ -2,29 +2,71 @@
 
 var teams :Team[];
 
-var numBigSnowBalls = 3;
-var bigSnowBallPrefab : GameObject;
-var ballSpawnPoints : GameObject[];
+//var numBigSnowBalls = 3;
+//var bigSnowBallPrefab : GameObject;
+//var ballSpawnPoints : GameObject[];
 
 @System.NonSerialized 
 var winner :Team;
 var gameOver : boolean;
 var gameOverTime = 0.0;
 
+var playerPrefab : GameObject;
+var botPrefab : GameObject;
+var player : GameObject; // the human player on this side of the connection.
+
+var overviewCam : MapOverview;
+
 function Awake () {
 	gameOver = false;
 	
 	for (var t in GameObject.FindObjectsOfType(Team)) {
-		teams += [t.GetComponent(Team)];
+		if (t.GetComponent(Team).GetTeamNumber() != 0)
+			teams += [t.GetComponent(Team)];
 	}
 
-	ballSpawnPoints = GameObject.FindGameObjectsWithTag("BallSpawn");
+	overviewCam = transform.FindChild("OverviewCam").GetComponent(MapOverview);
+	
+//	ballSpawnPoints = GameObject.FindGameObjectsWithTag("BallSpawn");
 
 //	for (var i = 0; i<numBigSnowBalls; i++) {
 //		Instantiate(bigSnowBallPrefab, Vector3(0,-50,0), Quaternion.identity);
 //	}
 }
 
+function OnNetworkLoadedLevel () {
+	// add the main player.
+	player = Network.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, 0);
+	AddPlayer(player);
+	overviewCam.SetPlayer(player.transform);
+	overviewCam.ResetPlayerCam();
+	
+	if (Network.isServer) {
+		// add the bots.
+		for (var i :int = 0; i < 3; i++) {
+			 AddPlayer(Network.Instantiate(botPrefab, Vector3.zero, Quaternion.identity, 0));
+		}
+	}
+	
+	//overviewCam.GetComponent(MapOverview).SetPlayerCam( player.transform.FindChild("CameraTarget") );
+}
+
+/*
+ * Places a new Player into the smallest team;
+ */
+function AddPlayer ( player :GameObject ) {
+	var minSize : int = 1000;
+	var minTeam : Team;
+	for (var t : Team in teams) {
+		var s = t.GetSize();
+		if (s < minSize) {
+			minSize = s;
+			minTeam = t;
+		} 
+	}
+	minTeam.AddPlayer(player);
+}
+	
 function Update () {
 	
 	if (!gameOver) {
@@ -52,7 +94,7 @@ function Update () {
 }
 
 function Restart() {
-	Application.LoadLevel(Application.loadedLevelName);
+	Application.LoadLevel("Main");//Application.loadedLevelName);
 }
 
 function TeamWins (t :Team) {
@@ -80,6 +122,10 @@ function OnTriggerEnter (other : Collider) {
 	}
 }
 
-function GetSnowBallSpawns() : GameObject[] {
-	return ballSpawnPoints;
+//function GetSnowBallSpawns() : GameObject[] {
+//	return ballSpawnPoints;
+//}
+
+function GetTeams () : Team[] {
+	return teams;
 }

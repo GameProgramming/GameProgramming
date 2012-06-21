@@ -1,31 +1,41 @@
+
 @System.NonSerialized
 var team :Team;
 
-var fullHp : int = 10;
+//This ID should be set when he wants to spawn at a certain base.
+@System.NonSerialized
+var spawnBaseID : int;
 var respawnTimeout = 5.0;
-//The maximum number of snowballs a player can carry.
+
+private var gameOver = false;
+
+enum PlayerState {Alive, Dead, Frozen, InVehicle}
+private var formerItem :GameObject;
+
+var fullHp : int = 10;
+private var hp : int = fullHp;
+private var killTime = -respawnTimeout;
+
+private var state : PlayerState;
+private var frozen :float;
+
 var maximumSnowballCapacity : int = 10;
-//The current number of snowballs the player carries.
 private var currentSnowballs : int = 0;
 
-private var hp : int = fullHp;
-private var killTime = -respawnTimeout; // prevents "double spawn" at start
-
-private var frozen : float = 0;
-private var died : boolean = true;
-private var respawning : boolean = false;
-private var gameOver = false;
 var maxCollectionSnowTime : float;
 private var collectionSnowTime : float;
 
-//This ID should be set when he wants to spawn at a certain base.
-var spawnBaseID : int;
+class Attack {
+	var attacker :GameObject;
+	var damageType :DamageType;
+	var damage :int;
+}
 
-//InvokeRepeating("Regenerate",5,10);
-//var damageSound : AudioClip;
+private var lastAttack :Attack;
 
 function Start() {
 	gameOver = false;
+	SetState(PlayerState.Dead);
 	
 	team = transform.parent.gameObject.GetComponent("Team");
 	if (team == null) {
@@ -34,121 +44,88 @@ function Start() {
 }
 
 function Update () {
-	//Every one second collect a snowball.
-	collectionSnowTime += Time.deltaTime;
-
-	if (frozen > 0 && frozen <= Time.deltaTime) {
-		gameObject.SendMessage ("OnDefrost", SendMessageOptions.DontRequireReceiver);
-	}
-	frozen -= Time.deltaTime;
-	frozen = Mathf.Clamp(frozen, 0, 100);
-
 	if (!gameOver) {
-		if (!died && hp <= 0) {
-  			Die(null);
-		} else if (died && Time.time > killTime + respawnTimeout && spawnBaseID > 0) {
-			Respawn();
+		switch (state) {
+		case PlayerState.Dead:
+			if (Time.time > killTime + respawnTimeout && spawnBaseID > 0) {
+				Respawn();
+			}
+			break;
+		case PlayerState.Frozen:
+			frozen -= Time.deltaTime;
+			if (frozen <= 0) {
+				SetState(PlayerState.Alive);
+				gameObject.SendMessage ("OnDefrost", SendMessageOptions.DontRequireReceiver);
+			}
+			frozen = Mathf.Clamp(frozen, 0, 100);
+			break;
+		case PlayerState.Alive:
+			collectionSnowTime += Time.deltaTime;
+			if (hp <= 0) {
+				Die();
+			}
+			break;
+		case PlayerState.InVehicle:
+			
+			break;
 		}
-	}
-}
-
-function Regenerate () {
-	if (!died && !gameOver && hp < fullHp) {
-		hp += 5;
-		hp = Mathf.Min(hp, fullHp);
 	}
 }
 
 function OnControllerColliderHit(hit : ControllerColliderHit){
-//	if(hit.gameObject.CompareTag("BigSnowball"))
-//		Debug.Log("Hit by snowball");
-	if (died) {
+	if (!IsHittable()) {
 		return;
 	}
 	
-	var ballPosition = hit.transform.position;
-	var playerPosition = gameObject.transform.position;
-	var inversePosition = gameObject.transform.InverseTransformPoint(hit.transform.position);
-	var damageObject : Damage = hit.gameObject.GetComponent("Damage");
+	if(hit.gameObject.CompareTag("BigSnowball")){
 	
-	if(hit.gameObject.CompareTag("BigSnowball") && damageObject.enabled){
-		//Get the damage Object
-		var damage = 0;
-		//If the ball hits the player in the head.
-		if (inversePosition.y > 0.9) {
-			damage = damageObject.GetHeadDamage();
-			//Debug.Log("Hit in the head.");
-			//Debug.Log(damage);
-		//He hits the player from behind.
-		} else if (inversePosition.z < -0.3) {
-			damage = damageObject.GetBehindDamage();
-			//Debug.Log("Hit from behind.");
-			//Debug.Log(damage);
-		} else {
-			damage = damageObject.GetFrontDamage();
-			//Debug.Log("Hit from side or front.");
-			//Debug.Log(damage);
-		}
+		var ballPosition = hit.transform.position;
+		var playerPosition = gameObject.transform.position;
+		var inversePosition = gameObject.transform.InverseTransformPoint(hit.transform.position);
+		var ball :BigSnowBall = hit.gameObject.GetComponent(BigSnowBall);
+		var damageObject :BigSnowBallDamage = hit.transform.GetComponent(BigSnowBallDamage);
+		var lastOwner : GameObject = ball.GetLastOwner();
 		
-		if (damage > 0) {
-			hp -= damage;
-			hp = Mathf.Max(0, hp);
+		if (hit.rigidbody.velocity.sqrMagnitude > 0.04 && lastOwner != gameObject) {
+			var attack = new Attack();
+			attack.damage = damageObject.GetDamage();
+			// todo: die groesse vielleicht noch mit rein.
+			attack.attacker = lastOwner;
+			ApplyDamage(attack);
+			ball.SmashBallToSnowfield();
 		}
-		
-		gameObject.SendMessage ("OnHit", SendMessageOptions.DontRequireReceiver);							
-		gameObject.SendMessage ("ReleaseBall", SendMessageOptions.DontRequireReceiver);
 	}
 }
 
 function OnCollisionEnter (collision : Collision) {
-	if (died) {
+	if (!IsHittable()) {
 		return;
 	}
-	//Get all required positions.
+	
 	var ballPosition = collision.transform.position;
 	var playerPosition = gameObject.transform.position;
 	var inversePosition = gameObject.transform.InverseTransformPoint(collision.transform.position);
 	
 	if(collision.rigidbody && collision.rigidbody.CompareTag("Projectile")){
-		//Get the damage Object
-		var damageObject : Damage = collision.transform.GetComponent("Damage");
-		var damage = 0;
-		//If the ball hits the player in the head.
+		var damageObject : Damage = collision.transform.GetComponent(Damage);
+		var attack = new Attack();
+		
 		if (inversePosition.y > 0.9) {
-			damage = damageObject.GetHeadDamage();
-			//Debug.Log("Hit in the head.");
-			//Debug.Log(damage);
-		//He hits the player from behind.
+			attack.damage = damageObject.GetHeadDamage();
 		} else if (inversePosition.z < -0.3) {
-			damage = damageObject.GetBehindDamage();
-			//Debug.Log("Hit from behind.");
-			//Debug.Log(damage);
+			attack.damage = damageObject.GetBehindDamage();
 		} else {
-			damage = damageObject.GetFrontDamage();
-			//Debug.Log("Hit from side or front.");
-			//Debug.Log(damage);
+			attack.damage = damageObject.GetFrontDamage();
 		}
 		
-		if (damage > 0) {
-			hp -= damage;
-			hp = Mathf.Max(0, hp);
-		}
-		
-		gameObject.SendMessage ("OnHit", SendMessageOptions.DontRequireReceiver);										
-		gameObject.SendMessage ("ReleaseBall", SendMessageOptions.DontRequireReceiver);
-		
-		if (hp <= 0) {
-			Die(damageObject);
-		}
+		ApplyDamage(attack);
 	}
 }
 
-function Die (ball : Damage) {
-	// ATTENTION: ball can be null, because there are special ways of dying.
-	
-	
-	if (died) //we're already dead
+function Die () {
+	if (IsDead()) {
 		return;
+	}
 	
 	if (transform.tag.Equals("Player")) {
 		var mapOverview = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
@@ -159,13 +136,9 @@ function Die (ball : Damage) {
 		spawnBaseID = 0;
 	}
 	
-	if (ball) {
-		team.LoseTickets(1);
-	}
+	team.LoseTickets(1);
 	
-
-	
-	died = true;
+	SetState(PlayerState.Dead);
 	killTime = Time.time;
 	
 	gameObject.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
@@ -173,14 +146,22 @@ function Die (ball : Damage) {
 	
 }
 
-function Freeze (strength :float) {
-	if (!died) {
-		frozen = strength;
+function Freeze (attack :Attack) {
+	if (state == PlayerState.Alive) {
+		frozen = attack.damage;
+		ApplyDamage(attack);
+		if (!IsDead()) {
+			SetState(PlayerState.Frozen);
+		}
 	}
 }
 
 function IsFrozen () :boolean {
-	return frozen > 0.0001;
+	return state == PlayerState.Frozen;
+}
+
+function IsHittable () :boolean {
+	return state == PlayerState.Alive && !gameOver;
 }
 
 function GetTeam () {
@@ -188,49 +169,33 @@ function GetTeam () {
 }
 
 function Respawn () {
-	respawning = true;
-	
-//	var teamSpawnPoints = team.GetSpawnPoints();
-//	
-//	if (teamSpawnPoints && teamSpawnPoints.Length > 0) {
-//		transform.position = teamSpawnPoints[Random.Range(0,teamSpawnPoints.Length-1)].position;
-//		transform.position.y += 5;
-//	}
-	//This would be the new code
-
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
 	newPosition.y += 5;
 	transform.position = newPosition;
 	
 	hp = fullHp;
 	currentSnowballs = maximumSnowballCapacity;
-	died = false;
+	SetState(PlayerState.Alive);
 	frozen = 0;
 	
 	gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
 	if (transform.tag.Equals("Player")) {
 		var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+		overviewCam.ResetPlayerCam();
 		overviewCam.SetMode(false);
 	}
 
 }
 
 function CollectSnow() {
-//	if (currentSnowballs < maximumSnowballCapacity
-		// REMOVED: && terrain.SnowAvailable(transform.position)
-		// TODO: neuer mechanismus.
-//		) {
-		collectionSnowTime = 0.0;
-		currentSnowballs += 1;
-		//terrain.GrabSnow(transform.position);
-//	}
+	collectionSnowTime = 0.0;
+	currentSnowballs += 1;
 }
 
 function CollectSnowPossible() : boolean {
-	if (currentSnowballs < maximumSnowballCapacity && collectionSnowTime >= maxCollectionSnowTime && !died) {
-		return true;
-	}
-	return false;
+	return	currentSnowballs < maximumSnowballCapacity
+		&&  collectionSnowTime >= maxCollectionSnowTime
+		&&  state == PlayerState.Alive;
 }
 
 function GetFullHp () : int {
@@ -242,7 +207,7 @@ function GetHp () : int {
 }
 
 function IsDead () : boolean {
-	return died;
+	return state == PlayerState.Dead;
 }
 
 function GameOver () {
@@ -250,15 +215,41 @@ function GameOver () {
 }
 
 function SubtractSnowball() {
-	if (currentSnowballs > 0) {
-		currentSnowballs -= 1;
-	}
+	SubtractSnowball(1);
 }
 
 function SubtractSnowball(x) {
 	if (currentSnowballs > 0) {
 		currentSnowballs -= x;
 	}
+}
+
+function ApplyDamage (attack :Attack) {
+	if (IsHittable() || attack.damageType == DamageType.Crash) {
+		lastAttack = attack;
+		hp -= attack.damage;
+		hp = Mathf.Max(0, hp);
+		
+		gameObject.SendMessage ("OnHit", attack, SendMessageOptions.DontRequireReceiver);										
+		gameObject.SendMessage ("ReleaseBall", null, SendMessageOptions.DontRequireReceiver);
+		
+		if (hp <= 0) {
+			Die();
+		}
+	}
+}
+
+function OnItemChange (im :ItemManager) {
+	var g :GameObject = im.GetItem();
+	if (!IsDead()) {
+		if (formerItem && formerItem.CompareTag("Ufo")) {
+			SetState(PlayerState.Alive);
+		}
+		if (g && g.CompareTag("Ufo")) {
+			SetState(PlayerState.InVehicle);
+		}
+	}
+	formerItem = g;
 }
 
 function GetMaximumSnowballs () : int  {
@@ -276,4 +267,9 @@ function GetSpawnBaseID () : int {
 function SetSpawnBaseID (newSpawnBaseID : int) {
 	spawnBaseID = newSpawnBaseID;
 	killTime = Time.time;
+}
+
+private function SetState (s :PlayerState) {
+	state = s;
+	SendMessage("OnPlayerStateChange", state, SendMessageOptions.DontRequireReceiver);
 }

@@ -200,14 +200,11 @@ private var tr : Transform;
 
 private var controller : CharacterController;
 
-private var floating = false;
-private var frozen = false;
+private var playerState :PlayerState;
 
 function Start () {
 	gameOver = false;
 	canControl = false;
-	floating = false;
-	frozen = false;
 }
 
 function Awake () {
@@ -255,7 +252,7 @@ private function UpdateFunction () {
 		}
 	}
 	
-	if (!floating && !frozen) {
+	if (playerState == PlayerState.Alive) {
 		AdjustPlayerSpeed();
 		
 		// We copy the actual velocity into a temporary variable that we can manipulate.
@@ -387,11 +384,6 @@ private function UpdateFunction () {
 	        movingPlatform.activeLocalRotation = Quaternion.Inverse(movingPlatform.activePlatform.rotation) * movingPlatform.activeGlobalRotation; 
 		}
 	}
-}
-
-function SetFloating ( f :boolean ) {
-	SetVelocity(Vector3.zero);
-	floating = f;
 }
 
 function Rotate (x :float, y :float) {
@@ -706,24 +698,31 @@ function GameOver() {
 	canControl = false;
 }
 
-function OnDeath() {
-	canControl = false;
-}
+// -> OnPlayerStateChange
+//function OnDeath() {
+//	canControl = false;
+//}
+//
+//function OnRespawn () {
+//	canControl = true;
+//	inputFire = false;
+//}
 
-function Freeze( s :float ) {
-	frozen = true;
+function OnPlayerStateChange (newState :PlayerState) {
+	playerState = newState;
+	SetVelocity(Vector3.zero);
+	switch (playerState) {
+	case PlayerState.Dead:
+		canControl = false;
+		break;
+	case PlayerState.Alive:
+	case PlayerState.InVehicle:
+	case PlayerState.Frozen:
+		canControl = true;
+		inputFire = false;
+		break;
+	}
 }
-
-function OnDefrost() {
-	frozen = false;
-}
-
-function OnRespawn () {
-	canControl = true;
-	inputFire = false;
-	frozen = false;
-}
-
 
 // Require a character controller to be attached to the same game object
 @script RequireComponent (CharacterController)

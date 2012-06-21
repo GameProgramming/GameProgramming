@@ -5,8 +5,13 @@ var color : Color = Color.gray;
 
 var playerSkin :Texture;
 
+private var size : int = 0;
+
+function Awake () {
+	size = 0;
+}
+
 function Start() {
-	
 }
 
 function Update () {
@@ -74,4 +79,17 @@ function GetTeamNumber () : int {
 
 function GetColor () : Color {
 	return color;
+}
+
+function AddPlayer (p :GameObject) {
+	p.transform.parent = transform;
+	var pStatus : PlayerStatus = p.GetComponent(PlayerStatus);
+	var base : TeamBase = GetBase().GetComponent(TeamBase);
+	pStatus.spawnBaseID = base.GetID();
+	
+	size++;
+}
+
+function GetSize () {
+	return size;
 }

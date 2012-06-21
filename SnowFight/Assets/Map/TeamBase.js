@@ -52,7 +52,7 @@ function Update () {
 	var gos : GameObject[];
     gos = GameObject.FindGameObjectsWithTag("Bot");  
     var player = GameObject.FindGameObjectWithTag("Player");
-    gos = gos + [player];
+    if (player) gos = gos + [player];
 	
 	var teamTakingOver :Team = null;
 	
@@ -67,7 +67,7 @@ function Update () {
     			}
     		}
     	}
-	};
+	}
 	
 //	Debug.Log("taking over "+teamTakingOver);
 	if (teamTakingOver != team && team != neutralTeam && teamTakingOver != null) {

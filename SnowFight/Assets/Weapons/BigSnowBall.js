@@ -4,7 +4,7 @@ var maxBallDistance : float = 3.0;
 var ballCorrectionSpeed : float = 5.0;
 private var groundNormal : Vector3 = Vector3.zero;
 
-private var spawnPoints : GameObject[]; 
+//private var spawnPoints : GameObject[]; 
 private var respawning : boolean;
 private var spawnTime = 0.0;
 private var meshRenderers :MeshRenderer[];
@@ -17,6 +17,7 @@ private var radius : float;
 var ballTurnSpeed = 150;
 
 private var pushingPlayer : GameObject;
+private var lastOwner : GameObject;
 private var playerMotor : CharacterMotorSF;
 private var isGrounded : boolean;
 var fallSpeed : float = 9.81;
@@ -27,8 +28,7 @@ var startSize : Vector3;
 var maxBallSize : float = 3.0;
 var sizeIncreaseRate : float = 0.05;
 private var shot : boolean = false; 
-private var damage : Damage;
-private var projectile : Projectile;
+
 private var shootDirection : Vector3;
 
 var snowRessource : GameObject;
@@ -41,7 +41,7 @@ function Start () {
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
 	
-	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
+//	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
 //	Respawn(Vector3.zero);
 	
 	//lastPosition = transform.position;
@@ -49,13 +49,7 @@ function Start () {
 }
 
 function Awake () {
-	Physics.IgnoreLayerCollision (LayerMask.NameToLayer("Item"), LayerMask.NameToLayer("Projectile"), true);
-	
-	damage = GetComponent(Damage);
-	projectile = GetComponent(Projectile);
-	damage.enabled = false;
-	projectile.enabled = false;
- 	
+
  	startSize = transform.localScale;
 }
 
@@ -69,21 +63,15 @@ function Update () {
 			if (playerMotor.inputAltFire) {
 				// player destroys snowball
 				pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
-				transform.parent = null;
-				transform.position.y -= radius ; //TODO: don't hardcode this value!!
-				transform.position.y += 1;
-				Instantiate(snowRessource, transform.position, Quaternion.identity);
-				snowRessource.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
-				Destroy(gameObject);
+				SmashBallToSnowfield();
 			}
 			
 			if (playerMotor.inputFire) {
 				shot = true;
-				damage.enabled = true;
-				projectile.enabled = true;
-				damage.SetShootingTeam(pushingPlayer.GetComponent(PlayerStatus).team);
-				//GetComponent(Collider).rigidbody.tag = "Projectile";
-				rigidbody.velocity = shootDirection * GetComponent(Projectile).speed * 10;
+
+				rigidbody.velocity = shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
+				lastOwner = pushingPlayer;
+
 				//Roll(true);
 				Release();
 				
@@ -126,8 +114,6 @@ function Update () {
 	if (shot && dir.magnitude < 0.05) {
 //		Debug.Log("Back to normal" , this);
 		shot = false;
-		damage.enabled = false;
-		projectile.enabled = false;
 		//gameObject.tag = "BigSnowball";
 		//Roll(false);	
 //		for (var rend : MeshRenderer in meshRenderers)
@@ -272,12 +258,26 @@ function Respawn (spawnPosition : Vector3) {
 		rend.enabled = false;
 	}
 	
-	if (spawnPosition != Vector3.zero)
-		transform.position = spawnPosition;
-	else if (spawnPoints && spawnPoints.Length > 0) {
-		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length)].transform.position;
-		transform.position.y += 5;
-	}
+//	if (spawnPosition != Vector3.zero)
+//		transform.position = spawnPosition;
+//	else if (spawnPoints && spawnPoints.Length > 0) {
+//		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length)].transform.position;
+//		transform.position.y += 5;
+//	}
 }
 
-@script RequireComponent (Damage)
+function SmashBallToSnowfield () {
+	transform.parent = null;
+	transform.position.y -= radius ; //TODO: don't hardcode this value!!
+	transform.position.y += 1;
+	Instantiate(snowRessource, transform.position, Quaternion.identity);
+	snowRessource.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
+	Destroy(gameObject);
+}
+
+function GetLastOwner() : GameObject {
+	return lastOwner;
+}
+
+@script RequireComponent (BigSnowBallDamage)
+
