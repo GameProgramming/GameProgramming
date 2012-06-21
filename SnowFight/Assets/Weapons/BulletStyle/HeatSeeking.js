@@ -16,6 +16,7 @@
         if(closetMissle){
             target = closetMissle.transform;
 		}
+		
     }   
 
     
@@ -26,7 +27,8 @@
 	    	transform.collider.isTrigger = false;
 	    }
         transform.LookAt(target);
-        transform.Translate(Vector3.forward * 5.0f * Time.deltaTime);
+        transform.Translate(Vector3.forward * 15.0f * Time.deltaTime);
+        transform.Rotate(0,-180,0);
         
     }
 
