@@ -100,3 +100,7 @@ function Crash () {
 	owner.SendMessage("ApplyDamage", attack);
 	Destroy (gameObject);
 }
+
+function GetOwner () : GameObject {
+	return owner;
+}

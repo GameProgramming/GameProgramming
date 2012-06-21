@@ -9,7 +9,8 @@ var attackRotateSpeed = 20.0;
 var idleTime = 1.6;
 
 var punchRadius = 7.1;
-var freezeRadius = 5.0;
+var freezeRadius = 10.0;
+var specialWeaponDistance = 10.0;
 
 private var attackAngle = 10.0;
 private var isAttacking = false;
@@ -100,6 +101,12 @@ function Idle ()
 					yield Attack();
 				}
 			}
+			
+			tar = FindCloseUFO();
+			if (tar) {
+				target = tar;
+				yield GetUFO();
+			}
 		}
 	}
 } 
@@ -111,6 +118,15 @@ function FindFreeBase() : GameObject{
 			base = t.gameObject;
 	}
 	return base;
+}
+
+function FindCloseUFO () : GameObject {
+	var ufo = null;
+	for (var u in GameObject.FindObjectsOfType(Ufo)) {
+		if (Vector3.Distance(u.transform.position, transform.position) < specialWeaponDistance)
+			ufo = u.gameObject;
+	}
+	return ufo;
 }
 
 // Find the name of the closest enemy within distance
@@ -252,6 +268,38 @@ function ConquerBase() {
 	}
 }
 
+function GetUFO () {
+	while (true) {
+		motor.inputAction = false;
+		
+		if (!target || pStatus.IsRidingUfo())
+			return;
+			
+		//if target is a ball
+		if (target && target.CompareTag("Ufo")) {
+			//if (Random.value > 0.95 || !target.GetComponent(Ufo).GetOwner() || pStatus.GetCurrentSnowballs() == 0)
+			//	return;
+			if (target.GetComponent(Ufo).GetOwner() || pStatus.GetCurrentSnowballs() == 0)
+				return;
+			
+			isAttacking = false;
+			
+			if (Vector3.Distance(transform.position, target.transform.position) < 5) {
+				motor.inputAction = true;
+				motor.inputAltFire = false;
+			}
+			else {
+				motor.inputAction = false;
+				MoveTowardsPosition(target.transform.position);
+			}
+		}
+		
+		
+		yield;
+	}
+}
+
+
 function GetAmmo () {
 	var alreadyThere : boolean = false;
 	var arrivalTime : float;
@@ -359,6 +407,7 @@ function RollBall ()
 //						target = oldTar;
 					return;
 				}
+				RemoveTarget();
 			}
 		}
 		yield;
@@ -389,10 +438,16 @@ function Attack ()
 	while (true) {
 		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) //RELOAD
 			return;
+			
+		if (pStatus.IsRidingUfo())
+		 		Debug.Log("Attacking from ufo", this);
 
 		angle = Mathf.Abs(RotateTowardsPosition(target.transform.position, rotateSpeed));
 		if (Mathf.Abs(angle) > 5)
 		{
+			if (pStatus.IsRidingUfo())
+		 		Debug.Log("angle..", this);
+		 		
 			time += Time.deltaTime;
 			
 			move = Mathf.Clamp01((90 - angle) / 90);
@@ -416,8 +471,10 @@ function Attack ()
 			direction = transform.TransformDirection(Vector3.forward * attackSpeed);
 	
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
-		 	if (pStatus.IsRidingUfo() && AboveTarget()) {
+		 	if (pStatus.IsRidingUfo())
 		 		Debug.Log("In Ufo!!", this);
+		 	if (pStatus.IsRidingUfo() && AboveTarget()) {
+		 		Debug.Log("and above target!!", this);
 		 		motor.inputAltFire = true;
 		 	}
 		 	//else motor.inputAltFire = false;

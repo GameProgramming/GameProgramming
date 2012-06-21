@@ -276,7 +276,8 @@ private function SetState (s :PlayerState) {
 }
 
 function IsRidingUfo () : boolean {
-	Debug.Log("Is riding Ufo " + (state == PlayerState.InVehicle), this);
+//	if(state == PlayerState.InVehicle)
+//		Debug.Log("Is riding Ufo " + (state == PlayerState.InVehicle), this );
 	return (state == PlayerState.InVehicle);
 }
 
