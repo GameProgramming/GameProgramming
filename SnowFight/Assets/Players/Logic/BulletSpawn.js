@@ -24,7 +24,12 @@ function ConnectToPlayer (t :Transform) {
 }
 
 function Update () {
+
 	reloadProgress -= Time.deltaTime;
+	
+	
+	
+	
 }
 
 function Fire () {
@@ -52,10 +57,9 @@ function Fire () {
 function GetProjectile(){
 	return bullet;
 }
-
+ 
 function OnGUI() {
-	
-	if (transform.parent.tag.Equals("Player")) {
+     if (transform.parent.tag.Equals("Player")) {
 		var texture : Texture2D = new Texture2D(1, 1);
 		var style = new GUIStyle();
 		var totalWidth = Screen.width/4; 
