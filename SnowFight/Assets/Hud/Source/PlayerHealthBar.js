@@ -22,8 +22,8 @@ function OnGUI() {
 		style.normal.background = texture;
 		
 		
-		GUI.Box (Rect (Screen.width/1.4-1, 9, totalWidth+2, boxHeight+2), "");
-		GUI.Box (Rect (Screen.width/1.4, 10, boxWidth, boxHeight), "",style);
+		GUI.Box (Rect (9, Screen.height - 25, totalWidth+2, boxHeight+2), "");
+		GUI.Box (Rect (10, Screen.height - 24, boxWidth, boxHeight), "",style);
 		//GUI.Box (Rect (Screen.width/1.4 + (totalWidth-boxWidth), 10, boxWidth, boxHeight), "",style);
 	}
 }

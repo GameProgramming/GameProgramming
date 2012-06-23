@@ -21,15 +21,15 @@ function OnGUI() {
 		var numberOfBoxes = player.GetMaximumSnowballs();
 		//Get the number of current snowballs.
 		var numberOfSnowballs = player.GetCurrentSnowballs();
-		var j : int = 18;
+		var j : int = boxWidth * numberOfBoxes + 50;
 		
 		//Now create the boxes.
 		for (i=0; i<numberOfBoxes; i++) {
-			GUI.Box (Rect (j-1, Screen.height-20, boxWidth+2, boxHeight+2), "");
+			GUI.Box (Rect (Screen.width - j - 1, Screen.height-25, boxWidth+2, boxHeight+2), "");
 			if (i < numberOfSnowballs) {
-				GUI.Box(Rect (j, Screen.height-20, boxWidth, boxHeight), "", style);
+				GUI.Box(Rect (Screen.width - j, Screen.height-25, boxWidth, boxHeight), "", style);
 			}
-			j += boxWidth;
+			j -= boxWidth;
 			
 		}
 		

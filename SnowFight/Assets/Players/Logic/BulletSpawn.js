@@ -88,9 +88,11 @@ function OnGUI() {
 		texture.Apply();
 		style.normal.background = texture;
 		
-		
-		GUI.Box (Rect (Screen.width/1.4-1, 29, totalWidth+2, boxHeight+2), "");
-		GUI.Box (Rect (Screen.width/1.4, 30, boxWidth, boxHeight), text,style);
+		if (player.GetCurrentSnowballs() <= 0) {
+			GUI.Box (Rect (Screen.width/2-31, Screen.height/2-1, totalWidth+2, boxHeight+2), "");
+			GUI.Box (Rect (Screen.width/2-30, Screen.height/2, boxWidth, boxHeight), text,style);
+		}
+	
 		//GUI.Box (Rect (Screen.width/1.4 + (totalWidth-boxWidth), 10, boxWidth, boxHeight), "",style);
 	}
 }
