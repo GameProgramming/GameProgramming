@@ -100,17 +100,17 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 	}
 }
 
-function OnCollisionEnter (collision : Collision) {
+function OnHitByObject (otherObj : GameObject) {
 	if (!IsHittable()) {
 		return;
 	}
 	
-	var ballPosition = collision.transform.position;
+	var ballPosition = otherObj.transform.position;
 	var playerPosition = gameObject.transform.position;
-	var inversePosition = gameObject.transform.InverseTransformPoint(collision.transform.position);
+	var inversePosition = gameObject.transform.InverseTransformPoint(otherObj.transform.position);
 	
-	if(collision.rigidbody && collision.rigidbody.CompareTag("Projectile")){
-		var damageObject : Damage = collision.transform.GetComponent(Damage);
+	if(otherObj.rigidbody && otherObj.rigidbody.CompareTag("Projectile")){
+		var damageObject : Damage = otherObj.GetComponent(Damage);
 		var attack = new Attack();
 		
 		if (inversePosition.y > 0.9) {
