@@ -81,7 +81,7 @@ function PickItem(player :GameObject) {
 }
 
    // Find the name of the closest enemy
-function AimTarget (enemyTag) : GameObject {
+function AimTarget (enemyTag : String) : GameObject {
     // Find all game objects with tag enemyTag
     var gos : GameObject[];
     gos = GameObject.FindGameObjectsWithTag(enemyTag); 
@@ -152,8 +152,8 @@ function OnGUI(){
 			var outerStyle = new GUIStyle();
 			var totalWidth = Screen.width/10; 
 			var boxWidth=10;
-			var color;
-			var outerColor;
+			var color : Color;
+			var outerColor : Color;
 			
 				boxWidth = Screen.width/10;
 				
