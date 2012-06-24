@@ -146,32 +146,41 @@ function InDirection( object : GameObject){
 }
 function OnGUI(){
 	if (transform.parent && transform.parent.tag.Equals("Player")) {
+	    var outerTexture : Texture2D = new Texture2D(1, 1);
 	    var texture : Texture2D = new Texture2D(1, 1);
 			var style = new GUIStyle();
+			var outerStyle = new GUIStyle();
 			var totalWidth = Screen.width/10; 
 			var boxWidth=10;
 			var color;
+			var outerColor;
 			
 				boxWidth = Screen.width/10;
 				
 			
 			if (!target){
-				color = new Color(1, 1, 0,0.1);
+				color = new Color(1, 1, 0,0.2);
+				outerColor = new Color(1, 1, 0,0.2);
 			
 			}else if (target){
-				color = new Color(1, 0, 0,0.1);
+				color = new Color(1, 0, 0,0.2);
+				outerColor = new Color(1, 0, 0,0.2);
 				if(progress >= aimFor){
-					color = new Color(0, 1, 0,0.1);
-				
+					color = new Color(0, 1, 0,0.2);
+					outerColor = new Color(1, 0, 0,0.2);
 				}else if(progress > 0 && progress < aimFor){
-					color = new Color(0, 0, 1,0.1);
+					color = new Color(0, aimFor/progress, aimFor/4.0-progress,0.2);
+					outerColor = new Color(0, aimFor/progress, aimFor/4.0-progress,0.2);
 				}
 			}
 			texture.SetPixel(0, 0, color);
 			texture.Apply();
 			style.normal.background = texture;
 			
-				GUI.Box (Rect (Screen.width/2-51, Screen.height/2-51, 22, 22), "",style);
+			outerTexture.SetPixel(0, 0, outerColor);
+			outerTexture.Apply();
+			outerStyle.normal.background = outerTexture;
+				GUI.Box (Rect (Screen.width/2-51, Screen.height/2-51, 22, 22), "",outerStyle);
 				GUI.Box (Rect (Screen.width/2-50, Screen.height/2-50, 20, 20), "",style);
 				
 	}
