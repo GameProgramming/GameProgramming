@@ -62,7 +62,14 @@ function GetBase () : Transform {
 }
 
 function LoseTickets (count :int) {
-	tickets -= count;
+	if (Network.isServer) {
+		networkView.RPC("NetTicketChange", RPCMode.All, tickets - count);
+	}
+}
+
+@RPC
+function NetTicketChange (t :int) {
+	tickets = t;
 }
 
 function Friendly (otherTeam :Team) :boolean {

@@ -40,6 +40,7 @@ function Fire () {
 		clone = Instantiate(projectile, Spawnpoint.position, Spawnpoint.rotation);
 		clone.velocity = clone.GetComponent("Projectile").speed * Spawnpoint.TransformDirection (Vector3.forward
 								+ new Vector3(0, startYSpeed, 0) );
+		SendFire(clone);
 		
 		snowCosts = projectile.GetComponent(Projectile).snowCosts;
 		if (snowCosts > 0) {
@@ -50,7 +51,24 @@ function Fire () {
 		reloadProgress = clone.GetComponent("Projectile").reloadTime;
 	}
 }
+
+function SendFire ( bullet :Rigidbody ) {
+	var netId :NetworkViewID = Network.AllocateViewID();
+	bullet.networkView.viewID = netId;
+	networkView.RPC("NetFire", RPCMode.Others, netId, bullet.position, bullet.velocity);
+}
+
+@RPC
+function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
+  	projectile = GetProjectile();
+  	var clone : Rigidbody;	
+	clone = Instantiate(projectile, pos, transform.rotation);
+	clone.networkView.viewID = netId;
+	clone.velocity = velo;
+}
+
 function FireHeatSeekingRocket (target) {
+	//TODO: falls das hier benuttzt wird, muss hier auch noch netwerk rein.
 	if(reloadProgress <= 0 && player.GetCurrentSnowballs() > 0){
 		Spawnpoint = transform;
 	  	projectile = GetProjectile();
