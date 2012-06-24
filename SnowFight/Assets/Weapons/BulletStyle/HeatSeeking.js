@@ -13,8 +13,9 @@
 
     function Start(){
         transform.collider.isTrigger = true;
-		transform.localPosition.x += 2;
-        transform.localPosition.z += 2;
+		//transform.localPosition.x += 2;
+        transform.localPosition.y += 0.5;
+        transform.localPosition.z -= 0.4;
         if(missleTarget){
             target = missleTarget.transform;
 		}
@@ -25,7 +26,7 @@
 
     function Update(){   
     	time += Time.deltaTime;
-    	transform.Rotate(0,180,0);
+    	//transform.Rotate(0,-180,0);
 	    if (time < 1){
 	    	transform.collider.isTrigger = true;
         }else{
