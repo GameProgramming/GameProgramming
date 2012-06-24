@@ -59,8 +59,8 @@ function Restock() {
 //This function will be called when a player want to create a big snowball.
 function GrabBigSnowball(player : GameObject) :GameObject {
 	currentSnowballs -= bigSnowballAmount;
-	var spawnPos = player.transform.position + player.transform.forward;
-	return Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity);
+	var spawnPos :Vector3 = player.transform.position + player.transform.forward;
+	return Network.Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity, 0);
 	//bigSnowballPrefab.GetComponent(BigSnowBall).Respawn(spawnPos);
 }
 
@@ -104,4 +104,8 @@ function CreateResourceFromSnowball(ballSize : float, maxBallSize : float) {
 	//Do some other important stuff	
 	snowballRessource = transform.Find("SnowballRessource");
 	GetComponent(Collider).isTrigger = true;
+}
+
+function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
+    stream.Serialize(currentSnowballs);
 }

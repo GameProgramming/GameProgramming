@@ -9,6 +9,10 @@ var team : Team;
 @System.NonSerialized
 var neutralTeam : Team;
 
+
+@System.NonSerialized
+private var game :GameStatus;
+
 var points : int = 3;
 
 var takeOverRadius :int = 10;
@@ -22,6 +26,7 @@ private var progress : float;
 
 var specialWeapons : GameObject[];
 
+
 function GetSpawnPoint() : Vector3 {
 	for (var t : Transform in transform) {
 		if (t.tag == "PlayerSpawn") {
@@ -32,6 +37,10 @@ function GetSpawnPoint() : Vector3 {
 			}
 		}
 	}
+}
+
+function Awake () {
+	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
 }
 
 function Start () {
@@ -47,46 +56,46 @@ function Start () {
 }
 
 function Update () {
-	var takeOverDist = takeOverRadius * takeOverRadius;
-	
-	var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("Player");  
-	
-	var teamTakingOver :Team = null;
-	
-	for (var go : GameObject in gos)  {
-		if ((go.transform.position - transform.position).sqrMagnitude < takeOverDist) {
-	    	var status :PlayerStatus = go.GetComponent(PlayerStatus);
-    		if (!status.IsDead() && status.team != teamTakingOver) {
-    			if (teamTakingOver == null) {
-    				teamTakingOver = status.team;
-    			} else {
-    				teamTakingOver = neutralTeam;
-    			}
-    		}
-    	}
-	}
-	
-//	Debug.Log("taking over "+teamTakingOver);
-	if (teamTakingOver != team && team != neutralTeam && teamTakingOver != null) {
-		teamTakingOver = neutralTeam;
-	}
-	
-	
-	
-	if (teamTakingOver == null || teamTakingOver != takeOverCurrTeam) {
-		//Debug.Log("takeOverReset");
-		takeOverProgress = 0;
-		takeOverCurrTeam = null;
-	} else if (teamTakingOver != team) {
-		takeOverProgress += Time.deltaTime / takeOverTime;
-//		Debug.Log("taking over "+takeOverProgress);
-		if (takeOverProgress >= 1) {
-//			Debug.Log("takeOverFinished");
-			SetTeam(teamTakingOver);
+	if (Network.isServer) {
+		var takeOverDist = takeOverRadius * takeOverRadius;
+		
+		var gos : GameObject[];
+	    gos = GameObject.FindGameObjectsWithTag("Player");  
+		
+		var teamTakingOver :Team = null;
+		
+		for (var go : GameObject in gos)  {
+			if ((go.transform.position - transform.position).sqrMagnitude < takeOverDist) {
+		    	var status :PlayerStatus = go.GetComponent(PlayerStatus);
+	    		if (!status.IsDead() && status.team != teamTakingOver) {
+	    			if (teamTakingOver == null) {
+	    				teamTakingOver = status.team;
+	    			} else {
+	    				teamTakingOver = neutralTeam;
+	    			}
+	    		}
+	    	}
 		}
-	} 
-	takeOverCurrTeam = teamTakingOver;
+		
+	//	Debug.Log("taking over "+teamTakingOver);
+		if (teamTakingOver != team && team != neutralTeam && teamTakingOver != null) {
+			teamTakingOver = neutralTeam;
+		}
+		
+		if (teamTakingOver == null || teamTakingOver != takeOverCurrTeam) {
+			//Debug.Log("takeOverReset");
+			takeOverProgress = 0;
+			takeOverCurrTeam = null;
+		} else if (teamTakingOver != team) {
+			takeOverProgress += Time.deltaTime / takeOverTime;
+	//		Debug.Log("taking over "+takeOverProgress);
+			if (takeOverProgress >= 1) {
+	//			Debug.Log("takeOverFinished");
+				SetTeam(teamTakingOver);
+			}
+		} 
+		takeOverCurrTeam = teamTakingOver;
+	}
 }
 
 function SetTeam (t :Team) {
@@ -96,48 +105,18 @@ function SetTeam (t :Team) {
 }
 
 function OnTriggerStay(other : Collider) {
-
-	if (other.tag.Equals("BigSnowball")) {
-		enterTime += Time.deltaTime;
-		if (enterTime > 2.0 && other.GetComponent(BigSnowBall)) {
-			// TODO:
-			// ... spezialwaffe erzeugen oder so
-			//other.GetComponent(BigSnowBall).Respawn(null);
-			other.transform.parent = null;
-			//other.transform.position.y += 1; //TODO: don't hardcode this value!!
-			var weapon = specialWeapons[Random.Range(0,specialWeapons.Length)];
-			Instantiate(weapon, other.transform.position, Quaternion.identity);
-			Destroy(other.gameObject);
-			
-			enterTime = 0.0;
+	if (Network.isServer) {
+		if (other.CompareTag("BigSnowball")) {
+			enterTime += Time.deltaTime;
+			if (enterTime > 2.0 && other.GetComponent(BigSnowBall)) {
+				other.transform.parent = null;
+				var weapon = specialWeapons[Random.Range(0,specialWeapons.Length)];
+				Network.Instantiate(weapon, other.transform.position, Quaternion.identity,0);
+				Network.Destroy(other.gameObject);
+				enterTime = 0.0;
+			}
 		}
 	}
-//	
-//	if (other.tag.Equals("Player") || other.tag.Equals("Bot")) {
-//	
-//		var otherTeam : Team = other.transform.parent.transform.GetComponent(Team);
-//		if (currentTeamTakingOver == null) {
-//			if (team.GetTeamNumber() != otherTeam.GetTeamNumber()) {
-//				currentTeamTakingOver = other.transform.parent.transform.GetComponent(Team);
-//			}
-//		} else {		
-//			if (currentTeamTakingOver.GetTeamNumber() != otherTeam.GetTeamNumber()) {
-//				currentTeamTakingOver = null;
-//			}			
-//		}
-//	
-//		if (currentTeamTakingOver != null) {
-//			progress += Time.deltaTime;
-//			if (progress > 5.0) {
-//				SetTeam(currentTeamTakingOver);
-//				progress = 0.0;
-//				currentTeamTakingOver = null;
-//			}
-//		} else {
-//			
-//			progress = 0.0;
-//		}
-//	}
 }
 
 function SetID (newId : int) {
@@ -146,4 +125,16 @@ function SetID (newId : int) {
 
 function GetID () : int {
 	return baseID;
+}
+
+function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
+    var teamNumber :int = team.GetTeamNumber();
+    stream.Serialize(teamNumber);
+    if (!stream.isWriting) {
+        if (team == null || team.GetTeamNumber() != teamNumber) {
+        	var t :Team = game.GetTeamById(teamNumber);
+        	if (!t) t = neutralTeam;
+        	SetTeam(t);
+        }
+    }
 }
