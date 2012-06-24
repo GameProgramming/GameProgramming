@@ -75,7 +75,7 @@ function PickItem(player :GameObject) {
 	transform.localRotation = Quaternion.identity;
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer (player.transform);
 	
-	if (player.CompareTag("Player")) {
+	if (player.GetComponent(PlayerStatus).IsMainPlayer()) {
 		GameObject.FindGameObjectWithTag("OverviewCam")
 		.GetComponent(MapOverview).SetPlayerCam(transform.Find("UfoCam"));
 	}

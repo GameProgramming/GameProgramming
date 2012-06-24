@@ -55,7 +55,7 @@ function SetActive (a :boolean) :boolean {
 }
 
 function OnTriggerStay (other :Collider) {
-	if (inputFire && (other.CompareTag("Player") || other.CompareTag("Bot"))) {
+	if (inputFire && (other.CompareTag("Player"))) {
 		if (freezingCurr == null) {
 			var p = other.GetComponent(PlayerStatus);
 			if (!p.IsDead() && !p.IsFrozen()) {

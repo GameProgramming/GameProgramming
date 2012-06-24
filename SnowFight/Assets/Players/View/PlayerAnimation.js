@@ -113,7 +113,7 @@ function OnThrow () {
 	anim.Play("throw2");
 	anim["throw2"].speed = 20;
 	anim["throw2"].weight = 10;
-	if (throwPreview) {
+	if (playerStatus.IsMainPlayer()) {
 		throwPreview.Deactivate();
 	}
 }
@@ -122,7 +122,7 @@ function OnLoadThrow () {
 	anim.Play("throw1");
 	anim["throw1"].speed = 20;
 	anim["throw1"].weight = 10;
-	if (throwPreview) {
+	if (playerStatus.IsMainPlayer()) {
 		throwPreview.Activate();
 	}
 }
@@ -130,7 +130,7 @@ function OnLoadThrow () {
 function OnUnloadThrow () {
 	anim.Stop("throw1");
 	anim.Stop("throw2");
-	if (throwPreview) {
+	if (playerStatus.IsMainPlayer()) {
 		throwPreview.Deactivate();
 	}
 }

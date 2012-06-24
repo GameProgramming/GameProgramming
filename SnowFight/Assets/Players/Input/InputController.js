@@ -38,5 +38,15 @@ function Update () {
 	motor.Rotate(Input.GetAxis("Mouse X") * 3, Input.GetAxis("Mouse Y") * 2);
 }
 
+function OnSetBot () {
+	enabled = false;
+}
+function OnSetMainPlayer () {
+	enabled = true;
+}
+function OnSetRemote () {
+	enabled = false;
+}
+
 // Require a character controller to be attached to the same game object
 @script RequireComponent (CharacterMotorSF)

@@ -12,7 +12,6 @@ var gameOver : boolean;
 var gameOverTime = 0.0;
 
 var playerPrefab : GameObject;
-var botPrefab : GameObject;
 var player : GameObject; // the human player on this side of the connection.
 
 var overviewCam : MapOverview;
@@ -36,19 +35,32 @@ function Awake () {
 
 function OnNetworkLoadedLevel () {
 	// add the main player.
-	player = Network.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, 0);
-	AddPlayer(player);
-	overviewCam.SetPlayer(player.transform);
-	overviewCam.ResetPlayerCam();
+	var pl :GameObject = Network.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, 0);
+	AddPlayer(pl);
+	SetMainPlayer(pl);
 	
 	if (Network.isServer) {
 		// add the bots.
 		for (var i :int = 0; i < 3; i++) {
-			 AddPlayer(Network.Instantiate(botPrefab, Vector3.zero, Quaternion.identity, 0));
+			var b :GameObject = Network.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, 0);
+			AddPlayer(b);
+			SetBot(b);
 		}
 	}
 	
 	//overviewCam.GetComponent(MapOverview).SetPlayerCam( player.transform.FindChild("CameraTarget") );
+}
+
+function SetMainPlayer (pl :GameObject) {
+	player = pl;
+	overviewCam.SetPlayer(pl.transform);
+	overviewCam.ResetPlayerCam();
+	pl.SendMessage("OnSetMainPlayer");
+}
+
+function SetBot (pl :GameObject) {
+	if (pl == player) player = null; // koennte schief gehen.. besser niemals zu diesem fall kommen lassen!
+	pl.SendMessage("OnSetBot");
 }
 
 /*
@@ -103,11 +115,10 @@ function TeamWins (t :Team) {
 	gameOver = true;
 	gameOverTime = Time.time;
 	
-	var bots = GameObject.FindGameObjectsWithTag ("Bot");
-	for (var bot in bots)
-	    bot.BroadcastMessage("GameOver");
-	    
-    GameObject.FindGameObjectWithTag("Player").BroadcastMessage("GameOver");
+	
+	// jedem erzaehlen, dass das spiel vorbei ist.
+	for (var go in FindObjectsOfType(GameObject))
+		go.SendMessage("GameOver", SendMessageOptions.DontRequireReceiver);	
 }
 
 //this happens when something falls off the level and into the death box

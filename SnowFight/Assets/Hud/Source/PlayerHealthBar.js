@@ -27,3 +27,13 @@ function OnGUI() {
 		//GUI.Box (Rect (Screen.width/1.4 + (totalWidth-boxWidth), 10, boxWidth, boxHeight), "",style);
 	}
 }
+
+function OnSetBot () {
+	enabled = false;
+}
+function OnSetMainPlayer () {
+	enabled = true;
+}
+function OnSetRemote () {
+	enabled = false;
+}

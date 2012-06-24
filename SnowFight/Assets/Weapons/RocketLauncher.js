@@ -33,7 +33,7 @@ function Start() {
 function Update () {
 	if (owner) {
 	
-		AimTarget("Bot");
+		AimTarget("Player");
 	  	transform.eulerAngles.x = -playerMotor.rotationY-10;
 	  	if(target == null){
 				progress = 0;
@@ -145,7 +145,7 @@ function InDirection( object : GameObject){
 	return true;
 }
 function OnGUI(){
-	if (transform.parent && transform.parent.tag.Equals("Player")) {
+	if (owner != null && owner.GetComponent(PlayerStatus).IsMainPlayer()) {
 	    var outerTexture : Texture2D = new Texture2D(1, 1);
 	    var texture : Texture2D = new Texture2D(1, 1);
 			var style = new GUIStyle();

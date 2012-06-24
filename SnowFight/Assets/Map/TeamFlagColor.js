@@ -1,7 +1,10 @@
 private var color;
 private var mouseOver : boolean;
 
+private var game :GameStatus;
+
 function Start () {
+	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
 	mouseOver = false;
 }
 
@@ -23,7 +26,7 @@ function SetColor(newColor : Color) {
 
 function OnMouseOver() {
 	
-	var playerStatus = GameObject.FindGameObjectWithTag("Player").GetComponent(PlayerStatus);
+	var playerStatus = game.player.GetComponent(PlayerStatus);
 	if (playerStatus.IsDead()) {
 		mouseOver = true;
 		var rend = GetComponent(MeshRenderer);

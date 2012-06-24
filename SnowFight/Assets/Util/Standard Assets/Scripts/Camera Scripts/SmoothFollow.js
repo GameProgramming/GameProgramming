@@ -30,7 +30,7 @@ function LateUpdate () {
 	} else {
 		if (target.CompareTag("Player")) {
 			var playerStatus = target.GetComponent(PlayerStatus);
-			if (target.IsDead()) {
+			if (playerStatus.IsDead()) {
 				return;
 			}
 		}

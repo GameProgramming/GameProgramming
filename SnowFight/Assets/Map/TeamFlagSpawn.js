@@ -6,6 +6,8 @@ function Update () {
 
 }
 
+//TODO: Was ist das hier fuer ein Script? Wird das noch verwendet? --- Ben, 24.6.
+
 function OnMouseDown() {
 
 	var playerStatus = GameObject.FindGameObjectWithTag("Player").GetComponent(PlayerStatus);

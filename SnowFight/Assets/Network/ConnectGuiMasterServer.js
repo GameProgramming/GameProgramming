@@ -232,3 +232,7 @@ function MakeClientWindow(id : int)
 		GUILayout.EndHorizontal();	
 	}
 }
+
+function OnApplicationQuit () {
+	MasterServer.UnregisterHost();
+}

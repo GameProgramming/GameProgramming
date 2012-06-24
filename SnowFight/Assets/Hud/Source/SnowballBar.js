@@ -36,3 +36,13 @@ function OnGUI() {
 	}
 	
 }
+
+function OnSetBot () {
+	enabled = false;
+}
+function OnSetMainPlayer () {
+	enabled = true;
+}
+function OnSetRemote () {
+	enabled = false;
+}

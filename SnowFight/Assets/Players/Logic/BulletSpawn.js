@@ -74,7 +74,7 @@ function GetProjectile(){
 }
  
 function OnGUI() {
-     if (transform.parent.tag.Equals("Player")) {
+     if (player != null && player.IsMainPlayer()) {
 		var texture : Texture2D = new Texture2D(1, 1);
 		var style = new GUIStyle();
 		var totalWidth = Screen.width/4; 

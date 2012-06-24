@@ -26,6 +26,8 @@ private var currentSnowballs : int = 0;
 var maxCollectionSnowTime : float;
 private var collectionSnowTime : float;
 
+private var isMainPlayer :boolean = false;
+
 class Attack {
 	var attacker :GameObject;
 	var damageType :DamageType;
@@ -128,12 +130,10 @@ function Die () {
 		return;
 	}
 	
-	if (transform.tag.Equals("Player")) {
+	if (IsMainPlayer()) {
 		var mapOverview = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
 		mapOverview.SetMode(true);
-	}
-	
-	if (transform.tag.Equals("Player")) {
+		
 		spawnBaseID = 0;
 	}
 	
@@ -180,7 +180,7 @@ function Respawn () {
 	frozen = 0;
 	
 	gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
-	if (transform.tag.Equals("Player")) {
+	if (IsMainPlayer()) {
 		var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
 		overviewCam.ResetPlayerCam();
 		overviewCam.SetMode(false);
@@ -283,4 +283,18 @@ function IsRidingUfo () : boolean {
 
 function GetTeamNumber () : int {
 	return team.GetTeamNumber();
+}
+
+function OnSetBot () {
+	isMainPlayer = false;
+}
+function OnSetMainPlayer () {
+	isMainPlayer = true;
+}
+function OnSetRemote () {
+	isMainPlayer = false;
+}
+
+function IsMainPlayer () {
+	return isMainPlayer;
 }

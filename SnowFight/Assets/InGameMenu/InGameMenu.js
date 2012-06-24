@@ -1,19 +1,13 @@
 private var showIngameMenu : boolean;
-private var motor : CharacterMotorSF;
+
 function Awake () {
 	showIngameMenu = false;
-	motor = GetComponent(CharacterMotorSF);
 }
 
 function Update() {
 	if (Input.GetKeyDown(KeyCode.Escape)) {
 		
 		showIngameMenu = !showIngameMenu;
-//		if (showIngameMenu) {
-//			motor.SetControllable(false);
-//		} else {
-//			motor.SetControllable(true);
-//		}
 	}
 }
 
@@ -36,5 +30,3 @@ function OnGUI () {
 		}
 	}
 }
-// Require a character controller to be attached to the same game object
-@script RequireComponent (CharacterMotorSF)

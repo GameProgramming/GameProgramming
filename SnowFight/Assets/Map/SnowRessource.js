@@ -85,7 +85,7 @@ function OnTriggerStay(other : Collider) {
 	if (Time.time < creationTime + activationTimeout)
 		return;
 
-	if (other.CompareTag("Player") || other.CompareTag("Bot")) {
+	if (other.CompareTag("Player")) {
 		if (IsGrabPossible()) {
 			var playerStatus : PlayerStatus = other.transform.GetComponent(PlayerStatus);
 			other.transform.GetComponent(ItemManager).SetSnowfieldCandidate(gameObject);

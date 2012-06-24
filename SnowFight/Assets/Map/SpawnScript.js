@@ -21,19 +21,19 @@ function Update () {
 }
 
 function OnTriggerEnter (other : Collider) {
-	if (other.tag.Equals("Player") || other.tag.Equals("Bot")) {
+	if (other.tag.Equals("Player")) {
 		playerInSpawn = true;
 	}
 }
 
 function OnTriggerStay (other : Collider) {
-	if (other.tag.Equals("Player") || other.tag.Equals("Bot")) {
+	if (other.tag.Equals("Player")) {
 		playerInSpawn = true;
 	}
 }
 
 function OnTriggerExit (other : Collider) {
-	if (other.tag.Equals("Player") || other.tag.Equals("Bot")) {
+	if (other.tag.Equals("Player")) {
 		playerInSpawn = false;
 	}
 }

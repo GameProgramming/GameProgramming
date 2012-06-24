@@ -133,8 +133,7 @@ function FindCloseUFO () : GameObject {
 function FindClosestEnemy () : GameObject {
     // Find all game objects with tag Enemy
     var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("Bot"); 
-    var player = GameObject.FindGameObjectWithTag("Player");
+    gos = GameObject.FindGameObjectsWithTag("Player"); 
     var closest : GameObject;
     var distance = Mathf.Infinity; 
     var position = transform.position; 
@@ -154,16 +153,6 @@ function FindClosestEnemy () : GameObject {
 	        } 
         }
     } 
-    
-    //check if player might be enemy and is closer
-    if (player.GetComponent(PlayerStatus) && !player.GetComponent(PlayerStatus).team.Friendly(pStatus.team)) {
-    		diff = (player.transform.position - position);
-        	curDistance = diff.sqrMagnitude; 
-        if (curDistance < distance) { 
-            closest = player; 
-            distance = curDistance; 
-        } 
-    }
     
     if (closest)
     	itemManager.ReleaseItem();
@@ -583,10 +572,8 @@ function MoveTowardsPosition (position : Vector3) {
 function BallOfFriend ( t : Transform ) : boolean {
     // Find all game objects with tag Enemy
     var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("Bot");  
-    var player = GameObject.FindGameObjectWithTag("Player");
-    gos = gos + [player];
-
+    gos = GameObject.FindGameObjectsWithTag("Player");  
+   
     var position = t.position; 
     var diff;
 	var curDistance;
@@ -632,6 +619,16 @@ function OnDrawGizmosSelected ()
 	Gizmos.DrawWireSphere (transform.position, punchRadius);
 	Gizmos.color = Color.red;
 	Gizmos.DrawWireSphere (transform.position, attackDistance);
+}
+
+function OnSetBot () {
+	enabled = true;
+}
+function OnSetMainPlayer () {
+	enabled = false;
+}
+function OnSetRemote () {
+	enabled = false;
 }
 
 @script RequireComponent (CharacterMotorSF)

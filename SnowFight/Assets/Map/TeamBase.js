@@ -50,9 +50,7 @@ function Update () {
 	var takeOverDist = takeOverRadius * takeOverRadius;
 	
 	var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("Bot");  
-    var player = GameObject.FindGameObjectWithTag("Player");
-    if (player) gos = gos + [player];
+    gos = GameObject.FindGameObjectsWithTag("Player");  
 	
 	var teamTakingOver :Team = null;
 	
