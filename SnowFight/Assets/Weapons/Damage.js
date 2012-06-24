@@ -3,7 +3,7 @@ var behindDamage : int;
 var headDamage : int; 
 var dmg : int = 2;
 
-enum DamageType {Direct, Area, Physical, Crash}
+enum DamageType {Direct = 1, Area = 2, Physical = 3, Crash = 4}
 // direct - schneeball, area - ??, physical - schneeball, crash - ufo.
 
 var type : DamageType;

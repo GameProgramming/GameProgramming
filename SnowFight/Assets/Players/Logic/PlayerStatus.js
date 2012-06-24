@@ -131,10 +131,12 @@ function Die () {
 	}
 	if (Network.isServer) {
 		networkView.RPC("NetDie", RPCMode.Others);
+		NetDie();
 		team.LoseTickets(1);
 	}
 }
 
+@RPC
 function NetDie () {
 	if (IsMainPlayer()) {
 		var mapOverview = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
@@ -232,7 +234,8 @@ function ApplyDamage (attack :Attack) {
 	if (Network.isServer && (IsHittable() || attack.damageType == DamageType.Crash)) {
 		hp -= attack.damage;
 		hp = Mathf.Max(0, hp);
-		networkView.RPC("NetApplyDamage", RPCMode.Others, hp, attack.damageType);
+		var dT :int = attack.damageType;
+		networkView.RPC("NetApplyDamage", RPCMode.Others, hp, dT);
 		gameObject.SendMessage ("OnHit", attack, SendMessageOptions.DontRequireReceiver);										
 		gameObject.SendMessage ("ReleaseBall", null, SendMessageOptions.DontRequireReceiver);
 				
@@ -243,7 +246,7 @@ function ApplyDamage (attack :Attack) {
 }
 
 @RPC
-function NetApplyDamage (newHp :int, damageType :DamageType) {
+function NetApplyDamage (newHp :int, damageType :int) {
 	//TODO: irgendwie den attacker durchs netzwerk uebertragen.
 	lastAttack = new Attack();
 	lastAttack.damage = hp - newHp;
