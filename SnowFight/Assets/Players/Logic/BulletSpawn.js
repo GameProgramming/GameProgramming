@@ -38,13 +38,10 @@ function Fire () {
 	  	projectile = GetProjectile();
 	  	var clone : Rigidbody;	
 		clone = Instantiate(projectile, Spawnpoint.position, Spawnpoint.rotation);
-		if (!projectile.GetComponent(HeatSeeking)){
-			clone.velocity = clone.GetComponent("Projectile").speed * Spawnpoint.TransformDirection (Vector3.forward
+		clone.velocity = clone.GetComponent("Projectile").speed * Spawnpoint.TransformDirection (Vector3.forward
 								+ new Vector3(0, startYSpeed, 0) );
-		}
 		
 		snowCosts = projectile.GetComponent(Projectile).snowCosts;
-//		Debug.Log(snowCosts);
 		if (snowCosts > 0) {
 			player.SubtractSnowball(snowCosts);
 		}
@@ -53,6 +50,24 @@ function Fire () {
 		reloadProgress = clone.GetComponent("Projectile").reloadTime;
 	}
 }
+function FireHeatSeekingRocket (target) {
+	if(reloadProgress <= 0 && player.GetCurrentSnowballs() > 0){
+		Spawnpoint = transform;
+	  	projectile = GetProjectile();
+	  	var clone : Rigidbody;	
+		clone = Instantiate(projectile, Spawnpoint.position, Spawnpoint.rotation);
+		clone.GetComponent(HeatSeeking).missleTarget = target;
+		
+		snowCosts = projectile.GetComponent(Projectile).snowCosts;
+		if (snowCosts > 0) {
+			player.SubtractSnowball(snowCosts);
+		}
+		
+		inputFire = false;
+		reloadProgress = clone.GetComponent("Projectile").reloadTime;
+	}
+}
+
 
 function GetProjectile(){
 	return bullet;
@@ -89,8 +104,9 @@ function OnGUI() {
 		style.normal.background = texture;
 		
 		if (player.GetCurrentSnowballs() <= 0) {
-			GUI.Box (Rect (Screen.width/2-31, Screen.height/2-1, totalWidth+2, boxHeight+2), "");
-			GUI.Box (Rect (Screen.width/2-30, Screen.height/2, boxWidth, boxHeight), text,style);
+			GUI.Box (Rect (Screen.width/2-31, Screen.height/2-101, totalWidth+2, boxHeight+2), "");
+			GUI.Box (Rect (Screen.width/2-30, Screen.height/2-100, boxWidth, boxHeight), text,style);
+			
 		}
 	
 		//GUI.Box (Rect (Screen.width/1.4 + (totalWidth-boxWidth), 10, boxWidth, boxHeight), "",style);
