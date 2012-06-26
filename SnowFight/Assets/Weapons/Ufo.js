@@ -53,9 +53,6 @@ function Move (offset : Vector3) {
 function Release () {
 	owner.transform.position.y += 0.2;
 	
-	owner = null;
-	transform.parent = null;
-	
 	var parent = GameObject.Find("Items");
 	if (parent)
 		transform.parent = parent.transform;
@@ -64,6 +61,9 @@ function Release () {
 		GameObject.FindGameObjectWithTag("OverviewCam")
 			.GetComponent(MapOverview).ResetPlayerCam();
 	}
+	
+	owner = null;
+	transform.parent = null;
 }
 
 function PickItem(player :GameObject) {
