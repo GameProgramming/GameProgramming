@@ -16,6 +16,9 @@ var player : GameObject; // the human player on this side of the connection.
 
 var overviewCam : MapOverview;
 
+var botNumber :int = 10;
+var teamBalance :float = 0.5;
+
 function Awake () {
 	gameOver = false;
 	
