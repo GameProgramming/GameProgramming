@@ -112,7 +112,7 @@ function OnDestroy() {
 		attack.damageType = DamageType.Crash;
 		attack.damage = 10000; // lethal, i hope ;)
 		attack.attacker = lastAttack ? lastAttack.attacker : null;
-		owner.SendMessage("ApplyDamage", attack);
+		owner.SendMessage("ApplyDamage", attack, SendMessageOptions.DontRequireReceiver);
 		owner = null;
 	}
 }

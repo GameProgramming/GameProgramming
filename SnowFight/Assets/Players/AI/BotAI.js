@@ -278,24 +278,23 @@ function GetUFO () {
 			
 			var ufoPos = target.transform.position;
 			ufoPos.y = transform.position.y;
-			if (Vector3.Distance(transform.position, ufoPos) < punchRadius*0.5) {
-			
-//				if(motor.inputAction && Time.time > pressActionTime + 0.2) {
+			var distance = Vector3.Distance(transform.position, ufoPos);
+			if (distance > punchRadius*0.3) {
+				MoveTowardsPosition(ufoPos);
+				motor.inputAction = false;
+				
+				if(distance > punchRadius*0.31 && distance < punchRadius*0.5) {
+					motor.inputAction = true;					
+					motor.inputAltFire = false;
 //					motor.inputAction = false;
 //					pressActionTime = Mathf.Infinity;
-//				}
+				}
 //				else {
 //					pressActionTime = Time.time;
-					motor.inputAction = true;
-//				}
-//								Debug.Log("Action: " + motor.inputAction, this);
 				
-				motor.inputAltFire = false;
-				moveDir = Vector3.zero;
 			}
 			else {
-				motor.inputAction = false;
-				MoveTowardsPosition(ufoPos);
+				moveDir = Vector3.zero;
 			}
 		}
 		
