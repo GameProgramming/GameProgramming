@@ -113,6 +113,9 @@ function Idle ()
 } 
 
 function FindFreeBase() : GameObject{
+	if (pStatus.IsRidingUfo()) 
+		return null;
+			
 	var base = null;
 	for (var t in GameObject.FindObjectsOfType(Team)) {
 		if (t.GetComponent(Team).GetTeamNumber() == 0)
@@ -122,6 +125,9 @@ function FindFreeBase() : GameObject{
 }
 
 function FindCloseUFO () : GameObject {
+	if (pStatus.IsRidingUfo())
+		return null;
+		
 	var ufo = null;
 	for (var u in GameObject.FindGameObjectsWithTag("Ufo")) {
 		var ufoPos = u.transform.position;
@@ -164,6 +170,9 @@ function FindClosestEnemy () : GameObject {
 }
 
 function FindBestBigSnowball () : GameObject {
+	if (pStatus.IsRidingUfo())
+		return null;
+			
     // Find all game objects with tag BigSnowball
     var gos : GameObject[];
     gos = GameObject.FindGameObjectsWithTag("BigSnowball"); 
@@ -191,6 +200,9 @@ function FindBestBigSnowball () : GameObject {
 }
 
 function FindSnowResource () : GameObject {
+	if (pStatus.IsRidingUfo())
+		return null;
+			
 	var gos : GameObject[];
     gos = GameObject.FindGameObjectsWithTag("SnowballRessource"); 
     
@@ -280,28 +292,22 @@ function GetUFO () {
 			var ufoPos = target.transform.position;
 			ufoPos.y = transform.position.y;
 			var distance = Vector3.Distance(transform.position, ufoPos);
-//			if (distance > punchRadius*0.3) {
-				MoveTowardsPosition(ufoPos);
-				
-				if(distance < punchRadius*0.5){// && !itemManager.GetCandidateItem()) {
-					motor.inputAction = true;					
-					motor.inputAltFire = false;
-//					motor.inputAction = false;
-//					pressActionTime = Mathf.Infinity;
-				}
-				if(itemManager.GetCandidateItem()) {
-					moveDir = Vector3.zero;
-					yield WaitForSeconds(0.01);
-					motor.inputAction = false;
-				}
-//				else 
-//					motor.inputAction = false;
-//					pressActionTime = Time.time;
-				
-//			}
-//			else {
-//				moveDir = Vector3.zero;
-//			}
+
+			MoveTowardsPosition(ufoPos);
+			
+			if(distance < punchRadius*0.5){
+				motor.inputAction = true;					
+				motor.inputAltFire = false;
+			}
+			if(itemManager.GetCandidateItem()) {
+				moveDir = Vector3.zero;
+				yield WaitForSeconds(0.01);
+				motor.inputAction = false;
+				Debug.Log("Riding ufo: " + pStatus.IsRidingUfo(), this);
+				yield WaitForSeconds(0.01);
+				Debug.Log("Riding ufo: " + pStatus.IsRidingUfo(), this);
+			}
+
 		}
 		
 		
@@ -480,27 +486,31 @@ function Attack ()
 			// Just move forward at constant speed
 			direction = transform.TransformDirection(Vector3.forward * attackSpeed);
 	
+		 	//else motor.inputAltFire = false;
+			
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
 		 	if (pStatus.IsRidingUfo())
 		 		Debug.Log("In Ufo!!", this);
+			var pos = transform.position;
+			// Keep looking if we are hitting our target
+			// If we are, knock them out of the way dealing damage
 		 	if (pStatus.IsRidingUfo() && AboveTarget()) {
 		 		Debug.Log("and above target!!", this);
 		 		motor.inputAltFire = true;
 		 	}
-		 	//else motor.inputAltFire = false;
 		 	
-		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo()) {
-		 		//TODO:
-		 		//if there's a bazooka close, go get it! and then shoot :)
-		 		//otherwise forget about it
-		 		target == null;
-		 		return;
-		 	}
-			
-			var pos = transform.position;
-			// Keep looking if we are hitting our target
-			// If we are, knock them out of the way dealing damage
-			if(!lostSight && (pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius)
+//		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo()) {
+//		 		//TODO:
+				//when holding a bazooka  -- shoot!! :)
+				//else
+//		 		//if there's a bazooka close, go get it!
+//		 		//otherwise try finding a snowball
+//		 		target == null;
+//		 		return;
+//		 	}
+
+			if(!lostSight && (pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
+				&& !pStatus.IsRidingUfo())
 			{
 				motor.inputFire = !motor.inputFire;
 				direction = Vector3.left * strafing;
@@ -516,23 +526,13 @@ function Attack ()
 		 		direction = Vector3.zero;
 		 		return;
 		 	}
-			
-//			motor.inputMoveDirection = direction;
+
 			moveDir = direction;
 		}
 		
 		if (Random.value > 0.99) {
 			RemoveTarget();
 			return;
-//			motor.inputAction = false;
-//			tar = FindClosestEnemy();
-//			var oldTar = target;
-//			if (tar && (tar.transform.position - transform.position).magnitude < attackDistance) {
-//				target = tar;
-//				Attack();
-//				if(target.GetComponent(PlayerStatus).IsDead())
-//					target = oldTar;
-//			}
 		}
 		// We are not actually moving forward.
 		// This probably means we ran into a wall or something. Stop attacking the player.

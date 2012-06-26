@@ -67,7 +67,7 @@ function Update () {
 			} else {
 				SetItem(candidateItem);
 			}
-			SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
+			SendMessage("OnItemChange", item, SendMessageOptions.DontRequireReceiver);
 			item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 		}
 	}
@@ -76,7 +76,7 @@ function Update () {
 function SetItem( it :GameObject ) {
 	item = it;
 	candidateItem = null;
-	SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
+	SendMessage("OnItemChange", item, SendMessageOptions.DontRequireReceiver);
 	item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 }
 
@@ -101,7 +101,7 @@ function ReleaseItem () {
 			item.transform.parent = null;
 		item = null;
 		candidateItem = null;
-		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
+		SendMessage("OnItemChange", item, SendMessageOptions.DontRequireReceiver);
 	}
 }
 
@@ -109,7 +109,7 @@ function OnItemDestruction ( destructedItem : GameObject) {
 	if (destructedItem == item) {
 		item = null;
 		candidateItem = null;
-		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
+		SendMessage("OnItemChange", item, SendMessageOptions.DontRequireReceiver);
 	}
 }
 
