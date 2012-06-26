@@ -270,9 +270,9 @@ function SmashBallToSnowfield () {
 	transform.parent = null;
 	transform.position.y -= radius ; //TODO: don't hardcode this value!!
 	transform.position.y += 1;
-	Instantiate(snowRessource, transform.position, Quaternion.identity);
+	Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
 	snowRessource.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
-	Destroy(gameObject);
+	Network.Destroy(gameObject);
 }
 
 function GetLastOwner() : GameObject {

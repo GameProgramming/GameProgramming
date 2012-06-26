@@ -18,7 +18,7 @@ private var body :Transform;
 private var meshRenderers :Component[];
 private var skinnedRenderers :Component[];
 
-function Start() {
+function Awake() {
 	playerStatus = GetComponent(PlayerStatus);
 	motor = GetComponent(CharacterMotorSF);
 	camSetup = transform.Find("CameraSetup");
@@ -45,14 +45,25 @@ function Start() {
 
 	anim.enabled = true;
 	
-	team = transform.parent.gameObject.GetComponent("Team");
-	if (team == null) {
-		Debug.LogError("Could not determine Player team. (Player object has to be child of Team object!)");
-	}
-	
 	body = transform.Find("Model");
 	meshRenderers = body.GetComponentsInChildren (MeshRenderer);
 	skinnedRenderers = body.GetComponentsInChildren (SkinnedMeshRenderer);
+
+	//make sure the player is visible on start
+	for (var rend : MeshRenderer in meshRenderers) {
+		rend.enabled = true;
+	}
+	
+	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
+		rend.enabled = true;
+	}
+}
+
+function OnJoinTeam (t :Team) {
+	team = t;
+	if (team == null) {
+		Debug.LogError("Could not determine Player team. (Player object has to be child of Team object!)");
+	}
 
 	//make sure the player is visible on start
 	for (var rend : MeshRenderer in meshRenderers) {

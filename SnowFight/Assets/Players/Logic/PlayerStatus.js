@@ -17,7 +17,7 @@ var fullHp : int = 10;
 private var hp : int = fullHp;
 private var killTime = -respawnTimeout;
 
-private var state : PlayerState;
+private var state : PlayerState = PlayerState.Dead;
 private var frozen :float;
 
 var maximumSnowballCapacity : int = 10;
@@ -27,6 +27,7 @@ var maxCollectionSnowTime : float;
 private var collectionSnowTime : float;
 
 private var isMainPlayer :boolean = false;
+private var game :GameStatus;
 
 class Attack {
 	var attacker :GameObject;
@@ -36,14 +37,31 @@ class Attack {
 
 private var lastAttack :Attack;
 
+function Awake () {
+	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+}
+
 function Start() {
 	gameOver = false;
 	SetState(PlayerState.Dead);
 	
-	team = transform.parent.gameObject.GetComponent("Team");
-	if (team == null) {
-		Debug.LogError("Could not determine Player team. (Player object has to be child of Team object!)");
+//	team = transform.parent.gameObject.GetComponent("Team");
+//	if (team == null) {
+//		Debug.LogError("Could not determine Player team. (Player object has to be child of Team object!)");
+//	}
+}
+
+function JoinTeam (t :Team) {
+	if (networkView.isMine) {
+		networkView.RPC("NetJoinTeam", RPCMode.AllBuffered, t.teamNumber);
 	}
+}
+
+@RPC
+function NetJoinTeam (teamId : int) {
+	team = game.GetTeamById(teamId);
+	transform.parent = team.transform;
+	gameObject.SendMessage("OnJoinTeam", team, SendMessageOptions.DontRequireReceiver);
 }
 
 function Update () {
@@ -131,10 +149,12 @@ function Die () {
 	}
 	if (Network.isServer) {
 		networkView.RPC("NetDie", RPCMode.Others);
+		NetDie();
 		team.LoseTickets(1);
 	}
 }
 
+@RPC
 function NetDie () {
 	if (IsMainPlayer()) {
 		var mapOverview = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
@@ -173,6 +193,17 @@ function GetTeam () {
 }
 
 function Respawn () {
+	if (networkView.isMine) {
+		networkView.RPC("NetRespawn", RPCMode.All, spawnBaseID);
+	}
+}
+
+@RPC
+function NetRespawn ( spawnBase :int ) {
+
+	Debug.Log("respawn ");
+	//spawnBaseID = spawnBase;
+	
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
 	newPosition.y += 5;
 	transform.position = newPosition;
@@ -188,7 +219,6 @@ function Respawn () {
 		overviewCam.ResetPlayerCam();
 		overviewCam.SetMode(false);
 	}
-
 }
 
 function CollectSnow() {
@@ -232,7 +262,9 @@ function ApplyDamage (attack :Attack) {
 	if (Network.isServer && (IsHittable() || attack.damageType == DamageType.Crash)) {
 		hp -= attack.damage;
 		hp = Mathf.Max(0, hp);
-		networkView.RPC("NetApplyDamage", RPCMode.Others, hp, attack.damageType);
+		var dT :int = attack.damageType;
+		networkView.RPC("NetApplyDamage", RPCMode.Others, hp, dT);
+		Debug.Log("NetHit Send");
 		gameObject.SendMessage ("OnHit", attack, SendMessageOptions.DontRequireReceiver);										
 		gameObject.SendMessage ("ReleaseBall", null, SendMessageOptions.DontRequireReceiver);
 				
@@ -243,7 +275,8 @@ function ApplyDamage (attack :Attack) {
 }
 
 @RPC
-function NetApplyDamage (newHp :int, damageType :DamageType) {
+function NetApplyDamage (newHp :int, damageType :int) {
+	Debug.Log("NetHit Recv");
 	//TODO: irgendwie den attacker durchs netzwerk uebertragen.
 	lastAttack = new Attack();
 	lastAttack.damage = hp - newHp;

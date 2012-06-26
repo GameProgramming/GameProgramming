@@ -140,3 +140,12 @@ function OnTriggerEnter (other : Collider) {
 function GetTeams () : Team[] {
 	return teams;
 }
+
+function GetTeamById ( id :int ) : Team {
+	for (var t :Team in teams) {
+		if (t.teamNumber == id) {
+			return t;
+		} 
+	}
+	return null;
+}
