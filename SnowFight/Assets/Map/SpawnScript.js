@@ -16,6 +16,7 @@ function Update () {
 		occupiedTime += Time.deltaTime;
 		if (occupiedTime >= 3.0) {
 			occupied = false;
+			occupiedTime = 0.0;
 		}
 	}
 }

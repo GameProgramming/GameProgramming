@@ -67,7 +67,7 @@ function Update () {
 			} else {
 				SetItem(candidateItem);
 			}
-			SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
+			SendMessage("OnItemChange", item, SendMessageOptions.DontRequireReceiver);
 			item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 		}
 	}
@@ -75,7 +75,8 @@ function Update () {
 
 function SetItem( it :GameObject ) {
 	item = it;
-	SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
+	candidateItem = null;
+	SendMessage("OnItemChange", item, SendMessageOptions.DontRequireReceiver);
 	item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 }
 
@@ -100,14 +101,15 @@ function ReleaseItem () {
 			item.transform.parent = null;
 		item = null;
 		candidateItem = null;
-		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
+		SendMessage("OnItemChange", item, SendMessageOptions.DontRequireReceiver);
 	}
 }
 
 function OnItemDestruction ( destructedItem : GameObject) {
 	if (destructedItem == item) {
 		item = null;
-		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
+		candidateItem = null;
+		SendMessage("OnItemChange", item, SendMessageOptions.DontRequireReceiver);
 	}
 }
 
@@ -161,6 +163,10 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     		}
     	}
     }
+}
+
+function GetCandidateItem() : GameObject {
+	return candidateItem;
 }
 
 @script RequireComponent (CharacterMotorSF)

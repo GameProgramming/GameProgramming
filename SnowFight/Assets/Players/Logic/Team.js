@@ -63,6 +63,26 @@ function GetBase () : Transform {
 	return base;
 }
 
+function GetAllBases () : Transform[] {
+	var bases : Transform[] = [];
+	for (var b : Transform in transform) {
+		if (b.CompareTag("Base")) {
+			bases += [b];
+		}
+	}
+	return bases;
+}
+
+function GetAllPlayers () : Transform[] {
+	var players : Transform[] = [];
+	for (var p : Transform in transform) {
+		if (p.CompareTag("Player")) {
+			players += [p];
+		}
+	}
+	return players;
+}
+
 function LoseTickets (count :int) {
 	if (Network.isServer) {
 		networkView.RPC("NetTicketChange", RPCMode.All, tickets - count);

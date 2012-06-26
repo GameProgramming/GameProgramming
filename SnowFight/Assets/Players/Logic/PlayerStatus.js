@@ -188,6 +188,13 @@ function IsHittable () :boolean {
 	return state == PlayerState.Alive && !gameOver;
 }
 
+function IsRidingUfo () : boolean {
+	return state == PlayerState.InVehicle;
+	//return transform.FindChild("Ufo")!=null;
+//	return gameObject.FindWithTag("Ufo");
+}
+
+
 function GetTeam () {
 	return team;
 }
@@ -205,19 +212,21 @@ function NetRespawn ( spawnBase :int ) {
 	//spawnBaseID = spawnBase;
 	
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
-	newPosition.y += 5;
-	transform.position = newPosition;
+	if (newPosition != Vector3.zero) {
+		newPosition.y += 5;
+		transform.position = newPosition;
 	
-	hp = fullHp;
-	currentSnowballs = maximumSnowballCapacity;
-	SetState(PlayerState.Alive);
-	frozen = 0;
-	
-	gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
-	if (IsMainPlayer()) {
-		var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
-		overviewCam.ResetPlayerCam();
-		overviewCam.SetMode(false);
+		hp = fullHp;
+		currentSnowballs = maximumSnowballCapacity;
+		SetState(PlayerState.Alive);
+		frozen = 0;
+		
+		gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
+		if (IsMainPlayer()) {
+			var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+			overviewCam.ResetPlayerCam();
+			overviewCam.SetMode(false);
+		}
 	}
 }
 
@@ -287,17 +296,17 @@ function NetApplyDamage (newHp :int, damageType :int) {
 	gameObject.SendMessage ("ReleaseBall", null, SendMessageOptions.DontRequireReceiver);
 }
 
-function OnItemChange (im :ItemManager) {
-	var g :GameObject = im.GetItem();
+function OnItemChange (item : GameObject) {
+	//var g :GameObject = im.GetItem();
 	if (!IsDead()) {
 		if (formerItem && formerItem.CompareTag("Ufo")) {
 			SetState(PlayerState.Alive);
 		}
-		if (g && g.CompareTag("Ufo")) {
+		if (item && item.CompareTag("Ufo")) {
 			SetState(PlayerState.InVehicle);
 		}
 	}
-	formerItem = g;
+	formerItem = item;
 }
 
 function GetMaximumSnowballs () : int  {
@@ -320,12 +329,6 @@ function SetSpawnBaseID (newSpawnBaseID : int) {
 private function SetState (s :PlayerState) {
 	state = s;
 	SendMessage("OnPlayerStateChange", state, SendMessageOptions.DontRequireReceiver);
-}
-
-function IsRidingUfo () : boolean {
-//	if(state == PlayerState.InVehicle)
-//		Debug.Log("Is riding Ufo " + (state == PlayerState.InVehicle), this );
-	return (state == PlayerState.InVehicle);
 }
 
 function GetTeamNumber () : int {
