@@ -16,7 +16,12 @@ var player : GameObject; // the human player on this side of the connection.
 
 var overviewCam : MapOverview;
 
-var botNumber :int = 12;
+var botNumber :int = 4;
+
+private var ticketReduceTime = 0.5;
+private var currentTicketReduceTime = 0.0;
+private var winIsPossible = false;
+private var possibleWinCandidate = 0;
 
 function Awake () {
 	gameOver = false;
@@ -84,6 +89,17 @@ function AddPlayer ( player :GameObject ) {
 function Update () {
 	
 	if (!gameOver) {
+		if (!winIsPossible) {
+			CheckWinCondition();
+		}
+		if (winIsPossible) {
+			currentTicketReduceTime += Time.deltaTime;
+			if (currentTicketReduceTime >= ticketReduceTime) {
+				LoseTickets();
+				currentTicketReduceTime = 0.0;
+			}
+			
+		}
 		// if every other team has lost, one team wins.
 		// TODO: special case: what if every team has lost?
 		var winCandidate :Team = null;
@@ -150,4 +166,54 @@ function GetTeamById ( id :int ) : Team {
 		} 
 	}
 	return null;
+}
+
+function CheckWinCondition() {
+	var counter : int = 0;
+	var basesFirst : Transform[];
+	var basesSecond : Transform[];
+	//Iterate over every team.
+	for (var t : Team in teams) {
+		if (t.GetTeamNumber() == 1) {
+			basesFirst = t.GetAllBases();
+		}
+		if (t.GetTeamNumber() == 2) {
+			basesSecond = t.GetAllBases();
+		}
+	}
+	var possibleLoseTeam : Team;
+	var players : Transform[];
+	var playerStatus : PlayerStatus;
+	if (basesFirst.Length == 3 && basesSecond.Length == 0) {
+		possibleLoseTeam = GetTeamById(2);
+		players = possibleLoseTeam.GetAllPlayers();
+		for (var player : Transform in players) {
+			playerStatus = player.GetComponent(PlayerStatus);
+			if (!playerStatus.IsDead()) {
+				return;
+			}
+		}
+		winIsPossible = true;
+		possibleWinCandidate = 1;
+		
+	}
+	if (basesFirst.Length == 0 && basesSecond.Length == 3) {
+		possibleLoseTeam = GetTeamById(1);
+		players = possibleLoseTeam.GetAllPlayers();
+		for (var player : Transform in players) {
+			playerStatus = player.GetComponent(PlayerStatus);
+			if (!playerStatus.IsDead()) {
+				return;
+			}
+		}
+		Debug.Log("We should win now!");
+		winIsPossible = true;
+		possibleWinCandidate = 2;
+	}
+	return;
+}
+
+function LoseTickets () {
+	var team : Team = GetTeamById(possibleWinCandidate);
+	team.LoseTickets(1);
 }

@@ -27,10 +27,7 @@ function OnCollisionEnter (collision : Collision) {
 			attack.damage = damageObject.GetBehindDamage();
 		} else {
 			attack.damage = damageObject.GetFrontDamage();
-		}
-		
-		Debug.Log("ufo dmg");
-		
+		}		
 		transform.parent.gameObject.SendMessage("ApplyDamage", attack);
 	}
 }

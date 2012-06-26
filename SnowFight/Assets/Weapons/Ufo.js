@@ -32,17 +32,35 @@ function Update () {
 
 function FixedUpdate () {
 	var terrH :float = terrain.SampleHeight(transform.position) + 2.0 + 0.5 * Mathf.Sin(Time.time*2);
-	if (owner && owner.networkView.isMine) {
-		velo += Time.deltaTime * playerMotor.inputMoveDirection;
-		terrH += 10.0;
-	}
-	velo.y = 0.03*(terrH - transform.position.y);
-	velo *= 0.95;
-	if (owner) {
-		owner.transform.position += velo;
+	
+	var transf :Transform = transform;
+	if (owner && owner.networkView.isMine)
+		transf = owner.transform;
+	
+	if (hp > 0) {
+		if (owner && owner.networkView.isMine) {
+			velo += Time.deltaTime * playerMotor.inputMoveDirection;
+			terrH += 10.0;
+		}
+		velo.y = 0.03*(terrH - transform.position.y);
+		velo *= 0.95;
 	} else {
-		transform.position += velo;
+		velo.y -= 0.002;
+		transf.eulerAngles.y += velo.y * 30.0;
+		transf.eulerAngles.z += 1.0;
+		velo += transf.forward * 0.002;
+		if (transf.position.y <= terrH + 2) {
+			// hit the ground
+			Crash();
+		}
 	}
+	if (owner == null || owner && owner.networkView.isMine) {
+		transf.position += velo;
+	}
+}
+
+function IsCrashing () :boolean {
+	return hp <= 0;
 }
 
 
@@ -85,22 +103,29 @@ function PickItem(player :GameObject) {
 }
 
 function ApplyDamage (attack :Attack) {
-	lastAttack = attack;
-	hp -= attack.damage;
-	hp = Mathf.Max(0, hp);
-	
-	if (hp <= 0) {
-		Crash();
+	if (Network.isServer) {
+		lastAttack = attack;
+		hp -= attack.damage;
+		hp = Mathf.Max(0, hp);
 	}
 }
 
+
+function NetApplyDamage (attack :Attack) {
+	lastAttack = attack;
+	hp -= attack.damage;
+	hp = Mathf.Max(0, hp);
+}
+
 function Crash () {
-	var attack = new Attack();
-	attack.damageType = DamageType.Crash;
-	attack.damage = 10000; // lethal, i hope ;)
-	attack.attacker = lastAttack ? lastAttack.attacker : null;
-	owner.SendMessage("ApplyDamage", attack);
-	owner = null;
+	if (owner) {
+		var attack = new Attack();
+		attack.damageType = DamageType.Crash;
+		attack.damage = 10000; // lethal, i hope ;)
+		attack.attacker = lastAttack ? lastAttack.attacker : null;
+		owner.SendMessage("ApplyDamage", attack);
+		owner = null;
+	}
 	if (Network.isServer) {
 		Network.Destroy (gameObject);
 	}
@@ -126,7 +151,11 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     stream.Serialize(nHp);
     if (nHp != hp) {
     	var a :Attack = new Attack();
-    	a.damage = nHp - hp;
-    	ApplyDamage(a);
+    	a.damage = hp - nHp;
+    	NetApplyDamage(a);
     }
+}
+
+function GameOver () {
+	this.enabled = false;
 }
