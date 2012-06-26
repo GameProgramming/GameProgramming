@@ -212,19 +212,21 @@ function NetRespawn ( spawnBase :int ) {
 	//spawnBaseID = spawnBase;
 	
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
-	newPosition.y += 5;
-	transform.position = newPosition;
+	if (newPosition != Vector3.zero) {
+		newPosition.y += 5;
+		transform.position = newPosition;
 	
-	hp = fullHp;
-	currentSnowballs = maximumSnowballCapacity;
-	SetState(PlayerState.Alive);
-	frozen = 0;
-	
-	gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
-	if (IsMainPlayer()) {
-		var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
-		overviewCam.ResetPlayerCam();
-		overviewCam.SetMode(false);
+		hp = fullHp;
+		currentSnowballs = maximumSnowballCapacity;
+		SetState(PlayerState.Alive);
+		frozen = 0;
+		
+		gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
+		if (IsMainPlayer()) {
+			var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+			overviewCam.ResetPlayerCam();
+			overviewCam.SetMode(false);
+		}
 	}
 }
 

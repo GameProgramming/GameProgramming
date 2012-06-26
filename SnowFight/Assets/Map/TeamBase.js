@@ -37,6 +37,7 @@ function GetSpawnPoint() : Vector3 {
 			}
 		}
 	}
+	return Vector3.zero;
 }
 
 function Awake () {
