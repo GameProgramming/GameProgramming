@@ -1,5 +1,3 @@
-#pragma strict
-
 private var enterTime :float = 0;
 
 var baseID : int;
