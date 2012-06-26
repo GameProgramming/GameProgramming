@@ -26,6 +26,8 @@ function Start () {
 }
 
 function Update () {
+	if (!networkView.isMine) return;
+	
 	if (candidateItem && CandidateTooFarAway()) {
 		candidateItem = null;
 	}
@@ -40,10 +42,9 @@ function Update () {
 			
 			if (srPickProgress > srPickTime) {
 				Debug.Log("Ball built", this);
-				item = snowResourcePick.GrabBigSnowball(gameObject);
+				SetItem(snowResourcePick.GrabBigSnowball(gameObject));
 				snowResourcePick = null;
 				srPickProgress = 0;
-				item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 			}
 		} else {
 			srPickProgress = 0;
@@ -59,15 +60,22 @@ function Update () {
 			snowResourcePick = candidateItem.GetComponent(SnowRessource);
 			srPickProgress = 0;
 		} else {
-			item = candidateItem;
-			if (item.layer != LayerMask.NameToLayer("Item")
-				&& item.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
-				item = item.transform.parent.gameObject;
+			if (candidateItem.layer != LayerMask.NameToLayer("Item") // ufo hack
+				&& candidateItem.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
+				SetItem(candidateItem.transform.parent.gameObject);
+			} else {
+				SetItem(candidateItem);
 			}
 			SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 			item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 		}
 	}
+}
+
+function SetItem( it :GameObject ) {
+	item = it;
+	SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
+	item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 }
 
 function OnControllerColliderHit (hit : ControllerColliderHit) {
@@ -130,6 +138,28 @@ function SetSnowfieldCandidate(sf :GameObject) {
 	if (!candidateItem) {
 		candidateItem = sf;
 	}
+}
+
+function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
+	var itemMyId :NetworkViewID = NetworkViewID.unassigned;
+	if (item) {
+		itemMyId = item.networkView.viewID;
+	}
+	var itemId :NetworkViewID = itemMyId;
+    stream.Serialize(itemId);
+    if (itemId != itemMyId) {
+    	if (itemId == itemMyId) {
+    		ReleaseItem();
+    	}
+    	if (itemId != NetworkViewID.unassigned) {
+    		var it :NetworkView = NetworkView.Find(itemId);
+    		if (it) {
+    			SetItem(it.gameObject);
+    		} else {
+    			Debug.Log("Received an item signal for an unknown itm. Id="+itemId);
+    		}
+    	}
+    }
 }
 
 @script RequireComponent (CharacterMotorSF)

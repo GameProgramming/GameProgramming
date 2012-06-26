@@ -22,7 +22,7 @@ function Start () {
 }
 
 function Update () {
-	if (owner) {
+	if (owner && owner.networkView.isMine) {
 		if (playerMotor.inputFire && bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0) {
 			bulletSpawn.GetComponent(BulletSpawn).Fire();
 		}
@@ -32,7 +32,7 @@ function Update () {
 
 function FixedUpdate () {
 	var terrH :float = terrain.SampleHeight(transform.position) + 2.0 + 0.5 * Mathf.Sin(Time.time*2);
-	if (owner) {
+	if (owner && owner.networkView.isMine) {
 		velo += Time.deltaTime * playerMotor.inputMoveDirection;
 		terrH += 10.0;
 	}
@@ -60,8 +60,10 @@ function Release () {
 	if (parent)
 		transform.parent = parent.transform;
 	
-	GameObject.FindGameObjectWithTag("OverviewCam")
-		.GetComponent(MapOverview).ResetPlayerCam();
+	if (owner.GetComponent(PlayerStatus).IsMainPlayer()) {
+		GameObject.FindGameObjectWithTag("OverviewCam")
+			.GetComponent(MapOverview).ResetPlayerCam();
+	}
 }
 
 function PickItem(player :GameObject) {
@@ -98,9 +100,33 @@ function Crash () {
 	attack.damage = 10000; // lethal, i hope ;)
 	attack.attacker = lastAttack ? lastAttack.attacker : null;
 	owner.SendMessage("ApplyDamage", attack);
-	Destroy (gameObject);
+	owner = null;
+	if (Network.isServer) {
+		Network.Destroy (gameObject);
+	}
+}
+
+function OnDestroy() {
+	if (owner) {
+		var attack = new Attack();
+		attack.damageType = DamageType.Crash;
+		attack.damage = 10000; // lethal, i hope ;)
+		attack.attacker = lastAttack ? lastAttack.attacker : null;
+		owner.SendMessage("ApplyDamage", attack);
+		owner = null;
+	}
 }
 
 function GetOwner () : GameObject {
 	return owner;
+}
+
+function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
+	var nHp :int = hp;
+    stream.Serialize(nHp);
+    if (nHp != hp) {
+    	var a :Attack = new Attack();
+    	a.damage = nHp - hp;
+    	ApplyDamage(a);
+    }
 }
