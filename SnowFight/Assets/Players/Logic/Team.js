@@ -3,6 +3,8 @@ var tickets = 10;
 var teamName = "Team";
 var color : Color = Color.gray;
 
+var balancingFactor :float = 1.0;
+
 var playerSkin :Texture;
 
 private var size : int = 0;
@@ -99,6 +101,10 @@ function AddPlayer (p :GameObject) {
 	size++;
 }
 
-function GetSize () {
+function GetSize () : int {
 	return size;
+}
+
+function GetBalancedSize () : float {
+	return size / balancingFactor;
 }
