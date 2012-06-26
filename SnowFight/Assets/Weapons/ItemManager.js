@@ -51,10 +51,11 @@ function Update () {
 			snowResourcePick = null;
 		}
 	} else if (item && (inputActionUp || pStatus.IsDead())) {
+//  } else if (item && (inputAction || pStatus.IsDead())) {
 		item.SendMessage("Release", null, SendMessageOptions.DontRequireReceiver);
 		ReleaseItem();
 	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem)
-	//} else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem)
+//	} else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem)
 			  && motor.IsGrounded()) {
 		if (candidateItem.CompareTag("SnowballRessource")) {
 			snowResourcePick = candidateItem.GetComponent(SnowRessource);

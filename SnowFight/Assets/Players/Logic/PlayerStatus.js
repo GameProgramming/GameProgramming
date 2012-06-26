@@ -201,7 +201,7 @@ function Respawn () {
 @RPC
 function NetRespawn ( spawnBase :int ) {
 
-	Debug.Log("respawn ");
+	Debug.Log("Net respawn ");
 	//spawnBaseID = spawnBase;
 	
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);

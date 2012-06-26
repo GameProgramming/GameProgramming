@@ -2,7 +2,7 @@
 
 
 function Start () {
-	Debug.Log("ufostart");
+//	Debug.Log("ufostart");
 }
 
 function Update () {

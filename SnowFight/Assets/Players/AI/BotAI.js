@@ -9,8 +9,8 @@ var attackRotateSpeed = 20.0;
 var idleTime = 1.6;
 
 var punchRadius = 7.1;
-var freezeRadius = 10.0;
-var specialWeaponDistance = 10.0;
+var freezeRadius = 50.0;
+var sightRadius = 50.0;
 
 private var attackAngle = 10.0;
 private var isAttacking = false;
@@ -72,7 +72,7 @@ function Idle ()
 	{
 		moveDir = Vector3.zero;
 		itemManager.ReleaseItem();
-		yield WaitForSeconds(0.2);
+//		yield WaitForSeconds(0.2);
 		
 		if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
 			tar = FindSnowResource();
@@ -122,8 +122,10 @@ function FindFreeBase() : GameObject{
 
 function FindCloseUFO () : GameObject {
 	var ufo = null;
-	for (var u in GameObject.FindObjectsOfType(Ufo)) {
-		if (Vector3.Distance(u.transform.position, transform.position) < specialWeaponDistance)
+	for (var u in GameObject.FindGameObjectsWithTag("Ufo")) {
+		var ufoPos = u.transform.position;
+		ufoPos.y = transform.position.y;
+		if (Vector3.Distance(ufoPos, transform.position) < attackDistance)
 			ufo = u.gameObject;
 	}
 	return ufo;
@@ -258,6 +260,7 @@ function ConquerBase() {
 }
 
 function GetUFO () {
+//	var pressActionTime = Mathf.Infinity;
 	while (true) {
 		motor.inputAction = false;
 		
@@ -273,13 +276,26 @@ function GetUFO () {
 			
 			isAttacking = false;
 			
-			if (Vector3.Distance(transform.position, target.transform.position) < 5) {
-				motor.inputAction = true;
+			var ufoPos = target.transform.position;
+			ufoPos.y = transform.position.y;
+			if (Vector3.Distance(transform.position, ufoPos) < punchRadius*0.5) {
+			
+//				if(motor.inputAction && Time.time > pressActionTime + 0.2) {
+//					motor.inputAction = false;
+//					pressActionTime = Mathf.Infinity;
+//				}
+//				else {
+//					pressActionTime = Time.time;
+					motor.inputAction = true;
+//				}
+//								Debug.Log("Action: " + motor.inputAction, this);
+				
 				motor.inputAltFire = false;
+				moveDir = Vector3.zero;
 			}
 			else {
 				motor.inputAction = false;
-				MoveTowardsPosition(target.transform.position);
+				MoveTowardsPosition(ufoPos);
 			}
 		}
 		
@@ -606,7 +622,7 @@ function AboveTarget() {
 	var enemyPos = target.transform.position;
 	botPos.y = enemyPos.y;
 	Debug.Log("Distance " + Vector3.Distance(botPos,enemyPos), this);
-	return (Vector3.Distance(botPos,enemyPos) < freezeRadius);
+	return (Vector3.Distance(botPos,enemyPos) < attackDistance);
 }
 
 function RemoveTarget () {
