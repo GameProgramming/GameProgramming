@@ -25,9 +25,10 @@ function SetColor(newColor : Color) {
 }
 
 function OnMouseOver() {
-	
+	var teamNumber = transform.parent.transform.parent.GetComponent(Team).GetTeamNumber();
 	var playerStatus = game.player.GetComponent(PlayerStatus);
-	if (playerStatus.IsDead()) {
+	var playerTeamNumber = playerStatus.GetTeamNumber();
+	if (playerStatus.IsDead() && teamNumber == playerTeamNumber) {
 		mouseOver = true;
 		var rend = GetComponent(MeshRenderer);
 		rend.material.color = Color.white;
