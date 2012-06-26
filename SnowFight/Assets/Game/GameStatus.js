@@ -16,8 +16,7 @@ var player : GameObject; // the human player on this side of the connection.
 
 var overviewCam : MapOverview;
 
-var botNumber :int = 10;
-var teamBalance :float = 0.5;
+var botNumber :int = 12;
 
 function Awake () {
 	gameOver = false;
@@ -44,7 +43,7 @@ function OnNetworkLoadedLevel () {
 	
 	if (Network.isServer) {
 		// add the bots.
-		for (var i :int = 0; i < 3; i++) {
+		for (var i :int = 0; i < botNumber; i++) {
 			var b :GameObject = Network.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, 0);
 			AddPlayer(b);
 			SetBot(b);
@@ -70,10 +69,10 @@ function SetBot (pl :GameObject) {
  * Places a new Player into the smallest team;
  */
 function AddPlayer ( player :GameObject ) {
-	var minSize : int = 1000;
+	var minSize : float = 1000;
 	var minTeam : Team;
 	for (var t : Team in teams) {
-		var s = t.GetSize();
+		var s = t.GetBalancedSize();
 		if (s < minSize) {
 			minSize = s;
 			minTeam = t;
