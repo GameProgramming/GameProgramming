@@ -33,32 +33,55 @@ function Start() {
 function Update () {
 	if (owner) {
 	
-		AimTarget("Player");
-	  	transform.eulerAngles.x = -playerMotor.rotationY-10;
+		AimTarget("Ufo");
+		
+		transform.eulerAngles.x = -playerMotor.rotationY-10;
 	  	if(target == null){
-				progress = 0;
-			}
-		if (progress < aimFor){
-			if (target && bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0 
-				&& owner.GetComponent(PlayerStatus).GetCurrentSnowballs() > 0) {
-				progress += Time.deltaTime;
-				locked = true;
-				//Debug.Log("Hold Aim for " + (aimFor - progress) + "seconds");
+			progress = 0;
+		}	  		
+			
+		var canShoot : boolean = bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0;
+		var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() > 0;
+		
+		
+		if (canShoot && hasSnowballs) {
+			
+			if(target){
+				//Debug.Log("Hold Aim for " + (aimFor - progress) + "seconds");		
+				if (progress < aimFor){
+					progress += Time.deltaTime;
+					locked = true;
+					if (playerMotor.inputFire) {
+						Fire(1);
+					}
+				}else if (progress >= aimFor) {
+					//Debug.Log("SHOOT!!!!!!!!");
+					if (playerMotor.inputFire) {
+						Fire(2);
+					}
+				}
 			}else{
-				progress = 0;
-			}
-		} else if (progress >= aimFor) {
-			//Debug.Log("SHOOT!!!!!!!!");
-			if (playerMotor.inputFire && target != null) {
-				bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
-				progress = 0;
-			}
-		} 
+				if (playerMotor.inputFire) {
+					Fire(1);
+				}
+			}	
+		}else{
+			progress = 0;
+		}
+			 
+	
 	}
 }
 
-function Move (offset : Vector3) {
+function Fire (style) {
 	
+	if(style == 1){
+		bulletSpawn.GetComponent(BulletSpawn).Fire();
+	}else if(style == 2){
+		bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
+	}
+	
+	progress = 0;
 }
 
 function Release () {
@@ -94,8 +117,6 @@ function AimTarget (enemyTag : String) : GameObject {
     	//Debug.Log("has target");
      	//check if still in range
      	if (!InDirection(target)) {				
-				lineRenderer.SetPosition(0, transform.position);
-	   			lineRenderer.SetPosition(1, transform.position);
 			//	Debug.Log("lost target");
 				target = null;
 		}
