@@ -75,6 +75,7 @@ function Update () {
 
 function SetItem( it :GameObject ) {
 	item = it;
+	candidateItem = null;
 	SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 }
@@ -107,6 +108,7 @@ function ReleaseItem () {
 function OnItemDestruction ( destructedItem : GameObject) {
 	if (destructedItem == item) {
 		item = null;
+		candidateItem = null;
 		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	}
 }
@@ -161,6 +163,10 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     		}
     	}
     }
+}
+
+function GetCandidateItem() : GameObject {
+	return candidateItem;
 }
 
 @script RequireComponent (CharacterMotorSF)

@@ -31,11 +31,14 @@ private var ball : GameObject;
 
 function Start ()
 {
-	yield WaitForSeconds(Random.value);
 	var game : GameStatus = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
-	
+	motor = GetComponent(CharacterMotorSF);
+	pStatus = GetComponent(PlayerStatus);
+	itemManager = GetComponent(ItemManager);
 	groundBase = pStatus.team.GetBase();
-		
+	
+	yield WaitForSeconds(Random.value);
+			
 	// Just attack for now
 //	while (true)	
 //	{
@@ -46,9 +49,7 @@ function Start ()
 }
 
 function Awake () {
-	motor = GetComponent(CharacterMotorSF);
-	pStatus = GetComponent(PlayerStatus);
-	itemManager = GetComponent(ItemManager);
+
 }
 
 function Update () {
@@ -82,7 +83,7 @@ function Idle ()
 			}
 		}
 		else {
-			//TODO: first of all head towards a free base if there is one
+			//first of all head towards a free base if there is one
 			tar = FindFreeBase();
 			if (tar) {
 				target = tar;
@@ -279,23 +280,28 @@ function GetUFO () {
 			var ufoPos = target.transform.position;
 			ufoPos.y = transform.position.y;
 			var distance = Vector3.Distance(transform.position, ufoPos);
-			if (distance > punchRadius*0.3) {
+//			if (distance > punchRadius*0.3) {
 				MoveTowardsPosition(ufoPos);
-				motor.inputAction = false;
 				
-				if(distance > punchRadius*0.31 && distance < punchRadius*0.5) {
+				if(distance < punchRadius*0.5){// && !itemManager.GetCandidateItem()) {
 					motor.inputAction = true;					
 					motor.inputAltFire = false;
 //					motor.inputAction = false;
 //					pressActionTime = Mathf.Infinity;
 				}
-//				else {
+				if(itemManager.GetCandidateItem()) {
+					moveDir = Vector3.zero;
+					yield WaitForSeconds(0.01);
+					motor.inputAction = false;
+				}
+//				else 
+//					motor.inputAction = false;
 //					pressActionTime = Time.time;
 				
-			}
-			else {
-				moveDir = Vector3.zero;
-			}
+//			}
+//			else {
+//				moveDir = Vector3.zero;
+//			}
 		}
 		
 		
