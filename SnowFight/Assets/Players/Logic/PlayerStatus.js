@@ -132,6 +132,8 @@ function OnHitByObject (otherObj : GameObject) {
 	if(otherObj.rigidbody && otherObj.rigidbody.CompareTag("Projectile")){
 		var damageObject : Damage = otherObj.GetComponent(Damage);
 		var attack = new Attack();
+		var healtBar : PlayerHealthBar = transform.GetComponent(PlayerHealthBar);
+		healtBar.SetHit();
 		
 		if (inversePosition.y > 0.9) {
 			attack.damage = damageObject.GetHeadDamage();

@@ -100,7 +100,7 @@ function OnGUI() {
 		var reloadPercent : float = parseFloat(reloadProgress) / parseFloat(maxReload);
 		
 	    if(player.GetCurrentSnowballs() <= 0){
-			boxWidth = (Screen.width/4);
+			boxWidth = (Screen.width/4 + 12);
 			color = new Color(1, 0, 0,0.5);
 			text = "RELOAD";
 		}else{
@@ -109,7 +109,7 @@ function OnGUI() {
 			text = "Loading";
 		}
 		
-		var boxHeight = 20;
+		var boxHeight = 19;
 		
 		
 		texture.SetPixel(0, 0, color);
@@ -117,8 +117,8 @@ function OnGUI() {
 		style.normal.background = texture;
 		
 		if (player.GetCurrentSnowballs() <= 0) {
-			GUI.Box (Rect (Screen.width/2-31, Screen.height/2-101, totalWidth+2, boxHeight+2), "");
-			GUI.Box (Rect (Screen.width/2-30, Screen.height/2-100, boxWidth, boxHeight), text,style);
+			GUI.Box (Rect (Screen.width - 231, Screen.height - 25, boxWidth, boxHeight), "");
+			GUI.Box (Rect (Screen.width - 231, Screen.height - 25, boxWidth, boxHeight), "", style);
 			
 		}
 	

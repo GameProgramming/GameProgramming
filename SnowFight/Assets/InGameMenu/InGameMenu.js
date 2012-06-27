@@ -26,7 +26,7 @@ function OnGUI () {
 			
 		}
 		if (GUI.Button (Rect (Screen.width/2 - 90, 340, 140, 50), "Resume Game")) {
-			showIngameMenu = false;
+			showIngameMenu = !showIngameMenu;
 		}
 	}
 }
