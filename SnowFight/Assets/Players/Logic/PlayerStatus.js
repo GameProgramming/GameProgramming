@@ -309,6 +309,21 @@ function OnItemChange (item : GameObject) {
 	formerItem = item;
 }
 
+//override the previous method, when the given parameter is null
+//required when releasing or destroying the item 
+function OnItemChange () {
+	//var g :GameObject = im.GetItem();
+	if (!IsDead()) {
+		if (formerItem && formerItem.CompareTag("Ufo")) 
+			SetState(PlayerState.Alive);
+		
+//		if (item && item.CompareTag("Ufo")) {
+//			SetState(PlayerState.InVehicle);
+//		}
+	}
+	formerItem = null;;
+}
+
 function GetMaximumSnowballs () : int  {
 	return maximumSnowballCapacity;
 }
