@@ -2,6 +2,9 @@
 
 var teams :Team[];
 
+var currentLevel : String;
+var allLevels : String[];
+
 //var numBigSnowBalls = 3;
 //var bigSnowBallPrefab : GameObject;
 //var ballSpawnPoints : GameObject[];
@@ -216,4 +219,12 @@ function CheckWinCondition() {
 function LoseTickets () {
 	var team : Team = GetTeamById(possibleWinCandidate);
 	team.LoseTickets(1);
+}
+
+function GetCurrentLevel () : String {
+	return currentLevel;
+}
+
+function GetAllLevels () : String[] {
+	return allLevels;
 }

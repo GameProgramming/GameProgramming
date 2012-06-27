@@ -90,5 +90,12 @@ function OnPlayerDisconnected (player : NetworkPlayer)
 	Network.DestroyPlayerObjects(player);
 }
 
+function LoadNewLevel(level : String) {
+	// Make sure no old RPC calls are buffered and then send load level command
+	Network.RemoveRPCsInGroup(0);
+	Network.RemoveRPCsInGroup(1);
+	// Load level with incremented level prefix (for view IDs)
+	networkView.RPC( "LoadLevel", RPCMode.AllBuffered, level, lastLevelPrefix + 1);
+}
 
 @script RequireComponent(NetworkView)
