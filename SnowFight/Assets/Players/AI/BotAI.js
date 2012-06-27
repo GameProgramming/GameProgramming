@@ -29,6 +29,11 @@ private var moveDir = Vector3.zero;
 
 private var ball : GameObject;
 
+private var stuck : boolean = false;
+private var stuckTime : float = 0.0;
+var timeoutWhenStuck : float = 0.5;
+private var alternateDir = Vector3.zero;
+
 function Start ()
 {
 	var game : GameStatus = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
@@ -53,7 +58,34 @@ function Awake () {
 }
 
 function Update () {
+
 	//if (target && target.CompareTag("BigSnowball"))
+	//we're probably not moving forward although we want to
+	if (moveDir != Vector3.zero && !ball && !pStatus.IsRidingUfo() 
+		&& Time.time > (stuckTime + timeoutWhenStuck) 
+		&& motor.movement.velocity.magnitude < attackSpeed * 0.3) {
+		
+		if (!stuck) { //strafe, or change direction
+			stuck = true;
+			if (Random.value > 0.5)
+				alternateDir = Vector3.Cross(moveDir, Vector3.up); //strafe to left
+			else
+				alternateDir = Vector3.Cross(Vector3.up, moveDir); //strafe to right
+		}
+		else { //this has happened before..strafing might not have worked, so walk backwards
+					Debug.Log("Backing up! at " + Time.time, this);
+			alternateDir.x = -moveDir.x;
+			alternateDir.y = moveDir.y;
+			alternateDir.z = -moveDir.z;
+		}
+		stuckTime = Time.time;
+	}
+	else
+		stuck = false;
+
+	if(Time.time < (stuckTime + timeoutWhenStuck))
+		motor.inputMoveDirection = alternateDir;
+	else
 		motor.inputMoveDirection = moveDir;
 	
 }
@@ -87,7 +119,7 @@ function Idle ()
 			
 			//first of all head towards a free base if there is one and there is no enemy really really close
 			tar = FindFreeBase();
-			if (tar && !(enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance)) {
+			if (tar && !(enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance)) {
 				target = tar;
 				yield ConquerBase();
 			}
@@ -98,12 +130,11 @@ function Idle ()
 				target = tar;
 				yield RollBall();
 			}
-			else {
-				tar = enemy;
-				if (tar) {
-					target = tar;
-					yield Attack();
-				}
+			
+			tar = enemy;
+			if (tar) {
+				target = tar;
+				yield Attack();
 			}
 			
 			tar = FindCloseUFO();
@@ -135,7 +166,7 @@ function FindCloseUFO () : GameObject {
 	for (var u in GameObject.FindGameObjectsWithTag("Ufo")) {
 		var ufoPos = u.transform.position;
 		ufoPos.y = transform.position.y;
-		if (Vector3.Distance(ufoPos, transform.position) < attackDistance)
+		if (Vector3.Distance(ufoPos, transform.position) < 2*attackDistance)
 			ufo = u.gameObject;
 	}
 	return ufo;
@@ -249,7 +280,7 @@ function ConquerBase() {
 		
 		//if an enemy is too close forget this stuff and attack!!
 		var enemy = FindClosestEnemy();
-		if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance) {
+		if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance) {
 			RemoveTarget();
 			return;
 		}
@@ -304,7 +335,7 @@ function GetUFO () {
 				
 			//if an enemy is too close forget this stuff and attack!!
 			var enemy = FindClosestEnemy();
-			if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance && 
+			if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
 				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 				RemoveTarget();
 				return;
@@ -394,7 +425,7 @@ function RollBall ()
 			
 		//if target is a ball
 		if (target && target.CompareTag("BigSnowball")) {
-			if (Random.value > 0.95 && BallOfFriend(target.transform)) {
+			if (Random.value > 0.90 && BallOfFriend(target.transform)) {
 				RemoveTarget();
 				return;
 			}
@@ -411,8 +442,8 @@ function RollBall ()
 					
 				//if an enemy is too close forget this stuff and attack!!
 				var enemy = FindClosestEnemy();
-				if(Random.value > 0.9 && enemy && 
-					Vector3.Distance(enemy.transform.position, transform.position)< attackDistance && 
+				if(Random.value > 0.6 && enemy && 
+					Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
 					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 					RemoveTarget();
 					return;
@@ -459,7 +490,7 @@ function RollBall ()
 				motor.inputAction = false;
 				tar = FindClosestEnemy();
 				//var oldTar = target;
-				if (tar && (tar.transform.position - transform.position).magnitude < attackDistance) {
+				if (tar && (tar.transform.position - transform.position).magnitude < 2*attackDistance) {
 					target = tar;
 					Attack();
 //					if(!target || target.GetComponent(PlayerStatus).IsDead())
@@ -479,20 +510,17 @@ function Attack ()
 			
 	isAttacking = true;
 	
-	// First we wait for a bit so the player can prepare while we turn around
-	// As we near an angle of 0, we will begin to move
-	var angle : float;
-	angle = 180.0;
-	var time : float;
-	time = 0.0;
-	var direction : Vector3;
+	var targetPlayer : PlayerStatus = target.GetComponent(PlayerStatus);
 	
-	var targetPlayer : PlayerStatus;
-	targetPlayer = target.GetComponent(PlayerStatus);
+	var angle : float = 180.0;
+	var time : float = 0.0;
+	var direction : Vector3 = Vector3.zero;
 	
 	// Run towards player
-	var timer = 0.0;
-	var lostSight = false;
+	var timer : float = 0.0;
+	var lostSight : boolean = false;
+	var pos : Vector3 = Vector3.zero;
+	var distanceToEnemy : float = 0.0;
 	
 	while (true) {
 		//if we're out of ammo or our target is dead, stop
@@ -500,8 +528,13 @@ function Attack ()
 			RemoveTarget();
 			return;
 		}
+		
+		pos = transform.position;
+		distanceToEnemy = Vector3.Distance(pos, target.transform.position);
 
 		angle = Mathf.Abs(RotateTowardsPosition(target.transform.position, rotateSpeed));
+		// First we wait for a bit so the player can prepare while we turn around
+		// As we near an angle of 0, we will begin to move
 		if (Mathf.Abs(angle) > 5)
 		{
 			time += Time.deltaTime;			
@@ -524,13 +557,32 @@ function Attack ()
 			
 			// Just move forward at constant speed
 			direction = transform.TransformDirection(Vector3.forward * attackSpeed);
-			var pos = transform.position;
+			
+			//we're getting too close, move back!
+			if (distanceToEnemy < punchRadius)
+				backup = true;
+			
+			//we're far away now, move closer again
+			if (backup && distanceToEnemy > attackDistance)
+				backup = false;
 
+			//move away from enemy
+			if (backup)
+				direction *= -1;
+				
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
 		 	if (pStatus.IsRidingUfo() && AboveTarget()) {
 		 		motor.inputAltFire = true;
 		 	}
 		 	
+		 	//we've turned our back and suffer a loss of memory
+			if (lostSight) {
+		 		moveDir = Vector3.zero;
+		 		RemoveTarget();
+		 		return;
+		 	}
+		 	
+		 	//the enemy is riding a ufo.. desperate times call for desperate measures
 //		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo()) {
 //		 		//TODO:
 				//when holding a bazooka  -- shoot!! :)
@@ -542,9 +594,10 @@ function Attack ()
 //		 		return;
 //		 	}
 
-			if(!lostSight && (pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
-				&& !pStatus.IsRidingUfo())
-			{
+			//shoot and move around a bit ;)
+//			if((pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
+			if (distanceToEnemy < punchRadius
+				&& !pStatus.IsRidingUfo()) {
 				motor.inputFire = !motor.inputFire;
 				direction = Vector3.left * strafing;
 				if (Random.value > 0.9) {
@@ -555,11 +608,6 @@ function Attack ()
 					if (x > 0.95) motor.inputJump = true;
 				}
 			}
-			if (lostSight) {
-		 		moveDir = Vector3.zero;
-		 		RemoveTarget();
-		 		return;
-		 	}
 
 			moveDir = direction;
 		}
@@ -568,11 +616,7 @@ function Attack ()
 			RemoveTarget();
 			return;
 		}
-		// We are not actually moving forward.
-		// This probably means we ran into a wall or something. Stop attacking the player.
-//		if (motor.movement.velocity.magnitude < attackSpeed * 0.3)
-//			break;
-		
+
 		// yield for one frame
 		yield;
 	}
