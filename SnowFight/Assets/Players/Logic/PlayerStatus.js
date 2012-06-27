@@ -296,33 +296,34 @@ function NetApplyDamage (newHp :int, damageType :int) {
 	gameObject.SendMessage ("ReleaseBall", null, SendMessageOptions.DontRequireReceiver);
 }
 
-function OnItemChange (item : GameObject) {
-	//var g :GameObject = im.GetItem();
+function OnItemChange (im : ItemManager) {
+	var g :GameObject = im.GetItem();
 	if (!IsDead()) {
 		if (formerItem && formerItem.CompareTag("Ufo")) {
 			SetState(PlayerState.Alive);
 		}
-		if (item && item.CompareTag("Ufo")) {
+		if (g && g.CompareTag("Ufo")) {
 			SetState(PlayerState.InVehicle);
 		}
 	}
-	formerItem = item;
+	formerItem = g;
 }
 
 //override the previous method, when the given parameter is null
 //required when releasing or destroying the item 
-function OnItemChange () {
-	//var g :GameObject = im.GetItem();
-	if (!IsDead()) {
-		if (formerItem && formerItem.CompareTag("Ufo")) 
-			SetState(PlayerState.Alive);
-		
-//		if (item && item.CompareTag("Ufo")) {
-//			SetState(PlayerState.InVehicle);
-//		}
-	}
-	formerItem = null;;
-}
+//function OnItemChange () {
+//	Debug.Log("on item change NULL",this);
+//	//var g :GameObject = im.GetItem();
+//	if (!IsDead()) {
+//		if (formerItem && formerItem.CompareTag("Ufo")) 
+//			SetState(PlayerState.Alive);
+//		
+////		if (item && item.CompareTag("Ufo")) {
+////			SetState(PlayerState.InVehicle);
+////		}
+//	}
+//	formerItem = null;;
+//}
 
 function GetMaximumSnowballs () : int  {
 	return maximumSnowballCapacity;

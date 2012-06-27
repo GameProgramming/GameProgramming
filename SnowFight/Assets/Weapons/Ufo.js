@@ -129,6 +129,8 @@ function Crash () {
 	if (Network.isServer) {
 		Network.Destroy (gameObject);
 	}
+	else
+		Destroy(gameObject);
 }
 
 function OnDestroy() {
