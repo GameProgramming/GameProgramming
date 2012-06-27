@@ -83,12 +83,15 @@ function Idle ()
 			}
 		}
 		else {
-			//first of all head towards a free base if there is one
+			var enemy = FindClosestEnemy();
+			
+			//first of all head towards a free base if there is one and there is no enemy really really close
 			tar = FindFreeBase();
-			if (tar) {
+			if (tar && !(enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance)) {
 				target = tar;
 				yield ConquerBase();
 			}
+
 			//otherwise just do business as usual
 			tar = FindBestBigSnowball();//FindClosestEnemy();
 			if (tar) {
@@ -96,7 +99,7 @@ function Idle ()
 				yield RollBall();
 			}
 			else {
-				tar = FindClosestEnemy();
+				tar = enemy;
 				if (tar) {
 					target = tar;
 					yield Attack();
@@ -239,9 +242,18 @@ function ConquerBase() {
 	while (true) {
 		
 		if (pStatus.IsRidingUfo() || !target || !target.transform.Find("TeamBase") || 
-			target.GetComponent(Team).GetTeamNumber() == pStatus.GetTeamNumber()) //leave once the base is conquered
+			target.GetComponent(Team).GetTeamNumber() == pStatus.GetTeamNumber()) {//leave once the base is conquered
+			RemoveTarget();
 			return;
+		}
 		
+		//if an enemy is too close forget this stuff and attack!!
+		var enemy = FindClosestEnemy();
+		if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance) {
+			RemoveTarget();
+			return;
+		}
+			
 		flagPosition = target.transform.Find("TeamBase").transform.position;
 		
 		if (alreadyThere) {
@@ -263,10 +275,10 @@ function ConquerBase() {
 			}
 		}
 
-		if (Random.value > 0.99) {
-			RemoveTarget();
-			return;
-		}
+//		if (Random.value > 0.99) {
+//			RemoveTarget();
+//			return;
+//		}
 			
 		yield;
 	}
@@ -277,15 +289,26 @@ function GetUFO () {
 	while (true) {
 		motor.inputAction = false;
 		
-		if (!target || pStatus.IsRidingUfo())
+		if (!target || pStatus.IsRidingUfo()) {
 			return;
+		}
 			
 		//if target is a ball
 		if (target && target.CompareTag("Ufo")) {
 			//if (Random.value > 0.95 || !target.GetComponent(Ufo).GetOwner() || pStatus.GetCurrentSnowballs() == 0)
 			//	return;
-			if (target.GetComponent(Ufo).GetOwner() || pStatus.GetCurrentSnowballs() == 0)
+			if (target.GetComponent(Ufo).GetOwner() || pStatus.GetCurrentSnowballs() == 0) {
+				RemoveTarget();
 				return;
+			}
+				
+			//if an enemy is too close forget this stuff and attack!!
+			var enemy = FindClosestEnemy();
+			if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance && 
+				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+				RemoveTarget();
+				return;
+			}
 			
 			isAttacking = false;
 			
@@ -303,9 +326,7 @@ function GetUFO () {
 				moveDir = Vector3.zero;
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
-				//Debug.Log("Riding ufo: " + pStatus.IsRidingUfo(), this);
 				yield WaitForSeconds(0.01);
-//				Debug.Log("Riding ufo: " + pStatus.IsRidingUfo(), this);
 			}
 
 		}
@@ -324,19 +345,23 @@ function GetAmmo () {
 	itemManager.ReleaseItem();
 	
 	while (true) {
-		if (!target || pStatus.IsRidingUfo())
+		if (!target || pStatus.IsRidingUfo()) {
+			RemoveTarget();
 			return;
+		}
 		
 		if (alreadyThere) {
 			if (Random.value > 0.9 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
+				Debug.Log("Make snowball", this);
 				motor.inputAction = true;
 				buildingBall = Time.time;
 				yield WaitForSeconds(GetComponent(ItemManager).srPickTime);
+				RemoveTarget();
 				return;
 			}
 			
 			if (pStatus.GetCurrentSnowballs() == pStatus.GetMaximumSnowballs() || Time.time > arrivalTime+reloadTime
-				|| target.GetComponent(SnowRessource).IsGrabPossible()) {
+				|| !target.GetComponent(SnowRessource).IsGrabPossible()) {
 				alreadyThere = false;
 				RemoveTarget();
 				return;
@@ -362,20 +387,36 @@ function RollBall ()
 	while (true) {
 		motor.inputAction = false;
 		
-		if (!target || pStatus.IsRidingUfo())
+		if (!target || pStatus.IsRidingUfo()) {
+			RemoveTarget();
 			return;
+		}
 			
 		//if target is a ball
 		if (target && target.CompareTag("BigSnowball")) {
-			if (Random.value > 0.95 && BallOfFriend(target.transform))
+			if (Random.value > 0.95 && BallOfFriend(target.transform)) {
+				RemoveTarget();
 				return;
+			}
 			
 			isAttacking = false;
 			ball = itemManager.GetItem();
 			//if we don't have a ball go get it
 			if (!ball) {
-				if (BallRolledByFriend () || pStatus.GetCurrentSnowballs() == 0) //RELOAD
+				//if the ball is already taken or we're out of ammo, return to check your other options
+				if (BallRolledByFriend () || pStatus.GetCurrentSnowballs() == 0) { //RELOAD
+					RemoveTarget();
 					return;
+				}
+					
+				//if an enemy is too close forget this stuff and attack!!
+				var enemy = FindClosestEnemy();
+				if(Random.value > 0.9 && enemy && 
+					Vector3.Distance(enemy.transform.position, transform.position)< attackDistance && 
+					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+					RemoveTarget();
+					return;
+				}
 				
 				var ballSize = target.GetComponent(Renderer).bounds.size.x;
 				 //if we're close enough, try to get a hold of it
@@ -391,8 +432,10 @@ function RollBall ()
 			//if we have a ball run to base
 			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
 				//if you're out of ammo, just create a snow seurce with right mouse click
-				if (ball.GetComponent(BigSnowBall).IsBallTooFarAway (gameObject))
+				if (ball.GetComponent(BigSnowBall).IsBallTooFarAway (gameObject)) {
+					RemoveTarget();
 					return;
+				}
 					
 				if (pStatus.GetCurrentSnowballs() == 0) { //RELOAD
 					motor.inputAltFire = true;
@@ -421,9 +464,9 @@ function RollBall ()
 					Attack();
 //					if(!target || target.GetComponent(PlayerStatus).IsDead())
 //						target = oldTar;
+					RemoveTarget();
 					return;
 				}
-				RemoveTarget();
 			}
 		}
 		yield;
@@ -452,20 +495,16 @@ function Attack ()
 	var lostSight = false;
 	
 	while (true) {
-		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) //RELOAD
+		//if we're out of ammo or our target is dead, stop
+		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) { //RELOAD
+			RemoveTarget();
 			return;
-			
-		if (pStatus.IsRidingUfo())
-		 		Debug.Log("Attacking from ufo", this);
+		}
 
 		angle = Mathf.Abs(RotateTowardsPosition(target.transform.position, rotateSpeed));
 		if (Mathf.Abs(angle) > 5)
 		{
-			if (pStatus.IsRidingUfo())
-		 		Debug.Log("angle..", this);
-		 		
-			time += Time.deltaTime;
-			
+			time += Time.deltaTime;			
 			move = Mathf.Clamp01((90 - angle) / 90);
 			
 			// depending on the angle, start moving
@@ -485,17 +524,10 @@ function Attack ()
 			
 			// Just move forward at constant speed
 			direction = transform.TransformDirection(Vector3.forward * attackSpeed);
-	
-		 	//else motor.inputAltFire = false;
-			
-			//if a bot is in a ufo and above an enemy, make him use the freeze ray
-		 	if (pStatus.IsRidingUfo())
-		 		Debug.Log("In Ufo!!", this);
 			var pos = transform.position;
-			// Keep looking if we are hitting our target
-			// If we are, knock them out of the way dealing damage
+
+			//if a bot is in a ufo and above an enemy, make him use the freeze ray
 		 	if (pStatus.IsRidingUfo() && AboveTarget()) {
-		 		Debug.Log("and above target!!", this);
 		 		motor.inputAltFire = true;
 		 	}
 		 	
@@ -506,6 +538,7 @@ function Attack ()
 //		 		//if there's a bazooka close, go get it!
 //		 		//otherwise try finding a snowball
 //		 		target == null;
+//				RemoveTarget();
 //		 		return;
 //		 	}
 
@@ -523,7 +556,8 @@ function Attack ()
 				}
 			}
 			if (lostSight) {
-		 		direction = Vector3.zero;
+		 		moveDir = Vector3.zero;
+		 		RemoveTarget();
 		 		return;
 		 	}
 
@@ -626,7 +660,6 @@ function AboveTarget() {
 	var botPos = transform.position;
 	var enemyPos = target.transform.position;
 	botPos.y = enemyPos.y;
-	Debug.Log("Distance " + Vector3.Distance(botPos,enemyPos), this);
 	return (Vector3.Distance(botPos,enemyPos) < attackDistance);
 }
 

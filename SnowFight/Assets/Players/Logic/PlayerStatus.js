@@ -113,7 +113,7 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 			// todo: die groesse vielleicht noch mit rein.
 			attack.attacker = lastOwner;
 			ApplyDamage(attack);
-			ball.SmashBallToSnowfield();
+//			ball.SmashBallToSnowfield();
 		}
 	}
 }

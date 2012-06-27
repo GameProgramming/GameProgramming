@@ -94,7 +94,6 @@ function Update () {
 	transform.Rotate(rotAxis, angle, Space.World);
 	
 	//increase ball size when rolling
-//			if (!deadly && radius <= maxBallSize) {
 	if (radius <= maxBallSize) {
 		var parent = transform.parent;
 		transform.parent = null;
@@ -113,14 +112,7 @@ function Update () {
 		
 	if (shot && dir.magnitude < 0.05) {
 //		Debug.Log("Back to normal" , this);
-		shot = false;
-		//gameObject.tag = "BigSnowball";
-		//Roll(false);	
-//		for (var rend : MeshRenderer in meshRenderers)
-//			rend.material.color = Color.white;
-//		for (var rend : SkinnedMeshRenderer in skinnedRenderers)
-//			rend.material.color = Color.white;
-		
+		shot = false;	
 	}
 	
 	//upon respawn make visible after hide time
@@ -277,7 +269,8 @@ function Respawn (spawnPosition : Vector3) {
 }
 
 function SmashBallToSnowfield () {
-	transform.parent = null;
+//	transform.parent = null;
+	Release ();
 	transform.position.y -= radius ; //TODO: don't hardcode this value!!
 	transform.position.y += 1;
 	Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
