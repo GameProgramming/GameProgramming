@@ -35,7 +35,7 @@
     	transform.LookAt(target);
     	transform.Translate(Vector3.forward * 15.0f * Time.deltaTime);
     	if (time >= 30){
-    		Destroy (transform);
+    		Destroy (gameObject);
     	}
 	    
     }
