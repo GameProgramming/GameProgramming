@@ -6,6 +6,8 @@ ModelImporter:
     4300002: teeth
     4300004: eye1
     4300006: eye2
+    4300008: yetiBody
+    4300010: YetiBody
     7400000: Animation //// yeti
     7400002: idle //// yeti
     7400004: walk //// yeti
@@ -16,6 +18,13 @@ ModelImporter:
     7400014: idle0 //// yeti
     7400016: throw1 //// yeti
     7400018: throw2 //// yeti
+    7400020: idle //// joint29
+    7400022: walk //// joint29
+    7400024: throw1 //// joint29
+    7400026: hit //// joint29
+    7400028: die //// joint29
+    7400030: jumping //// joint29
+    7400032: throw2 //// joint29
   serializedVersion: 10
   materials:
     importMaterials: 1
@@ -95,36 +104,13 @@ ModelImporter:
       data:
         first: 111
         second: 605fa900
-    body:
-      data:
-        first: 1
-        second: dc860100
-      data:
-        first: 4
-        second: bc1a0600
-      data:
-        first: 137
-        second: a60bd100
-    eye1:
-      data:
-        first: 1
-        second: cc860100
-      data:
-        first: 4
-        second: ac1a0600
-      data:
-        first: 137
-        second: a20bd100
-    eye2:
+    YetiBody:
       data:
         first: 1
         second: be860100
       data:
         first: 4
         second: 9e1a0600
-      data:
-        first: 137
-        second: a00bd100
     joint1:
       data:
         first: 1
@@ -132,6 +118,9 @@ ModelImporter:
       data:
         first: 4
         second: a01a0600
+      data:
+        first: 137
+        second: a00bd100
     joint10:
       data:
         first: 1
@@ -272,6 +261,13 @@ ModelImporter:
       data:
         first: 4
         second: a21a0600
+    joint29:
+      data:
+        first: 1
+        second: e2860100
+      data:
+        first: 4
+        second: c21a0600
     joint3:
       data:
         first: 1
@@ -321,13 +317,3 @@ ModelImporter:
       data:
         first: 4
         second: 921a0600
-    teeth:
-      data:
-        first: 1
-        second: d2860100
-      data:
-        first: 4
-        second: b21a0600
-      data:
-        first: 137
-        second: a40bd100
