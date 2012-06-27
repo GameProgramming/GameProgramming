@@ -115,8 +115,10 @@ function AddPlayer (p :GameObject) {
 	
 	pStatus.JoinTeam(this);
 	
-	var base : TeamBase = GetBase().GetComponent(TeamBase);
-	pStatus.spawnBaseID = base.GetID();
+	if (GetBase()) {
+		var base : TeamBase = GetBase().GetComponent(TeamBase);
+		pStatus.spawnBaseID = base.GetID();
+	} // otherwise the team apparently has no bases.
 	
 	size++;
 }
