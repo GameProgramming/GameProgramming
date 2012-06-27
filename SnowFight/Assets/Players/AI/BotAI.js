@@ -216,7 +216,11 @@ function FindBestBigSnowball () : GameObject {
     var position = transform.position; 
     var diff;
 	var curDistance;
-	        
+	
+	if (groundBase == null) {
+		return null;
+	}
+	
     // Iterate through them and find the closest one
     for (var go : GameObject in gos)  { 
     	diff1 = (go.transform.position - position);
