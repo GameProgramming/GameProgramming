@@ -303,9 +303,9 @@ function GetUFO () {
 				moveDir = Vector3.zero;
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
-				Debug.Log("Riding ufo: " + pStatus.IsRidingUfo(), this);
+				//Debug.Log("Riding ufo: " + pStatus.IsRidingUfo(), this);
 				yield WaitForSeconds(0.01);
-				Debug.Log("Riding ufo: " + pStatus.IsRidingUfo(), this);
+//				Debug.Log("Riding ufo: " + pStatus.IsRidingUfo(), this);
 			}
 
 		}
