@@ -113,7 +113,9 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 			// todo: die groesse vielleicht noch mit rein.
 			attack.attacker = lastOwner;
 			ApplyDamage(attack);
-//			ball.SmashBallToSnowfield();
+			// ben: das finde ich komisch.. es verursacht auch, dass einem manchmal
+			//      der ball abrupt und unbeabsichtigt vor der nase zerbroeselt.
+			//ball.SmashBallToSnowfield();
 		}
 	}
 }
@@ -130,6 +132,8 @@ function OnHitByObject (otherObj : GameObject) {
 	if(otherObj.rigidbody && otherObj.rigidbody.CompareTag("Projectile")){
 		var damageObject : Damage = otherObj.GetComponent(Damage);
 		var attack = new Attack();
+		var healtBar : PlayerHealthBar = transform.GetComponent(PlayerHealthBar);
+		healtBar.SetHit();
 		
 		if (inversePosition.y > 0.9) {
 			attack.damage = damageObject.GetHeadDamage();

@@ -685,5 +685,11 @@ function OnSetRemote () {
 	enabled = false;
 }
 
+function OnDeath () {
+	StopAllCoroutines();
+	StartCoroutine("Start");
+}
+
+
 @script RequireComponent (CharacterMotorSF)
 @script RequireComponent (ItemManager)
