@@ -23,7 +23,7 @@ function Update () {
 		clone = Instantiate(bulletSpawn.GetProjectile());
 		var speed = clone.GetComponent("Projectile").speed * 
 					((matFade * Vector3.forward) + new Vector3(0, bulletSpawn.startYSpeed,0) );
-		var curPos = Vector3(0,0,0)-speed/8.0;
+		var curPos = Vector3(0,0,0);//-speed/8.0;
 		for (var i = 0; i < 40; i++) {
 			line.SetPosition(i,curPos);
 			curPos += speed/20.0;

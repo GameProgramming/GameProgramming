@@ -115,7 +115,7 @@ function Update () {
 		
 	}
 	if (camSetup) {
-		camSetup.localEulerAngles = Vector3(-0.3*motor.rotationY,0,0);
+		camSetup.localEulerAngles = Vector3(-0.5*motor.rotationY,0,0);
 	}
 }
 
