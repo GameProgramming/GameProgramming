@@ -29,11 +29,15 @@
     	//transform.Rotate(0,-180,0);
 	    if (time < 1){
 	    	transform.collider.isTrigger = true;
-        }else{
+        }else if (time >= 1 && time < 30 ){
     		transform.collider.isTrigger = false;
     	}
     	transform.LookAt(target);
     	transform.Translate(Vector3.forward * 15.0f * Time.deltaTime);
+    	if (time >= 30){
+    		Destroy (transform);
+    	}
+	    
     }
 
     

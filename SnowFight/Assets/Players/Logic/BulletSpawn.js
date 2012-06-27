@@ -4,7 +4,7 @@ var bullet : Rigidbody;
 private var player : PlayerStatus;
 private var motor :CharacterMotorSF;
 
-var reloadProgress = 0;
+var reloadProgress : float = 0.0;
 
 var startYSpeed :float = 0.0;
 
@@ -24,16 +24,11 @@ function ConnectToPlayer (t :Transform) {
 }
 
 function Update () {
-
 	reloadProgress -= Time.deltaTime;
-	
-	
-	
-	
 }
 
 function Fire () {
-	if(reloadProgress <= 0 && player.GetCurrentSnowballs() > 0){
+	if(reloadProgress <= 0.0 && player.GetCurrentSnowballs() > 0){
 		Spawnpoint = transform;
 	  	projectile = GetProjectile();
 	  	var clone : Rigidbody;	
@@ -69,7 +64,7 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
 
 function FireHeatSeekingRocket (target) {
 	//TODO: falls das hier benuttzt wird, muss hier auch noch netwerk rein.
-	if(reloadProgress <= 0 && player.GetCurrentSnowballs() > 0){
+	if(reloadProgress <= 0.0 && player.GetCurrentSnowballs() > 0){
 		Spawnpoint = transform;
 	  	projectile = GetProjectile();
 	  	var clone : Rigidbody;	
