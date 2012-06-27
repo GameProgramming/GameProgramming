@@ -25,7 +25,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: .150000006
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -63,6 +63,9 @@ ModelImporter:
       data:
         first: 33
         second: a05a3200
+      data:
+        first: 64
+        second: 06a86100
     Duplica(2):
       data:
         first: 1
@@ -76,6 +79,9 @@ ModelImporter:
       data:
         first: 33
         second: a65a3200
+      data:
+        first: 64
+        second: 00a86100
     Duplicate0:
       data:
         first: 1
@@ -89,6 +95,9 @@ ModelImporter:
       data:
         first: 33
         second: a45a3200
+      data:
+        first: 64
+        second: 02a86100
     tanne:
       data:
         first: 1
@@ -102,3 +111,6 @@ ModelImporter:
       data:
         first: 33
         second: a25a3200
+      data:
+        first: 64
+        second: 04a86100
