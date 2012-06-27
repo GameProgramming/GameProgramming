@@ -119,7 +119,7 @@ function Idle ()
 			
 			//first of all head towards a free base if there is one and there is no enemy really really close
 			tar = FindFreeBase();
-			if (tar && !(enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance)) {
+			if (tar) {
 				target = tar;
 				yield ConquerBase();
 			}
@@ -154,6 +154,22 @@ function FindFreeBase() : GameObject{
 	for (var t in GameObject.FindObjectsOfType(Team)) {
 		if (t.GetComponent(Team).GetTeamNumber() == 0)
 			base = t.gameObject;
+	}
+	return base;
+}
+
+function FindClosestOwnBase () : GameObject{
+	var base = null;
+	var shortestDist = Mathf.Infinity;
+	var curDist = 0.0;
+	for (var t in GameObject.FindObjectsOfType(Team)) {
+		if (t.GetComponent(Team).GetTeamNumber() == pStatus.GetTeamNumber()) {
+			curDist = Vector3.Distance(transform.position, t.transform.position);
+			if (curDist < shortestDist) {
+				base = t.gameObject;
+				shortestDist = curDist;
+			}
+		}
 	}
 	return base;
 }
@@ -432,6 +448,11 @@ function RollBall ()
 			
 			isAttacking = false;
 			ball = itemManager.GetItem();
+			
+			//if we have a ball, find out where the closest base is
+			if (ball)
+				groundBase = FindClosestOwnBase().transform;
+			
 			//if we don't have a ball go get it
 			if (!ball) {
 				//if the ball is already taken or we're out of ammo, return to check your other options
@@ -442,8 +463,8 @@ function RollBall ()
 					
 				//if an enemy is too close forget this stuff and attack!!
 				var enemy = FindClosestEnemy();
-				if(Random.value > 0.6 && enemy && 
-					Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
+				if(Random.value > 0.8 && enemy && 
+					Vector3.Distance(enemy.transform.position, transform.position)< attackDistance && 
 					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 					RemoveTarget();
 					return;
