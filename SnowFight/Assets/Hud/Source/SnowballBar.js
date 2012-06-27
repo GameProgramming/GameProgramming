@@ -24,15 +24,14 @@ function OnGUI() {
 		var j : int = boxWidth * numberOfBoxes + 50;
 		
 		//Now create the boxes.
-		for (i=0; i<numberOfBoxes; i++) {
+		for (i=0; i<numberOfBoxes; i++) {			
 			GUI.Box (Rect (Screen.width - j - 1, Screen.height-25, boxWidth+2, boxHeight+2), "");
 			if (i < numberOfSnowballs) {
 				GUI.Box(Rect (Screen.width - j, Screen.height-25, boxWidth, boxHeight), "", style);
 			}
 			j -= boxWidth;
-			
 		}
-		
+
 	}
 	
 }
