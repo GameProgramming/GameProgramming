@@ -223,6 +223,11 @@ function Release () {
 		if (!shot)
 			rigidbody.velocity = Vector3.zero;
 		transform.parent = null;
+		
+		if (pushingPlayer.GetComponent(PlayerStatus).IsMainPlayer()) {
+			GameObject.FindGameObjectWithTag("OverviewCam")
+			.GetComponent(MapOverview).ResetPlayerCam();	
+		}
 		pushingPlayer = null;
 	}
 }
@@ -232,6 +237,11 @@ function PickItem(player:GameObject) {
 	transform.parent = pushingPlayer.transform;
 	playerMotor = player.GetComponent(CharacterMotorSF);
 	shot = false;
+	
+	if (player.GetComponent(PlayerStatus).IsMainPlayer()) {
+		GameObject.FindGameObjectWithTag("OverviewCam")
+		.GetComponent(MapOverview).SetPlayerCam(player.transform.Find("CameraSetup/CameraTargetDistant"));
+	}
 }
 
 function Respawn (spawnPosition : Vector3) {
