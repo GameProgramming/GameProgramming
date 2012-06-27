@@ -18,7 +18,12 @@ private var body :Transform;
 private var meshRenderers :Component[];
 private var skinnedRenderers :Component[];
 
+enum PlayerViewMode {Default, AimUp}
+private var viewMode :PlayerViewMode = PlayerViewMode.Default;
+
 function Awake() {
+	viewMode = PlayerViewMode.Default;
+	
 	playerStatus = GetComponent(PlayerStatus);
 	motor = GetComponent(CharacterMotorSF);
 	camSetup = transform.Find("CameraSetup");
@@ -115,7 +120,14 @@ function Update () {
 		
 	}
 	if (camSetup) {
-		camSetup.localEulerAngles = Vector3(-0.5*motor.rotationY,0,0);
+		switch (viewMode) {
+		case PlayerViewMode.AimUp:
+			camSetup.localEulerAngles = Vector3(-10-1.3*motor.rotationY,0,0);
+			break;
+		default:
+			camSetup.localEulerAngles = Vector3(-0.5*motor.rotationY,0,0);
+			break;
+		}
 	}
 }
 
@@ -202,6 +214,15 @@ function OnPlayerStateChange (newState :PlayerState) {
 	case PlayerState.Frozen:
 		if (frost) frost.renderer.enabled = true;
 		break;
+	}
+}
+
+function OnItemChange(itemManager :ItemManager) {
+	var item :GameObject = itemManager.GetItem();
+	if (item && item.GetComponent(RocketLauncher)){
+		viewMode = PlayerViewMode.AimUp;
+	} else {
+		viewMode = PlayerViewMode.Default;
 	}
 }
 
