@@ -133,7 +133,7 @@ function ItemNotHeld(it : GameObject) : boolean {
 		return true;
 }
 
-function GetItem () {
+function GetItem () : GameObject {
 	return item;
 }
 

@@ -176,7 +176,7 @@ function NetDie () {
 
 function Freeze (attack :Attack) {
 	if (state == PlayerState.Alive) {
-		frozen = attack.damage;
+		frozen = attack.damage * 0.1;
 		ApplyDamage(attack);
 		if (!IsDead()) {
 			SetState(PlayerState.Frozen);
@@ -193,9 +193,9 @@ function IsHittable () :boolean {
 }
 
 function IsRidingUfo () : boolean {
-	return state == PlayerState.InVehicle;
+//	return state == PlayerState.InVehicle;
 	//return transform.FindChild("Ufo")!=null;
-//	return gameObject.FindWithTag("Ufo");
+	return gameObject.GetComponentInChildren(Ufo) != null;
 }
 
 
@@ -231,6 +231,8 @@ function NetRespawn ( spawnBase :int ) {
 			overviewCam.ResetPlayerCam();
 			overviewCam.SetMode(false);
 		}
+	} else {
+		killTime += respawnTimeout / 2;
 	}
 }
 
@@ -312,22 +314,6 @@ function OnItemChange (im : ItemManager) {
 	}
 	formerItem = g;
 }
-
-//override the previous method, when the given parameter is null
-//required when releasing or destroying the item 
-//function OnItemChange () {
-//	Debug.Log("on item change NULL",this);
-//	//var g :GameObject = im.GetItem();
-//	if (!IsDead()) {
-//		if (formerItem && formerItem.CompareTag("Ufo")) 
-//			SetState(PlayerState.Alive);
-//		
-////		if (item && item.CompareTag("Ufo")) {
-////			SetState(PlayerState.InVehicle);
-////		}
-//	}
-//	formerItem = null;;
-//}
 
 function GetMaximumSnowballs () : int  {
 	return maximumSnowballCapacity;
