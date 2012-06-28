@@ -219,6 +219,9 @@ function NetRespawn ( spawnBase :int ) {
 	if (newPosition != Vector3.zero) {
 		newPosition.y += 5;
 		transform.position = newPosition;
+		transform.LookAt(GameObject.Find("/Game/MapCenter").transform);
+		transform.eulerAngles.x = 0;
+		transform.eulerAngles.z = 0;
 	
 		hp = fullHp;
 		currentSnowballs = maximumSnowballCapacity;

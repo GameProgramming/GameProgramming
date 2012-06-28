@@ -2,6 +2,7 @@ DontDestroyOnLoad(this);
 
 var gameName = "TUSnowFight";
 var serverPort = 25002;
+var serverName = "SomeServer";
 
 private var timeoutHostList = 0.0;
 private var lastHostListRequest = -1000.0;
@@ -19,6 +20,9 @@ private var serverListRect;
 private var hideTest = false;
 private var testMessage = "Undetermined NAT capabilities";
 
+private var levels :String[];
+private var selectedLevelId = 0;
+
 // Enable this if not running a client on the server machine
 //MasterServer.dedicatedServer = true;
 
@@ -34,9 +38,10 @@ function OnFailedToConnect(info: NetworkConnectionError)
 
 function OnGUI ()
 {
-	windowRect = GUILayout.Window (0, windowRect, MakeWindow, "Server Controls");
-	if (Network.peerType == NetworkPeerType.Disconnected && MasterServer.PollHostList().Length != 0)
+	if (Network.peerType == NetworkPeerType.Disconnected) {
+		windowRect = GUILayout.Window (0, windowRect, MakeWindow, "Server Controls");
 		serverListRect = GUILayout.Window(1, serverListRect, MakeClientWindow, "Server List");
+	}
 }
 
 function Awake ()
@@ -52,7 +57,11 @@ function Awake ()
 		Debug.Log("This machine has a public IP address");
 	else
 		Debug.Log("This machine has a private IP address");
+		
+	levels = GetComponent(NetworkLevelLoad).supportedNetworkLevels;
 }
+
+
 
 function Update()
 {
@@ -138,56 +147,49 @@ function TestConnection()
 
 function MakeWindow (id : int)
 {	
-	hideTest = GUILayout.Toggle(hideTest, "Hide test info");
-	
-	if (!hideTest)
-	{
-		GUILayout.Label(testMessage);
-		if (GUILayout.Button ("Retest connection"))
-		{
-			Debug.Log("Redoing connection test");
-			probingPublicIP = false;
-			doneTesting = false;
-			connectionTestResult = Network.TestConnection(true);
-		}
-	}
-	
 	if (Network.peerType == NetworkPeerType.Disconnected)
 	{
-		GUILayout.BeginHorizontal();
+		
 		GUILayout.Space(10);
-		// Start a new server
-		if (GUILayout.Button ("Start Server"))
-		{
-			Network.InitializeServer(32, serverPort, useNat);
-			MasterServer.RegisterHost(gameName, "stuff", "l33t game for all");
-		}
-
-		// Refresh hosts
-		if (GUILayout.Button ("Refresh available Servers") || Time.realtimeSinceStartup > lastHostListRequest + hostListRefreshTimeout)
-		{
-			MasterServer.RequestHostList (gameName);
-			lastHostListRequest = Time.realtimeSinceStartup;
-		}
 		
-		GUILayout.FlexibleSpace();
-		
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Server Name");
+		serverName = GUILayout.TextField(serverName);
 		GUILayout.EndHorizontal();
-	}
-	else
-	{
-		if (GUILayout.Button ("Disconnect"))
+		
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Map");
+		selectedLevelId = GUILayout.SelectionGrid(selectedLevelId, levels, 1);
+		GUILayout.EndHorizontal();
+		
+		// Start a new server
+		if (GUILayout.Button ("Start Server / Singleplayer"))
 		{
-			Network.Disconnect();
-			MasterServer.UnregisterHost();
+			StartServer (serverName, levels[selectedLevelId]);
 		}
+		
+		
 		GUILayout.FlexibleSpace();
 	}
 	GUI.DragWindow (Rect (0,0,1000,1000));
 }
 
+function StartServer (serverName :String, level :String) {
+	Network.InitializeServer(32, serverPort, useNat);
+	MasterServer.RegisterHost(gameName, serverName, "Map: "+level);
+	GetComponent(NetworkLevelLoad).LoadNewLevel(level);
+}
+
 function MakeClientWindow(id : int)
 {
+	GUILayout.Space(5);
+
+	// Refresh hosts
+	if (GUILayout.Button ("Refresh available Servers") || Time.realtimeSinceStartup > lastHostListRequest + hostListRefreshTimeout)
+	{
+		MasterServer.RequestHostList (gameName);
+		lastHostListRequest = Time.realtimeSinceStartup;
+	}
 	GUILayout.Space(5);
 
 	var data : HostData[] = MasterServer.PollHostList();
@@ -234,5 +236,10 @@ function MakeClientWindow(id : int)
 }
 
 function OnApplicationQuit () {
+	MasterServer.UnregisterHost();
+}
+
+function Disconnect () {
+	Network.Disconnect();
 	MasterServer.UnregisterHost();
 }

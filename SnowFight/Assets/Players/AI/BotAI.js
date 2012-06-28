@@ -144,6 +144,7 @@ function Idle ()
 				yield GetUFO();
 			}
 		}
+		yield;
 	}
 } 
 
