@@ -387,7 +387,7 @@ private function UpdateFunction () {
 }
 
 function Rotate (x :float, y :float) {
-	if (canControl && !gameOver) {
+	if (canControl && playerState != PlayerState.Frozen && !gameOver) {
 		rotationX = transform.localEulerAngles.y + x;
 		rotationY += y;
 		rotationY = Mathf.Clamp (rotationY, -40, 30);
