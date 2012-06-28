@@ -10,7 +10,7 @@ var respawnTimeout = 5.0;
 
 private var gameOver = false;
 
-enum PlayerState {Alive, Dead, Frozen, InVehicle}
+enum PlayerState {Alive = 0, Dead = 1, Frozen = 2, InVehicle = 3}
 private var formerItem :GameObject;
 
 var fullHp : int = 10;
@@ -213,7 +213,7 @@ function Respawn () {
 function NetRespawn ( spawnBase :int ) {
 
 	Debug.Log("Net respawn ");
-	//spawnBaseID = spawnBase;
+	spawnBaseID = spawnBase;
 	
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
 	if (newPosition != Vector3.zero) {
@@ -357,5 +357,10 @@ function OnSetRemote () {
 function IsMainPlayer () {
 	return isMainPlayer;
 }
+
+function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
+
+}
+
 
 @script RequireComponent (NetworkView)
