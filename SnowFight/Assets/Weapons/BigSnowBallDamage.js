@@ -1,6 +1,6 @@
 #pragma strict
 
-var maximumDamage : int = 10;
+var maximumDamage : int = 0;
 var painfulSpeed : float = 2.0;
 var speed : int = 30;
 
