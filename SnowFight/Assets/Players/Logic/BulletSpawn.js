@@ -52,7 +52,7 @@ function SendFire ( bullet :Rigidbody ) {
 	var netId :NetworkViewID = Network.AllocateViewID();
 	bullet.networkView.viewID = netId;
 	Debug.Log ("Send fire "+netId);
-	networkView.RPC("NetFire", RPCMode.Others, netId, bullet.position, bullet.velocity);
+	this.networkView.RPC("NetFire", RPCMode.Others, netId, bullet.position, bullet.velocity);
 }
 
 @RPC
