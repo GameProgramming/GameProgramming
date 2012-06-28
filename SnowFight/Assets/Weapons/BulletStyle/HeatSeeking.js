@@ -26,7 +26,7 @@
 
     function Update(){   
     	time += Time.deltaTime;
-    	//transform.Rotate(0,-180,0);
+    	transform.Rotate(0,-180,0);
 	    if (time < 1){
 	    	transform.collider.isTrigger = true;
         }else if (time >= 1 && time < 30 ){

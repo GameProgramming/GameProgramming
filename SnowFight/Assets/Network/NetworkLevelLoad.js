@@ -14,32 +14,28 @@ function Awake ()
 	Application.LoadLevel(disconnectedLevel);
 }
 
-function OnGUI ()
-{
-	// When network is running (server or client) then display the levels
-	// configured in the supportedNetworkLevels array and allow them to be loaded
-	// at the push of a button
-	if (Network.peerType != NetworkPeerType.Disconnected && Network.isServer)
-	{
-		GUILayout.BeginArea(Rect(0, Screen.height - 30, Screen.width, 30));
-		GUILayout.BeginHorizontal();
-		
-		for (var level in supportedNetworkLevels)
-		{
-			if (GUILayout.Button(level))
-			{
-				// Make sure no old RPC calls are buffered and then send load level command
-				Network.RemoveRPCsInGroup(0);
-				Network.RemoveRPCsInGroup(1);
-				// Load level with incremented level prefix (for view IDs)
-				networkView.RPC( "LoadLevel", RPCMode.AllBuffered, level, lastLevelPrefix + 1);
-			}
-		}
-		GUILayout.FlexibleSpace();
-		GUILayout.EndHorizontal();
-		GUILayout.EndArea();
-	}
-}
+//function OnGUI ()
+//{
+//	// When network is running (server or client) then display the levels
+//	// configured in the supportedNetworkLevels array and allow them to be loaded
+//	// at the push of a button
+//	if (Network.peerType != NetworkPeerType.Disconnected && Network.isServer)
+//	{
+//		GUILayout.BeginArea(Rect(0, Screen.height - 30, Screen.width, 30));
+//		GUILayout.BeginHorizontal();
+//		
+//		for (var level in supportedNetworkLevels)
+//		{
+//			if (GUILayout.Button(level))
+//			{
+//				
+//			}
+//		}
+//		GUILayout.FlexibleSpace();
+//		GUILayout.EndHorizontal();
+//		GUILayout.EndArea();
+//	}
+//}
 
 @RPC
 function LoadLevel (level : String, levelPrefix : int)
@@ -96,6 +92,10 @@ function LoadNewLevel(level : String) {
 	Network.RemoveRPCsInGroup(1);
 	// Load level with incremented level prefix (for view IDs)
 	networkView.RPC( "LoadLevel", RPCMode.AllBuffered, level, lastLevelPrefix + 1);
+}
+
+function Disconnect () {
+	Application.LoadLevel(disconnectedLevel);
 }
 
 @script RequireComponent(NetworkView)

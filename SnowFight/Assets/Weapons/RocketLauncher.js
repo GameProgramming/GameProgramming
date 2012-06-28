@@ -41,7 +41,7 @@ function Update () {
 		}	  		
 			
 		var canShoot : boolean = bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0;
-		var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() > 0;
+		var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= 3;
 		
 		
 		if (canShoot && hasSnowballs) {
@@ -162,53 +162,76 @@ function InDirection( object : GameObject){
 }
 function OnGUI(){
 	if (owner != null && owner.GetComponent(PlayerStatus).IsMainPlayer()) {
-	    var outerTexture : Texture2D = new Texture2D(1, 1);
-	    var texture : Texture2D = new Texture2D(1, 1);
-		var style = new GUIStyle();
+	    
+	    var crossTexture1 : Texture2D = new Texture2D(1, 1);
+	    var crossTexture2 : Texture2D = new Texture2D(1, 1);
+		var outerTexture : Texture2D = new Texture2D(1, 1);
+		var crossStyle1 = new GUIStyle();
+		var crossStyle2 = new GUIStyle();
 		var outerStyle = new GUIStyle();
 		var totalWidth = Screen.width/10; 
 		var boxWidth=10;
-		var color : Color;
+		var crossColor1 : Color;
+		var crossColor2 : Color;
 		var outerColor : Color;
 		
-			boxWidth = Screen.width/10;
+		var aiming:String= "";
+		    
+		boxWidth = Screen.width/10;
 			
-		
+		var progrAim :float ;
 		if (!target){
-			color = new Color(1, 1, 0,0.2);
-			outerColor = new Color(1, 1, 0,0.2);
-		
+			progrAim = 1 ;
+			crossColor1 = new Color(1, 1, 0,0.2);
+			crossColor2 = new Color(1, 1, 0,0.2);
+			outerColor = new Color(0, 0, 0,0.5);
+			aiming = "No Target";
 		}else if (target){
-			color = new Color(1, 0, 0,0.2);
-			outerColor = new Color(1, 0, 0,0.2);
+			
+		    
 			if(progress >= aimFor){
-				color = new Color(0, 1, 0,0.2);
-				outerColor = new Color(1, 0, 0,0.2);
-			}else if(progress > 0 && progress < aimFor){
-				color = new Color(0, aimFor/progress, aimFor/4.0-progress,0.2);
-				outerColor = new Color(0, aimFor/progress, aimFor/4.0-progress,0.2);
+				crossColor1 = new Color(1, 0, 0,0.6);
+				crossColor2 = new Color(0, 1, 1,0.6);
+				outerColor = new Color(1, 0, 0,0.8);
+				progrAim = 1 ;
+				aiming = "Target locked";
+		    }else if(progress > 0 && progress < aimFor){
+				crossColor1 = new Color(0, 1, progress,0.4);
+				crossColor2 = new Color(0, 1, progress,0.4);
+				outerColor = new Color(0, 0, 0,0.5);
+				progrAim = progress/aimFor ;
+				aiming = "Locking target";
+			}else{
+				progrAim = 1 ;
+				crossColor1 = new Color(1, 1, 0,0.5);
+				crossColor2 = new Color(1, 1, 0,0.2);
+				outerColor = new Color(0, 0, 0,0.5);
+				aiming = "Locking not possible";
 			}
 		}
-		texture.SetPixel(0, 0, color);
-		texture.Apply();
-		style.normal.background = texture;
+		crossTexture1.SetPixel(0, 0, crossColor1);
+		crossTexture1.Apply();
+		crossStyle1.normal.background = crossTexture1;
+		crossTexture2.SetPixel(0, 0, crossColor2);
+		crossTexture2.Apply();
+		crossStyle2.normal.background = crossTexture2;
 		outerTexture.SetPixel(0, 0, outerColor);
 		outerTexture.Apply();
 		outerStyle.normal.background = outerTexture;
-		GUI.Box (Rect (Screen.width/2-10, Screen.height/2-3, 20, 6), "",outerStyle);
-		GUI.Box (Rect (Screen.width/2-3, Screen.height/2-10, 6, 20), "",style);
+		
 		if(target){
 			var cam : Camera = Camera.main;
 		    var screenPos : Vector3 = cam.WorldToScreenPoint(target.transform.position);
-		    var counter:String;
-		    counter = "";
-		    if((aimFor-progress) >= 1){
-		    	counter = (aimFor-progress).ToString('#.#');
-		    }else{
-		    	counter = "0" + (aimFor-progress).ToString('#.#');
-		    }
-		    GUI.Box (Rect (screenPos.x - 11, Screen.height - screenPos.y - 11,22,22), "",outerStyle);
-			GUI.Box (Rect (screenPos.x - 10, Screen.height - screenPos.y - 10,20,20), counter,style);
-		}	
+		    GUI.Box (Rect (screenPos.x - 11, Screen.height - screenPos.y - 11,22,22), "",crossStyle2);
+			GUI.Box (Rect (screenPos.x - 10, Screen.height - screenPos.y - 10,20,20), "",crossStyle1);
+		}
+		GUI.Box (Rect (Screen.width/2-10 -25, Screen.height/2-3, 20, 6), "",crossStyle2);
+		GUI.Box (Rect (Screen.width/2-3 -25, Screen.height/2-10, 6, 20), "",crossStyle1);
+		
+		boxWidth = ((Screen.width/8)-20);
+		GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 47, boxWidth+2, 18), "", outerStyle);
+		GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 46, boxWidth * progrAim ,16), aiming,crossStyle2);
+		
+			
 	}
 }

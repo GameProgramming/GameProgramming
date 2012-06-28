@@ -22,8 +22,8 @@ function OnGUI () {
 				levelLoad.LoadNewLevel(currentLevel);
 			}
 			
-			if (GUI.Button (Rect (Screen.width/2 - 90, 190, 200, 50), "Main Menu")) {
-				Application.LoadLevel("Main");
+			if (GUI.Button (Rect (Screen.width/2 - 90, 190, 200, 50), "Main Menu / Disconnect")) {
+				GameObject.FindGameObjectWithTag("Main").SendMessage("Disconnect");
 			}
 			if (GUI.Button (Rect (Screen.width/2 - 90, 250, 200, 50), "Exit Game")) {
 				Application.Quit();
@@ -33,8 +33,8 @@ function OnGUI () {
 			}	
 		}
 		GUI.Box(Rect (Screen.width/2 - 100, 100, 250, 300), "Menu");
-		if (GUI.Button (Rect (Screen.width/2 - 90, 190, 200, 50), "Main Menu")) {
-			Application.LoadLevel("Main");
+		if (GUI.Button (Rect (Screen.width/2 - 90, 190, 200, 50), "Main Menu / Disconnect")) {
+			GameObject.FindGameObjectWithTag("Main").SendMessage("Disconnect");
 		}
 		if (GUI.Button (Rect (Screen.width/2 - 90, 250, 200, 50), "Exit Game")) {
 			Application.Quit();

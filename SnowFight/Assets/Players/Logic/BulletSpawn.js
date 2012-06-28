@@ -91,37 +91,42 @@ function OnGUI() {
 		var texture : Texture2D = new Texture2D(1, 1);
 		var style = new GUIStyle();
 		var totalWidth = Screen.width/4; 
-		var boxWidth;
+		var boxWidth : float= (Screen.width/8 + 10);
+		var finalBoxWidth;
+		
 		var color;
 		var text;
 		var projectile = GetProjectile().GetComponent("Projectile");
 		var maxReload = projectile.reloadTime;
 		
-		var reloadPercent : float = parseFloat(reloadProgress) / parseFloat(maxReload);
-		
-	    if(player.GetCurrentSnowballs() <= 0){
-			boxWidth = (Screen.width/4 + 12);
+		var reloadPercent : float = reloadProgress / maxReload;
+		if (reloadPercent < 0.0) {
+			reloadPercent = 0.0;
+		}
+	    if(player.GetCurrentSnowballs() < projectile.snowCosts){
+			finalBoxWidth = boxWidth;
+			
 			color = new Color(1, 0, 0,0.5);
-			text = "RELOAD";
+			text = "Collect Snow";
 		}else{
-			boxWidth = reloadPercent * (Screen.width/4);
-			color = new Color(reloadPercent, 1-reloadPercent, 0,0.5);
-			text = "Loading";
+			if (reloadPercent == 0.0) {
+				color = new Color(0, 1, 0,0.5);
+				text = "Fire!";
+				finalBoxWidth = boxWidth;
+			}else{
+				color = new Color(reloadPercent, 1-reloadPercent, 0,0.5);
+				text = "Making "+ projectile.name;
+				finalBoxWidth = reloadPercent * boxWidth;
+			}
 		}
 		
 		var boxHeight = 19;
-		
 		
 		texture.SetPixel(0, 0, color);
 		texture.Apply();
 		style.normal.background = texture;
 		
-		if (player.GetCurrentSnowballs() <= 0) {
-			GUI.Box (Rect (Screen.width - 231, Screen.height - 25, boxWidth, boxHeight), "");
-			GUI.Box (Rect (Screen.width - 231, Screen.height - 25, boxWidth, boxHeight), "", style);
-			
-		}
-	
-		//GUI.Box (Rect (Screen.width/1.4 + (totalWidth-boxWidth), 10, boxWidth, boxHeight), "",style);
+		GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
+		GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), text, style);
 	}
 }
