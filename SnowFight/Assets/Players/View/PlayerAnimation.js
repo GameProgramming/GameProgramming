@@ -224,6 +224,19 @@ function OnItemChange(itemManager :ItemManager) {
 	} else {
 		viewMode = PlayerViewMode.Default;
 	}
+	if (playerStatus.IsMainPlayer()) {
+		var overview :MapOverview = GameObject.FindGameObjectWithTag("OverviewCam")
+				.GetComponent(MapOverview);
+		if (item == null) {
+			overview.ResetPlayerCam();
+		} else if (item.CompareTag("Ufo")) {
+			overview.SetPlayerCam(item.transform.Find("UfoCam"));
+		} else if (item.CompareTag("BigSnowball")) {
+			overview.SetPlayerCam(transform.Find("CameraSetup/CameraTargetDistant"));
+		} else {
+			overview.ResetPlayerCam();
+		}
+	}
 }
 
 function GameOver () {

@@ -71,11 +71,6 @@ function Move (offset : Vector3) {
 function Release () {
 	if (owner) {
 		owner.transform.position.y += 0.2;
-		
-		if (owner.GetComponent(PlayerStatus).IsMainPlayer()) {
-			GameObject.FindGameObjectWithTag("OverviewCam")
-				.GetComponent(MapOverview).ResetPlayerCam();
-		}
 	}
 	
 	owner = null;
@@ -93,12 +88,6 @@ function PickItem(player :GameObject) {
 	transform.localPosition = Vector3.zero;
 	transform.localRotation = Quaternion.identity;
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer (player.transform);
-	
-	if (player.GetComponent(PlayerStatus).IsMainPlayer()) {
-		GameObject.FindGameObjectWithTag("OverviewCam")
-		.GetComponent(MapOverview).SetPlayerCam(transform.Find("UfoCam"));
-	}
-
 }
 
 function ApplyDamage (attack :Attack) {

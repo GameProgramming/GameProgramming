@@ -9,6 +9,9 @@ var playerSkin :Texture;
 
 private var size : int = 0;
 
+//private var ticketReduceTime = 0.5;
+//private var currentTicketReduceTime = 0.0;
+
 function Awake () {
 	size = 0;
 }
@@ -16,8 +19,20 @@ function Awake () {
 function Start() {
 }
 
-function Update () {
-
+function FixedUpdate () {
+	if (GetAllBases().Length == 0) {
+		var allDead :boolean = true;
+		for (var player : Transform in GetAllPlayers()) {
+			playerStatus = player.GetComponent(PlayerStatus);
+			if (!playerStatus.IsDead()) {
+				allDead = false;
+				break;
+			}
+		}
+		if (allDead) {
+			LoseTickets(1);
+		}
+	}
 }
 
 function HasLost () {
@@ -85,7 +100,7 @@ function GetAllPlayers () : Transform[] {
 
 function LoseTickets (count :int) {
 	if (Network.isServer) {
-		networkView.RPC("NetTicketChange", RPCMode.All, tickets - count);
+		networkView.RPC("NetTicketChange", RPCMode.All, Mathf.Clamp(tickets - count,0,999999));
 	}
 }
 

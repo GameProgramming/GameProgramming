@@ -114,16 +114,16 @@ function Update () {
 	}
 	
 	//upon respawn make visible after hide time
-	if (respawning && Time.time > spawnTime + respawnTimeout) {
-		for (var rend : MeshRenderer in meshRenderers) {
-			rend.enabled = true;
-		}
-		
-		for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-			rend.enabled = true;
-		}
-		respawning = false;
-	}
+//	if (respawning && Time.time > spawnTime + respawnTimeout) {
+//		for (var rend : MeshRenderer in meshRenderers) {
+//			rend.enabled = true;
+//		}
+//		
+//		for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
+//			rend.enabled = true;
+//		}
+//		respawning = false;
+//	}
 }
 
 function LateUpdate () {
@@ -213,11 +213,6 @@ function Release () {
 		if (!shot)
 			rigidbody.velocity = Vector3.zero;
 		transform.parent = null;
-		
-		if (pushingPlayer.GetComponent(PlayerStatus).IsMainPlayer()) {
-			GameObject.FindGameObjectWithTag("OverviewCam")
-			.GetComponent(MapOverview).ResetPlayerCam();	
-		}
 		pushingPlayer = null;
 	}
 }
@@ -227,43 +222,47 @@ function PickItem(player:GameObject) {
 	transform.parent = pushingPlayer.transform;
 	playerMotor = player.GetComponent(CharacterMotorSF);
 	shot = false;
-	
-	if (player.GetComponent(PlayerStatus).IsMainPlayer()) {
-		GameObject.FindGameObjectWithTag("OverviewCam")
-		.GetComponent(MapOverview).SetPlayerCam(player.transform.Find("CameraSetup/CameraTargetDistant"));
-	}
 }
 
-function Respawn (spawnPosition : Vector3) {
+function OnReachBase () {
 	if (pushingPlayer) { //tell the bot that his ball has reached the base
-			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
+		pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 	}
 	
-	transform.localScale = startSize;
-	for (var rend : MeshRenderer in meshRenderers)
-		rend.material.color = Color.white;
-	for (var rend : SkinnedMeshRenderer in skinnedRenderers)
-		rend.material.color = Color.white;
-	
-	respawning = true;
-	spawnTime = Time.time;
-	
-	//hide for a while
-	for (var rend : MeshRenderer in meshRenderers) {
-		rend.enabled = false;
-	}
-	
-	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-		rend.enabled = false;
-	}
-	
-//	if (spawnPosition != Vector3.zero)
-//		transform.position = spawnPosition;
-//	else if (spawnPoints && spawnPoints.Length > 0) {
-//		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length)].transform.position;
-//		transform.position.y += 5;
-//	}
+	Network.Destroy(gameObject);
 }
+
+
+//function Respawn (spawnPosition : Vector3) {
+//	if (pushingPlayer) { //tell the bot that his ball has reached the base
+//			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
+//	}
+//	
+//	transform.localScale = startSize;
+//	for (var rend : MeshRenderer in meshRenderers)
+//		rend.material.color = Color.white;
+//	for (var rend : SkinnedMeshRenderer in skinnedRenderers)
+//		rend.material.color = Color.white;
+//	
+//	respawning = true;
+//	spawnTime = Time.time;
+//	
+//	//hide for a while
+//	for (var rend : MeshRenderer in meshRenderers) {
+//		rend.enabled = false;
+//	}
+//	
+//	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
+//		rend.enabled = false;
+//	}
+//	
+////	if (spawnPosition != Vector3.zero)
+////		transform.position = spawnPosition;
+////	else if (spawnPoints && spawnPoints.Length > 0) {
+////		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length)].transform.position;
+////		transform.position.y += 5;
+////	}
+//}
 
 function SmashBallToSnowfield () {
 //	transform.parent = null;

@@ -111,7 +111,7 @@ function OnTriggerStay(other : Collider) {
 				other.transform.parent = null;
 				var weapon = specialWeapons[Random.Range(0,specialWeapons.Length)];
 				Network.Instantiate(weapon, other.transform.position, Quaternion.identity,0);
-				Network.Destroy(other.gameObject);
+				other.gameObject.SendMessage("OnReachBase", SendMessageOptions.DontRequireReceiver);
 				enterTime = 0.0;
 			}
 		}
