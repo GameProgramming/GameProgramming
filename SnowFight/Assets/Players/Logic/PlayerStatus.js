@@ -359,7 +359,12 @@ function IsMainPlayer () {
 }
 
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
-
+	var s :int = state;
+    stream.Serialize(s);
+    if (s != state) {
+    	var st :PlayerState = s;
+    	SetState(st);
+    }
 }
 
 
