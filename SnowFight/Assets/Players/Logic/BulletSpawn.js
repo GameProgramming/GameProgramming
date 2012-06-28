@@ -16,8 +16,13 @@ function Start() {
 }
 
 function ConnectToPlayer (t :Transform) {
-	player = t.GetComponent(PlayerStatus);
-	motor = t.GetComponent(CharacterMotorSF);
+	if (t) {
+		player = t.GetComponent(PlayerStatus);
+		motor = t.GetComponent(CharacterMotorSF);
+	} else {
+		player = null;
+		motor = null;
+	}
 }
 
 function Update () {
@@ -25,7 +30,7 @@ function Update () {
 }
 
 function Fire () {
-	if(reloadProgress <= 0.0 && player.GetCurrentSnowballs() >= snowCosts){
+	if(reloadProgress <= 0.0 && player && player.GetCurrentSnowballs() >= snowCosts){
 		Spawnpoint = transform;
 	  	projectile = GetProjectile();
 	  	var clone : Rigidbody;	

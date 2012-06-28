@@ -879,7 +879,7 @@ function OnSetRemote () {
 
 function OnDeath () {
 	StopAllCoroutines();
-	StartCoroutine("Start");
+	if (this.enabled) StartCoroutine("Start");
 }
 
 

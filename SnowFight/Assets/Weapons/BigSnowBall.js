@@ -56,9 +56,7 @@ function Awake () {
 function Update () {
 	if (pushingPlayer) {
 		if (playerMotor.IsMovingBackward() || playerMotor.IsJumping() || IsBallTooFarAway (pushingPlayer)) {
-			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
-			Release();
-		}
+			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);		}
 		else {
 			if (playerMotor.inputAltFire) {
 				// player destroys snowball
@@ -240,7 +238,6 @@ function Respawn (spawnPosition : Vector3) {
 	if (pushingPlayer) { //tell the bot that his ball has reached the base
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 	}
-	Release ();
 	
 	transform.localScale = startSize;
 	for (var rend : MeshRenderer in meshRenderers)

@@ -88,6 +88,7 @@ function Release () {
 	owner = null;
 	transform.parent = null;
 	collider.enabled = true;
+	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer(null);
 }
 
 function PickItem(player :GameObject) {
@@ -140,9 +141,7 @@ function AimTarget (enemyTag : String) : GameObject {
 
 
 function InDirection( object : GameObject){
-	var diffToEnemy = (object.transform.position - transform.position);
-	var enemyDistance = diffToEnemy.magnitude;
-	var enemyDirection = diffToEnemy / enemyDistance;  // This is now the normalized direction.
+	var enemyDirection = (object.transform.position - transform.position).normalized;
 	// Calculate the x-axis relative to the camera
 	var cam : Transform = Camera.main.transform;
 	relativeCameraAngle = cam.TransformDirection (Vector3.forward);

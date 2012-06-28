@@ -52,7 +52,6 @@ function Update () {
 		}
 	} else if (item && (inputActionUp || pStatus.IsDead())) {
 //  } else if (item && (inputAction || pStatus.IsDead())) {
-		item.SendMessage("Release", null, SendMessageOptions.DontRequireReceiver);
 		ReleaseItem();
 	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem)
 //	} else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem)
@@ -67,8 +66,6 @@ function Update () {
 			} else {
 				SetItem(candidateItem);
 			}
-			SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
-			item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 }
@@ -76,6 +73,7 @@ function Update () {
 function SetItem( it :GameObject ) {
 	item = it;
 	candidateItem = null;
+	if (pStatus.IsMainPlayer()) Debug.Log("Player picked up "+item);
 	SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 }
@@ -97,8 +95,10 @@ function PassOnMovementOffset (offset : Vector3) {
 
 function ReleaseItem () {
 	if(item) {
+		item.SendMessage("Release", SendMessageOptions.DontRequireReceiver);
 		if (item.CompareTag("BigSnowball"))
 			item.transform.parent = null;
+		if (pStatus.IsMainPlayer()) Debug.Log("Player released "+item);
 		item = null;
 		candidateItem = null;
 		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
@@ -107,9 +107,10 @@ function ReleaseItem () {
 
 function OnItemDestruction ( destructedItem : GameObject) {
 	if (destructedItem == item) {
-		item = null;
-		candidateItem = null;
-		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
+		ReleaseItem();
+//		item = null;
+//		candidateItem = null;
+//		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	}
 }
 
@@ -118,7 +119,6 @@ function CandidateTooFarAway() {
 			+ candidateItem.collider.bounds.size.x + maxCandidateDistance;
 	if (Vector3.Distance(candidateItem.transform.position, transform.position) > totalDistance) {
 		candidateItem = null;
-		item = null;
 		return true;
 	}
 	else
@@ -151,9 +151,6 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 	var itemId :NetworkViewID = itemMyId;
     stream.Serialize(itemId);
     if (itemId != itemMyId) {
-    	if (itemId == itemMyId) {
-    		ReleaseItem();
-    	}
     	if (itemId != NetworkViewID.unassigned) {
     		var it :NetworkView = NetworkView.Find(itemId);
     		if (it) {
@@ -161,6 +158,8 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     		} else {
     			Debug.Log("Received an item signal for an unknown itm. Id="+itemId);
     		}
+    	} else {
+    		ReleaseItem();
     	}
     }
 }

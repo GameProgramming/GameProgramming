@@ -69,19 +69,18 @@ function Move (offset : Vector3) {
 }
 
 function Release () {
-	owner.transform.position.y += 0.2;
-	
-	var parent = GameObject.Find("Items");
-	if (parent)
-		transform.parent = parent.transform;
-	
-	if (owner.GetComponent(PlayerStatus).IsMainPlayer()) {
-		GameObject.FindGameObjectWithTag("OverviewCam")
-			.GetComponent(MapOverview).ResetPlayerCam();
+	if (owner) {
+		owner.transform.position.y += 0.2;
+		
+		if (owner.GetComponent(PlayerStatus).IsMainPlayer()) {
+			GameObject.FindGameObjectWithTag("OverviewCam")
+				.GetComponent(MapOverview).ResetPlayerCam();
+		}
 	}
 	
 	owner = null;
 	transform.parent = null;
+	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer(null);
 }
 
 function PickItem(player :GameObject) {
