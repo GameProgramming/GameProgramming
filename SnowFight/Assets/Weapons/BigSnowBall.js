@@ -199,7 +199,7 @@ function IsBallTooFarAway (player : GameObject) : boolean {
 	if (player) {
 		var playerController = player.GetComponent(CharacterController);
 		var playerTransform = player.GetComponent(Transform);
-		var maxAllowedDist = Mathf.Max(maxBallDistance, playerController.radius + radius*2);
+		var maxAllowedDist = Mathf.Max(maxBallDistance, playerController.radius + radius*4);
 		tooFar = (Vector3.Distance(transform.position , playerController.transform.position) > maxAllowedDist);
 	}
 	return tooFar;
