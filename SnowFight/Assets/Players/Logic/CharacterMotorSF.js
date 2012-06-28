@@ -390,7 +390,7 @@ function Rotate (x :float, y :float) {
 	if (canControl && !gameOver) {
 		rotationX = transform.localEulerAngles.y + x;
 		rotationY += y;
-		rotationY = Mathf.Clamp (rotationY, -30, 20);
+		rotationY = Mathf.Clamp (rotationY, -40, 30);
 		transform.localEulerAngles = new Vector3(0, rotationX, 0);
 	}
 }

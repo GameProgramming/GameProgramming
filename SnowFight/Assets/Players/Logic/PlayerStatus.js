@@ -176,7 +176,7 @@ function NetDie () {
 
 function Freeze (attack :Attack) {
 	if (state == PlayerState.Alive) {
-		frozen = attack.damage;
+		frozen = attack.damage * 0.1;
 		ApplyDamage(attack);
 		if (!IsDead()) {
 			SetState(PlayerState.Frozen);
@@ -231,6 +231,8 @@ function NetRespawn ( spawnBase :int ) {
 			overviewCam.ResetPlayerCam();
 			overviewCam.SetMode(false);
 		}
+	} else {
+		killTime += respawnTimeout / 2;
 	}
 }
 
