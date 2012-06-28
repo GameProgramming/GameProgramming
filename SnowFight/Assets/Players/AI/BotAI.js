@@ -175,7 +175,7 @@ function FindClosestOwnBase () : GameObject{
 		if (team.GetComponent(Team).GetTeamNumber() == pStatus.GetTeamNumber()) {
 			curDist = Vector3.Distance(transform.position, team.transform.position);
 			if (curDist < shortestDist) {
-				base = t.gameObject;
+				base = t.transform.Find("TeamFlag").gameObject;
 				shortestDist = curDist;
 			}
 		}
@@ -357,7 +357,7 @@ function ConquerBase() {
 			return;
 		}
 			
-		flagPosition = target.transform.position;
+		flagPosition = target.transform.Find("TeamFlag").position;
 		
 		if (alreadyThere) {
 			if (Time.time > arrivalTime+patience) {
