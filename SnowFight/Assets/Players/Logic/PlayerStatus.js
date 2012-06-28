@@ -193,9 +193,9 @@ function IsHittable () :boolean {
 }
 
 function IsRidingUfo () : boolean {
-	return state == PlayerState.InVehicle;
+//	return state == PlayerState.InVehicle;
 	//return transform.FindChild("Ufo")!=null;
-//	return gameObject.FindWithTag("Ufo");
+	return gameObject.GetComponentInChildren(Ufo) != null;
 }
 
 
@@ -314,22 +314,6 @@ function OnItemChange (im : ItemManager) {
 	}
 	formerItem = g;
 }
-
-//override the previous method, when the given parameter is null
-//required when releasing or destroying the item 
-//function OnItemChange () {
-//	Debug.Log("on item change NULL",this);
-//	//var g :GameObject = im.GetItem();
-//	if (!IsDead()) {
-//		if (formerItem && formerItem.CompareTag("Ufo")) 
-//			SetState(PlayerState.Alive);
-//		
-////		if (item && item.CompareTag("Ufo")) {
-////			SetState(PlayerState.InVehicle);
-////		}
-//	}
-//	formerItem = null;;
-//}
 
 function GetMaximumSnowballs () : int  {
 	return maximumSnowballCapacity;

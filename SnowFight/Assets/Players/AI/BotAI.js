@@ -83,7 +83,7 @@ function Update () {
 	else
 		stuck = false;
 
-	if(Time.time < (stuckTime + timeoutWhenStuck))
+	if(Time.time < (stuckTime + timeoutWhenStuck) && !pStatus.IsRidingUfo() && !target.CompareTag("BigSnowball"))
 		motor.inputMoveDirection = alternateDir;
 	else
 		motor.inputMoveDirection = moveDir;
