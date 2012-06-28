@@ -41,7 +41,7 @@ function Update () {
 		}	  		
 			
 		var canShoot : boolean = bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0;
-		var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= 3;
+		var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= bulletSpawn.GetComponent(BulletSpawn).snowCosts;
 		
 		
 		if (canShoot && hasSnowballs) {

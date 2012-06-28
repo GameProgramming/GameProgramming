@@ -222,7 +222,6 @@ private function UpdateFunction () {
 	if(gameOver)
 		return;
 	
-	snowballSpawn.inputFire = false;
 	itemManager.inputAction = inputAction;
 	itemManager.inputAltFire = inputAltFire;
 

@@ -8,9 +8,6 @@ var reloadProgress : float = 0.0;
 
 var startYSpeed :float = 0.0;
 
-@System.NonSerialized
-var inputFire : boolean = false;
-
 var snowCosts :int = 1;
 
 function Start() {
@@ -28,7 +25,7 @@ function Update () {
 }
 
 function Fire () {
-	if(reloadProgress <= 0.0 && player.GetCurrentSnowballs() > 0){
+	if(reloadProgress <= 0.0 && player.GetCurrentSnowballs() >= snowCosts){
 		Spawnpoint = transform;
 	  	projectile = GetProjectile();
 	  	var clone : Rigidbody;	
@@ -42,7 +39,6 @@ function Fire () {
 			player.SubtractSnowball(snowCosts);
 		}
 		
-		inputFire = false;
 		reloadProgress = clone.GetComponent("Projectile").reloadTime;
 	}
 }
@@ -62,8 +58,7 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
 	clone.velocity = velo;
 }
 
-function FireHeatSeekingRocket (target) {
-	//TODO: falls das hier benuttzt wird, muss hier auch noch netwerk rein.
+function FireHeatSeekingRocket (target :GameObject) {
 	if(reloadProgress <= 0.0 && player.GetCurrentSnowballs() > 0){
 		Spawnpoint = transform;
 	  	projectile = GetProjectile();
@@ -76,8 +71,30 @@ function FireHeatSeekingRocket (target) {
 			player.SubtractSnowball(snowCosts);
 		}
 		
-		inputFire = false;
 		reloadProgress = clone.GetComponent("Projectile").reloadTime;
+	}
+}
+
+function SendFireTarget ( bullet :Rigidbody, target :GameObject ) {
+	var netId :NetworkViewID = Network.AllocateViewID();
+	bullet.networkView.viewID = netId;
+	networkView.RPC("NetFireTarget", RPCMode.Others, netId,
+					bullet.position, bullet.velocity, target.networkView.viewID);
+}
+
+@RPC
+function NetFireTarget ( netId :NetworkViewID, pos :Vector3, velo :Vector3, targetId :NetworkViewID ) {
+  	projectile = GetProjectile();
+  	var clone : Rigidbody;	
+	clone = Instantiate(projectile, pos, transform.rotation);
+	clone.networkView.viewID = netId;
+	clone.velocity = velo;
+	
+	var tar :NetworkView = NetworkView.Find(targetId);
+	if (tar) {
+		clone.GetComponent(HeatSeeking).missleTarget = tar.gameObject;
+	} else {
+		Debug.LogWarning("Could not find Target with ID "+targetId);
 	}
 }
 
@@ -126,7 +143,9 @@ function OnGUI() {
 		texture.Apply();
 		style.normal.background = texture;
 		
-		GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
-		GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), text, style);
+		if (reloadPercent > 0.0) {
+			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
+			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
+		}
 	}
 }
