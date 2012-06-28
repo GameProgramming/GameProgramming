@@ -149,3 +149,5 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 function GameOver () {
 	this.enabled = false;
 }
+
+@script RequireComponent (NetworkView)

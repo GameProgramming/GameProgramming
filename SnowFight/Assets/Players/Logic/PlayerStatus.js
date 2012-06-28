@@ -357,3 +357,5 @@ function OnSetRemote () {
 function IsMainPlayer () {
 	return isMainPlayer;
 }
+
+@script RequireComponent (NetworkView)

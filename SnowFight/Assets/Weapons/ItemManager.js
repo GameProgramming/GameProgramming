@@ -169,3 +169,4 @@ function GetCandidateItem() : GameObject {
 }
 
 @script RequireComponent (CharacterMotorSF)
+@script RequireComponent (NetworkView)

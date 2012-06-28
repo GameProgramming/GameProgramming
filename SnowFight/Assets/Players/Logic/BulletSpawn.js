@@ -51,6 +51,7 @@ function Fire () {
 function SendFire ( bullet :Rigidbody ) {
 	var netId :NetworkViewID = Network.AllocateViewID();
 	bullet.networkView.viewID = netId;
+	Debug.Log ("Send fire "+netId);
 	networkView.RPC("NetFire", RPCMode.Others, netId, bullet.position, bullet.velocity);
 }
 
@@ -61,6 +62,7 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
 	clone = Instantiate(projectile, pos, transform.rotation);
 	clone.networkView.viewID = netId;
 	clone.velocity = velo;
+	Debug.Log ("Rcv fire "+netId);
 }
 
 function FireHeatSeekingRocket (target :GameObject) {
@@ -154,3 +156,6 @@ function OnGUI() {
 		}
 	}
 }
+
+
+@script RequireComponent (NetworkView)

@@ -17,3 +17,5 @@ function NetHitSomething (){
 	explosionClone.GetComponent("Detonator").Explode();
 	Destroy(gameObject);
 }
+
+@script RequireComponent (NetworkView)

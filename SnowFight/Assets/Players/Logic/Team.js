@@ -145,3 +145,5 @@ function GetSize () : int {
 function GetBalancedSize () : float {
 	return size / balancingFactor;
 }
+
+@script RequireComponent (NetworkView)
