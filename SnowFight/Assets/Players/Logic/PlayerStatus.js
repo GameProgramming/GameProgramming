@@ -112,7 +112,7 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 			attack.damage = damageObject.GetDamage();
 			// todo: die groesse vielleicht noch mit rein.
 			attack.attacker = lastOwner;
-			ApplyDamage(attack);
+//			ApplyDamage(attack);
 			// ben: das finde ich komisch.. es verursacht auch, dass einem manchmal
 			//      der ball abrupt und unbeabsichtigt vor der nase zerbroeselt.
 			//ball.SmashBallToSnowfield();
