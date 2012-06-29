@@ -148,13 +148,13 @@ function InDirection( object : GameObject){
 	////if relativeCameraAngle [blikwinkel] ~~ enemyDirection
 	//Debug.Log("relativeCameraAngle" + relativeCameraAngle);
 	//Debug.Log("enemyDirection" + enemyDirection);
-	var targetInDirectionX : boolean = enemyDirection.x > (relativeCameraAngle.x - 0.1) && enemyDirection.x < (relativeCameraAngle.x + 0.1); 
+	var targetInDirectionX : boolean = enemyDirection.x > (relativeCameraAngle.x - 0.2) && enemyDirection.x < (relativeCameraAngle.x + 0.2); 
 	if(!targetInDirectionX)
 		return false;
-	var targetInDirectionY : boolean = enemyDirection.y > (relativeCameraAngle.y - 0.1) && enemyDirection.y < (relativeCameraAngle.y + 0.1);
+	var targetInDirectionY : boolean = enemyDirection.y > (relativeCameraAngle.y - 0.2) && enemyDirection.y < (relativeCameraAngle.y + 0.2);
 	if(!targetInDirectionY)
 		return false;
-	var targetInDirectionZ : boolean = enemyDirection.z > (relativeCameraAngle.z - 0.1) && enemyDirection.z < (relativeCameraAngle.z + 0.1);
+	var targetInDirectionZ : boolean = enemyDirection.z > (relativeCameraAngle.z - 0.2) && enemyDirection.z < (relativeCameraAngle.z + 0.2);
 	if(!targetInDirectionZ)
 		return false;
 	return true;
