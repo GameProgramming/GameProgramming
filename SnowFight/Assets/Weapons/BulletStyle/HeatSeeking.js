@@ -13,14 +13,9 @@
 
     function Start(){
         transform.collider.isTrigger = true;
-		//transform.localPosition.x += 2;
         transform.Rotate(0,-180,0);
         if(missleTarget){
-        	transform.localPosition.y += 0.5;
-        	transform.localPosition.z -= 0.4;
-        
-            target = missleTarget.transform;
-            
+        	target = missleTarget.transform;
 		}
 		
     }   
