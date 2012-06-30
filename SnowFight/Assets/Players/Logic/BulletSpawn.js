@@ -35,7 +35,7 @@ function Fire () {
 	  	projectile = GetProjectile();
 	  	var clone : Rigidbody;	
 		clone = Instantiate(projectile, Spawnpoint.position, Spawnpoint.rotation);
-		clone.velocity = clone.GetComponent("Projectile").speed * Spawnpoint.TransformDirection (Vector3.forward
+	  	clone.velocity = clone.GetComponent("Projectile").speed * Spawnpoint.TransformDirection (Vector3.forward
 								+ new Vector3(0, startYSpeed, 0) );
 		SendFire(clone);
 		

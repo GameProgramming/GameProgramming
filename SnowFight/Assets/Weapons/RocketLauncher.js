@@ -14,7 +14,8 @@ var lengthOfLineRenderer : int = 20;
 var mat1 :Material;
 
 var aimFor : int = 4; 
-var relativeCameraAngle : Vector3;
+//var relativeCameraAngle : Vector3;
+var viewAngle : Vector3;
 var locked :boolean;
 
 var target : GameObject; 
@@ -143,18 +144,19 @@ function AimTarget (enemyTag : String) : GameObject {
 function InDirection( object : GameObject){
 	var enemyDirection = (object.transform.position - transform.position).normalized;
 	// Calculate the x-axis relative to the camera
-	var cam : Transform = Camera.main.transform;
-	relativeCameraAngle = cam.TransformDirection (Vector3.forward);
+	//var cam : Transform = Camera.main.transform;
+	//relativeCameraAngle = cam.TransformDirection (Vector3.forward);
+	var viewAngle = owner.transform.TransformDirection (Vector3.forward);
 	////if relativeCameraAngle [blikwinkel] ~~ enemyDirection
 	//Debug.Log("relativeCameraAngle" + relativeCameraAngle);
 	//Debug.Log("enemyDirection" + enemyDirection);
-	var targetInDirectionX : boolean = enemyDirection.x > (relativeCameraAngle.x - 0.2) && enemyDirection.x < (relativeCameraAngle.x + 0.2); 
+	var targetInDirectionX : boolean = enemyDirection.x > (viewAngle.x - 0.2) && enemyDirection.x < (viewAngle.x + 0.2); 
 	if(!targetInDirectionX)
 		return false;
-	var targetInDirectionY : boolean = enemyDirection.y > (relativeCameraAngle.y - 0.2) && enemyDirection.y < (relativeCameraAngle.y + 0.2);
+	var targetInDirectionY : boolean = enemyDirection.y > (viewAngle.y - 0.2) && enemyDirection.y < (viewAngle.y + 0.2);
 	if(!targetInDirectionY)
 		return false;
-	var targetInDirectionZ : boolean = enemyDirection.z > (relativeCameraAngle.z - 0.2) && enemyDirection.z < (relativeCameraAngle.z + 0.2);
+	var targetInDirectionZ : boolean = enemyDirection.z > (viewAngle.z - 0.2) && enemyDirection.z < (viewAngle.z + 0.2);
 	if(!targetInDirectionZ)
 		return false;
 	return true;

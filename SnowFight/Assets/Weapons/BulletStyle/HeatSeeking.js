@@ -14,10 +14,13 @@
     function Start(){
         transform.collider.isTrigger = true;
 		//transform.localPosition.x += 2;
-        transform.localPosition.y += 0.5;
-        transform.localPosition.z -= 0.4;
+        transform.Rotate(0,-180,0);
         if(missleTarget){
+        	transform.localPosition.y += 0.5;
+        	transform.localPosition.z -= 0.4;
+        
             target = missleTarget.transform;
+            
 		}
 		
     }   
@@ -26,17 +29,22 @@
 
     function Update(){   
     	time += Time.deltaTime;
-    	transform.Rotate(0,-180,0);
-	    if (time < 1){
+    	if (time < 1){
 	    	transform.collider.isTrigger = true;
         }else if (time >= 1 && time < 30 ){
     		transform.collider.isTrigger = false;
     	}
-    	transform.LookAt(target);
-    	transform.Translate(Vector3.forward * 10.0f * Time.deltaTime);
-    	if (time >= 30){
-    		Destroy (gameObject);
+    	if (target){
+	    	transform.LookAt(target);
+    		transform.Rotate(0,-180,0);
+	    	transform.Translate(Vector3.back * 10.0f * Time.deltaTime);
+    	}else{
+    		//Debug.Log("normal fire without target");
     	}
+    	if (time >= 30){
+    		//Destroy (gameObject);
+    	}
+    	
 	    
     }
 
