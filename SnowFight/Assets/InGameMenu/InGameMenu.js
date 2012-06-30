@@ -1,5 +1,5 @@
 private var showIngameMenu : boolean;
-private var pressed = false;
+private var locked : boolean = false;
 
 function Awake () {
 	showIngameMenu = false;
@@ -8,6 +8,19 @@ function Awake () {
 function Update() {
 	if (Input.GetKeyDown(KeyCode.Escape)) {
 		showIngameMenu = !showIngameMenu;
+		var player : GameObject = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).player;
+		var status : PlayerStatus = player.GetComponent(PlayerStatus);
+		var motor : CharacterMotorSF;
+		if (status.IsMainPlayer()) {
+			motor = player.GetComponent(CharacterMotorSF);
+		}
+		if (!locked) {
+			locked = true;
+			motor.canControl = false;
+		} else {
+			locked = false;
+			motor.canControl = true;
+		}
 	}
 }
 
@@ -29,9 +42,9 @@ function OnGUI () {
 		if (GUILayout.Button ("Exit Game")) {
 			Application.Quit();
 		}
-		if (GUILayout.Button ("Resume Game")) {
-			showIngameMenu = !showIngameMenu;
-		}
+//		if (GUILayout.Button ("Resume Game")) {
+//			showIngameMenu = !showIngameMenu;
+//		}
 		GUILayout.FlexibleSpace();
 		GUILayout.EndVertical();
 		GUILayout.EndArea();
