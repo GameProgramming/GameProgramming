@@ -1,4 +1,5 @@
 private var showIngameMenu : boolean;
+private var pressed = false;
 
 function Awake () {
 	showIngameMenu = false;
@@ -6,7 +7,6 @@ function Awake () {
 
 function Update() {
 	if (Input.GetKeyDown(KeyCode.Escape)) {
-		
 		showIngameMenu = !showIngameMenu;
 	}
 }
@@ -14,34 +14,26 @@ function Update() {
 function OnGUI () {
 
 	if (showIngameMenu) {
+		GUILayout.BeginArea(Rect (Screen.width/2 - 87.5, Screen.height/2 - 100, 175, 200));
+		GUILayout.BeginVertical();
 		if (Network.isServer) {
-			GUI.Box(Rect (Screen.width/2 - 100, 100, 250, 300), "Menu");
-			if (GUI.Button (Rect (Screen.width/2 - 90, 130, 200, 50), "RestartLevel")) {
+			if (GUILayout.Button ("Restart Level")) {
 				var currentLevel : String = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetCurrentLevel();
 				var levelLoad : NetworkLevelLoad = GameObject.FindGameObjectWithTag("Main").GetComponent(NetworkLevelLoad);
 				levelLoad.LoadNewLevel(currentLevel);
 			}
-			
-			if (GUI.Button (Rect (Screen.width/2 - 90, 190, 200, 50), "Main Menu / Disconnect")) {
-				GameObject.FindGameObjectWithTag("Main").SendMessage("Disconnect");
-			}
-			if (GUI.Button (Rect (Screen.width/2 - 90, 250, 200, 50), "Exit Game")) {
-				Application.Quit();
-			}
-			if (GUI.Button (Rect (Screen.width/2 - 90, 340, 200, 50), "Resume Game")) {
-				showIngameMenu = !showIngameMenu;
-			}	
 		}
-		GUI.Box(Rect (Screen.width/2 - 100, 100, 250, 300), "Menu");
-		if (GUI.Button (Rect (Screen.width/2 - 90, 190, 200, 50), "Main Menu / Disconnect")) {
+		if (GUILayout.Button ("Main Menu / Disconnect")) {
 			GameObject.FindGameObjectWithTag("Main").SendMessage("Disconnect");
 		}
-		if (GUI.Button (Rect (Screen.width/2 - 90, 250, 200, 50), "Exit Game")) {
+		if (GUILayout.Button ("Exit Game")) {
 			Application.Quit();
-			
 		}
-		if (GUI.Button (Rect (Screen.width/2 - 90, 340, 200, 50), "Resume Game")) {
+		if (GUILayout.Button ("Resume Game")) {
 			showIngameMenu = !showIngameMenu;
 		}
+		GUILayout.FlexibleSpace();
+		GUILayout.EndVertical();
+		GUILayout.EndArea();
 	}
 }

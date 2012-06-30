@@ -14,6 +14,10 @@ private var candidateItem : GameObject;
 private var movementOffset : Vector3;
 var maxCandidateDistance : float = 1.0;
 
+private var showItemGUI : boolean = true;
+var itemGUIStyle : GUIStyle;
+var itemGUITime : float = 0.0;
+
 private var snowResourcePick :SnowRessource; // typo im typnamen, ach mensch...
 private var srPickProgress : float = 0;
 var srPickTime : float = 3;
@@ -23,6 +27,65 @@ function Start () {
 	pStatus = GetComponent(PlayerStatus);
 	item = null;
 	snowResourcePick = null;
+}
+
+function OnGUI () {
+	var status : PlayerStatus = transform.GetComponent(PlayerStatus);
+	if (status.IsMainPlayer() && showItemGUI) {
+		if (item != null) {
+				itemGUITime += Time.deltaTime;
+			if (item.CompareTag("Ufo") && itemGUITime <= 5.0) {
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height/2, 200, 20), "Left click to shoot.", itemGUIStyle);
+				GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2 + 30, 300, 20), "Right click to freeze enemies.", itemGUIStyle);
+			} else if (item.CompareTag("BigSnowball") && itemGUITime <= 5.0) {
+				GUI.Label (Rect (Screen.width/2 - 200, Screen.height/2, 400, 20), "Right click to create a Snow Ressource.", itemGUIStyle);
+			} else if (item.CompareTag("Weapon") && itemGUITime <= 5.0) {
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height/2, 200, 20), "Left click to shoot.", itemGUIStyle);
+			}
+		} else {
+			itemGUITime = 0.0;
+			if (candidateItem) {
+				if (candidateItem.CompareTag("BigSnowball") && item == null) {
+					GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Press E to move big Snowball.", itemGUIStyle);
+				//} else if (candidateItem.layer != LayerMask.NameToLayer("Item") &&
+			    	//candidateItem.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
+					//GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Press E to get in the UFO.", itemGUIStyle);
+				} else if (candidateItem.CompareTag("Weapon") && item == null) {
+					GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Press E to use Snow Rocket.", itemGUIStyle);
+				} else if (candidateItem.CompareTag("SnowballRessource") && item == null) {
+					GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Hold E to create a big Snowball.", itemGUIStyle);
+				}
+			}
+		}
+		var texture : Texture2D = new Texture2D(1, 1);
+		var style = new GUIStyle();
+		var boxWidth : float = (Screen.width/8 + 10);
+		var finalBoxWidth;
+		var color;
+		var text;
+	
+		var srPercent : float = srPickProgress / srPickTime;
+		if (srPercent < 0.0) {
+			srPercent = 0.0;
+		}
+		if (srPercent == 0.0) {
+			color = new Color(1, 0, 0,0.5);
+			finalBoxWidth = boxWidth;
+		} else {
+			color = new Color(1-srPercent, srPercent, 0,0.5);
+			finalBoxWidth = srPercent * boxWidth;
+		}
+	
+		var boxHeight = 19;
+		texture.SetPixel(0, 0, color);
+		texture.Apply();
+		style.normal.background = texture;
+	
+		if (srPercent > 0.0) {
+			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
+			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
+		}
+	}
 }
 
 function Update () {
@@ -41,7 +104,7 @@ function Update () {
 //			Debug.Log("Building ball " + srPickProgress, this);
 			
 			if (srPickProgress > srPickTime) {
-				Debug.Log("Ball built", this);
+				//Debug.Log("Ball built", this);
 				SetItem(snowResourcePick.GrabBigSnowball(gameObject));
 				snowResourcePick = null;
 				srPickProgress = 0;
@@ -166,6 +229,10 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 
 function GetCandidateItem() : GameObject {
 	return candidateItem;
+}
+
+function GetShowItemGUI () : boolean {
+	return showItemGUI;
 }
 
 @script RequireComponent (CharacterMotorSF)
