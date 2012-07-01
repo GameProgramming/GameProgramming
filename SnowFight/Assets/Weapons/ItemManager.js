@@ -1,4 +1,5 @@
 #pragma strict
+#pragma downcast
 private var motor : CharacterMotorSF;
 private var pStatus : PlayerStatus;
 

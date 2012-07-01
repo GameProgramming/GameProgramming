@@ -1,4 +1,5 @@
-private var projectile : Rigidbody;
+#pragma strict
+
 var bullet : Rigidbody;
 
 private var player : PlayerStatus;
@@ -29,22 +30,32 @@ function Update () {
 	reloadProgress -= Time.deltaTime;
 }
 
+function CanFire () {
+	return reloadProgress <= 0.0 && player.GetCurrentSnowballs() >= snowCosts;
+}
+
 function Fire () {
-	if(reloadProgress <= 0.0 && player && player.GetCurrentSnowballs() >= snowCosts){
-		Spawnpoint = transform;
-	  	projectile = GetProjectile();
-	  	var clone : Rigidbody;	
-		clone = Instantiate(projectile, Spawnpoint.position, Spawnpoint.rotation);
-	  	clone.velocity = clone.GetComponent("Projectile").speed * Spawnpoint.TransformDirection (Vector3.forward
-								+ new Vector3(0, startYSpeed, 0) );
-		SendFire(clone);
-		
-		snowCosts = projectile.GetComponent(Projectile).snowCosts;
-		if (snowCosts > 0) {
-			player.SubtractSnowball(snowCosts);
+	if(player && CanFire()){
+	  	var projectile = GetProjectile();
+	  	
+	  	if (projectile) {
+		  	var clone : Rigidbody;	
+			clone = Instantiate(projectile, transform.position, transform.rotation);
+		  	clone.velocity = clone.GetComponent(Projectile).speed * transform.TransformDirection (Vector3.forward
+									+ new Vector3(0, startYSpeed, 0) );
+			SendFire(clone);
+			reloadProgress = clone.GetComponent(Projectile).reloadTime;
+			
+			snowCosts = projectile.GetComponent(Projectile).snowCosts;
+			if (snowCosts > 0) {
+				player.SubtractSnowball(snowCosts);
+			}
+		} else {
+			for (var child : Object in transform) {
+				(child as Transform).gameObject.SendMessage("Fire", SendMessageOptions.DontRequireReceiver);
+			}
 		}
 		
-		reloadProgress = clone.GetComponent("Projectile").reloadTime;
 	}
 }
 
@@ -57,7 +68,7 @@ function SendFire ( bullet :Rigidbody ) {
 
 @RPC
 function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
-  	projectile = GetProjectile();
+  	var projectile = GetProjectile();
   	var clone : Rigidbody;	
 	clone = Instantiate(projectile, pos, transform.rotation);
 	clone.networkView.viewID = netId;
@@ -67,10 +78,9 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
 
 function FireHeatSeekingRocket (target :GameObject) {
 	if(reloadProgress <= 0.0 && player.GetCurrentSnowballs() > 0){
-		Spawnpoint = transform;
-	  	projectile = GetProjectile();
+		var projectile = GetProjectile();
 	  	var clone : Rigidbody;	
-		clone = Instantiate(projectile, Spawnpoint.position, Spawnpoint.rotation);
+		clone = Instantiate(projectile, transform.position, transform.rotation);
 		clone.GetComponent(HeatSeeking).missleTarget = target;
 		
 		snowCosts = projectile.GetComponent(Projectile).snowCosts;
@@ -78,7 +88,7 @@ function FireHeatSeekingRocket (target :GameObject) {
 			player.SubtractSnowball(snowCosts);
 		}
 		
-		reloadProgress = clone.GetComponent("Projectile").reloadTime;
+		reloadProgress = clone.GetComponent(Projectile).reloadTime;
 	}
 }
 
@@ -91,7 +101,7 @@ function SendFireTarget ( bullet :Rigidbody, target :GameObject ) {
 
 @RPC
 function NetFireTarget ( netId :NetworkViewID, pos :Vector3, velo :Vector3, targetId :NetworkViewID ) {
-  	projectile = GetProjectile();
+  	var projectile = GetProjectile();
   	var clone : Rigidbody;	
 	clone = Instantiate(projectile, pos, transform.rotation);
 	clone.networkView.viewID = netId;
@@ -111,16 +121,16 @@ function GetProjectile(){
 }
  
 function OnGUI() {
-     if (player != null && player.IsMainPlayer()) {
+     if (player != null && player.IsMainPlayer() && GetProjectile()) {
 		var texture : Texture2D = new Texture2D(1, 1);
 		var style = new GUIStyle();
 		var totalWidth = Screen.width/4; 
 		var boxWidth : float= (Screen.width/8 + 10);
 		var finalBoxWidth;
 		
-		var color;
-		var text;
-		var projectile = GetProjectile().GetComponent("Projectile");
+		var color :Color;
+		var text :String;
+		var projectile = GetProjectile().GetComponent(Projectile);
 		var maxReload = projectile.reloadTime;
 		
 		var reloadPercent : float = reloadProgress / maxReload;
