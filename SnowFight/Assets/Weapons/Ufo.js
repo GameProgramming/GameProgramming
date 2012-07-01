@@ -22,7 +22,7 @@ function Start () {
 }
 
 function Update () {
-	if (owner && owner.networkView.isMine) {
+	if (owner && networkView.isMine) {
 		if (playerMotor.inputFire && bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0) {
 			bulletSpawn.GetComponent(BulletSpawn).Fire();
 		}

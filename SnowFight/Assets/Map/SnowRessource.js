@@ -10,18 +10,28 @@ var bigSnowballPrefab : GameObject;
 //The amount a big snowball represents.
 var bigSnowballAmount : int;
 //The current snowballs of a resource.
-private var currentSnowballs : int;
+var currentSnowballs : int = 0;
 
 private var snowballRessource : Transform;
 private var creationTime : float = 0.0;
 var activationTimeout : float = 5.0;
 
+private var snowRestockingRound :int = 0;
+private var snowAmountManager :SnowAmountManager;
+
+function Awake () {
+	snowAmountManager = GameObject.FindGameObjectWithTag("Game").GetComponent(SnowAmountManager);
+}
+
 function Start () {
-	currentSnowballs = maxSnowballs;
+	snowRestockingRound = snowAmountManager.GetDistributionRound();
 	
 	GetComponent(Collider).isTrigger = true;
 	
 	snowballRessource = transform.Find("SnowballRessource");
+	
+	transform.position.y = Terrain.activeTerrain.SampleHeight(transform.position) + 0.8;
+
 //	var renderer : MeshRenderer = snowballRessource.GetComponent(MeshRenderer);
 //	renderer.material.color = Color.green;
 
@@ -33,10 +43,12 @@ function Update () {
 	
 	currentRestockTime += Time.deltaTime;
 
-	//Restock every 3 seconds.
 	if (currentRestockTime >= restockTime) {
-		Restock();
-		currentRestockTime = 0.0;
+		if (snowAmountManager.GetDistributionRound() > snowRestockingRound) {
+			Restock();
+			currentRestockTime = 0.0;
+			snowRestockingRound = snowAmountManager.GetDistributionRound();
+		}
 	}
 }
 
@@ -65,9 +77,9 @@ function GrabBigSnowball(player : GameObject) :GameObject {
 }
 
 //We need to restore all balls when restarting the level.
-function Restart() {
-	currentSnowballs = maxSnowballs;
-}
+//function Restart() {
+//	currentSnowballs = maxSnowballs;
+//}
 
 //Should be called before grabbing.
 function IsGrabPossible() : boolean {
@@ -78,6 +90,11 @@ function IsGrabPossible() : boolean {
 function IsGrabBigSnowballPossible() : boolean {
 	return (currentSnowballs >= bigSnowballAmount);
 }
+
+function GetCurrentSnowballs() :int {
+	return currentSnowballs;
+}
+
 
 function OnTriggerStay(other : Collider) {
 	//Debug.Log("triggering " + Time.time, this);
@@ -99,7 +116,7 @@ function OnTriggerStay(other : Collider) {
 
 function CreateResourceFromSnowball(ballSize : float, maxBallSize : float) {
 	creationTime = Time.time;
-	currentSnowballs = Mathf.Min(Mathf.Round(maxSnowballs * ballSize/maxBallSize), maxSnowballs);
+	currentSnowballs = Mathf.Min(Mathf.Round(30.0 * ballSize/maxBallSize), maxSnowballs);
 	
 	//Do some other important stuff	
 	snowballRessource = transform.Find("SnowballRessource");

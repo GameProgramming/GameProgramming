@@ -32,10 +32,6 @@ function Awake () {
 	overviewCam = transform.FindChild("OverviewCam").GetComponent(MapOverview);
 	
 //	ballSpawnPoints = GameObject.FindGameObjectsWithTag("BallSpawn");
-
-//	for (var i = 0; i<numBigSnowBalls; i++) {
-//		Instantiate(bigSnowBallPrefab, Vector3(0,-50,0), Quaternion.identity);
-//	}
 }
 
 function OnNetworkLoadedLevel () {
