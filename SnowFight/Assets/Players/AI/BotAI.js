@@ -59,6 +59,9 @@ function Awake () {
 
 function Update () {
 
+	if (target && pStatus.IsRidingUfo())
+		Debug.Log("target: " + target.tag, this);
+	
 	//if (target && target.CompareTag("BigSnowball"))
 	//we're probably not moving forward although we want to
 	if (moveDir != Vector3.zero && !ball && !(target && target.CompareTag("BigSnowball")) 
@@ -108,7 +111,6 @@ function Idle ()
 //		yield WaitForSeconds(0.2);
 		
 		if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
-			Debug.Log("Need ammo", this);
 			tar = FindSnowResource();
 			if (tar) {
 				target = tar;
@@ -167,6 +169,9 @@ function FindFreeBase() : GameObject{
 }
 
 function FindClosestOwnBase () : GameObject{
+	if (pStatus.IsRidingUfo())
+		return null;
+		
 	var base = null;
 	var shortestDist = Mathf.Infinity;
 	var curDist = 0.0;
@@ -242,8 +247,10 @@ function FindClosestEnemy () : GameObject {
         }
     } 
     
-    if (closest && (itemManager.GetItem() && itemManager.GetItem().CompareTag("Weapon"))) //can't just let go.. what if we have a bazooka?
-    	itemManager.ReleaseItem();
+//    if (closest && (itemManager.GetItem() && itemManager.GetItem().CompareTag("BigSnowball"))) { //can't just let go.. what if we have a bazooka?
+//		Debug.Log("Releasing " + itemManager.GetItem().tag, this);
+//    	itemManager.ReleaseItem();
+//	}
     	
     return closest;    
 }
@@ -390,16 +397,17 @@ function ConquerBase() {
 function GetUFO () {
 //	var pressActionTime = Mathf.Infinity;
 	while (true) {
-		motor.inputAction = false;
+//		motor.inputAction = false;
 		
 		if (!target || pStatus.IsRidingUfo()) {
 			return;
 		}
 			
-		//if target is a ball
+		//if target is a ufo
 		if (target && target.CompareTag("Ufo")) {
 			//if (Random.value > 0.95 || !target.GetComponent(Ufo).GetOwner() || pStatus.GetCurrentSnowballs() == 0)
 			//	return;
+			//somebody's already in the ufo
 			if (target.GetComponent(Ufo).GetOwner()) { // || pStatus.GetCurrentSnowballs() == 0) {
 				RemoveTarget();
 				return;
@@ -429,7 +437,7 @@ function GetUFO () {
 				moveDir = Vector3.zero;
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
-				yield WaitForSeconds(0.01);
+				//yield WaitForSeconds(0.01);
 			}
 
 		}
@@ -480,7 +488,7 @@ function GetBazooka () {
 				moveDir = Vector3.zero;
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
-				yield WaitForSeconds(0.01);
+			//	yield WaitForSeconds(0.01);
 			}
 
 		}
@@ -503,7 +511,6 @@ function GetAmmo () {
 		
 		if (alreadyThere) {
 			if (Random.value > 0.9 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
-				Debug.Log("Make snowball", this);
 				motor.inputAction = true;
 				buildingBall = Time.time;
 				yield WaitForSeconds(GetComponent(ItemManager).srPickTime);
@@ -597,7 +604,6 @@ function RollBall ()
 					
 				if (pStatus.GetCurrentSnowballs() == 0) { //RELOAD
 					motor.inputAltFire = true;
-					Debug.Log("Destroy ball for ammo", this);
 					var tar = FindSnowResource();
 					if (tar) {
 						target = tar;
@@ -698,7 +704,8 @@ function Attack ()
 //				direction *= -1;
 				
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
-		 	if (pStatus.IsRidingUfo() && AboveTarget() && !target.GetComponent(PlayerStatus).IsRidingUfo()) {
+		 	if (pStatus.IsRidingUfo() && AboveTarget() && 
+		 	(target.GetComponent(PlayerStatus) && !target.GetComponent(PlayerStatus).IsRidingUfo())) {
 		 		motor.inputAltFire = true;
 		 	}
 		 	

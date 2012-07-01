@@ -193,9 +193,9 @@ function IsHittable () :boolean {
 }
 
 function IsRidingUfo () : boolean {
-//	return state == PlayerState.InVehicle;
+	return state == PlayerState.InVehicle;
 	//return transform.FindChild("Ufo")!=null;
-	return gameObject.GetComponentInChildren(Ufo) != null;
+//	return gameObject.GetComponentInChildren(Ufo) != null;
 }
 
 
@@ -212,7 +212,7 @@ function Respawn () {
 @RPC
 function NetRespawn ( spawnBase :int ) {
 
-	Debug.Log("Net respawn ");
+//	Debug.Log("Net respawn ");
 	spawnBaseID = spawnBase;
 	
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);

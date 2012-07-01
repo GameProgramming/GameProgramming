@@ -114,6 +114,7 @@ function Update () {
 			snowResourcePick = null;
 		}
 	} else if (item && (inputActionUp || pStatus.IsDead())) {
+		Debug.Log("Input action up: " + inputActionUp, this);
 //  } else if (item && (inputAction || pStatus.IsDead())) {
 		ReleaseItem();
 	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem)
@@ -159,6 +160,10 @@ function PassOnMovementOffset (offset : Vector3) {
 function ReleaseItem () {
 	if(item) {
 		item.SendMessage("Release", SendMessageOptions.DontRequireReceiver);
+		
+//		if (item.CompareTag("Ufo"))
+//			Debug.Log("Releasing Ufo");
+		
 		if (item.CompareTag("BigSnowball"))
 			item.transform.parent = null;
 		if (pStatus.IsMainPlayer()) Debug.Log("Player released "+item);
