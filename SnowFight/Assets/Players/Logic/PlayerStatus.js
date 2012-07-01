@@ -38,7 +38,8 @@ class Attack {
 private var lastAttack :Attack;
 
 function Awake () {
-	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+	if(GameObject.FindGameObjectWithTag("Game"))
+		game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
 }
 
 function Start() {
