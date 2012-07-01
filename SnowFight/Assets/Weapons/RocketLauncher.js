@@ -105,7 +105,7 @@ function PickItem(player :GameObject) {
 }
 
    // Find the name of the closest enemy
-function AimTarget (enemyTag : String) : GameObject {
+function AimTarget (enemyTag : String) {
     // Find all game objects with tag enemyTag
     var gos : GameObject[];
     gos = GameObject.FindGameObjectsWithTag(enemyTag); 

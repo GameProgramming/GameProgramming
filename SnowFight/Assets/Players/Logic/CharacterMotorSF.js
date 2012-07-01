@@ -4,6 +4,7 @@
 
 private var itemManager : ItemManager;
 private var snowballSpawn : BulletSpawn;
+private var altSpawn : BulletSpawn;
 private var gameOver = false;
 private var gameOverTime = 0.0;
 
@@ -216,6 +217,7 @@ function Awake () {
 	tr = transform;
 	
 	snowballSpawn = transform.Find("BulletSpawn").GetComponent(BulletSpawn);
+	altSpawn = transform.Find("AltBulletSpawn").GetComponent(BulletSpawn);
 }
 
 private function UpdateFunction () {
@@ -228,8 +230,7 @@ private function UpdateFunction () {
 	snowballSpawn.startYSpeed = 0.03+rotationY*.015;
 		
 	if (canControl && !itemManager.GetItem() && !GetComponent(PlayerStatus).IsDead()) {
-		if (inputFire && throwProgress == 0 && snowballSpawn.reloadProgress <= 0 
-			&& GetComponent(PlayerStatus).GetCurrentSnowballs() > 0) {
+		if (inputFire && throwProgress == 0 && snowballSpawn.CanFire()) {
 			throwProgress = 2;
 			gameObject.SendMessage ("OnLoadThrow", SendMessageOptions.DontRequireReceiver);
 		} else if (throwProgress > 0) {
@@ -238,12 +239,22 @@ private function UpdateFunction () {
 				if (throwProgress > 2) {
 					snowballSpawn.Fire();
 					gameObject.SendMessage ("OnThrow", SendMessageOptions.DontRequireReceiver);
+				} else {
+					gameObject.SendMessage ("OnUnloadThrow", SendMessageOptions.DontRequireReceiver);
+					throwProgress = 0;
 				}
 				throwProgress = 0;
 			}
 		} else {
-			gameObject.SendMessage ("OnUnloadThrow", SendMessageOptions.DontRequireReceiver);
-			throwProgress = 0;
+			if (inputAltFire && altSpawn.CanFire() && throwProgress == 0) {
+				throwProgress = 1;
+				altSpawn.Fire();
+			} else if (throwProgress > 0) {
+				throwProgress += Time.deltaTime;
+				if (throwProgress > 2.0) {
+					throwProgress = 0;
+				}
+			}
 		}
 	} else {
 		if (!itemManager.GetItem()) {
