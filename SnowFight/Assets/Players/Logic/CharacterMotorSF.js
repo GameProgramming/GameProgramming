@@ -218,6 +218,10 @@ function Awake () {
 	
 	snowballSpawn = transform.Find("BulletSpawn").GetComponent(BulletSpawn);
 	altSpawn = transform.Find("AltBulletSpawn").GetComponent(BulletSpawn);
+	
+	inputAction = false;
+	inputFire = false;					
+	inputAltFire = false;
 }
 
 private function UpdateFunction () {
