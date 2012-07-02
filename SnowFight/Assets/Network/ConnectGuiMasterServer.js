@@ -42,9 +42,9 @@ function OnGUI ()
 	if (Network.peerType == NetworkPeerType.Disconnected) {
 		windowRect = GUILayout.Window (0, windowRect, MakeWindow, "Server Controls");
 		serverListRect = GUILayout.Window(1, serverListRect, MakeClientWindow, "Server List");
-	}
-	if (GUI.Button (Rect (Screen.width - 90, Screen.height - 35, 80, 30), "Quit Game")) {
-		Application.Quit();
+		if (GUI.Button (Rect (Screen.width - 90, Screen.height - 35, 80, 30), "Quit Game")) {
+			Application.Quit();
+		}
 	}
 }
 
