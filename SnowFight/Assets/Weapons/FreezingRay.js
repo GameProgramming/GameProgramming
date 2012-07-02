@@ -40,19 +40,27 @@ function SetActive (a :boolean) :boolean {
 	if (a != inputFire) {
 		if (a) {
 			if (energy > 0.25 * energyMax) { // nur aktivierbar, wenn halbwegs aufgeladen.
-				// hier ggf noch diversen kram rein.
-				// z.B. sound und eine art animation.
-				this.renderer.enabled = true;
-				inputFire = a;
+				NetSetActive (true);
 			}
 		} else {
-			inputFire = a;
-			freezingCurr = null;
-			this.renderer.enabled = false;
+			NetSetActive (false);
 		}
 	}
 	return inputFire;
 }
+
+private function NetSetActive (a :boolean) {
+	if (a) {
+		// hier ggf noch diversen kram rein.
+		// z.B. sound und eine art animation.
+		this.renderer.enabled = true;
+	} else {
+		freezingCurr = null;
+		this.renderer.enabled = false;
+	}
+	inputFire = a;
+}
+
 
 function OnTriggerStay (other :Collider) {
 	if (inputFire && (other.CompareTag("Player"))) {
@@ -75,3 +83,13 @@ function OnTriggerExit (other :Collider) {
 function OnGUI() {
 	
 }
+
+function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
+	var inp :boolean = inputFire;
+    stream.Serialize(inp);
+    if (inp != inputFire) {
+    	NetSetActive(inp);
+    }
+}
+
+@script RequireComponent (NetworkView)

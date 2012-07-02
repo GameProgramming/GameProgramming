@@ -57,7 +57,7 @@ function Awake ()
 		Debug.Log("This machine has a public IP address");
 	else
 		Debug.Log("This machine has a private IP address");
-		
+	
 	levels = GetComponent(NetworkLevelLoad).supportedNetworkLevels;
 }
 

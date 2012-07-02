@@ -49,7 +49,6 @@ function Start () {
 }
 
 function Awake () {
-
  	startSize = transform.localScale;
 }
 
@@ -267,15 +266,17 @@ function OnReachBase () {
 function SmashBallToSnowfield () {
 //	transform.parent = null;
 	Release ();
-	transform.position.y -= radius ; //TODO: don't hardcode this value!!
-	transform.position.y += 1;
-	Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
-	snowRessource.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
+	var res :GameObject = Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
+	res.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
 	Network.Destroy(gameObject);
 }
 
 function GetLastOwner() : GameObject {
 	return lastOwner;
+}
+
+function GetCurrentSnowballs() :int {
+	return 10;
 }
 
 @script RequireComponent (BigSnowBallDamage)

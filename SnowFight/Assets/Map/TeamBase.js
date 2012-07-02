@@ -23,6 +23,10 @@ private var currentTeamTakingOver : Team;
 private var progress : float;
 
 var specialWeapons : GameObject[];
+var specialWeaponIcons : Texture2D[];
+
+var spawnWeaponPipelineLength :int = 4;
+var spawnWeaponPipeline : Array;
 
 
 function GetSpawnPoint() : Vector3 {
@@ -40,6 +44,8 @@ function GetSpawnPoint() : Vector3 {
 
 function Awake () {
 	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+	spawnWeaponPipeline = new Array();
+	FillPipeline();
 }
 
 function Start () {
@@ -52,6 +58,12 @@ function Start () {
 	SetTeam(team);
 	currentTeamTakingOver = null;
 	progress = 0.0;
+}
+
+function FillPipeline() {
+	while (spawnWeaponPipeline.length < spawnWeaponPipelineLength) {
+		spawnWeaponPipeline.Add(Random.Range(0,specialWeapons.Length));
+	}
 }
 
 function Update () {
@@ -109,7 +121,8 @@ function OnTriggerStay(other : Collider) {
 			enterTime += Time.deltaTime;
 			if (enterTime > 2.0 && other.GetComponent(BigSnowBall)) {
 				other.transform.parent = null;
-				var weapon = specialWeapons[Random.Range(0,specialWeapons.Length)];
+				var weapon = specialWeapons[spawnWeaponPipeline.Shift()];
+				FillPipeline();
 				Network.Instantiate(weapon, other.transform.position, Quaternion.identity,0);
 				other.gameObject.SendMessage("OnReachBase", SendMessageOptions.DontRequireReceiver);
 				enterTime = 0.0;
@@ -136,4 +149,18 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
         	SetTeam(t);
         }
     }
+}
+
+function OnGUI () {
+	var pos :Vector3 = Camera.main.WorldToScreenPoint(transform.position);
+	if (pos.z > 0 && pos.z < 60) {
+		GUILayout.BeginArea(Rect(pos.x, Screen.height-pos.y, 20,150));
+		GUILayout.BeginVertical();
+		for (var itemId :int in spawnWeaponPipeline) {
+			if (itemId < specialWeaponIcons.Length)
+				GUILayout.Label(specialWeaponIcons[itemId],GUILayout.Height(25));
+		}
+		GUILayout.EndVertical();
+		GUILayout.EndArea();
+	}
 }

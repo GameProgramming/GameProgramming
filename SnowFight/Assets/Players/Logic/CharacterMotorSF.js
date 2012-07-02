@@ -30,7 +30,9 @@ var inputAction : boolean = false;
 var inputFire : boolean = false;
 @System.NonSerialized
 var inputAltFire : boolean = false;
-var throwProgress = 0.0;
+var throwProgress :float = 0.0;
+private var breathProgress :float = 0.0;
+var breathReload :float = 1.5;
 
 var rotationY = 0.0;
 var rotationX = 0.0;
@@ -250,13 +252,13 @@ private function UpdateFunction () {
 				throwProgress = 0;
 			}
 		} else {
-			if (inputAltFire && altSpawn.CanFire() && throwProgress == 0) {
-				throwProgress = 1;
+			if (inputAltFire && altSpawn.CanFire() && breathProgress == 0) {
+				breathProgress = 1;
 				altSpawn.Fire();
-			} else if (throwProgress > 0) {
-				throwProgress += Time.deltaTime;
-				if (throwProgress > 2.0) {
-					throwProgress = 0;
+			} else if (breathProgress > 0) {
+				breathProgress += Time.deltaTime;
+				if (breathProgress > 1.0+breathReload) {
+					breathProgress = 0;
 				}
 			}
 		}
@@ -738,6 +740,16 @@ function OnPlayerStateChange (newState :PlayerState) {
 	}
 }
 
+function OnItemChange (iM :ItemManager) {
+	breathProgress = 0.1;
+}
+
+function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
+	stream.Serialize(inputFire);
+	stream.Serialize(inputAltFire);
+}
+
 // Require a character controller to be attached to the same game object
 @script RequireComponent (CharacterController)
 @script RequireComponent (ItemManager)
+@script RequireComponent (NetworkView)
