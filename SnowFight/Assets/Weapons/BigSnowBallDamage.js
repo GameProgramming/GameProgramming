@@ -22,7 +22,7 @@ function GetDamage() : int {
 	if (GetVelocity().magnitude > painfulSpeed) {
 		damage = Mathf.Round(maximumDamage * GetVelocity().magnitude/speed);
 	}
-	Debug.Log("Velocity " + GetVelocity().magnitude + " damage " + damage, this);
+//	Debug.Log("Velocity " + GetVelocity().magnitude + " damage " + damage, this);
 	return Mathf.Min(maximumDamage, damage);
 }
 

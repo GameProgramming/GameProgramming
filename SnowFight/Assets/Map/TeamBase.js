@@ -157,7 +157,8 @@ function OnGUI () {
 		GUILayout.BeginArea(Rect(pos.x, Screen.height-pos.y, 20,150));
 		GUILayout.BeginVertical();
 		for (var itemId :int in spawnWeaponPipeline) {
-			GUILayout.Label(specialWeaponIcons[itemId],GUILayout.Height(25));
+			if (itemId < specialWeaponIcons.Length)
+				GUILayout.Label(specialWeaponIcons[itemId],GUILayout.Height(25));
 		}
 		GUILayout.EndVertical();
 		GUILayout.EndArea();

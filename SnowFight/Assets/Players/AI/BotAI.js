@@ -34,23 +34,21 @@ private var stuckTime : float = 0.0;
 var timeoutWhenStuck : float = 0.5;
 private var alternateDir = Vector3.zero;
 
+private var busy : boolean = false;
+private var teamAI : TeamAI;
+
 function Start ()
 {
 	var game : GameStatus = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
 	motor = GetComponent(CharacterMotorSF);
 	pStatus = GetComponent(PlayerStatus);
 	itemManager = GetComponent(ItemManager);
-	groundBase = pStatus.team.GetBase().gameObject;
+	teamAI = transform.parent.GetComponent(TeamAI);
 	
 	yield WaitForSeconds(Random.value);
 			
-	// Just attack for now
-//	while (true)	
-//	{
-//		// Don't do anything when idle. And wait for player to be in range!
-//		// This is the perfect time for the player to attack us
-		yield Idle();
-//	}
+	//Idle might be the wrong name for the function.. this does it all
+	yield Idle();
 }
 
 function Awake () {
@@ -59,10 +57,6 @@ function Awake () {
 
 function Update () {
 
-	if (target && pStatus.IsRidingUfo())
-		Debug.Log("target: " + target.tag, this);
-	
-	//if (target && target.CompareTag("BigSnowball"))
 	//we're probably not moving forward although we want to
 	if (moveDir != Vector3.zero && !ball && !(target && target.CompareTag("BigSnowball")) 
 		&& !pStatus.IsRidingUfo() && Time.time > (stuckTime + timeoutWhenStuck) 
@@ -108,237 +102,73 @@ function Idle ()
 	{
 		moveDir = Vector3.zero;
 		itemManager.ReleaseItem();
-//		yield WaitForSeconds(0.2);
 		
-		if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
-			tar = FindSnowResource();
-			if (tar) {
-				target = tar;
-				if(target.CompareTag("SnowballRessource"))
-					yield GetAmmo();
-				else if (target.CompareTag("BigSnowball"))
-					yield RollBall();
+			if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
+				tar = FindSnowResource();
+				if (tar) {
+					target = tar;
+					if(target.CompareTag("SnowballRessource"))
+						yield GetAmmo();
+					else if (target.CompareTag("BigSnowball"))
+						yield RollBall();
+				}
 			}
-		}
-		else {
-
-			//first of all head towards a free base if there is one and there is no enemy really really close
-			tar = FindFreeBase();
-			if (tar) {
+			tar = teamAI.FindClosestEnemy();			
+			if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
 				target = tar;
-				yield ConquerBase();
+				yield Attack();	
 			}
 
-			//otherwise just do business as usual
-			tar = FindClosestBigSnowball();
-			if (tar) {
-				target = tar;
-				yield RollBall();
+			var targets : GameObject[] = teamAI.GetTargets(gameObject);
+			for (t in targets) {			
+				
+				if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
+					tar = FindSnowResource();
+					if (tar) {
+						target = tar;
+						if(target.CompareTag("SnowballRessource"))
+							yield GetAmmo();
+						else if (target.CompareTag("BigSnowball"))
+							yield RollBall();
+					}
+				}
+				tar = teamAI.FindClosestEnemy();			
+				if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
+					target = tar;
+					yield Attack();	
+				}
+				
+				busy = false;
+				target = t;
+				if (target) {
+					if(target.CompareTag("SnowballRessource")) {
+						yield GetAmmo();
+					}
+					else if (target.CompareTag("BigSnowball")) {
+						yield RollBall();	
+					}
+					else if (target.CompareTag("Base")) {
+						yield ConquerBase();
+					}
+					else if (target.CompareTag("Ufo")) {
+						yield GetUFO();
+					}
+					else if (target.CompareTag("Weapon")) {
+						yield GetBazooka();
+					}
+				}
 			}
-			
-			tar = FindClosestEnemy();
-			if (tar) {
-				target = tar;
-				yield Attack();
-			}
-			
-			tar = FindCloseUFO();
-			if (tar) {
-				target = tar;
-				yield GetUFO();
-			}
-		}
 		yield;
 	}
 } 
 
-function FindFreeBase() : GameObject{
-	if (pStatus.IsRidingUfo()) 
-		return null;
-			
-	var base = null;
-	for (var t in GameObject.FindObjectsOfType(TeamBase)) {
-		var team = t.transform.parent;
-		if (team && team.GetComponent(Team).GetTeamNumber() == 0)
-			base = t.gameObject;
-			if (Random.value > 0.8) {
-				return base;
-			}
-	}
-	return base;
-}
-
-function FindClosestOwnBase () : GameObject{
-	if (pStatus.IsRidingUfo())
-		return null;
-		
-	var base = null;
-	var shortestDist = Mathf.Infinity;
-	var curDist = 0.0;
-	for (var t in GameObject.FindObjectsOfType(TeamBase)) {
-		var team = t.transform.parent;
-		if (team.GetComponent(Team).GetTeamNumber() == pStatus.GetTeamNumber()) {
-			curDist = Vector3.Distance(transform.position, team.transform.position);
-			if (curDist < shortestDist) {
-				base = t.transform.Find("TeamFlag").gameObject;
-				shortestDist = curDist;
-			}
-		}
-	}
-	return base;
-}
-
-function FindCloseUFO () : GameObject {
-	if (pStatus.IsRidingUfo())
-		return null;
-		
-	var ufo = null;
-	for (var u in GameObject.FindGameObjectsWithTag("Ufo")) {
-		var ufoPos = u.transform.position;
-		ufoPos.y = transform.position.y;
-		if (Vector3.Distance(ufoPos, transform.position) < 2*attackDistance && !u.GetComponent(Ufo).GetOwner())
-			ufo = u.gameObject;
-	}
-	return ufo;
-}
-
-function FindCloseBazooka () : GameObject {
-	if (pStatus.IsRidingUfo())
-		return null;
-		
-	var bazooka = null;
-	var minDist = Mathf.Infinity;
-	var curDist = 0.0;
-	for (var b in GameObject.FindGameObjectsWithTag("Weapon")) {
-		var bazookaPos = b.transform.position;
-		bazookaPos.y = transform.position.y;
-		
-		curDist = Vector3.Distance(bazookaPos, transform.position);
-		if (curDist < minDist) {// 2*attackDistance && b.transform.parent == null)
-			bazooka = b.gameObject;
-			minDist = curDist;
-		}
-	}
-	return bazooka;
-}
-
-// Find the name of the closest enemy within distance
-function FindClosestEnemy () : GameObject {
-    // Find all game objects with tag Enemy
-    var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("Player"); 
-    var closest : GameObject;
-    var distance = Mathf.Infinity; 
-    var position = transform.position; 
-    var diff;
-	var curDistance;
-	        
-    // Iterate through them and find the closest one
-    for (var go : GameObject in gos)  { 
-    	var status = go.GetComponent(PlayerStatus);
-    	//get closest bot
-    	if (status != null && !status.team.Friendly(pStatus.team)) {
-	        diff = (go.transform.position - position);
-	        curDistance = diff.sqrMagnitude; 
-	        if (curDistance < distance) { 
-	            closest = go; 
-	            distance = curDistance; 
-	        } 
-        }
-    } 
-    
-//    if (closest && (itemManager.GetItem() && itemManager.GetItem().CompareTag("BigSnowball"))) { //can't just let go.. what if we have a bazooka?
-//		Debug.Log("Releasing " + itemManager.GetItem().tag, this);
-//    	itemManager.ReleaseItem();
-//	}
-    	
-    return closest;    
-}
-
-function FindBestBigSnowball () : GameObject {
-	if (pStatus.IsRidingUfo())
-		return null;
-			
-    // Find all game objects with tag BigSnowball
-    var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("BigSnowball"); 
-    
-    var closest : GameObject;
-    var distance = Mathf.Infinity; 
-    var position = transform.position; 
-    var diff;
-	var curDistance;
-    groundBase = FindClosestOwnBase();
-    
-    // Iterate through them and find the closest one
-    for (var go : GameObject in gos)  { 
-    	diff1 = (go.transform.position - position);
-    	diff2 = (go.transform.position - groundBase.transform.position);
-	    curDistance = diff1.sqrMagnitude + diff2.sqrMagnitude; 
-	    if (curDistance < distance) {
-	    	if (!BallOfFriend(go.transform)) { 
-		        closest = go; 
-		        distance = curDistance; 
-	        }
-	    }
-    } 
-    
-    return closest;    
-}
-
-function FindClosestBigSnowball () : GameObject {
-	if (pStatus.IsRidingUfo())
-		return null;
-			
-    // Find all game objects with tag BigSnowball
-    var gos : GameObject[] = GameObject.FindGameObjectsWithTag("BigSnowball"); 
-    
-    var closest : GameObject;
-    var distance : float = Mathf.Infinity; 
-    var position : Vector3 = transform.position; 
-	var curDistance : float = 0.0;
-
-    groundBase = FindClosestOwnBase();
-    
-    // Iterate through them and find the closest one
-    for (var go in gos)  { 
-	    curDistance = Vector3.Distance(position, go.transform.position); 
-	    if (curDistance < distance && !BallOfFriend(go.transform)) { 
-	        closest = go; 
-	        distance = curDistance; 
-	    }
-    } 
-    
-    return closest;    
-}
-
 function FindSnowResource () : GameObject {
-	if (pStatus.IsRidingUfo())
-		return null;
-			
-	var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag("SnowballRessource"); 
-    
-    var closest : GameObject;
-    var distance = Mathf.Infinity; 
-    var pos = transform.position; 
-	var curDistance = 0.0;
-	        
-    // Iterate through them and find the closest one
-    for (var go in gos)  { 
-    	curDistance = Vector3.Distance(pos, go.transform.position);
-	    if (curDistance < distance) { 
-	        closest = go; 
-	        distance = curDistance; 
-	    }
-    } 
-        
-    var snowBall = FindClosestBigSnowball();
-    if (snowBall && FirstCloserThanSecond(snowBall.transform.position,  closest.transform.position)) {
-//    	target = snowBall;
-//		yield RollBall();
-    	closest = snowBall; //return null, then we will jump out and search for snowballs
-	}
+
+	var closest = teamAI.GetClosestObjectInArray(gameObject, teamAI.GetSnowRessources());
+	var ball = teamAI.GetClosestObjectInArray(gameObject, teamAI.GetSnowRessources());
+	
+	if (ball && FirstCloserThanSecond(ball.transform.position,  closest.transform.position))
+		closest = ball;
     	
     return closest;  
 }
@@ -350,21 +180,23 @@ function ConquerBase() {
 	var flagPosition : Vector3;
 	
 	while (true) {
+		if (pStatus.GetCurrentSnowballs() == 0 || pStatus.IsRidingUfo() || !target) {
+			RemoveTarget();
+			return;
+		}
+		
 		var team = target.transform.parent;
-		if (pStatus.GetCurrentSnowballs() == 0 || pStatus.IsRidingUfo() || !target || !team || 
-			team.GetComponent(Team).GetTeamNumber() == pStatus.GetTeamNumber()) {//leave once the base is conquered
+		if (!team || team.GetComponent(Team).GetTeamNumber() == pStatus.GetTeamNumber()) {//leave once the base is conquered
 			RemoveTarget();
 			return;
 		}
 		
 		//if an enemy is too close forget this stuff and attack!!
-		var enemy = FindClosestEnemy();
+		var enemy = teamAI.FindClosestEnemy();
 		if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance) {
 			RemoveTarget();
 			return;
 		}
-			
-		flagPosition = target.transform.Find("TeamFlag").position;
 		
 		if (alreadyThere) {
 			if (Time.time > arrivalTime+patience) {
@@ -374,47 +206,38 @@ function ConquerBase() {
 			}
 		}
 		else {
+			flagPosition = target.transform.Find("TeamFlag").position;
 			if (Vector3.Distance(transform.position, flagPosition) >= 5)
 				MoveTowardsPosition(flagPosition);
 			else {
 				//wait for a while
 				alreadyThere = true;
 				arrivalTime = Time.time;
-				patience = Random.Range(0.0,4.0);
+				patience = Random.Range(2.0,4.0);
 				moveDir = Vector3.zero;
 			}
-		}
-
-//		if (Random.value > 0.99) {
-//			RemoveTarget();
-//			return;
-//		}
-			
+		}			
 		yield;
 	}
 }
 
 function GetUFO () {
-//	var pressActionTime = Mathf.Infinity;
 	while (true) {
-//		motor.inputAction = false;
 		
 		if (!target || pStatus.IsRidingUfo()) {
 			return;
 		}
 			
-		//if target is a ufo
-		if (target && target.CompareTag("Ufo")) {
-			//if (Random.value > 0.95 || !target.GetComponent(Ufo).GetOwner() || pStatus.GetCurrentSnowballs() == 0)
-			//	return;
-			//somebody's already in the ufo
-			if (target.GetComponent(Ufo).GetOwner()) { // || pStatus.GetCurrentSnowballs() == 0) {
+		//if target is a ufo and someone's already in it, forget it
+		if (target.CompareTag("Ufo")) {
+
+			if (target.GetComponent(Ufo).GetOwner() || pStatus.GetCurrentSnowballs() == 0) {
 				RemoveTarget();
 				return;
 			}
 				
 			//if an enemy is too close forget this stuff and attack!!
-			var enemy = FindClosestEnemy();
+			var enemy = teamAI.FindClosestEnemy();
 			if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
 				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 				RemoveTarget();
@@ -437,7 +260,6 @@ function GetUFO () {
 				moveDir = Vector3.zero;
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
-				//yield WaitForSeconds(0.01);
 			}
 
 		}
@@ -451,22 +273,20 @@ function GetBazooka () {
 	while (true) {
 		motor.inputAction = false;
 		
-		if (!target || pStatus.IsRidingUfo()) {
+		if (!target || pStatus.IsRidingUfo() || pStatus.GetCurrentSnowballs() == 0) {
 			return;
 		}
 			
-		//if target is a ball
-		if (target && target.CompareTag("Weapon")) {
-			//if (Random.value > 0.95 || !target.GetComponent(Ufo).GetOwner() || pStatus.GetCurrentSnowballs() == 0)
-			//	return;
+		//if target is a weapon
+		if (target.CompareTag("Weapon")) {
 			if (target.transform.parent) {//This means, another bot is already holding this weapon || pStatus.GetCurrentSnowballs() == 0) {
 				RemoveTarget();
 				return;
 			}
 				
 			//if an enemy is too close forget this stuff and attack!!
-			var enemy = FindClosestEnemy();
-			if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance && 
+			var enemy = teamAI.FindClosestEnemy();
+			if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
 				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 				RemoveTarget();
 				return;
@@ -488,7 +308,6 @@ function GetBazooka () {
 				moveDir = Vector3.zero;
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
-			//	yield WaitForSeconds(0.01);
 			}
 
 		}
@@ -508,6 +327,8 @@ function GetAmmo () {
 			RemoveTarget();
 			return;
 		}
+		
+		busy = true;
 		
 		if (alreadyThere) {
 			if (Random.value > 0.9 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
@@ -542,8 +363,6 @@ function GetAmmo () {
 
 function RollBall ()
 {
-	groundBase = FindClosestOwnBase();
-	
 	while (true) {
 		motor.inputAction = false;
 		
@@ -554,30 +373,24 @@ function RollBall ()
 			
 		//if target is a ball
 		if (target && target.CompareTag("BigSnowball")) {
-			if (Random.value > 0.90 && BallOfFriend(target.transform)) {
-				RemoveTarget();
-				return;
-			}
-			
 			isAttacking = false;
 			ball = itemManager.GetItem();
 			
-			//if we have a ball, find out where the closest base is
-//			if (ball)
-//				groundBase = FindClosestOwnBase();
+			// find out where the closest base is
+			groundBase = teamAI.GetClosestOwnBase(target);
 			
 			//if we don't have a ball go get it
 			if (!ball) {
 				//if the ball is already taken or we're out of ammo, return to check your other options
-				if (BallRolledByFriend () || pStatus.GetCurrentSnowballs() == 0) { //RELOAD
+				if (BallRolledByFriend ()) {
 					RemoveTarget();
 					return;
 				}
 					
 				//if an enemy is too close forget this stuff and attack!!
-				var enemy = FindClosestEnemy();
+				var enemy = teamAI.FindClosestEnemy();
 				if(Random.value > 0.8 && enemy && 
-					Vector3.Distance(enemy.transform.position, transform.position)< attackDistance && 
+					Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
 					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 					RemoveTarget();
 					return;
@@ -601,14 +414,11 @@ function RollBall ()
 					RemoveTarget();
 					return;
 				}
+				
+				busy = true;
 					
 				if (pStatus.GetCurrentSnowballs() == 0) { //RELOAD
 					motor.inputAltFire = true;
-					var tar = FindSnowResource();
-					if (tar) {
-						target = tar;
-						yield GetAmmo();
-					}
 					RemoveTarget();
 					return;
 				}
@@ -621,13 +431,8 @@ function RollBall ()
 			
 			if (Random.value > 0.9) {
 				motor.inputAction = false;
-				tar = FindClosestEnemy();
-				//var oldTar = target;
-				if (tar && (tar.transform.position - transform.position).magnitude < 2*attackDistance) {
-					target = tar;
-					Attack();
-//					if(!target || target.GetComponent(PlayerStatus).IsDead())
-//						target = oldTar;
+				enemy = teamAI.FindClosestEnemy();
+				if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance) {
 					RemoveTarget();
 					return;
 				}
@@ -662,6 +467,8 @@ function Attack ()
 			return;
 		}
 		
+		busy = true;
+		
 		pos = transform.position;
 		distanceToEnemy = Vector3.Distance(pos, target.transform.position);
 
@@ -675,7 +482,6 @@ function Attack ()
 			
 			// depending on the angle, start moving
 			direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
-			//motor.inputMoveDirection = Vector3.zero;
 			moveDir = Vector3.zero;
 		} else {
 			// The angle of our forward direction and the player position is larger than 100 degrees
@@ -698,10 +504,6 @@ function Attack ()
 			//we're far away now, move closer again
 			if (backup && distanceToEnemy > punchRadius)
 				backup = false;
-
-			//TODO: move away from enemy
-//			if (backup && !pStatus.IsRidingUfo())
-//				direction *= -1;
 				
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
 		 	if (pStatus.IsRidingUfo() && AboveTarget() && 
@@ -725,29 +527,10 @@ function Attack ()
 		 			motor.inputFire = !motor.inputFire;
 		 		}
 		 		else { //if there's a bazooka lying around, go get it!
-		 			weapon = FindCloseBazooka ();
-		 			
-		 			if (weapon) {
-		 				GetBazooka();
-		 			}
-		 			//if there's nothing, find a snowfield, make a ball and take it to base wishing for a bazooka
-		 			else {
-		 				tar = FindSnowResource();
-						if (tar) {
-							target = tar;
-							yield GetAmmo();
-						}
-		 			}
+		 			//hopefully do something else!
+		 			RemoveTarget();
+		 			return;
 		 		}
-		 		
-//		 		//TODO:
-				//when holding a bazooka  -- shoot!! :)
-				//else
-//		 		//if there's a bazooka close, go get it!
-//		 		//otherwise try finding a snowball
-//		 		target == null;
-//				RemoveTarget();
-//		 		return;
 		 	}
 
 			//shoot and move around a bit ;)
@@ -767,10 +550,12 @@ function Attack ()
 			moveDir = direction;
 		}
 		
-		if (Random.value > 0.90) {
-			RemoveTarget();
-			return;
-		}
+		//TODO: uncomment if the rest works
+//		if (Random.value > 0.99) {
+//			Debug.Log("return 4", this);
+//			RemoveTarget();
+//			return;
+//		}
 
 		// yield for one frame
 		yield;
@@ -778,7 +563,6 @@ function Attack ()
 	
 
 	isAttacking = false;
-	//motor.inputMoveDirection = Vector3.zero;
 	moveDir = Vector3.zero;
 	
 }
@@ -815,7 +599,6 @@ function MoveTowardsPosition (position : Vector3) {
 		move = Mathf.Clamp01((90 - angle) / 90);
 		// depending on the angle, start moving
 		direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
-		//direction = Vector3.zero;
 	} else {
 		// Just move forward at constant speed
 		direction = transform.TransformDirection(Vector3.forward * attackSpeed);
@@ -823,6 +606,7 @@ function MoveTowardsPosition (position : Vector3) {
 	moveDir = direction;
 }
 
+//TODO: not used??
 function BallOfFriend ( t : Transform ) : boolean {
     // Find all game objects with tag Enemy
     var gos : GameObject[];
@@ -872,6 +656,10 @@ function OnDrawGizmosSelected ()
 	Gizmos.DrawWireSphere (transform.position, punchRadius);
 	Gizmos.color = Color.red;
 	Gizmos.DrawWireSphere (transform.position, attackDistance);
+}
+
+function IsBusy () {
+	return busy;
 }
 
 function OnSetBot () {

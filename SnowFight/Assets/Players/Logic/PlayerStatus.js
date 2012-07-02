@@ -45,11 +45,6 @@ function Awake () {
 function Start() {
 	gameOver = false;
 	SetState(PlayerState.Dead);
-	
-//	team = transform.parent.gameObject.GetComponent("Team");
-//	if (team == null) {
-//		Debug.LogError("Could not determine Player team. (Player object has to be child of Team object!)");
-//	}
 }
 
 function JoinTeam (t :Team) {
@@ -186,15 +181,15 @@ function Freeze (attack :Attack) {
 }
 
 function IsFrozen () :boolean {
-	return state == PlayerState.Frozen;
+	return (state == PlayerState.Frozen);
 }
 
 function IsHittable () :boolean {
-	return state == PlayerState.Alive && !gameOver;
+	return (state == PlayerState.Alive) && !gameOver;
 }
 
 function IsRidingUfo () : boolean {
-	return state == PlayerState.InVehicle;
+	return (state == PlayerState.InVehicle);
 	//return transform.FindChild("Ufo")!=null;
 //	return gameObject.GetComponentInChildren(Ufo) != null;
 }
@@ -205,6 +200,9 @@ function GetTeam () {
 }
 
 function Respawn () {
+	//just make sure this really really happens!
+	currentSnowballs = maximumSnowballCapacity;
+	
 	if (networkView.isMine) {
 		networkView.RPC("NetRespawn", RPCMode.All, spawnBaseID);
 	}
@@ -213,7 +211,7 @@ function Respawn () {
 @RPC
 function NetRespawn ( spawnBase :int ) {
 
-//	Debug.Log("Net respawn ");
+	Debug.Log("Net respawn ");
 	spawnBaseID = spawnBase;
 	
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
@@ -260,7 +258,7 @@ function GetHp () : int {
 }
 
 function IsDead () : boolean {
-	return state == PlayerState.Dead;
+	return (state == PlayerState.Dead);
 }
 
 function GameOver () {
