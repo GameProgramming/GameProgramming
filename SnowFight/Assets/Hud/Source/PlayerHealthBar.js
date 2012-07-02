@@ -1,11 +1,10 @@
 private var hit : boolean = false;
 private var hitTime : float = 0.0;	
-		
+private var inUFO : boolean = false;
+
 function OnGUI() {
-	
-	if (transform.tag.Equals("Player")) {
-	var player = gameObject.GetComponent("PlayerStatus");
-	
+	var player = gameObject.GetComponent("PlayerStatus");	
+	if (player.IsMainPlayer()) {
 		var hpPercent : float = parseFloat(player.GetHp()) / parseFloat(player.GetFullHp());
 		
 	    var texture : Texture2D = new Texture2D(1, 1);
@@ -36,8 +35,41 @@ function OnGUI() {
 				hit = false;
 			}
 		}
-		GUI.Box (Rect (9, Screen.height - 25, totalWidth+2, boxHeight+2), "");
-		GUI.Box (Rect (10, Screen.height - 24, boxWidth, boxHeight), "",style);
+		if (!inUFO) {
+			GUI.Box (Rect (9, Screen.height - 25, totalWidth+2, boxHeight+2), "");
+			GUI.Box (Rect (10, Screen.height - 24, boxWidth, boxHeight), "",style);
+		} else {
+			//The UFO Health display.
+			var uFOScript : Ufo = transform.GetComponentInChildren(Ufo);
+			var uFOHealthPercent = uFOScript.hp / uFOScript.maxHp;		
+			var uFOHealthTexture : Texture2D = new Texture2D(1, 1);
+			var uFOHealthColor : Color = new Color(1-hpPercent, hpPercent, 0,0.5);
+			var uFOHealthStyle : GUIStyle = new GUIStyle();
+			var uFOHealthBoxWidth = uFOHealthPercent * (Screen.width/4);
+			uFOHealthTexture.SetPixel(0, 0, uFOHealthColor);
+			uFOHealthTexture.Apply();
+			uFOHealthStyle.normal.background = uFOHealthTexture;
+			GUI.Box (Rect (9, Screen.height - 75, totalWidth + 2, boxHeight+2), "");
+			GUI.Box (Rect (10, Screen.height - 74, uFOHealthBoxWidth, boxHeight), "", uFOHealthStyle);
+			
+			//The freezing ray display.
+			var uFOFreezingTexture : Texture2D = new Texture2D(1, 1);
+			var uFOFreezingColor : Color = Color.blue;
+			var uFOFreezingStyle : GUIStyle = new GUIStyle();
+			var ray : FreezingRay = transform.GetComponentInChildren(FreezingRay);
+			var rayPercent = ray.energy / ray.energyMax;
+			var freezingRayBoxWidth = rayPercent * (Screen.width/4);
+			uFOFreezingTexture.SetPixel(0, 0, uFOFreezingColor);
+			uFOFreezingTexture.Apply();
+			uFOFreezingStyle.normal.background = uFOFreezingTexture;
+			GUI.Box (Rect (9, Screen.height - 50, totalWidth + 2, boxHeight+2), "");
+			GUI.Box (Rect (10, Screen.height - 49, freezingRayBoxWidth, boxHeight), "", uFOFreezingStyle);
+			
+			//The player health.
+			GUI.Box (Rect (9, Screen.height - 25, (totalWidth+2)/2, (boxHeight+2)), "");
+			GUI.Box (Rect (10, Screen.height - 24, boxWidth/2, boxHeight/2), "",style);
+		}
+
 		//GUI.Box (Rect (Screen.width/1.4 + (totalWidth-boxWidth), 10, boxWidth, boxHeight), "",style);
 	}
 }
@@ -54,4 +86,12 @@ function OnSetRemote () {
 
 function SetHit () {
 	hit = true;
+}
+
+function SetInUFO (newInUFO : boolean) {
+	inUFO = newInUFO;
+}
+
+function GetInUFO () : boolean {
+	return inUFO;
 }

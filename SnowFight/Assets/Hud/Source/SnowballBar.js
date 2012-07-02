@@ -1,3 +1,5 @@
+private var inUFO : boolean = false;
+
 function OnGUI() {
 
 	if (transform.tag.Equals("Player")) {
@@ -23,14 +25,26 @@ function OnGUI() {
 		var numberOfSnowballs = player.GetCurrentSnowballs();
 		var j : int = boxWidth * numberOfBoxes + 50;
 		
-		//Now create the boxes.
-		for (i=0; i<numberOfBoxes; i++) {			
-			GUI.Box (Rect (Screen.width - j - 1, Screen.height-25, boxWidth+2, boxHeight+2), "");
-			if (i < numberOfSnowballs) {
-				GUI.Box(Rect (Screen.width - j, Screen.height-25, boxWidth, boxHeight), "", style);
+		if (!inUFO) {
+			//Now create the boxes.
+			for (i=0; i<numberOfBoxes; i++) {			
+				GUI.Box (Rect (Screen.width - j - 1, Screen.height-25, boxWidth+2, boxHeight+2), "");
+				if (i < numberOfSnowballs) {
+					GUI.Box(Rect (Screen.width - j, Screen.height-25, boxWidth, boxHeight), "", style);
+				}
+				j -= boxWidth;
 			}
-			j -= boxWidth;
+		} else {
+			//Now create the boxes.
+			for (i=0; i<numberOfBoxes; i++) {			
+				GUI.Box (Rect (Screen.width - j - 1, Screen.height-25, (boxWidth+2)/2, (boxHeight+2)/2), "");
+				if (i < numberOfSnowballs) {
+					GUI.Box(Rect (Screen.width - j, Screen.height-25, boxWidth/2, boxHeight/2), "", style);
+				}
+				j -= boxWidth/2;
+			}
 		}
+
 
 	}
 	
@@ -44,4 +58,8 @@ function OnSetMainPlayer () {
 }
 function OnSetRemote () {
 	enabled = false;
+}
+
+function SetInUFO (newInUFO : boolean) {
+	inUFO = newInUFO;
 }
