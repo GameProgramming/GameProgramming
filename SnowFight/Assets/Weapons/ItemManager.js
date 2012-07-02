@@ -127,6 +127,13 @@ function Update () {
 		} else {
 			if (candidateItem.layer != LayerMask.NameToLayer("Item") // ufo hack
 				&& candidateItem.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
+				var status : PlayerStatus = transform.GetComponent(PlayerStatus);
+				if (status.IsMainPlayer()) {
+					var playerHealth : PlayerHealthBar = transform.GetComponent(PlayerHealthBar);
+					var snowballBarPlayer : SnowballBar = transform.GetComponent(SnowballBar);
+					playerHealth.SetInUFO(true);
+					snowballBarPlayer.SetInUFO(true);
+				}
 				SetItem(candidateItem.transform.parent.gameObject);
 			} else {
 				SetItem(candidateItem);
@@ -164,7 +171,13 @@ function ReleaseItem () {
 		
 //		if (item.CompareTag("Ufo"))
 //			Debug.Log("Releasing Ufo");
-		
+		var status : PlayerStatus = transform.GetComponent(PlayerStatus);
+		if (item.CompareTag("Ufo") && status.IsMainPlayer()) {
+			var playerHealth : PlayerHealthBar = transform.GetComponent(PlayerHealthBar);
+			var snowballBarPlayer : SnowballBar = transform.GetComponent(SnowballBar);
+			playerHealth.SetInUFO(false);
+			snowballBarPlayer.SetInUFO(false);
+		}
 		if (item.CompareTag("BigSnowball"))
 			item.transform.parent = null;
 		if (pStatus.IsMainPlayer()) Debug.Log("Player released "+item);

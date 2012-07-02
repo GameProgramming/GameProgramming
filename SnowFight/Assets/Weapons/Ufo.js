@@ -10,7 +10,8 @@ private var velo :Vector3 = Vector3.zero;
 @System.NonSerialized
 private var terrain :Terrain;
 
-var hp : int = 10;
+var hp : int = 100;
+var maxHp : int = 100;
 private var lastAttack :Attack;
 
 function Start () {
