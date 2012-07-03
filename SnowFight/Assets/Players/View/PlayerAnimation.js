@@ -47,7 +47,7 @@ function Awake() {
 	
 	anim["throw2"].layer = 1;
 	anim["throw2"].blendMode = AnimationBlendMode.Additive;
-
+	
 	anim.enabled = true;
 	
 	body = transform.Find("Model");
@@ -58,7 +58,6 @@ function Awake() {
 	for (var rend : MeshRenderer in meshRenderers) {
 		rend.enabled = true;
 	}
-	
 	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
 		rend.enabled = true;
 	}
@@ -86,13 +85,10 @@ function Update () {
 	if (goRed && Time.time > redTime + redDuration) {
 		//color damaged player back to white
 		for (var rend : MeshRenderer in meshRenderers) {
-			//if(!rend.CompareTag("BigSnowball"))
-				rend.material.color = Color.white;
+			rend.material.color = Color.white;
 		}
-
 		for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-			//if(!rend.CompareTag("BigSnowball"))
-				rend.material.color = Color.white;
+			rend.material.color = Color.white;
 		}
 		goRed = false;
 	}
@@ -102,6 +98,12 @@ function Update () {
 		if (speed > 0.01) {
 			anim.CrossFade("walk");
 			anim["walk"].speed = speed * 80;
+//			if (Random.Range(0,10) <= 1) {
+//				leftFootEmitter.Emit(1);
+//			}
+//			if (Random.Range(0,10) <= 1) {
+//				rightFootEmitter.Emit(1);
+//			}
 		} else {
 			anim.CrossFade("idle");
 			anim["idle"].speed = 10;
@@ -110,10 +112,6 @@ function Update () {
 		anim.CrossFade("jumping");
 		anim["jumping"].speed = 10;
 	}
-	
-//	if (throwPreview && throwPreview.IsActivated()) {
-//		throwPreview.startYSpeed = 0.03+motor.rotationY*.015;
-//	}
 	
 	if (motor.throwProgress == 0) {
 		anim.Stop("throw1");
