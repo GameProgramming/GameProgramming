@@ -229,7 +229,7 @@ function Awake () {
 }
 
 private function UpdateFunction () {
-	if(gameOver)
+	if(gameOver || !networkView.isMine)
 		return;
 	
 	itemManager.inputAction = inputAction;
@@ -242,7 +242,7 @@ private function UpdateFunction () {
 	} else {
 		itemInputBlock -= Time.deltaTime;
 	}
-		
+	
 	if (canControl && itemInputBlock <= 0 && !GetComponent(PlayerStatus).IsDead()) {
 		if (inputFire && throwProgress == 0 && snowballSpawn.CanFire()) {
 			throwProgress = 2;

@@ -44,10 +44,6 @@ function Start () {
 	
 	particleTail = transform.Find("Particles").GetComponent(ParticleSystem);
 	
-//	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
-//	Respawn(Vector3.zero);
-	
-	//lastPosition = transform.position;
 	radius = GetComponent(Renderer).bounds.size.x*0.5;
 }
 
@@ -122,16 +118,10 @@ function Move (offset : Vector3) {
 		correctionVector.Normalize();
 		correctionVector *= ballCorrectionSpeed;
 		correctionVector *= Time.deltaTime;
-		
-//		//save this in case we wanna shoot
-//		var sDir :Vector3 = (offset - correctionVector);
-//		if (sDir.sqrMagnitude >= 0.001) {
-//			shootDirection = sDir.normalized;
-//		}
 
 		correctionVector.y = 0.0;
 		offset.y = 0;
-		//transform.Translate(offset -  correctionVector, Space.World);		
+		
 		rigidbody.MovePosition(transform.position + (offset -  correctionVector));
 
 	}
