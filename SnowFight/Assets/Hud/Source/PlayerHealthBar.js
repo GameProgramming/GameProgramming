@@ -85,6 +85,7 @@ function OnSetRemote () {
 }
 
 function SetHit () {
+	hitTime = 0.0;
 	hit = true;
 }
 

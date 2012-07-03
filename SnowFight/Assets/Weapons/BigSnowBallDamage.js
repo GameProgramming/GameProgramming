@@ -19,7 +19,7 @@ function Update () {
 function GetDamage() : int {
 	damage = 0;
 	//TODO.. no harm if shooter is hit by own ball
-	if (GetVelocity().magnitude > painfulSpeed) {
+	if (GetVelocity().sqrMagnitude > painfulSpeed * painfulSpeed) {
 		damage = Mathf.Round(maximumDamage * GetVelocity().magnitude/speed);
 	}
 //	Debug.Log("Velocity " + GetVelocity().magnitude + " damage " + damage, this);

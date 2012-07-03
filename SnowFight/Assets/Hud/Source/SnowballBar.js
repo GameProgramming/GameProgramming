@@ -1,4 +1,5 @@
 private var inUFO : boolean = false;
+private var blinkingTime : float = 0.0;
 
 function OnGUI() {
 
@@ -33,6 +34,22 @@ function OnGUI() {
 					GUI.Box(Rect (Screen.width - j, Screen.height-25, boxWidth, boxHeight), "", style);
 				}
 				j -= boxWidth;
+			}
+			if (numberOfSnowballs == 0) {
+				blinkingTime += Time.deltaTime;
+				//Create the red layout if there is no ammu anymore.
+				var noAmmuTexture : Texture2D = new Texture2D(1, 1);
+				var noAmmuStyle : GUIStyle = new GUIStyle();
+				var noAmmuColor : Color = new Color(1, 0, 0, 0.5);
+				noAmmuTexture.SetPixel(0, 0, noAmmuColor);
+				noAmmuTexture.Apply();
+				noAmmuStyle.normal.background = noAmmuTexture;
+				if (blinkingTime <= 0.3) {
+					GUI.Box (Rect (Screen.width - 231, Screen.height - 25, 181, 20), "");
+					GUI.Box (Rect (Screen.width - 230, Screen.height - 25, 180, 20), "", noAmmuStyle);
+				} else if (blinkingTime >= 0.6) {
+					blinkingTime = 0.0;
+				}
 			}
 		} else {
 			//Now create the boxes.

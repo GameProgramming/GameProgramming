@@ -9,8 +9,10 @@ function Start() {
 }
 
 function Update () {
-	if (Network.isServer && breathProgress > 0.0) {
-		breathProgress -= Time.deltaTime;
+	if (breathProgress > 0.0) {
+		if (networkView.isMine) {
+			breathProgress -= Time.deltaTime;
+		}
 		if (breathProgress <= 0.0) {
 			particleSystem.Stop();
 		}
@@ -18,7 +20,7 @@ function Update () {
 }
 
 function Fire () {
-	if (Network.isServer) {
+	if (networkView.isMine) {
 		breathProgress = breathTime;
 		particleSystem.Play();
 	}
@@ -40,8 +42,10 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     if (inp != (breathProgress > 0.0)) {
     	if (inp) {
     		breathProgress = breathTime;
+    		particleSystem.Play();
     	} else {
-    		breathProgress = breathTime;	
+    		breathProgress = 0;
+    		particleSystem.Stop();
     	}
     }
 }

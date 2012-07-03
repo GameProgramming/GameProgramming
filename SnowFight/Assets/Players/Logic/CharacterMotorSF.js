@@ -34,6 +34,8 @@ var throwProgress :float = 0.0;
 private var breathProgress :float = 0.0;
 var breathReload :float = 1.5;
 
+private var itemInputBlock :float = 0;
+
 var rotationY = 0.0;
 var rotationX = 0.0;
 
@@ -227,15 +229,21 @@ function Awake () {
 }
 
 private function UpdateFunction () {
-	if(gameOver)
+	if(gameOver || !networkView.isMine)
 		return;
 	
 	itemManager.inputAction = inputAction;
 	itemManager.inputAltFire = inputAltFire;
 
 	snowballSpawn.startYSpeed = 0.03+rotationY*.015;
-		
-	if (canControl && !itemManager.GetItem() && !GetComponent(PlayerStatus).IsDead()) {
+	
+	if (itemManager.GetItem()) {
+		itemInputBlock = .3;
+	} else {
+		itemInputBlock -= Time.deltaTime;
+	}
+	
+	if (canControl && itemInputBlock <= 0 && !GetComponent(PlayerStatus).IsDead()) {
 		if (inputFire && throwProgress == 0 && snowballSpawn.CanFire()) {
 			throwProgress = 2;
 			gameObject.SendMessage ("OnLoadThrow", SendMessageOptions.DontRequireReceiver);

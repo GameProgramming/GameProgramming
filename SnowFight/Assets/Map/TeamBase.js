@@ -61,8 +61,10 @@ function Start () {
 }
 
 function FillPipeline() {
-	while (spawnWeaponPipeline.length < spawnWeaponPipelineLength) {
-		spawnWeaponPipeline.Add(Random.Range(0,specialWeapons.Length));
+	if (Network.isServer) {
+		while (spawnWeaponPipeline.length < spawnWeaponPipelineLength) {
+			spawnWeaponPipeline.Add(Random.Range(0,specialWeapons.Length));
+		}
 	}
 }
 
@@ -142,6 +144,12 @@ function GetID () : int {
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     var teamNumber :int = team.GetTeamNumber();
     stream.Serialize(teamNumber);
+    spawnWeaponPipeline.length = spawnWeaponPipelineLength;
+    for (var i = 0; i < spawnWeaponPipelineLength; i++) {
+    	var itemId :int = spawnWeaponPipeline[i];
+    	stream.Serialize(itemId);
+    	spawnWeaponPipeline[i] = itemId;
+    }
     if (!stream.isWriting) {
         if (team == null || team.GetTeamNumber() != teamNumber) {
         	var t :Team = game.GetTeamById(teamNumber);
