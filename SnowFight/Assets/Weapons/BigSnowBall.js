@@ -61,23 +61,14 @@ function Update () {
 				// player destroys snowball
 				pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
 				SmashBallToSnowfield();
-			}
-			
-			if (playerMotor.inputFire) {
+			} else if (playerMotor.inputFire) {
 				shot = true;
 
-				rigidbody.velocity = shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
+				rigidbody.velocity = (GetComponent(BigSnowBallDamage).GetSpeed() / radius)
+									* pushingPlayer.transform.forward;//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;
 
-				//Roll(true);
-				if (pushingPlayer) { //tell the bot that his ball has reached the base
-					pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
-				}
-				
-//				for (var rend : MeshRenderer in meshRenderers)
-//					rend.material.color = Color.red;
-//				for (var rend : SkinnedMeshRenderer in skinnedRenderers)
-//					rend.material.color = Color.red;
+				pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			}
 		}
 	}
@@ -86,7 +77,7 @@ function Update () {
 	radius = GetComponent(Renderer).bounds.size.x*0.5;
 
 	//rotate ball while rolling
-	var dir = transform.position - lastPosition;
+	var dir :Vector3 = transform.position - lastPosition;
 	var rotAxis = Vector3.Cross(dir, Vector3.up);
 	rotAxis.Normalize();
 	var angle : float = -(2*radius*Mathf.PI)/36*dir.magnitude * ballTurnSpeed;
@@ -96,35 +87,14 @@ function Update () {
 	if (radius <= maxBallSize) {
 		var parent = transform.parent;
 		transform.parent = null;
-		transform.localScale.x += sizeIncreaseRate * dir.magnitude;
-		transform.localScale.y += sizeIncreaseRate * dir.magnitude;
-		transform.localScale.z += sizeIncreaseRate * dir.magnitude;
+		var increase :float = sizeIncreaseRate * dir.magnitude;
+		transform.localScale += Vector3(increase,increase,increase);
 		transform.parent = parent;
 	}
-//	else {
-//
-//		for (var rend : MeshRenderer in meshRenderers)
-//			rend.material.color = Color.blue;
-//		for (var rend : SkinnedMeshRenderer in skinnedRenderers)
-//			rend.material.color = Color.blue;
-//	}
 		
-	if (shot && dir.magnitude < 0.05) {
-//		Debug.Log("Back to normal" , this);
+	if (shot && dir.sqrMagnitude < 0.025) {
 		shot = false;	
 	}
-	
-	//upon respawn make visible after hide time
-//	if (respawning && Time.time > spawnTime + respawnTimeout) {
-//		for (var rend : MeshRenderer in meshRenderers) {
-//			rend.enabled = true;
-//		}
-//		
-//		for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-//			rend.enabled = true;
-//		}
-//		respawning = false;
-//	}
 }
 
 function LateUpdate () {
@@ -132,48 +102,14 @@ function LateUpdate () {
 }
 
 function FixedUpdate () {
-	//if (!collider.attachedRigidbody.useGravity) {
-//	Debug.DrawRay(transform.position, Vector3.up * radius51, Color.red);
-//	if (!isGrounded) {
-//		var gravityVector = Vector3.down * fallSpeed * Time.deltaTime;
-//    	transform.Translate(gravityVector, Space.World);
-//	}
-		
-	//ApplyGravity
-//	if (Physics.Raycast (transform.position, -Vector3.up, radius + 0.05, LayerMask.NameToLayer("Ground"))) {
-//        isGrounded = true;
-//    }
-//    else { //we're not grounded, move us down a bit
-//    	isGrounded = false; 
-    	rigidbody.velocity.y += -1 * fallSpeed * Time.deltaTime;
-    	//var gravityVector = Vector3.down * fallSpeed * Time.deltaTime;
-    	//transform.Translate(gravityVector, Space.World);	
-//    }
-   // }
+   	rigidbody.velocity.y += -1 * fallSpeed * Time.deltaTime;
 }
-
-//function OnCollisionEnter(collisionInfo : Collision) {
-//	var player = collisionInfo.gameObject.GetComponent(PlayerStatus);
-//	if (deadly && player && collisionInfo.transform != transform.parent) {
-//
-//	}
-////	isGrounded = false;
-////	for (var contact : ContactPoint in collisionInfo.contacts) {
-////		if (contact.normal.y > 0.01)
-////			isGrounded = true;
-//////        Debug.DrawRay(contact.point, contact.normal * 10, Color.white);
-////    }
-////}
-////
-////function OnCollisionExit(collisionInfo : Collision) {
-////	isGrounded = false;
-//}
 
 function Move (offset : Vector3) {
 	if (pushingPlayer && !shot) {
 		//Roll(true);
 		var playerController = pushingPlayer.GetComponent(CharacterController);
-		var playerTransform = pushingPlayer.GetComponent(Transform);
+		var playerTransform :Transform = pushingPlayer.transform;
 		//try to make sure the ball is infront of the player
 		var minDistance = playerController.radius + radius + 0.2;
 		var desiredPos : Vector3 = playerTransform.position + playerTransform.forward * minDistance;
@@ -182,8 +118,11 @@ function Move (offset : Vector3) {
 		correctionVector *= ballCorrectionSpeed;
 		correctionVector *= Time.deltaTime;
 		
-		//save this in case we wanna shoot
-		shootDirection = (offset -  correctionVector);
+//		//save this in case we wanna shoot
+//		var sDir :Vector3 = (offset - correctionVector);
+//		if (sDir.sqrMagnitude >= 0.001) {
+//			shootDirection = sDir.normalized;
+//		}
 
 		correctionVector.y = 0.0;
 		offset.y = 0;
@@ -203,11 +142,6 @@ function IsBallTooFarAway (player : GameObject) : boolean {
 	}
 	return tooFar;
 }
-
-//private function IsGrounded () {
-//	return isGrounded;
-//}
-
 
 function Release () {
 	if (pushingPlayer) {
@@ -232,38 +166,6 @@ function OnReachBase () {
 	
 	Network.Destroy(gameObject);
 }
-
-
-//function Respawn (spawnPosition : Vector3) {
-//	if (pushingPlayer) { //tell the bot that his ball has reached the base
-//			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
-//	}
-//	
-//	transform.localScale = startSize;
-//	for (var rend : MeshRenderer in meshRenderers)
-//		rend.material.color = Color.white;
-//	for (var rend : SkinnedMeshRenderer in skinnedRenderers)
-//		rend.material.color = Color.white;
-//	
-//	respawning = true;
-//	spawnTime = Time.time;
-//	
-//	//hide for a while
-//	for (var rend : MeshRenderer in meshRenderers) {
-//		rend.enabled = false;
-//	}
-//	
-//	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-//		rend.enabled = false;
-//	}
-//	
-////	if (spawnPosition != Vector3.zero)
-////		transform.position = spawnPosition;
-////	else if (spawnPoints && spawnPoints.Length > 0) {
-////		transform.position = spawnPoints[Random.Range(0,spawnPoints.Length)].transform.position;
-////		transform.position.y += 5;
-////	}
-//}
 
 function SmashBallToSnowfield () {
 //	transform.parent = null;
