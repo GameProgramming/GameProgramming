@@ -34,6 +34,8 @@ var throwProgress :float = 0.0;
 private var breathProgress :float = 0.0;
 var breathReload :float = 1.5;
 
+private var itemInputBlock :float = 0;
+
 var rotationY = 0.0;
 var rotationX = 0.0;
 
@@ -234,8 +236,14 @@ private function UpdateFunction () {
 	itemManager.inputAltFire = inputAltFire;
 
 	snowballSpawn.startYSpeed = 0.03+rotationY*.015;
+	
+	if (itemManager.GetItem()) {
+		itemInputBlock = .3;
+	} else {
+		itemInputBlock -= Time.deltaTime;
+	}
 		
-	if (canControl && !itemManager.GetItem() && !GetComponent(PlayerStatus).IsDead()) {
+	if (canControl && itemInputBlock <= 0 && !GetComponent(PlayerStatus).IsDead()) {
 		if (inputFire && throwProgress == 0 && snowballSpawn.CanFire()) {
 			throwProgress = 2;
 			gameObject.SendMessage ("OnLoadThrow", SendMessageOptions.DontRequireReceiver);

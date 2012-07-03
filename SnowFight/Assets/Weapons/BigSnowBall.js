@@ -70,7 +70,9 @@ function Update () {
 				lastOwner = pushingPlayer;
 
 				//Roll(true);
-				Release();
+				if (pushingPlayer) { //tell the bot that his ball has reached the base
+					pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
+				}
 				
 //				for (var rend : MeshRenderer in meshRenderers)
 //					rend.material.color = Color.red;
@@ -265,7 +267,6 @@ function OnReachBase () {
 
 function SmashBallToSnowfield () {
 //	transform.parent = null;
-	Release ();
 	var res :GameObject = Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
 	res.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
 	Network.Destroy(gameObject);
