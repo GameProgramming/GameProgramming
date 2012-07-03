@@ -9,6 +9,7 @@ private var respawning : boolean;
 private var spawnTime = 0.0;
 private var meshRenderers :MeshRenderer[];
 private var skinnedRenderers :SkinnedMeshRenderer[];
+private var particleTail :ParticleSystem;
 
 //private var rollBall : boolean;
 private var lastPosition : Vector3;
@@ -40,6 +41,8 @@ function Start () {
 	
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
+	
+	particleTail = transform.Find("Particles").GetComponent(ParticleSystem);
 	
 //	spawnPoints = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).GetSnowBallSpawns();
 //	Respawn(Vector3.zero);
@@ -91,6 +94,8 @@ function Update () {
 		transform.localScale += Vector3(increase,increase,increase);
 		transform.parent = parent;
 	}
+	
+	particleTail.emissionRate = dir.magnitude * 10;
 		
 	if (shot && dir.sqrMagnitude < 0.025) {
 		shot = false;	
