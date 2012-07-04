@@ -4,7 +4,7 @@ private var inUFO : boolean = false;
 
 function OnGUI() {
 	var player = gameObject.GetComponent("PlayerStatus");	
-	if (player.IsMainPlayer()) {
+	if (player.IsMainPlayer() && !player.IsDead()) {
 		var hpPercent : float = parseFloat(player.GetHp()) / parseFloat(player.GetFullHp());
 		
 	    var texture : Texture2D = new Texture2D(1, 1);
