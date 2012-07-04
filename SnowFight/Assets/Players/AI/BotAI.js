@@ -253,7 +253,7 @@ function GetUFO () {
 			ufoPos.y = transform.position.y;
 			var distance = Vector3.Distance(transform.position, ufoPos);
 
-			Debug.DrawRay(target.transform.position, transform.up * 100, Color.blue);
+			Debug.DrawRay(target.transform.position, transform.up * 50, Color.blue);
 			
 			var candidateItem = itemManager.GetCandidateItem();	
 			if (candidateItem && (candidateItem.CompareTag("Ufo") || 
@@ -265,7 +265,7 @@ function GetUFO () {
 				//moveDir = Vector3.zero;
 			}
 //			else {
-				Debug.DrawRay(transform.position, transform.up * 100, Color.blue);
+				Debug.DrawRay(transform.position, transform.up * 50, Color.blue);
 //				motor.inputAction = false;
 				MoveTowardsPosition(ufoPos);
 //			}
@@ -274,14 +274,14 @@ function GetUFO () {
 //			if(distance < punchRadius*0.5){
 ////				motor.inputAction = true;					
 //				motor.inputAltFire = false;
-//				Debug.DrawRay(transform.position, transform.up * 100, Color.red);
+//				Debug.DrawRay(transform.position, transform.up * 50, Color.red);
 //			}
 //			if(itemManager.GetCandidateItem()) {
 //				moveDir = Vector3.zero;
 //				motor.inputAction = true;
 //				yield WaitForSeconds(0.01);
 //				motor.inputAction = false;
-//				Debug.DrawRay(transform.position, transform.up * 100, Color.blue);
+//				Debug.DrawRay(transform.position, transform.up * 50, Color.blue);
 //			}
 
 		}
@@ -295,7 +295,8 @@ function GetBazooka () {
 	motor.inputAction = false;
 	while (true) {
 
-		if (!target || pStatus.IsRidingUfo() || pStatus.GetCurrentSnowballs() == 0) {
+		if (!target || pStatus.IsRidingUfo() || pStatus.GetCurrentSnowballs() == 0 || 
+			itemManager.GetItem() && itemManager.GetItem().CompareTag("Weapon")) {
 			return;
 		}
 			
@@ -322,17 +323,23 @@ function GetBazooka () {
 
 			var candidateItem = itemManager.GetCandidateItem();
 			if(candidateItem && candidateItem.CompareTag("Weapon")) {
-				Debug.DrawRay(transform.position, transform.up * 100, Color.red);
+				Debug.Log("Bazooka is candidate", this);
 				motor.inputAction = true;
 				motor.inputAltFire = false;
 //				RemoveTs
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
-//				moveDir = Vector3.zero;
+				moveDir = Vector3.zero;
+				
+				if (itemManager.GetItem()) {
+					RemoveTarget();
+					return;
+				}
+				//Debug.Log("Has item " + (itemManager.GetItem()!=null), this);
 			}
 //			else {
-			Debug.DrawRay(target.transform.position, transform.up * 100, Color.yellow);
-				Debug.DrawRay(transform.position, transform.up * 100, Color.yellow);
+			Debug.DrawRay(target.transform.position, transform.up * 50, Color.yellow);
+			Debug.DrawRay(transform.position, transform.up * 50, Color.yellow);
 //				motor.inputAction = false;
 				MoveTowardsPosition(bazookaPos);
 //			}
@@ -427,7 +434,7 @@ function RollBall ()
 			isAttacking = false;
 			ball = itemManager.GetItem();
 			
-			Debug.DrawRay(target.transform.position, transform.up * 100, Color.green);
+			Debug.DrawRay(target.transform.position, transform.up * 50, Color.green);
 			//if we don't have a ball go get it
 			if (!ball) {
 				//if the ball is already taken or we're out of ammo, return to check your other options
@@ -498,8 +505,8 @@ function RollBall ()
 					moveDir = Vector3.zero;
 				else {
 					MoveTowardsPosition(groundBaseFlag.position);
-					Debug.DrawRay(groundBaseFlag.position, transform.up * 100, Color.green);
-					Debug.DrawRay(transform.position, transform.up * 100, Color.green);
+					Debug.DrawRay(groundBaseFlag.position, transform.up * 50, Color.green);
+					Debug.DrawRay(transform.position, transform.up * 50, Color.green);
 				}
 			}
 		}
@@ -533,6 +540,8 @@ function Attack ()
 			return;
 		}
 		
+		Debug.DrawRay(transform.position, transform.up * 50, Color.red);
+		Debug.DrawRay(target.transform.position, transform.up * 50, Color.magenta);
 		busy = true;
 		
 		pos = transform.position;
