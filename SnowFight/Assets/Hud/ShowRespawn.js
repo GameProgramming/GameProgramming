@@ -37,5 +37,7 @@ function OnGUI () {
 }
 
 function ActivateRespawn() {
+	respawnTimer = 3.0;
+	
 	respawn = true;
 }

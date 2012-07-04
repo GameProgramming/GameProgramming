@@ -1,7 +1,0 @@
-function Start () {
-
-}
-
-function OnGUI () {
-
-}

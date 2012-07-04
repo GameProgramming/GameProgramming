@@ -30,6 +30,7 @@ function OnTriggerStay (other :Collider) {
 	if (Network.isServer && breathProgress > 0 && other.CompareTag("Player")) {
 		var attack = new Attack();
 		attack.damageType = DamageType.Area;
+		attack.attacker = 
 		attack.damage = strength * 10 * Time.deltaTime;
 		other.gameObject.SendMessage("ApplyDamage", attack,
 									SendMessageOptions.DontRequireReceiver);
