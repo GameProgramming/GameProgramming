@@ -20,6 +20,10 @@ var player : GameObject; // the human player on this side of the connection.
 var overviewCam : MapOverview;
 
 var botNumber :int = 4;
+var botNames :String[] = ["Erwin", "Mark", "Konstantin", "Anton", "Bernhard", "Thomas",
+						  "Moritz", "Karl", "Martin", "Sebastian", "Jan", "Egon", "Markus",
+						  "Lukas", "Johann", "Wolfgang"];
+
 
 function Awake () {
 	gameOver = false;
@@ -38,6 +42,8 @@ function OnNetworkLoadedLevel () {
 	// add the main player.
 	var pl :GameObject = Network.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, 0);
 	AddPlayer(pl);
+    pl.GetComponent(PlayerStatus).SetName(GameObject.FindGameObjectWithTag("Main").
+    										GetComponent(ConnectGuiMasterServer).playerName);
 	SetMainPlayer(pl);
 	
 	if (Network.isServer) {
@@ -45,6 +51,7 @@ function OnNetworkLoadedLevel () {
 		for (var i :int = 0; i < botNumber; i++) {
 			var b :GameObject = Network.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, 0);
 			AddPlayer(b);
+			b.GetComponent(PlayerStatus).SetName(botNames[i % botNames.Length]);
 			SetBot(b);
 		}
 	}
@@ -60,7 +67,7 @@ function SetMainPlayer (pl :GameObject) {
 }
 
 function SetBot (pl :GameObject) {
-	if (pl == player) player = null; // koennte schief gehen.. besser niemals zu diesem fall kommen lassen!
+	if (pl == player) player = null; // koennte schief gehen.. besser niemals zu diesem fall kommen lassen
 	pl.SendMessage("OnSetBot");
 }
 

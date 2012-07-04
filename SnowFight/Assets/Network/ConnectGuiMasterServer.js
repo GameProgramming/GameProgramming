@@ -4,6 +4,8 @@ var gameName = "TUSnowFight";
 var serverPort = 25002;
 var serverName = "SomeServer";
 
+var playerName = "Player01";
+
 private var timeoutHostList = 0.0;
 private var lastHostListRequest = -1000.0;
 private var hostListRefreshTimeout = 10.0;
