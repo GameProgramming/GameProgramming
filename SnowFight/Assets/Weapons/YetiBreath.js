@@ -5,6 +5,8 @@ private var breathProgress = 0.0f;
 
 var strength :int = 10;
 
+private var player :PlayerStatus;
+
 function Start() {
 }
 
@@ -19,6 +21,14 @@ function Update () {
 	}
 }
 
+function ConnectToPlayer (t :Transform) {
+	if (t) {
+		player = t.GetComponent(PlayerStatus);
+	} else {
+		player = null;
+	}
+}
+
 function Fire () {
 	if (networkView.isMine) {
 		breathProgress = breathTime;
@@ -30,7 +40,9 @@ function OnTriggerStay (other :Collider) {
 	if (Network.isServer && breathProgress > 0 && other.CompareTag("Player")) {
 		var attack = new Attack();
 		attack.damageType = DamageType.Area;
-//		attack.attacker = 
+		if (player) {
+			attack.attacker = player.gameObject;
+		}
 		attack.damage = strength * 10 * Time.deltaTime;
 		other.gameObject.SendMessage("ApplyDamage", attack,
 									SendMessageOptions.DontRequireReceiver);
