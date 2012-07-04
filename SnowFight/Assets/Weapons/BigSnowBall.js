@@ -53,6 +53,8 @@ function Awake () {
 
 function Update () {
 	if (pushingPlayer) {
+		Debug.DrawRay(pushingPlayer.transform.position, pushingPlayer.transform.forward * 100, Color.green);
+		
 		if (playerMotor.IsMovingBackward() || playerMotor.IsJumping() || IsBallTooFarAway (pushingPlayer)) {
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);		}
 		else {

@@ -22,7 +22,7 @@ private var motor : CharacterMotorSF;
 private var pStatus : PlayerStatus;
 private var itemManager : ItemManager;
 
-private var groundBase : GameObject;
+private var groundBaseFlag : Transform;
 
 private var strafing = 0.0;
 private var moveDir = Vector3.zero;
@@ -193,7 +193,7 @@ function ConquerBase() {
 		
 		//if an enemy is too close forget this stuff and attack!!
 		var enemy = teamAI.FindClosestEnemy();
-		if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance) {
+		if(Random.value > 0.8 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance) {
 			RemoveTarget();
 			return;
 		}
@@ -238,7 +238,7 @@ function GetUFO () {
 				
 			//if an enemy is too close forget this stuff and attack!!
 			var enemy = teamAI.FindClosestEnemy();
-			if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
+			if(Random.value > 0.8 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
 				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 				RemoveTarget();
 				return;
@@ -286,7 +286,7 @@ function GetBazooka () {
 				
 			//if an enemy is too close forget this stuff and attack!!
 			var enemy = teamAI.FindClosestEnemy();
-			if(Random.value > 0.9 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
+			if(Random.value > 0.8 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
 				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 				RemoveTarget();
 				return;
@@ -356,15 +356,16 @@ function GetAmmo () {
 				reloadTime = Random.Range(1.0,2.0);
 				moveDir = Vector3.zero;
 			}
-			
-			if (Random.value > 0.9) {
-				enemy = teamAI.FindClosestEnemy();
-				if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance) {
-					RemoveTarget();
-					return;
-				}
+		}
+		
+		if (Random.value > 0.9) {
+			enemy = teamAI.FindClosestEnemy();
+			if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance) {
+				RemoveTarget();
+				return;
 			}
 		}
+			
 		yield;
 	}
 }
@@ -385,7 +386,7 @@ function RollBall ()
 			ball = itemManager.GetItem();
 			
 			// find out where the closest base is
-			groundBase = teamAI.GetClosestOwnBase(target);
+			groundBaseFlag = teamAI.GetClosestOwnBase(target).transform.Find("TeamFlag");
 			
 			//if we don't have a ball go get it
 			if (!ball) {
@@ -416,7 +417,7 @@ function RollBall ()
 				MoveTowardsPosition(target.transform.position);
 			}
 			//if we have a ball run to base
-			else if (ball.CompareTag("BigSnowball") && groundBase) { //but make sure we have a base
+			else if (ball.CompareTag("BigSnowball") && groundBaseFlag) { //but make sure we have a base
 				//if you're out of ammo, just create a snow seurce with right mouse click
 				if (ball.GetComponent(BigSnowBall).IsBallTooFarAway (gameObject)) {
 					RemoveTarget();
@@ -431,10 +432,13 @@ function RollBall ()
 					return;
 				}
 					
-				if(BallAtBase(groundBase.transform.position))
+				if(BallAtBase(groundBaseFlag.position))
 					moveDir = Vector3.zero;
-				else
-					MoveTowardsPosition(groundBase.transform.position);
+				else {
+					MoveTowardsPosition(groundBaseFlag.position);
+					var dir = groundBaseFlag.position-transform.position;
+//					Debug.DrawRay(transform.position, transform.forward * 100, Color.green);
+				}
 			}
 			
 			if (Random.value > 0.9) {
@@ -532,7 +536,12 @@ function Attack ()
 		 		var weapon : GameObject = itemManager.GetItem();
 		 		//if we have a bazooka, use it!
 		 		if (weapon && weapon.CompareTag("Weapon")) {
-		 			//aim and then shoot
+		 			//TODO: aim and then shoot
+		 			//-------------------------
+		 			//wait for a while and act as if you're aming
+		 			//meanwhile always rotate towards the ufo
+		 			//RotateTowardsPosition(target.transform.position, rotateSpeed)
+		 			//when lock-time is over, shoot
 		 			motor.inputFire = !motor.inputFire;
 		 		}
 		 		else { //if there's a bazooka lying around, go get it!
