@@ -594,7 +594,11 @@ function Attack ()
 		 					newTransform = target.transform;
 		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
 		 				}
-		 			  	
+		 			  	//if(newTransform.position.x lostTarget){
+		 			  	//	target.GetComponent(PlayerStatus).isLockedTarget = false;
+		 			  	//	newTransform = null;
+		 			  	//	lostTarget +=1;
+		 				//}
 		 				
 		 				RL = weapon.GetComponent("RocketLauncher");
 		 			  	if (RL.getProgress() < RL.aimFor){
@@ -608,6 +612,9 @@ function Attack ()
 						}else if (RL.getProgress() >= RL.aimFor){
 							//Debug.Log("SHOOT!!!!!!!!");
 								RL.Fire(2);
+								target.GetComponent(PlayerStatus).isLockedTarget = false;
+								newTransform = null;
+		 			  			lostTarget = 0;
 						}
 		 			}
 		 			//TODO: aim and then shoot
