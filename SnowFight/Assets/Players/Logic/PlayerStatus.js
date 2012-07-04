@@ -28,6 +28,7 @@ private var collectionSnowTime : float;
 
 private var isMainPlayer :boolean = false;
 private var game :GameStatus;
+var isLockedTarget : boolean = false;
 
 class Attack {
 	var attacker :GameObject;

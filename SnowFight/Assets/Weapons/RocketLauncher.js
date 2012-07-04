@@ -5,7 +5,7 @@ private var owner : GameObject;
 private var bulletSpawn : Transform;
 private var playerMotor : CharacterMotorSF;
 
-private var progress :float = 0;
+private var progress :float = 0.0;
 
 var c1 : Color = Color.yellow;
 var c2 : Color = Color.red;
@@ -13,9 +13,10 @@ var lengthOfLineRenderer : int = 20;
 
 var mat1 :Material;
 
-var aimFor : int = 4; 
+var aimFor : float = 4.0; 
 var viewAngle : Vector3;
 var locked :boolean;
+
 
 var target : GameObject; 
 
@@ -232,4 +233,14 @@ function OnGUI(){
 		
 			
 	}
+}
+
+function getProgress(){
+	return progress;
+}
+
+
+function addToProgress(progr:float){
+	progress += progr ;
+	return progress ;
 }
