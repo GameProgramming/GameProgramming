@@ -374,10 +374,12 @@ function GetAmmo () {
 
 function RollBall ()
 {
+	groundBaseFlag = null;
 	while (true) {
 		motor.inputAction = false;
 		
 		if (!target || pStatus.IsRidingUfo()) {
+			groundBaseFlag = null;
 			RemoveTarget();
 			return;
 		}
@@ -387,13 +389,12 @@ function RollBall ()
 			isAttacking = false;
 			ball = itemManager.GetItem();
 			
-			// find out where the closest base is
-			groundBaseFlag = teamAI.GetClosestOwnBase(target).transform.Find("TeamFlag");
-			
+			Debug.DrawRay(target.transform.position, transform.up * 100, Color.yellow);
 			//if we don't have a ball go get it
 			if (!ball) {
 				//if the ball is already taken or we're out of ammo, return to check your other options
 				if (BallRolledByFriend ()) {
+					groundBaseFlag =  null;
 					RemoveTarget();
 					return;
 				}
@@ -403,52 +404,64 @@ function RollBall ()
 				if(Random.value > 0.8 && enemy && 
 					Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
 					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+					groundBaseFlag = null;
 					RemoveTarget();
 					return;
 				}
 				
-				var ballSize = target.GetComponent(Renderer).bounds.size.x;
+				//var ballRadius = target.GetComponent(Renderer).bounds.size.x * 0.5;
 				 //if we're close enough, try to get a hold of it
-				if (Vector3.Distance(transform.position, target.transform.position) < ballSize + 2) {
+				//if (Vector3.Distance(transform.position, target.transform.position) < ballRadius + 0.1) {
+				var candidateItem = itemManager.GetCandidateItem();
+				if(candidateItem && candidateItem.CompareTag("BigSnowball")) {
 					motor.inputAction = true;
 					motor.inputAltFire = false;
+					
+					// find out where the closest base is
+					groundBaseFlag = teamAI.GetClosestBase(candidateItem).transform.Find("TeamFlag");
 				}
 				else
 					motor.inputAction = false;
 					
 				MoveTowardsPosition(target.transform.position);
+				
+				if (Random.value > 0.9) {
+					enemy = teamAI.FindClosestEnemy();
+					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance) {
+						motor.inputAction = false;
+						groundBaseFlag = null;
+						RemoveTarget();
+						return;
+					}
+				}
 			}
 			//if we have a ball run to base
 			else if (ball.CompareTag("BigSnowball") && groundBaseFlag) { //but make sure we have a base
-				//if you're out of ammo, just create a snow seurce with right mouse click
+				//release the button, once the ball is yours
+				motor.inputAction = false;
+				
 				if (ball.GetComponent(BigSnowBall).IsBallTooFarAway (gameObject)) {
+					groundBaseFlag = null;
 					RemoveTarget();
 					return;
 				}
 				
-				busy = true;
-					
+				//if you're out of ammo, just create a snow seurce with right mouse click					
 				if (pStatus.GetCurrentSnowballs() == 0) { //RELOAD
 					motor.inputAltFire = true;
+					groundBaseFlag = null;
 					RemoveTarget();
 					return;
 				}
+				
+//				busy = true;
 					
 				if(BallAtBase(groundBaseFlag.position))
 					moveDir = Vector3.zero;
 				else {
 					MoveTowardsPosition(groundBaseFlag.position);
-					var dir = groundBaseFlag.position-transform.position;
-//					Debug.DrawRay(transform.position, transform.forward * 100, Color.green);
-				}
-			}
-			
-			if (Random.value > 0.9) {
-				enemy = teamAI.FindClosestEnemy();
-				if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance) {
-					motor.inputAction = false;
-					RemoveTarget();
-					return;
+					Debug.DrawRay(groundBaseFlag.position, transform.up * 100, Color.green);
+					Debug.DrawRay(transform.position, transform.up * 100, Color.green);
 				}
 			}
 		}

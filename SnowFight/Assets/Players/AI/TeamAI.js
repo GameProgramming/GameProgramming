@@ -121,7 +121,7 @@ function UpdateBases () {
 }
 
 function GetClosestBase (respawningBot : GameObject) : GameObject {
-	GetClosestObjectInArray(respawningBot, allBases);
+	return GetClosestObjectInArray(respawningBot, allBases);
 }
 
 function GetClosestOwnBase (respawningBot : GameObject) : GameObject {
@@ -231,6 +231,7 @@ function FindClosestEnemy () : GameObject {
     	var status = go.GetComponent(PlayerStatus);
     	//get closest bot
     	if (status != null && !status.team.Friendly(teamComponent)) {
+    		position.y = go.transform.position.y;
 	        curDistance = Vector3.Distance(go.transform.position, position);
 	        
 	        if (curDistance < distance) { 
