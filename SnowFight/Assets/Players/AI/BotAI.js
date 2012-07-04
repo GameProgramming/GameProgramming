@@ -224,16 +224,17 @@ function ConquerBase() {
 }
 
 function GetUFO () {
+	motor.inputAction = false;
 	while (true) {
 		
-		if (!target || pStatus.IsRidingUfo()) {
+		if (!target) {
 			return;
 		}
 			
 		//if target is a ufo and someone's already in it, forget it
 		if (target.CompareTag("Ufo")) {
-
-			if (target.GetComponent(Ufo).GetOwner() || pStatus.GetCurrentSnowballs() == 0) {
+			//Either we just got into the ufo or the ufo is already taken
+			if (pStatus.IsRidingUfo() || target.GetComponent(Ufo).GetOwner()) {
 				RemoveTarget();
 				return;
 			}
@@ -252,17 +253,36 @@ function GetUFO () {
 			ufoPos.y = transform.position.y;
 			var distance = Vector3.Distance(transform.position, ufoPos);
 
-			MoveTowardsPosition(ufoPos);
+			Debug.DrawRay(target.transform.position, transform.up * 100, Color.blue);
 			
-			if(distance < punchRadius*0.5){
-				motor.inputAction = true;					
+			var candidateItem = itemManager.GetCandidateItem();	
+			if (candidateItem && (candidateItem.CompareTag("Ufo") || 
+				candidateItem.transform.parent && candidateItem.transform.parent.CompareTag("Ufo"))) {
+				motor.inputAction = true;
 				motor.inputAltFire = false;
-			}
-			if(itemManager.GetCandidateItem()) {
-				moveDir = Vector3.zero;
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
+				//moveDir = Vector3.zero;
 			}
+//			else {
+				Debug.DrawRay(transform.position, transform.up * 100, Color.blue);
+//				motor.inputAction = false;
+				MoveTowardsPosition(ufoPos);
+//			}
+//				
+//			MoveTowardsPosition(ufoPos);
+//			if(distance < punchRadius*0.5){
+////				motor.inputAction = true;					
+//				motor.inputAltFire = false;
+//				Debug.DrawRay(transform.position, transform.up * 100, Color.red);
+//			}
+//			if(itemManager.GetCandidateItem()) {
+//				moveDir = Vector3.zero;
+//				motor.inputAction = true;
+//				yield WaitForSeconds(0.01);
+//				motor.inputAction = false;
+//				Debug.DrawRay(transform.position, transform.up * 100, Color.blue);
+//			}
 
 		}
 		
@@ -272,9 +292,9 @@ function GetUFO () {
 }
 
 function GetBazooka () {
+	motor.inputAction = false;
 	while (true) {
-		motor.inputAction = false;
-		
+
 		if (!target || pStatus.IsRidingUfo() || pStatus.GetCurrentSnowballs() == 0) {
 			return;
 		}
@@ -300,17 +320,35 @@ function GetBazooka () {
 			bazookaPos.y = transform.position.y;
 			var distance = Vector3.Distance(transform.position, bazookaPos);
 
-			MoveTowardsPosition(bazookaPos);
-			
-			if(distance < punchRadius*0.5){
-				motor.inputAction = true;					
+			var candidateItem = itemManager.GetCandidateItem();
+			if(candidateItem && candidateItem.CompareTag("Weapon")) {
+				Debug.DrawRay(transform.position, transform.up * 100, Color.red);
+				motor.inputAction = true;
 				motor.inputAltFire = false;
-			}
-			if(itemManager.GetCandidateItem()) {
-				moveDir = Vector3.zero;
+//				RemoveTs
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
+//				moveDir = Vector3.zero;
 			}
+//			else {
+			Debug.DrawRay(target.transform.position, transform.up * 100, Color.yellow);
+				Debug.DrawRay(transform.position, transform.up * 100, Color.yellow);
+//				motor.inputAction = false;
+				MoveTowardsPosition(bazookaPos);
+//			}
+
+			
+//			MoveTowardsPosition(bazookaPos);
+//			
+//			if(distance < punchRadius*0.5){
+//				motor.inputAction = true;					
+//				motor.inputAltFire = false;
+//			}
+//			if(itemManager.GetCandidateItem()) {
+//				moveDir = Vector3.zero;
+//				yield WaitForSeconds(0.01);
+//				motor.inputAction = false;
+//			}
 
 		}
 		yield;
@@ -389,7 +427,7 @@ function RollBall ()
 			isAttacking = false;
 			ball = itemManager.GetItem();
 			
-			Debug.DrawRay(target.transform.position, transform.up * 100, Color.yellow);
+			Debug.DrawRay(target.transform.position, transform.up * 100, Color.green);
 			//if we don't have a ball go get it
 			if (!ball) {
 				//if the ball is already taken or we're out of ammo, return to check your other options
@@ -420,10 +458,10 @@ function RollBall ()
 					// find out where the closest base is
 					groundBaseFlag = teamAI.GetClosestBase(candidateItem).transform.Find("TeamFlag");
 				}
-				else
+				else {
 					motor.inputAction = false;
-					
-				MoveTowardsPosition(target.transform.position);
+					MoveTowardsPosition(target.transform.position);
+				}
 				
 				if (Random.value > 0.9) {
 					enemy = teamAI.FindClosestEnemy();
@@ -540,7 +578,7 @@ function Attack ()
 		 	}
 		 	
 		 	//we've turned our back and suffer a loss of memory
-			if (lostSight) {
+			if (lostSight && !pStatus.IsRidingUfo()) {
 		 		moveDir = Vector3.zero;
 		 		RemoveTarget();
 		 		return;
@@ -611,11 +649,11 @@ function Attack ()
 		}
 		
 		//TODO: uncomment if the rest works
-		if (Random.value > 0.99) {
-//			Debug.Log("return 4", this);
-			RemoveTarget();
-			return;
-		}
+//		if (Random.value > 0.99) {
+////			Debug.Log("return 4", this);
+//			RemoveTarget();
+//			return;
+//		}
 
 		// yield for one frame
 		yield;

@@ -317,7 +317,7 @@ function OnItemChange (im : ItemManager) {
 		if (formerItem && formerItem.CompareTag("Ufo")) {
 			SetState(PlayerState.Alive);
 		}
-		if (g && g.CompareTag("Ufo")) {
+		if (g && g.CompareTag("Ufo") || g && g.transform.parent && g.transform.parent.CompareTag("Ufo")) {
 			SetState(PlayerState.InVehicle);
 		}
 	}

@@ -198,8 +198,8 @@ function GetClosestObjectInArray (bot : GameObject, objects : GameObject[]) : Ga
 	var curDist = 0.0;
 	for (var obj in objects) {
 		//with are certain possibility, give a result that's not actually the closest
-		if (Random.value > 0.8)
-			return obj;
+//		if (Random.value > 0.8)
+//			return obj;
 		
 		if(obj.CompareTag("Base")) {
 			var flag = obj.transform.Find("TeamFlag");
