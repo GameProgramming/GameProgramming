@@ -36,25 +36,25 @@ function OnGUI () {
 		if (item != null) {
 				itemGUITime += Time.deltaTime;
 			if (item.CompareTag("Ufo") && itemGUITime <= 5.0) {
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height/2, 200, 20), "Left click to shoot.", itemGUIStyle);
-				GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2 + 30, 300, 20), "Right click to freeze enemies.", itemGUIStyle);
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-80, 200, 20), "Left click to shoot.", itemGUIStyle);
+				GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Right click to freeze enemies.", itemGUIStyle);
 			} else if (item.CompareTag("BigSnowball") && itemGUITime <= 5.0) {
-				GUI.Label (Rect (Screen.width/2 - 200, Screen.height/2, 400, 20), "Right click to create a Snow Ressource.", itemGUIStyle);
+				GUI.Label (Rect (Screen.width/2 - 200, Screen.height-60, 400, 20), "Right click to create a Snow Ressource.", itemGUIStyle);
 			} else if (item.CompareTag("Weapon") && itemGUITime <= 5.0) {
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height/2, 200, 20), "Left click to shoot.", itemGUIStyle);
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-60, 200, 20), "Left click to shoot.", itemGUIStyle);
 			}
 		} else {
 			itemGUITime = 0.0;
 			if (candidateItem) {
 				if (candidateItem.CompareTag("BigSnowball") && item == null) {
-					GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Press E to move big Snowball.", itemGUIStyle);
+					GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Press E to move big Snowball.", itemGUIStyle);
 				//} else if (candidateItem.layer != LayerMask.NameToLayer("Item") &&
 			    	//candidateItem.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
 					//GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Press E to get in the UFO.", itemGUIStyle);
 				} else if (candidateItem.CompareTag("Weapon") && item == null) {
-					GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Press E to use Snow Rocket.", itemGUIStyle);
+					GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Press E to use Snow Rocket.", itemGUIStyle);
 				} else if (candidateItem.CompareTag("SnowballRessource") && item == null) {
-					GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Hold E to create a big Snowball.", itemGUIStyle);
+					GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Hold E to create a big Snowball.", itemGUIStyle);
 				}
 			}
 		}

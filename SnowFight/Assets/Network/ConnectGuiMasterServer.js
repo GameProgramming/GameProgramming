@@ -3,6 +3,9 @@ DontDestroyOnLoad(this);
 var gameName = "TUSnowFight";
 var serverPort = 25002;
 var serverName = "SomeServer";
+var botCount = "10";
+
+var playerName = "Player01";
 
 private var timeoutHostList = 0.0;
 private var lastHostListRequest = -1000.0;
@@ -166,6 +169,11 @@ function MakeWindow (id : int)
 		selectedLevelId = GUILayout.SelectionGrid(selectedLevelId, levels, 1);
 		GUILayout.EndHorizontal();
 		
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Bot count");
+		botCount = GUILayout.TextField(botCount);
+		GUILayout.EndHorizontal();
+		
 		// Start a new server
 		if (GUILayout.Button ("Start Server / Singleplayer"))
 		{
@@ -241,6 +249,10 @@ function MakeClientWindow(id : int)
 
 function OnApplicationQuit () {
 	MasterServer.UnregisterHost();
+}
+
+function GetBotCount () : int {
+	return parseInt(botCount);
 }
 
 function Disconnect () {

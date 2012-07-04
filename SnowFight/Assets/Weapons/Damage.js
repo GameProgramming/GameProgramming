@@ -3,6 +3,8 @@ var behindDamage : int;
 var headDamage : int; 
 var dmg : int = 2;
 
+var shooter :GameObject;
+
 enum DamageType {Direct = 1, Area = 2, Physical = 3, Crash = 4}
 // direct - schneeball, area - ??, physical - schneeball, crash - ufo.
 
@@ -35,9 +37,5 @@ function GetHeadDamage() : int {
 }
 
 function GetShooter () : GameObject {
-	var parent = transform.parent;
-	if (parent)
-		return parent.gameObject;
-	else
-		return null;
+	return shooter;
 }

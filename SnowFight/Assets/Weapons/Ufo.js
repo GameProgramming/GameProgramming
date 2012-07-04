@@ -14,6 +14,7 @@ var hp : int = 100;
 var maxHp : int = 100;
 private var lastAttack :Attack;
 
+
 function Start () {
 	mesh = transform.Find("Ufo");
 	bulletSpawn = transform.Find("Ufo/BulletSpawn");

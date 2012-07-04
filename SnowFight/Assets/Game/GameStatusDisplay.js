@@ -131,6 +131,14 @@ function OnGUI() {
 	}
 }
 
+function GetTeamStyle (t :Team) :GUIStyle {
+	if (t) {
+		if (t.teamNumber == 1) return styleTeam1;
+		if (t.teamNumber == 2) return styleTeam2;
+	}
+	return neutralStyle;
+}
+
 function Update () {
 	
 	if (Input.GetKeyDown("tab")) {

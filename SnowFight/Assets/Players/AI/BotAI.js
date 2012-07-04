@@ -36,6 +36,8 @@ private var alternateDir = Vector3.zero;
 
 private var busy : boolean = false;
 private var teamAI : TeamAI;
+private var lostTarget : int = 0;
+var newTransform : Transform = null;
 
 function Start ()
 {
@@ -549,13 +551,35 @@ function Attack ()
 		 		var weapon : GameObject = itemManager.GetItem();
 		 		//if we have a bazooka, use it!
 		 		if (weapon && weapon.CompareTag("Weapon")) {
+		 			if(weapon.GetComponent("RocketLauncher")){
+		 				if(newTransform == null){
+		 					newTransform = target.transform;
+		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
+		 				}
+		 			  	
+		 				
+		 				RL = weapon.GetComponent("RocketLauncher");
+		 			  	if (RL.getProgress() < RL.aimFor){
+		 			  		RL.addToProgress(Time.deltaTime);
+		 			  		
+		 			  		Debug.Log("NT:"+newTransform.position);
+		 			  		Debug.Log("lostLock:"+lostTarget);
+		 			  		transform.LookAt(target.transform);	//locked = true;
+							//	RL.Fire(1);
+						
+						}else if (RL.getProgress() >= RL.aimFor){
+							//Debug.Log("SHOOT!!!!!!!!");
+								RL.Fire(2);
+						}
+		 			}
 		 			//TODO: aim and then shoot
 		 			//-------------------------
 		 			//wait for a while and act as if you're aming
 		 			//meanwhile always rotate towards the ufo
 		 			//RotateTowardsPosition(target.transform.position, rotateSpeed)
 		 			//when lock-time is over, shoot
-		 			motor.inputFire = !motor.inputFire;
+		 			//motor.inputFire = !motor.inputFire;
+		 			
 		 		}
 		 		else { //if there's a bazooka lying around, go get it!
 		 			//hopefully do something else!

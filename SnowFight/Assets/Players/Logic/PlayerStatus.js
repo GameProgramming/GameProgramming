@@ -3,6 +3,8 @@
 var team :Team;
 private var teamNumber : int;
 
+var playerName :String = "AnonPlayer";
+
 //This ID should be set when he wants to spawn at a certain base.
 @System.NonSerialized
 var spawnBaseID : int;
@@ -28,6 +30,7 @@ private var collectionSnowTime : float;
 
 private var isMainPlayer :boolean = false;
 private var game :GameStatus;
+var isLockedTarget : boolean = false;
 
 class Attack {
 	var attacker :GameObject;
@@ -139,6 +142,8 @@ function OnHitByObject (otherObj : GameObject) {
 			attack.damage = damageObject.GetFrontDamage();
 		}
 		
+		attack.attacker = damageObject.GetShooter();
+		
 		ApplyDamage(attack);
 	}
 }
@@ -168,6 +173,7 @@ function NetDie () {
 	
 	gameObject.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
 	gameObject.SendMessage ("RemoveTarget", SendMessageOptions.DontRequireReceiver);
+	game.SendMessage ("OnPlayerDeath", this);
 }
 
 function Freeze (attack :Attack) {
@@ -282,6 +288,7 @@ function ApplyDamage (attack :Attack) {
 		var dT :int = attack.damageType;
 		networkView.RPC("NetApplyDamage", RPCMode.Others, hp, dT);
 //s		Debug.Log("NetHit Send");
+		lastAttack = attack;
 		gameObject.SendMessage ("OnHit", attack, SendMessageOptions.DontRequireReceiver);										
 		gameObject.SendMessage ("ReleaseBall", null, SendMessageOptions.DontRequireReceiver);
 				
@@ -315,6 +322,10 @@ function OnItemChange (im : ItemManager) {
 		}
 	}
 	formerItem = g;
+}
+
+function GetLastAttack () :Attack {
+	return lastAttack;
 }
 
 function GetMaximumSnowballs () : int  {
@@ -364,6 +375,10 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     	var st :PlayerState = s;
     	SetState(st);
     }
+}
+
+function SetName (name :String) {
+	playerName = name;
 }
 
 
