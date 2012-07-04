@@ -211,7 +211,7 @@ function Respawn () {
 @RPC
 function NetRespawn ( spawnBase :int ) {
 
-	Debug.Log("Net respawn ");
+//	Debug.Log("Net respawn ");
 	spawnBaseID = spawnBase;
 	
 	var newPosition : Vector3 = team.GetSpawnPoint(spawnBaseID);
@@ -281,7 +281,7 @@ function ApplyDamage (attack :Attack) {
 		hp = Mathf.Max(0, hp);
 		var dT :int = attack.damageType;
 		networkView.RPC("NetApplyDamage", RPCMode.Others, hp, dT);
-		Debug.Log("NetHit Send");
+//s		Debug.Log("NetHit Send");
 		gameObject.SendMessage ("OnHit", attack, SendMessageOptions.DontRequireReceiver);										
 		gameObject.SendMessage ("ReleaseBall", null, SendMessageOptions.DontRequireReceiver);
 				

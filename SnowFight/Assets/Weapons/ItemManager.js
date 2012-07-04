@@ -102,10 +102,8 @@ function Update () {
 		if (snowResourcePick.IsGrabBigSnowballPossible() 
 				&& inputAction && !pStatus.IsDead()) {
 			srPickProgress += Time.deltaTime;
-//			Debug.Log("Building ball " + srPickProgress, this);
-			
+
 			if (srPickProgress > srPickTime) {
-				//Debug.Log("Ball built", this);
 				SetItem(snowResourcePick.GrabBigSnowball(gameObject));
 				snowResourcePick = null;
 				srPickProgress = 0;
@@ -115,7 +113,6 @@ function Update () {
 			snowResourcePick = null;
 		}
 	} else if (item && (inputActionUp || pStatus.IsDead())) {
-		Debug.Log("Input action up: " + inputActionUp, this);
 //  } else if (item && (inputAction || pStatus.IsDead())) {
 		ReleaseItem();
 	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem)
@@ -160,17 +157,15 @@ function OnControllerColliderHit (hit : ControllerColliderHit) {
 }
 
 function PassOnMovementOffset (offset : Vector3) {
-
-	if (item) 
+	if (item) {
 		item.SendMessage("Move", offset, SendMessageOptions.DontRequireReceiver);
+	}
 }
 
 function ReleaseItem () {
 	if(item) {
 		item.SendMessage("Release", SendMessageOptions.DontRequireReceiver);
 		
-//		if (item.CompareTag("Ufo"))
-//			Debug.Log("Releasing Ufo");
 		var status : PlayerStatus = transform.GetComponent(PlayerStatus);
 		if (item.CompareTag("Ufo") && status.IsMainPlayer()) {
 			var playerHealth : PlayerHealthBar = transform.GetComponent(PlayerHealthBar);
@@ -178,9 +173,11 @@ function ReleaseItem () {
 			playerHealth.SetInUFO(false);
 			snowballBarPlayer.SetInUFO(false);
 		}
-		if (item.CompareTag("BigSnowball"))
+		if (item.CompareTag("BigSnowball")) {
 			item.transform.parent = null;
+		}
 		if (pStatus.IsMainPlayer()) Debug.Log("Player released "+item);
+		
 		item = null;
 		candidateItem = null;
 		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
@@ -190,9 +187,6 @@ function ReleaseItem () {
 function OnItemDestruction ( destructedItem : GameObject) {
 	if (destructedItem == item) {
 		ReleaseItem();
-//		item = null;
-//		candidateItem = null;
-//		SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	}
 }
 
