@@ -5,7 +5,6 @@ function Start () {
 }
 
 function Update () {
-
 }
 
 //TODO: Was ist das hier fuer ein Script? Wird das noch verwendet? --- Ben, 24.6.
