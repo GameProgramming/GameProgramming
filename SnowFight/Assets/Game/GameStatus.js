@@ -39,7 +39,7 @@ function OnNetworkLoadedLevel () {
 	var pl :GameObject = Network.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity, 0);
 	AddPlayer(pl);
 	SetMainPlayer(pl);
-	
+	botNumber = GameObject.FindGameObjectWithTag("Main").GetComponent(ConnectGuiMasterServer).GetBotCount();
 	if (Network.isServer) {
 		// add the bots.
 		for (var i :int = 0; i < botNumber; i++) {
