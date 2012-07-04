@@ -3,10 +3,11 @@ private var blinkingTime : float = 0.0;
 
 function OnGUI() {
 
-	if (transform.tag.Equals("Player")) {
+	//Get the player status script.
+	var player = gameObject.GetComponent("PlayerStatus");
+	if (player.IsMainPlayer() && !player.IsDead()) {
 	
-		//Get the player status script.
-		var player = gameObject.GetComponent("PlayerStatus");
+		
 		//Create a new texture and style.
 		var texture : Texture2D = new Texture2D(1, 1);
 		var color = new Color(1, 1, 1, 1);

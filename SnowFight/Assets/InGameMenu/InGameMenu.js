@@ -4,6 +4,7 @@ private var ingameMenuRect;
 private var changeMapRect;
 private var locked : boolean = false;
 private var pressed : boolean = false;
+private var disconnect : boolean = false;
 
 function Awake () {
 	showIngameMenu = false;
@@ -34,8 +35,9 @@ function Update() {
 				}
 			}
 		}
-
-
+	}
+	if (disconnect) {
+		GameObject.FindGameObjectWithTag("Main").SendMessage("Disconnect");
 	}
 }
 
@@ -82,7 +84,8 @@ function MakeIngameMenuRect(id : int) {
 			}
 		}
 		if (GUILayout.Button ("Main Menu / Disconnect")) {
-			GameObject.FindGameObjectWithTag("Main").SendMessage("Disconnect");
+			pressed = true;
+			disconnect = true;
 		}
 		if (GUILayout.Button ("Exit Game")) {
 			Application.Quit();

@@ -18,6 +18,10 @@ var styleTeam1Tab : GUIStyle;
 var styleTeam2Tab : GUIStyle;
 var neutralStyleTab : GUIStyle;
 
+var blueCircle : Texture2D;
+var redCircle : Texture2D;
+var grayCircle : Texture2D;
+
 function Awake () {
 	status = GetComponent(GameStatus);
 	
@@ -64,6 +68,38 @@ function OnGUI() {
 	GUI.Label (Rect (55, 15, 20, 25), " : ", neutralStyle);
 	GUI.Label (Rect (77, 15, 35, 25), scoreTeam2, styleTeam2);
 	
+	var positionX : int = 20;
+	
+	var gos : GameObject[] = GameObject.FindGameObjectsWithTag("Team");
+	
+	for (var j : GameObject in gos) {
+		var teamScript : Team = j.GetComponent(Team);
+		if (teamScript.GetTeamNumber() == 1) {
+			for (var k : Transform in j.transform) {
+				if (k.CompareTag("Base")) {
+					GUI.Label (Rect (positionX, 50, 25, 25), blueCircle);
+					positionX += 25;
+				} 
+			}
+		}
+		if (teamScript.GetTeamNumber() == 2) {
+			for (var k : Transform in j.transform) {
+				if (k.CompareTag("Base")) {
+					GUI.Label (Rect (positionX, 50, 25, 25), redCircle);
+					positionX += 25;
+				} 
+			}
+		}
+
+	}
+	
+	var neutralTeam : GameObject = GameObject.FindGameObjectWithTag("TeamNeutral");
+	for (var i : Transform in neutralTeam.transform) {
+		if (i.CompareTag("Base")) {
+			GUI.Label (Rect (positionX, 50, 25, 25), grayCircle);
+			positionX += 25;
+		}
+	}
 	//Show the points tab.
 	if (Time.time < fade) {
 		GUI.Box (Rect (120, 15, 240, 110), "Team Frags");

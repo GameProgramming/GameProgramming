@@ -3,6 +3,7 @@
 private var teamComponent : Team;
 private var teamNumber = 0;
 private var teamMembers : Transform[];
+private var allBases : GameObject[] = [];
 private var unoccupiedBases : GameObject[] = [];
 private var ownBases : GameObject[] = [];
 private var enemyBases : GameObject[] = [];
@@ -25,11 +26,19 @@ function Update () {
 function GetTargets (player : GameObject) : GameObject[] {
 	var closestBall : GameObject;
 	var targets : GameObject[] = [];
+	
+	//find bases
+	UpdateBases();
+	//if there'still a free base, return that as targets!
+	if (unoccupiedBases.Length > 0)
+		targets += [GetClosestObjectInArray (player,unoccupiedBases)];
+	
 	GetUfos ();
 	for (ufo in ufos) {
 		//if the ufo is empty and we're closest, go get it!
 		if (IsUfoUnoccupied (ufo) && IsClosestTeamMember(player, ufo.transform.position)) {
 			targets += [ufo];
+			break;
 		}
 		//if there's an enemy in a ufo
 		else if (IsUfoOccupiedByEnemy(ufo)) {
@@ -38,8 +47,10 @@ function GetTargets (player : GameObject) : GameObject[] {
 			if (bazookas.Length > 0) {
 				for (baz in bazookas) {
 					//and we're the closest bot, return that bazooka
-					if (IsClosestTeamMember(player, baz.transform.position))
+					if (IsClosestTeamMember(player, baz.transform.position)) {
 						targets += [baz];
+						break;
+					}
 				}
 			}
 			//if there's no bazooka find a snowball or snowfield to take to the base
@@ -78,16 +89,13 @@ function GetTargets (player : GameObject) : GameObject[] {
 		}
 	}
 	
-	//otherwise find bases
-	UpdateBases();
-	//if there'still a free base, return that as targets!
-	if (unoccupiedBases.Length > 0)
-		targets += [GetClosestObjectInArray (player,unoccupiedBases)];
 	//otherwise return an enemies base to regain
-	else if (enemyBases.Length > 0)
-		targets += [GetClosestObjectInArray (player,enemyBases)];
-	else 
-		targets += [GetClosestObjectInArray (player,ownBases)];
+	if (unoccupiedBases.Length == 0) {
+		if (enemyBases.Length > 0)
+			targets += [GetClosestObjectInArray (player,enemyBases)];
+		else 
+			targets += [GetClosestObjectInArray (player,ownBases)];
+	}
 	
 	return targets;
 }
@@ -97,6 +105,8 @@ function UpdateBases () {
 //	var own = 0;
 //	var enemy = 0;
 	for (var base in GameObject.FindGameObjectsWithTag("Base")) {
+		allBases += [base.gameObject];
+		
 		var team = base.transform.parent;
 		if (team && team.GetComponent(Team).GetTeamNumber() == 0) {
 			unoccupiedBases += [base.gameObject];
@@ -108,6 +118,10 @@ function UpdateBases () {
 			enemyBases += [base.gameObject];
 		}
 	}
+}
+
+function GetClosestBase (respawningBot : GameObject) : GameObject {
+	GetClosestObjectInArray(respawningBot, allBases);
 }
 
 function GetClosestOwnBase (respawningBot : GameObject) : GameObject {
@@ -186,8 +200,15 @@ function GetClosestObjectInArray (bot : GameObject, objects : GameObject[]) : Ga
 		//with are certain possibility, give a result that's not actually the closest
 		if (Random.value > 0.8)
 			return obj;
-			
-		curDist = Vector3.Distance(botPosition, obj.transform.position);
+		
+		if(obj.CompareTag("Base")) {
+			var flag = obj.transform.Find("TeamFlag");
+			curDist = Vector3.Distance(botPosition, flag.position);
+		}
+		else
+			curDist = Vector3.Distance(botPosition, obj.transform.position);
+		
+		
 		if (curDist < minDist) {
 			closest = obj;
 			minDist = curDist;

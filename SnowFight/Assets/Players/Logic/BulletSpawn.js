@@ -24,6 +24,9 @@ function ConnectToPlayer (t :Transform) {
 		player = null;
 		motor = null;
 	}
+	for (var child :Transform in transform) {
+		child.SendMessage("ConnectToPlayer", t, SendMessageOptions.DontRequireReceiver);
+	}
 }
 
 function Update () {

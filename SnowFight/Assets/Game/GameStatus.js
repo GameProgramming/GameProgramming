@@ -45,7 +45,7 @@ function OnNetworkLoadedLevel () {
     pl.GetComponent(PlayerStatus).SetName(GameObject.FindGameObjectWithTag("Main").
     										GetComponent(ConnectGuiMasterServer).playerName);
 	SetMainPlayer(pl);
-	
+	botNumber = GameObject.FindGameObjectWithTag("Main").GetComponent(ConnectGuiMasterServer).GetBotCount();
 	if (Network.isServer) {
 		// add the bots.
 		for (var i :int = 0; i < botNumber; i++) {
