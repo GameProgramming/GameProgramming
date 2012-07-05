@@ -753,8 +753,20 @@ function OnItemChange (iM :ItemManager) {
 }
 
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
+	var oldFire :boolean = inputFire;
+	var oldAltFire :boolean = inputAltFire;
 	stream.Serialize(inputFire);
 	stream.Serialize(inputAltFire);
+	stream.Serialize(grounded);
+	if (!networkView.isMine) {
+		if (oldFire != inputFire) {
+			if (inputFire) {
+				gameObject.SendMessage ("OnLoadThrow", SendMessageOptions.DontRequireReceiver);
+			} else {
+				gameObject.SendMessage ("OnThrow", SendMessageOptions.DontRequireReceiver);
+			}
+		}
+	}
 }
 
 // Require a character controller to be attached to the same game object

@@ -5,7 +5,7 @@ var dmg : int = 2;
 
 var shooter :GameObject;
 
-enum DamageType {Direct = 1, Area = 2, Physical = 3, Crash = 4}
+enum DamageType {Direct = 1, Area = 2, Physical = 3, Crash = 4, Freeze = 5}
 // direct - schneeball, area - ??, physical - schneeball, crash - ufo.
 
 var type : DamageType;

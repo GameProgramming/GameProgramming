@@ -44,8 +44,7 @@ function OnTriggerStay (other :Collider) {
 			attack.attacker = player.gameObject;
 		}
 		attack.damage = strength * 10 * Time.deltaTime;
-		other.gameObject.SendMessage("ApplyDamage", attack,
-									SendMessageOptions.DontRequireReceiver);
+		other.gameObject.SendMessage("ApplyDamage", attack);
 	}
 }
 

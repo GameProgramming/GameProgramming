@@ -81,9 +81,9 @@ function Update () {
 			break;
 		case PlayerState.Alive:
 			collectionSnowTime += Time.deltaTime;
-			if (hp <= 0) {
-				Die();
-			}
+//			if (hp <= 0) { // diese zeilen sollten ueberfluessig sein, oder?
+//				Die();
+//			}
 			break;
 		case PlayerState.InVehicle:
 			
@@ -173,16 +173,6 @@ function NetDie (attacker :NetworkViewID) {
 	gameObject.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
 	gameObject.SendMessage ("RemoveTarget", SendMessageOptions.DontRequireReceiver);
 	game.SendMessage ("OnPlayerDeath", this);
-}
-
-function Freeze (attack :Attack) {
-	if (state == PlayerState.Alive) {
-		frozen = attack.damage * 0.1;
-		ApplyDamage(attack);
-		if (!IsDead()) {
-			SetState(PlayerState.Frozen);
-		}
-	}
 }
 
 function IsFrozen () :boolean {
@@ -286,11 +276,19 @@ function ApplyDamage (attack :Attack) {
 		hp = Mathf.Max(0, hp);
 		var dT :int = attack.damageType;
 		networkView.RPC("NetApplyDamage", RPCMode.Others, hp, dT);
+		
+		if (attack.damageType == DamageType.Freeze
+			&& state == PlayerState.Alive
+			&& networkView.isMine) {
+			frozen = attack.damage * 0.1;
+			SetState(PlayerState.Frozen);
+		}
+		
 //s		Debug.Log("NetHit Send");
 		lastAttack = attack;
 		gameObject.SendMessage ("OnHit", attack, SendMessageOptions.DontRequireReceiver);										
 		gameObject.SendMessage ("ReleaseBall", null, SendMessageOptions.DontRequireReceiver);
-				
+		
 		if (hp <= 0) {
 			Die();
 		}
@@ -299,12 +297,19 @@ function ApplyDamage (attack :Attack) {
 
 @RPC
 function NetApplyDamage (newHp :int, damageType :int) {
-	Debug.Log("NetHit Recv");
+//	Debug.Log("NetHit Recv");
 	//TODO: irgendwie den attacker durchs netzwerk uebertragen.
 	lastAttack = new Attack();
 	lastAttack.damage = hp - newHp;
 	lastAttack.damageType = damageType;
 	hp = newHp;
+	
+	if (lastAttack.damageType == DamageType.Freeze
+		&& state == PlayerState.Alive
+		&& networkView.isMine) {
+		frozen = lastAttack.damage * 0.1;
+		SetState(PlayerState.Frozen);
+	}
 	
 	gameObject.SendMessage ("OnHit", lastAttack, SendMessageOptions.DontRequireReceiver);										
 	gameObject.SendMessage ("ReleaseBall", null, SendMessageOptions.DontRequireReceiver);
@@ -344,7 +349,7 @@ function SetSpawnBaseID (newSpawnBaseID : int) {
 	killTime = Time.time;
 }
 
-private function SetState (s :PlayerState) {
+private function NetSetState (s :PlayerState) {
 	if (s == PlayerState.Dead && IsMainPlayer()) {
 		var mapOverview = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
 		mapOverview.SetMode(true);
@@ -352,6 +357,12 @@ private function SetState (s :PlayerState) {
 	}
 	state = s;
 	SendMessage("OnPlayerStateChange", state, SendMessageOptions.DontRequireReceiver);
+}
+
+private function SetState (s :PlayerState) {
+	if (networkView.isMine) {
+		NetSetState(s);
+	}
 }
 
 function GetTeamNumber () : int {
@@ -376,8 +387,9 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 	var s :int = state;
     stream.Serialize(s);
     if (s != state) {
+    	Debug.Log ("Network state change "+playerName+" to "+s);
     	var st :PlayerState = s;
-    	SetState(st);
+    	NetSetState(st);
     }
 }
 
@@ -390,6 +402,12 @@ function SetName (name :String) {
 @RPC
 function NetSetName (name :String) {
 	playerName = name;
+}
+
+function OnPlayerConnected(newPlayer: NetworkPlayer) {
+	if (state != PlayerState.Dead) {
+		networkView.RPC("NetRespawn", newPlayer, spawnBaseID);
+	}
 }
 
 function OnGUI() {
@@ -427,6 +445,5 @@ function OnGUI() {
 		
     } 
 }
-
 
 @script RequireComponent (NetworkView)

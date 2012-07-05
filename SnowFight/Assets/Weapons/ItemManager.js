@@ -92,7 +92,7 @@ function OnGUI () {
 function Update () {
 	if (!networkView.isMine) return;
 	
-	if (candidateItem && CandidateTooFarAway()) {
+	if (candidateItem && (CandidateTooFarAway() || item == candidateItem)) {
 		candidateItem = null;
 	}
 	var inputActionUp = !lastInputAction && inputAction;
@@ -115,9 +115,8 @@ function Update () {
 	} else if (item && (inputActionUp || pStatus.IsDead())) {
 //  } else if (item && (inputAction || pStatus.IsDead())) {
 		ReleaseItem();
-	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem)
-//	} else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem)
-			  && motor.IsGrounded()) {
+	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem) ) {
+//	} else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem) && motor.IsGrounded()
 		if (candidateItem.CompareTag("SnowballRessource")) {
 			snowResourcePick = candidateItem.GetComponent(SnowRessource);
 			srPickProgress = 0;
@@ -140,6 +139,10 @@ function Update () {
 }
 
 function SetItem( it :GameObject ) {
+	if (it == item) {
+		Debug.Log ("Prevented the re-setting of the same item for "+pStatus.playerName);
+		return;
+	}
 	item = it;
 	candidateItem = null;
 	if (pStatus.IsMainPlayer()) Debug.Log("Player picked up "+item);

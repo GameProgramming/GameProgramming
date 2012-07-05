@@ -99,14 +99,13 @@ function GetAllPlayers () : Transform[] {
 }
 
 function LoseTickets (count :int) {
-	if (Network.isServer) {
-		networkView.RPC("NetTicketChange", RPCMode.All, Mathf.Clamp(tickets - count,0,999999));
+	if (networkView.isMine) {
+		tickets = Mathf.Clamp(tickets - count,0,999999);
 	}
 }
 
-@RPC
-function NetTicketChange (t :int) {
-	tickets = t;
+function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
+    stream.Serialize(tickets);
 }
 
 function Friendly (otherTeam :Team) :boolean {

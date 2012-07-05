@@ -32,9 +32,9 @@ function Update () {
 		if (freezingProgress >= freezingTime) {
 			var attack = new Attack();
 			attack.damage = freezingStrength;
+			attack.damageType = DamageType.Freeze;
 			attack.attacker = player;
-			freezingCurr.gameObject.SendMessage("Freeze", attack,
-									SendMessageOptions.DontRequireReceiver);
+			freezingCurr.gameObject.SendMessage("ApplyDamage", attack);
 		}
 	}
 }

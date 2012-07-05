@@ -2,6 +2,8 @@
 var redDuration = 0.2;
 var hideDuration = 0.1;
 
+private var lastPosition :Vector3;
+
 private var goRed : boolean = false;
 private var redTime = 0.0;
 
@@ -17,6 +19,7 @@ private var frost :Transform;
 private var body :Transform;
 private var meshRenderers :Component[];
 private var skinnedRenderers :Component[];
+private var controller :CharacterController;
 
 enum PlayerViewMode {Default, AimUp}
 private var viewMode :PlayerViewMode = PlayerViewMode.Default;
@@ -31,6 +34,8 @@ function Awake() {
 	frost = transform.Find("Frost");
 	
 	anim = transform.Find("Model").GetComponent(Animation);
+	
+	controller = GetComponent (CharacterController);
 	
 	anim["hit"].speed = 10;
 	anim["hit"].layer = 2;
@@ -93,17 +98,14 @@ function Update () {
 		goRed = false;
 	}
 	
+	var posVelo = (transform.position - lastPosition)/Time.deltaTime;
+	lastPosition = transform.position;
+	
 	if (motor.grounded) {
-		var speed = motor.inputMoveDirection.magnitude;
+		var speed = 0.15 * posVelo.magnitude;
 		if (speed > 0.01) {
 			anim.CrossFade("walk");
-			anim["walk"].speed = speed * 80;
-//			if (Random.Range(0,10) <= 1) {
-//				leftFootEmitter.Emit(1);
-//			}
-//			if (Random.Range(0,10) <= 1) {
-//				rightFootEmitter.Emit(1);
-//			}
+			anim["walk"].speed = speed * 90;
 		} else {
 			anim.CrossFade("idle");
 			anim["idle"].speed = 10;
@@ -112,11 +114,10 @@ function Update () {
 		anim.CrossFade("jumping");
 		anim["jumping"].speed = 10;
 	}
-	
-	if (motor.throwProgress == 0) {
-		anim.Stop("throw1");
-		
-	}
+//	
+//	if (motor.throwProgress == 0) {
+//		anim.Stop("throw1");
+//	}
 	if (camSetup) {
 		switch (viewMode) {
 		case PlayerViewMode.AimUp:
@@ -158,6 +159,11 @@ function OnUnloadThrow () {
 
 function OnDeath () {
 	anim.CrossFade("die");
+	anim.Stop("throw1");
+	anim.Stop("throw2");
+	if (playerStatus.IsMainPlayer()) {
+		throwPreview.Deactivate();
+	}
 }
 
 function OnRespawn () {
@@ -240,3 +246,5 @@ function OnItemChange(itemManager :ItemManager) {
 function GameOver () {
 	anim.enabled = false;
 }
+
+@script RequireComponent (NetworkView)
