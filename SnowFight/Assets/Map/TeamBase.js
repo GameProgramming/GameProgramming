@@ -144,12 +144,16 @@ function GetID () : int {
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     var teamNumber :int = team.GetTeamNumber();
     stream.Serialize(teamNumber);
-    spawnWeaponPipeline.length = spawnWeaponPipelineLength;
+    var newSWP :Array = new Array();
     for (var i = 0; i < spawnWeaponPipelineLength; i++) {
-    	var itemId :int = spawnWeaponPipeline[i];
+    	var itemId :int = 0;
+    	if (spawnWeaponPipeline.length > i) {
+    		itemId = spawnWeaponPipeline[i];
+    	}
     	stream.Serialize(itemId);
-    	spawnWeaponPipeline[i] = itemId;
+    	newSWP.Add(itemId);
     }
+    spawnWeaponPipeline = newSWP;
     if (!stream.isWriting) {
         if (team == null || team.GetTeamNumber() != teamNumber) {
         	var t :Team = game.GetTeamById(teamNumber);

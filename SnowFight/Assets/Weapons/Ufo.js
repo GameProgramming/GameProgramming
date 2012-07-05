@@ -90,6 +90,7 @@ function PickItem(player :GameObject) {
 	transform.localPosition = Vector3.zero;
 	transform.localRotation = Quaternion.identity;
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer (player.transform);
+	freezer.ConnectToPlayer (player.transform);
 }
 
 function ApplyDamage (attack :Attack) {

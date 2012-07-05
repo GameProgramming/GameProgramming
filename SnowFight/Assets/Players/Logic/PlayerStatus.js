@@ -111,10 +111,7 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 			attack.damage = damageObject.GetDamage();
 			// todo: die groesse vielleicht noch mit rein.
 			attack.attacker = lastOwner;
-//			ApplyDamage(attack);
-			// ben: das finde ich komisch.. es verursacht auch, dass einem manchmal
-			//      der ball abrupt und unbeabsichtigt vor der nase zerbroeselt.
-			//ball.SmashBallToSnowfield();
+			ApplyDamage(attack);
 		}
 	}
 }
@@ -153,19 +150,21 @@ function Die () {
 		return;
 	}
 	if (Network.isServer) {
-		networkView.RPC("NetDie", RPCMode.Others);
-		NetDie();
+		var attacker :NetworkViewID = NetworkViewID.unassigned;
+		if (lastAttack && lastAttack.attacker) {
+			attacker = lastAttack.attacker.networkView.viewID;
+		}
+		networkView.RPC("NetDie", RPCMode.Others, attacker);
+		NetDie(attacker);
 		team.LoseTickets(1);
 	}
 }
 
 @RPC
-function NetDie () {
-	if (IsMainPlayer()) {
-		var mapOverview = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
-		mapOverview.SetMode(true);
-		
-		spawnBaseID = 0;
+function NetDie (attacker :NetworkViewID) {
+	if (!Network.isServer && attacker != NetworkViewID.unassigned) {
+		var a :NetworkView = NetworkView.Find(attacker);
+		if (a && lastAttack) lastAttack.attacker = a.gameObject;
 	}
 	
 	SetState(PlayerState.Dead);
@@ -346,6 +345,11 @@ function SetSpawnBaseID (newSpawnBaseID : int) {
 }
 
 private function SetState (s :PlayerState) {
+	if (s == PlayerState.Dead && IsMainPlayer()) {
+		var mapOverview = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+		mapOverview.SetMode(true);
+		spawnBaseID = 0;
+	}
 	state = s;
 	SendMessage("OnPlayerStateChange", state, SendMessageOptions.DontRequireReceiver);
 }
@@ -378,6 +382,13 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 }
 
 function SetName (name :String) {
+	if (networkView.isMine) {
+		networkView.RPC("NetSetName", RPCMode.AllBuffered, name);
+	}
+}
+
+@RPC
+function NetSetName (name :String) {
 	playerName = name;
 }
 

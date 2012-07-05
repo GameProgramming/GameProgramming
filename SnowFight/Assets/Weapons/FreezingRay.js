@@ -8,6 +8,8 @@ var freezingTime = 0.2f;
 private var freezingProgress = 0.0f;
 private var freezingCurr :Transform = null;
 
+private var player :GameObject;
+
 var freezingStrength = 2.5f;
 
 function Start() {
@@ -30,9 +32,16 @@ function Update () {
 		if (freezingProgress >= freezingTime) {
 			var attack = new Attack();
 			attack.damage = freezingStrength;
+			attack.attacker = player;
 			freezingCurr.gameObject.SendMessage("Freeze", attack,
 									SendMessageOptions.DontRequireReceiver);
 		}
+	}
+}
+
+function ConnectToPlayer (pT :Transform) {
+	if (pT) {
+		player = pT.gameObject;
 	}
 }
 
@@ -78,10 +87,6 @@ function OnTriggerExit (other :Collider) {
 	if (other.transform == freezingCurr) {
 		freezingCurr = null;
 	}
-}
-
-function OnGUI() {
-	
 }
 
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {

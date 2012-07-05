@@ -4,7 +4,7 @@ private var blinkingTime : float = 0.0;
 function OnGUI() {
 
 	//Get the player status script.
-	var player = gameObject.GetComponent("PlayerStatus");
+	var player :PlayerStatus = gameObject.GetComponent(PlayerStatus);
 	if (player.IsMainPlayer() && !player.IsDead()) {
 	
 		

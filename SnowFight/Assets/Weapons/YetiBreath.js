@@ -37,7 +37,7 @@ function Fire () {
 }
 
 function OnTriggerStay (other :Collider) {
-	if (Network.isServer && breathProgress > 0 && other.CompareTag("Player")) {
+	if (Network.isServer && breathProgress > 0.0 && other.CompareTag("Player")) {
 		var attack = new Attack();
 		attack.damageType = DamageType.Area;
 		if (player) {
