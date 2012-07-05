@@ -122,8 +122,9 @@ function Idle ()
 			}
 
 			var targets : GameObject[] = teamAI.GetTargets(gameObject);
-			for (t in targets) {			
-				
+			for (t in targets) {
+//			if (targets.Length > 0) {
+//				var t = targets[0];
 				if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
 					tar = FindSnowResource();
 					if (tar) {
@@ -208,6 +209,9 @@ function ConquerBase() {
 			}
 		}
 		else {
+			Debug.DrawRay(target.transform.position, transform.up * 50, Color.black);
+			Debug.DrawRay(transform.position, transform.up * 50, Color.black);
+			
 			flagPosition = target.transform.Find("TeamFlag").position;
 			if (Vector3.Distance(transform.position, flagPosition) >= 5)
 				MoveTowardsPosition(flagPosition);
@@ -323,7 +327,6 @@ function GetBazooka () {
 
 			var candidateItem = itemManager.GetCandidateItem();
 			if(candidateItem && candidateItem.CompareTag("Weapon")) {
-				Debug.Log("Bazooka is candidate", this);
 				motor.inputAction = true;
 				motor.inputAltFire = false;
 //				RemoveTs
@@ -376,6 +379,8 @@ function GetAmmo () {
 		}
 		
 		busy = true;
+		Debug.DrawRay(transform.position, transform.up * 50, Color.cyan);
+		Debug.DrawRay(target.transform.position, transform.up * 50, Color.cyan);
 		
 		if (alreadyThere) {
 			if (Random.value > 0.9 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
@@ -597,6 +602,13 @@ function Attack ()
 		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() && !pStatus.IsRidingUfo()) {
 		 		var weapon : GameObject = itemManager.GetItem();
 		 		//if we have a bazooka, use it!
+	 			//aim and then shoot
+	 			//-------------------------
+	 			//wait for a while and act as if you're aming
+	 			//meanwhile always rotate towards the ufo
+	 			//RotateTowardsPosition(target.transform.position, rotateSpeed)
+	 			//when lock-time is over, shoot
+	 			//motor.inputFire = !motor.inputFire;
 		 		if (weapon && weapon.CompareTag("Weapon")) {
 		 			if(weapon.GetComponent("RocketLauncher")){
 		 				if(newTransform == null){
@@ -625,18 +637,10 @@ function Attack ()
 								newTransform = null;
 		 			  			lostTarget = 0;
 						}
-		 			}
-		 			//TODO: aim and then shoot
-		 			//-------------------------
-		 			//wait for a while and act as if you're aming
-		 			//meanwhile always rotate towards the ufo
-		 			//RotateTowardsPosition(target.transform.position, rotateSpeed)
-		 			//when lock-time is over, shoot
-		 			//motor.inputFire = !motor.inputFire;
-		 			
+		 			}		 			
 		 		}
 		 		else { //if there's a bazooka lying around, go get it!
-		 			//hopefully do something else!
+		 			//hopefully do something useful in TeamAI!
 		 			RemoveTarget();
 		 			return;
 		 		}
@@ -663,13 +667,6 @@ function Attack ()
 
 			moveDir = direction;
 		}
-		
-		//TODO: uncomment if the rest works
-//		if (Random.value > 0.99) {
-////			Debug.Log("return 4", this);
-//			RemoveTarget();
-//			return;
-//		}
 
 		// yield for one frame
 		yield;

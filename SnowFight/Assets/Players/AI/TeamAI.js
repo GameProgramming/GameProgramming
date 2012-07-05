@@ -183,7 +183,7 @@ function IsClosestTeamMember (player : GameObject, pos : Vector3) : boolean {
 	var curDist = 0.0;
 	for (var bot in teamMembers) {
 		curDist = Vector3.Distance(bot.position, pos);
-		if (curDist < minDist && !bot.GetComponent(BotAI).IsBusy()) {
+		if (curDist < minDist && bot.GetComponent(BotAI).enabled && !bot.GetComponent(BotAI).IsBusy()) {
 			minDist = curDist;
 			return false;
 		}
