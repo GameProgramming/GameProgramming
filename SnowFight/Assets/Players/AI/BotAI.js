@@ -103,53 +103,55 @@ function Idle ()
 	// unless we're dying, in which case we just keep idling.
 	while (true)
 	{
-		whileCounter ++;
-		moveDir = Vector3.zero;
-		itemManager.ReleaseItem();
-
-		var targets : GameObject[] = teamAI.GetTargets(gameObject);
-			for (t in targets) {
-//		if (targets.Length > 0) {
-//			var t = targets[0];
-			if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
-				tar = FindSnowResource();
-				if (tar) {
+		if (!pStatus.IsDead()) {
+	
+			whileCounter ++;
+			moveDir = Vector3.zero;
+			itemManager.ReleaseItem();
+	
+			var targets : GameObject[] = teamAI.GetTargets(gameObject);
+				for (t in targets) {
+	//		if (targets.Length > 0) {
+	//			var t = targets[0];
+				if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
+					tar = FindSnowResource();
+					if (tar) {
+						target = tar;
+						if(target.CompareTag("SnowballRessource"))
+							yield GetAmmo();
+						else if (target.CompareTag("BigSnowball"))
+							yield RollBall();
+					}
+				}
+				tar = teamAI.FindClosestEnemy();			
+				if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
 					target = tar;
-					if(target.CompareTag("SnowballRessource"))
+					yield Attack();	
+				}
+				
+				busy = false;
+				target = t;
+				if (target) {
+					if(target.CompareTag("SnowballRessource")) {
 						yield GetAmmo();
-					else if (target.CompareTag("BigSnowball"))
-						yield RollBall();
+					}
+					else if (target.CompareTag("BigSnowball")) {
+						yield RollBall();	
+					}
+					else if (target.CompareTag("Base")) {
+						yield ConquerBase();
+					}
+					else if (target.CompareTag("Ufo")) {
+						yield GetUFO();
+					}
+					else if (target.CompareTag("Weapon")) {
+						yield GetBazooka();
+					}
+					else {
+						Debug.Log("Tag not recognized!", this);
+					}
 				}
 			}
-			tar = teamAI.FindClosestEnemy();			
-			if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
-				target = tar;
-				yield Attack();	
-			}
-			
-			busy = false;
-			target = t;
-			if (target) {
-				if(target.CompareTag("SnowballRessource")) {
-					yield GetAmmo();
-				}
-				else if (target.CompareTag("BigSnowball")) {
-					yield RollBall();	
-				}
-				else if (target.CompareTag("Base")) {
-					yield ConquerBase();
-				}
-				else if (target.CompareTag("Ufo")) {
-					yield GetUFO();
-				}
-				else if (target.CompareTag("Weapon")) {
-					yield GetBazooka();
-				}
-				else {
-					Debug.Log("Tag not recognized!", this);
-				}
-			}
-		//	Debug.Log("Done with if", this);
 		}
 		yield;
 	}
@@ -199,7 +201,7 @@ function ConquerBase() {
 			}
 		}
 		else {
-			Debug.DrawRay(target.transform.position, transform.up * 50, Color.black);
+			//Debug.DrawRay(target.transform.position, transform.up * 50, Color.black);
 			Debug.DrawRay(transform.position, transform.up * 50, Color.black);
 			
 			flagPosition = target.transform.Find("TeamFlag").position;
@@ -491,6 +493,7 @@ function Attack ()
 	var lostSight : boolean = false;
 	var pos : Vector3 = Vector3.zero;
 	var distanceToEnemy : float = 0.0;
+	var shootDistance = punchRadius;
 	
 	while (true) {
 		//if our target is dead, stop
@@ -532,12 +535,22 @@ function Attack ()
 			// Just move forward at constant speed
 			direction = transform.TransformDirection(Vector3.forward * attackSpeed);
 			
+			var weapon : GameObject = itemManager.GetItem();
+			if (weapon && weapon.CompareTag("Weapon")) {
+ 				shootDistance = punchRadius*3;
+	 			//get the closest enemy in a ufo if there is one
+	 			tar = teamAI.GetClosestFlyingEnemy(gameObject);
+	 			if (tar)
+	 				target = tar;
+			}
+		 				
+			
 			//we're getting too close, move back!
-			if (distanceToEnemy < punchRadius*0.1)
+			if (distanceToEnemy < shootDistance*0.1)
 				backup = true;
 			
 			//we're far away now, move closer again
-			if (backup && distanceToEnemy > punchRadius)
+			if (backup && distanceToEnemy > shootDistance)
 				backup = false;
 				
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
@@ -554,8 +567,8 @@ function Attack ()
 		 	}
 		 	
 		 	//the enemy is riding a ufo.. desperate times call for desperate measures
-		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() && !pStatus.IsRidingUfo()) {
-		 		var weapon : GameObject = itemManager.GetItem();
+//		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() && !pStatus.IsRidingUfo()) {
+	 		if (target.GetComponent(PlayerStatus) && !pStatus.IsRidingUfo()) {
 		 		//if we have a bazooka, use it!
 	 			//aim and then shoot
 	 			//-------------------------
@@ -565,7 +578,8 @@ function Attack ()
 	 			//when lock-time is over, shoot
 	 			//motor.inputFire = !motor.inputFire;
 		 		if (weapon && weapon.CompareTag("Weapon")) {
-		 			if(weapon.GetComponent("RocketLauncher")){
+		 				
+		 			if(weapon.GetComponent("RocketLauncher")) {		 			
 		 				if(newTransform == null){
 		 					newTransform = target.transform;
 		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
@@ -596,6 +610,7 @@ function Attack ()
 		 		}
 		 		else { //if there's a bazooka lying around, go get it!
 		 			//hopefully do something useful in TeamAI!
+		 			shootDistance = punchRadius;
 		 			RemoveTarget();
 		 			return;
 		 		}
@@ -603,7 +618,7 @@ function Attack ()
 
 			//shoot and move around a bit ;)
 //			if((pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
-			if (distanceToEnemy < punchRadius) {
+			if (distanceToEnemy < shootDistance) {
 			
 				if (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3)
 					motor.inputAltFire = !motor.inputAltFire;
@@ -744,6 +759,11 @@ function OnSetRemote () {
 }
 
 function OnDeath () {
+	if (teamAI) {
+		var spawnBase = teamAI.GetClosestOwnBase (gameObject);
+		if (spawnBase)
+			pStatus.SetSpawnBaseID(spawnBase.GetComponent(TeamBase).GetID());
+	}
 	StopAllCoroutines();
 	if (this.enabled) StartCoroutine("Start");
 }

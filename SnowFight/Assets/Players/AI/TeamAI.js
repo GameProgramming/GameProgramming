@@ -138,14 +138,14 @@ function UpdateBases () {
 	}
 }
 
-function GetClosestBase (respawningBot : GameObject) : GameObject {
-	return GetClosestObjectInArray(respawningBot, allBases);
+function GetClosestBase (bot : GameObject) : GameObject {
+	return GetClosestObjectInArray(bot, allBases);
 }
 
-function GetClosestOwnBase (respawningBot : GameObject) : GameObject {
+function GetClosestOwnBase (bot : GameObject) : GameObject {
 	UpdateBases ();
 	//just get the closest spawn base for now
-	return GetClosestObjectInArray(respawningBot, ownBases);
+	return GetClosestObjectInArray(bot, ownBases);
 }
 
 function GetUfos () : GameObject[] {
@@ -158,6 +158,17 @@ function IsUfoOccupiedByEnemy (ufo : GameObject) : boolean {
 	if (owner && owner.GetComponent(PlayerStatus).GetTeamNumber() != teamNumber)
 		return true;
 	else return false;
+}
+
+function GetClosestFlyingEnemy (bot : GameObject) : GameObject {
+	GetUfos();
+	var flyingBots : GameObject[] = [];
+	for (u in ufos) {
+		if (IsUfoOccupiedByEnemy(u)) {
+			flyingBots += [u.GetComponent(Ufo).GetOwner()];
+		}
+	}
+	return GetClosestObjectInArray(bot, flyingBots);
 }
 
 function IsUfoUnoccupied (ufo : GameObject) : boolean {
