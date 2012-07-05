@@ -16,7 +16,6 @@ function Start () {
 	teamComponent = GetComponent(Team);
 	teamNumber = teamComponent.GetTeamNumber();
 	teamMembers = teamComponent.GetAllPlayers();
-	
 }
 
 function Update () {
@@ -30,8 +29,9 @@ function GetTargets (player : GameObject) : GameObject[] {
 	//find bases
 	UpdateBases();
 	//if there'still a free base, return that as targets!
-	if (unoccupiedBases.Length > 0)
+	if (unoccupiedBases.Length > 0) {
 		targets += [GetClosestObjectInArray (player,unoccupiedBases)];
+	}
 	
 	GetUfos ();
 	for (ufo in ufos) {
@@ -117,6 +117,11 @@ function UpdateBases () {
 //	var unoccupied = 0;
 //	var own = 0;
 //	var enemy = 0;
+	allBases = [];
+	ownBases = [];
+	enemyBases = [];
+	unoccupiedBases = [];
+
 	for (var base in GameObject.FindGameObjectsWithTag("Base")) {
 		allBases += [base.gameObject];
 		

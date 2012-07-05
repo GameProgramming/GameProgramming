@@ -145,7 +145,6 @@ function SetItem( it :GameObject ) {
 	if (pStatus.IsMainPlayer()) Debug.Log("Player picked up "+item);
 	SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
-	Debug.Log("Set item " + item.tag, this);
 }
 
 function OnControllerColliderHit (hit : ControllerColliderHit) {
