@@ -12,16 +12,16 @@ var type : DamageType;
 
 function Start(){
 	type = DamageType.Direct;
-	if (gameObject.GetComponent("Projectile")) {
-		dmg = gameObject.GetComponent("Projectile").dmg;
-		frontDamage = dmg;
-		behindDamage = dmg * 1.5;
-	 	headDamage = dmg * 3;
- 	} else {
-		frontDamage = dmg;
-		behindDamage = dmg;
-	 	headDamage = dmg;
- 	}
+//	if (gameObject.GetComponent("Projectile")) {
+//		dmg = gameObject.GetComponent("Projectile").dmg;
+//		frontDamage = dmg;
+//		behindDamage = dmg * 1.5;
+//	 	headDamage = dmg * 3;
+// 	} else {
+//		frontDamage = dmg;
+//		behindDamage = dmg;
+//	 	headDamage = dmg;
+// 	}
 }
 
 function GetFrontDamage () : int {

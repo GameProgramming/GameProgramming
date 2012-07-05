@@ -194,6 +194,11 @@ function StartServer (serverName :String, level :String) {
 
 function MakeClientWindow(id : int)
 {
+	GUILayout.BeginHorizontal();
+	GUILayout.Label("Player name");
+	playerName = GUILayout.TextField(playerName);
+	GUILayout.EndHorizontal();
+		
 	GUILayout.Space(5);
 
 	// Refresh hosts
