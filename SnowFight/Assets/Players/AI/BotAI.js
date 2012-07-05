@@ -285,7 +285,7 @@ function GetBazooka () {
 				
 			//if an enemy is too close forget this stuff and attack!!
 			var enemy = teamAI.FindClosestEnemy();
-			if(Random.value > 0.8 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
+			if(Random.value > 0.99 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
 				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 				RemoveTarget();
 				return;
@@ -541,7 +541,7 @@ function Attack ()
 				backup = false;
 				
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
-		 	if (pStatus.IsRidingUfo() && AboveTarget() && 
+		 	if (Random.value > 0.7 && pStatus.IsRidingUfo() && AboveTarget() && 
 		 	(target.GetComponent(PlayerStatus) && !target.GetComponent(PlayerStatus).IsRidingUfo())) {
 		 		motor.inputAltFire = true;
 		 	}
