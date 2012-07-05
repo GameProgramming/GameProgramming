@@ -1,4 +1,5 @@
 #pragma strict
+#pragma downcast
 
 var tabFade = 3.0;
 var skyBox : UnityEngine.Material;

@@ -398,7 +398,7 @@ function OnGUI() {
 		boxWidth = Screen.width/10;
 			
 		 
-			innerColor = new Color(0, 0, 0,0.5);
+			innerColor = new Color(1, 1, 1,0.5);
 			outerColor = new Color(1, 0, 0,0.5);
 			aiming = "Targeted";
 		  
@@ -414,7 +414,7 @@ function OnGUI() {
 		GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 47, boxWidth+2, 18), "", outerStyle);
 		GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 46, boxWidth  ,16), aiming,innerStyle);
 		
-    }
+    } 
 }
 
 

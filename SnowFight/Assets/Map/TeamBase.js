@@ -161,7 +161,8 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 
 function OnGUI () {
 	var pos :Vector3 = Camera.main.WorldToScreenPoint(transform.position);
-	if (pos.z > 0 && pos.z < 60) {
+	if (pos.z > 1 && pos.z < 70 && pos.x > -10 && pos.y > -10
+				  			    && pos.x < Screen.width-10 && pos.y < Screen.height-10) {
 		GUILayout.BeginArea(Rect(pos.x, Screen.height-pos.y, 20,150));
 		GUILayout.BeginVertical();
 		for (var itemId :int in spawnWeaponPipeline) {
