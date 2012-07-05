@@ -105,62 +105,63 @@ function Idle ()
 		moveDir = Vector3.zero;
 		itemManager.ReleaseItem();
 		
-			if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
-				tar = FindSnowResource();
-				if (tar) {
-					target = tar;
-					if(target.CompareTag("SnowballRessource"))
-						yield GetAmmo();
-					else if (target.CompareTag("BigSnowball"))
-						yield RollBall();
-				}
-			}
-			tar = teamAI.FindClosestEnemy();			
-			if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
+		if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
+			tar = FindSnowResource();
+			if (tar) {
 				target = tar;
-				yield Attack();	
+				if(target.CompareTag("SnowballRessource"))
+					yield GetAmmo();
+				else if (target.CompareTag("BigSnowball"))
+					yield RollBall();
 			}
+		}
+		tar = teamAI.FindClosestEnemy();			
+		if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
+			target = tar;
+			yield Attack();	
+		}
 
-			var targets : GameObject[] = teamAI.GetTargets(gameObject);
-			for (t in targets) {
-//			if (targets.Length > 0) {
-//				var t = targets[0];
-				if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
-					tar = FindSnowResource();
-					if (tar) {
-						target = tar;
-						if(target.CompareTag("SnowballRessource"))
-							yield GetAmmo();
-						else if (target.CompareTag("BigSnowball"))
-							yield RollBall();
-					}
+		var targets : GameObject[] = teamAI.GetTargets(gameObject);
+//			for (t in targets) {
+		if (targets.Length > 0) {
+//			Debug.Log("In if", this);
+			var t = targets[0];
+//			if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
+//				tar = FindSnowResource();
+//				if (tar) {
+//					target = tar;
+//					if(target.CompareTag("SnowballRessource"))
+//						yield GetAmmo();
+//					else if (target.CompareTag("BigSnowball"))
+//						yield RollBall();
+//				}
+//			}
+//			tar = teamAI.FindClosestEnemy();			
+//			if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
+//				target = tar;
+//				yield Attack();	
+//			}
+			
+			busy = false;
+			target = t;
+			if (target) {
+				if(target.CompareTag("SnowballRessource")) {
+					yield GetAmmo();
 				}
-				tar = teamAI.FindClosestEnemy();			
-				if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
-					target = tar;
-					yield Attack();	
+				else if (target.CompareTag("BigSnowball")) {
+					yield RollBall();	
 				}
-				
-				busy = false;
-				target = t;
-				if (target) {
-					if(target.CompareTag("SnowballRessource")) {
-						yield GetAmmo();
-					}
-					else if (target.CompareTag("BigSnowball")) {
-						yield RollBall();	
-					}
-					else if (target.CompareTag("Base")) {
-						yield ConquerBase();
-					}
-					else if (target.CompareTag("Ufo")) {
-						yield GetUFO();
-					}
-					else if (target.CompareTag("Weapon")) {
-						yield GetBazooka();
-					}
+				else if (target.CompareTag("Base")) {
+					yield ConquerBase();
+				}
+				else if (target.CompareTag("Ufo")) {
+					yield GetUFO();
+				}
+				else if (target.CompareTag("Weapon")) {
+					yield GetBazooka();
 				}
 			}
+		}
 		yield;
 	}
 } 
@@ -462,17 +463,19 @@ function RollBall ()
 				//var ballRadius = target.GetComponent(Renderer).bounds.size.x * 0.5;
 				 //if we're close enough, try to get a hold of it
 				//if (Vector3.Distance(transform.position, target.transform.position) < ballRadius + 0.1) {
+				MoveTowardsPosition(target.transform.position);
+				
 				var candidateItem = itemManager.GetCandidateItem();
 				if(candidateItem && candidateItem.CompareTag("BigSnowball")) {
 					motor.inputAction = true;
 					motor.inputAltFire = false;
-					
+					moveDir = Vector3.zero;
 					// find out where the closest base is
 					groundBaseFlag = teamAI.GetClosestBase(candidateItem).transform.Find("TeamFlag");
 				}
 				else {
 					motor.inputAction = false;
-					MoveTowardsPosition(target.transform.position);
+//					MoveTowardsPosition(target.transform.position);
 				}
 				
 				if (Random.value > 0.9) {
