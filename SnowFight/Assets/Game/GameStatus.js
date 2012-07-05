@@ -114,7 +114,8 @@ function Update () {
 }
 
 function Restart() {
-	Application.LoadLevel("Main");//Application.loadedLevelName);
+	var levelLoad : NetworkLevelLoad = GameObject.FindGameObjectWithTag("Main").GetComponent(NetworkLevelLoad);
+	levelLoad.LoadNewLevel(currentLevel);
 }
 
 function TeamWins (t :Team) {

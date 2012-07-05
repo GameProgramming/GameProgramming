@@ -1,4 +1,5 @@
 #pragma strict
+#pragma downcast
 
 var breathTime :float = 1.0f;
 private var breathProgress = 0.0f;
@@ -6,12 +7,25 @@ private var breathProgress = 0.0f;
 var strength :int = 10;
 
 private var player :PlayerStatus;
+private var targets :Array;
 
 function Start() {
+	targets = new Array();
 }
 
 function Update () {
 	if (breathProgress > 0.0) {
+		if (Network.isServer) {
+			for (var tar :Collider in targets) {
+				var attack = new Attack();
+				attack.damageType = DamageType.Area;
+				if (player) {
+					attack.attacker = player.gameObject;
+				}
+				attack.damage = strength * 10 * Time.deltaTime;
+				tar.gameObject.SendMessage("ApplyDamage", attack);
+			}
+		}
 		if (networkView.isMine) {
 			breathProgress -= Time.deltaTime;
 		}
@@ -36,15 +50,15 @@ function Fire () {
 	}
 }
 
-function OnTriggerStay (other :Collider) {
-	if (Network.isServer && breathProgress > 0.0 && other.CompareTag("Player")) {
-		var attack = new Attack();
-		attack.damageType = DamageType.Area;
-		if (player) {
-			attack.attacker = player.gameObject;
-		}
-		attack.damage = strength * 10 * Time.deltaTime;
-		other.gameObject.SendMessage("ApplyDamage", attack);
+function OnTriggerEnter (other :Collider) {
+	if (Network.isServer && other.CompareTag("Player")) {
+		targets.Add(other);
+	}
+}
+
+function OnTriggerExit (other :Collider) {
+	if (Network.isServer && other.CompareTag("Player")) {
+		targets.Remove(other);
 	}
 }
 

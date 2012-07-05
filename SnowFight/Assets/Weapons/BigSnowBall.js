@@ -64,7 +64,7 @@ function Update () {
 				shot = true;
 
 				rigidbody.velocity = (GetComponent(BigSnowBallDamage).GetSpeed() / radius)
-									* pushingPlayer.transform.forward;//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
+									* pushingPlayer.transform.forward.normalized;//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;
 
 				pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);

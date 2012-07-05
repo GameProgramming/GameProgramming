@@ -36,6 +36,7 @@ class Attack {
 	var attacker :GameObject;
 	var damageType :DamageType;
 	var damage :int;
+	var time :float;
 }
 
 private var lastAttack :Attack;
@@ -271,7 +272,13 @@ function SubtractSnowball(x) {
 }
 
 function ApplyDamage (attack :Attack) {
-	if (Network.isServer && (IsHittable() || attack.damageType == DamageType.Crash)) {
+	if (Network.isServer && hp > 0 && (IsHittable() || attack.damageType == DamageType.Crash)) {
+		if (lastAttack && (attack.damageType == DamageType.Freeze || attack.damageType == DamageType.Area)
+			&& (lastAttack.damageType == DamageType.Freeze || lastAttack.damageType == DamageType.Area)
+			&& Time.time < lastAttack.time + 0.25) {
+			return;
+			// zu schnelle doppeltreffer vermeiden.
+		} 
 		hp -= attack.damage;
 		hp = Mathf.Max(0, hp);
 		var dT :int = attack.damageType;
@@ -285,6 +292,7 @@ function ApplyDamage (attack :Attack) {
 		}
 		
 //s		Debug.Log("NetHit Send");
+		attack.time = Time.time;
 		lastAttack = attack;
 		gameObject.SendMessage ("OnHit", attack, SendMessageOptions.DontRequireReceiver);										
 		gameObject.SendMessage ("ReleaseBall", null, SendMessageOptions.DontRequireReceiver);
@@ -302,6 +310,7 @@ function NetApplyDamage (newHp :int, damageType :int) {
 	lastAttack = new Attack();
 	lastAttack.damage = hp - newHp;
 	lastAttack.damageType = damageType;
+	lastAttack.time = Time.time;
 	hp = newHp;
 	
 	if (lastAttack.damageType == DamageType.Freeze

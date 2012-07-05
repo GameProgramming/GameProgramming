@@ -2,7 +2,7 @@
 
 var maximumDamage : int = 0;
 var painfulSpeed : float = 2.0;
-var speed : int = 30;
+var speed : int = 5;
 
 private var shooter : GameObject;
 private var velocity : Vector3;
