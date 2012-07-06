@@ -36,8 +36,8 @@
     		var aimDir :Vector3 = target.position - transform.position;
     		transform.rotation = Quaternion.RotateTowards(transform.rotation,
     								Quaternion.LookRotation(aimDir), Time.deltaTime * turnSpeed);
-	    	transform.Translate(Vector3.forward * speed * Time.deltaTime);
     	}
+    	transform.Translate(Vector3.forward * speed * Time.deltaTime);
     	if (time >= 30){
     		//Destroy (gameObject);
     	}
