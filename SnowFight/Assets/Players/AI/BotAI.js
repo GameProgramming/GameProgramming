@@ -72,7 +72,6 @@ function Update () {
 				alternateDir = Vector3.Cross(Vector3.up, moveDir); //strafe to right
 		}
 		else { //this has happened before..strafing might not have worked, so walk backwards
-//					Debug.Log("Backing up! at " + Time.time, this);
 			alternateDir.x = -moveDir.x;
 			alternateDir.y = moveDir.y;
 			alternateDir.z = -moveDir.z;
@@ -508,6 +507,7 @@ function Attack ()
 		busy = true;
 		
 		pos = transform.position;
+		pos.y = target.transform.position.y;
 		distanceToEnemy = Vector3.Distance(pos, target.transform.position);
 
 		angle = Mathf.Abs(RotateTowardsPosition(target.transform.position, rotateSpeed));
@@ -535,9 +535,10 @@ function Attack ()
 			// Just move forward at constant speed
 			direction = transform.TransformDirection(Vector3.forward * attackSpeed);
 			
+			shootDistance = punchRadius;
 			var weapon : GameObject = itemManager.GetItem();
 			if (weapon && weapon.CompareTag("Weapon")) {
- 				shootDistance = punchRadius*3;
+ 				shootDistance *= 3;
 	 			//get the closest enemy in a ufo if there is one
 	 			tar = teamAI.GetClosestFlyingEnemy(gameObject);
 	 			if (tar)
@@ -567,8 +568,8 @@ function Attack ()
 		 	}
 		 	
 		 	//the enemy is riding a ufo.. desperate times call for desperate measures
-//		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() && !pStatus.IsRidingUfo()) {
-	 		if (target.GetComponent(PlayerStatus) && !pStatus.IsRidingUfo()) {
+		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() && !pStatus.IsRidingUfo()) {
+//	 		if (target.GetComponent(PlayerStatus) && !pStatus.IsRidingUfo()) {
 		 		//if we have a bazooka, use it!
 	 			//aim and then shoot
 	 			//-------------------------
@@ -619,7 +620,6 @@ function Attack ()
 			//shoot and move around a bit ;)
 //			if((pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
 			if (distanceToEnemy < shootDistance) {
-			
 				if (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3)
 					motor.inputAltFire = !motor.inputAltFire;
 				else
@@ -637,7 +637,8 @@ function Attack ()
 
 			moveDir = direction;
 			
-			if (Random.value > 0.9 && !pStatus.IsRidingUfo() && !itemManager.GetItem()) {
+//			if (Random.value > 0.99 && !pStatus.IsRidingUfo() && !itemManager.GetItem()) {
+			if (Random.value > 0.999 && !itemManager.GetItem()) {
 				RemoveTarget();
 				return;
 			}
