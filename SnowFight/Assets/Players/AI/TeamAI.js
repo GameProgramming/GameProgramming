@@ -26,14 +26,19 @@ function GetTargets (player : GameObject) : GameObject[] {
 	var closestBall : GameObject;
 	var targets : GameObject[] = [];
 	
+	//find all relevant objects - we will probably need them anyways
+	GetUfos ();
+	GetBazookas();
+	GetSnowBalls();
+	GetSnowRessources();
 	//find bases
 	UpdateBases();
+	
 	//if there'still a free base, return that as targets!
 	if (unoccupiedBases.Length > 0) {
 		targets += [GetClosestObjectInArray (player,unoccupiedBases)];
 	}
 	
-	GetUfos ();
 	for (ufo in ufos) {
 		//if the ufo is empty and we're closest, go get it!
 		if (IsUfoUnoccupied (ufo) && IsClosestTeamMember(player, ufo.transform.position)) {
@@ -42,7 +47,6 @@ function GetTargets (player : GameObject) : GameObject[] {
 		}
 		//if there's an enemy in a ufo
 		else if (IsUfoOccupiedByEnemy(ufo)) {
-			GetBazookas();
 			//if there's a bazooka somewhere
 			if (bazookas.Length > 0) {
 				for (baz in bazookas) {
@@ -54,10 +58,7 @@ function GetTargets (player : GameObject) : GameObject[] {
 				}
 			}
 			//if there's no bazooka find a snowball or snowfield to take to the base
-			else {
-				GetSnowBalls();
-				GetSnowRessources();
-				
+			else {			
 				closestBall = GetClosestObjectInArray(player, snowBalls);
 				var closestRessource = GetClosestObjectInArray(player, snowRessources);
 				if (closestBall && Vector3.Distance(player.transform.position, closestBall.transform.position) < 
@@ -71,7 +72,6 @@ function GetTargets (player : GameObject) : GameObject[] {
 	
 	//we're still here, so there's no ufo or bazooka for us to get
 	//so perhaps get snowballs
-	GetSnowBalls();
 	if (snowBalls.Length > 0) {
 		closestBall = GetClosestObjectInArray(player, snowBalls);
 		if (IsClosestTeamMember(player, closestBall.transform.position) && !closestBall.transform.parent) {
@@ -79,8 +79,7 @@ function GetTargets (player : GameObject) : GameObject[] {
 		}
 	}
 	
-	//Get bazookas if they're around
-	GetBazookas();
+	
 	//if there's a bazooka somewhere
 	if (bazookas.Length > 0) {
 		for (baz in bazookas) {
@@ -91,10 +90,18 @@ function GetTargets (player : GameObject) : GameObject[] {
 			}
 		}
 	}
-			
+	
+	//Get bazookas if they're around
 	//or go make a snowball at a snowressource
-	GetSnowRessources();
 	if (Random.value > 0.8) {
+		if (bazookas.Length > 0) {
+			var closestBazooka = GetClosestObjectInArray(player, bazookas);
+			if (IsClosestTeamMember(player, closestBazooka.transform.position)) {
+				targets += [closestBazooka];
+				//return targets;
+			}
+		}
+	
 		closestRessource = GetClosestObjectInArray(player, snowRessources);
 		if (IsClosestTeamMember(player, closestRessource.transform.position)) {
 			targets += [closestRessource];
