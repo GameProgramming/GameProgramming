@@ -177,6 +177,12 @@ function OnRespawn () {
 		rend.enabled = true;
 	}
 	
+	if (playerStatus.IsMainPlayer()) {
+		var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+		overviewCam.ResetPlayerCam();
+		overviewCam.SetMode(false);
+	}
+	
 	anim.Stop("die");
 	
 	anim.CrossFade("idle");
@@ -211,6 +217,13 @@ function OnPlayerStateChange (newState :PlayerState) {
 	playerState = newState;
 	switch (playerState) {
 	case PlayerState.Dead:
+		if (playerStatus.IsMainPlayer()) {
+			var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+			overviewCam.ResetPlayerCam();
+			overviewCam.SetMode(true);
+		}
+		if (frost) frost.renderer.enabled = false;
+		break;
 	case PlayerState.Alive:
 	case PlayerState.InVehicle:
 		if (frost) frost.renderer.enabled = false;

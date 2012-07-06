@@ -53,17 +53,20 @@ function Update () {
 					progress += Time.deltaTime;
 					locked = true;
 					if (playerMotor.inputFire) {
-						Fire(1);
+						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
+						progress = 0;
 					}
 				}else if (progress >= aimFor) {
 					//Debug.Log("SHOOT!!!!!!!!");
 					if (playerMotor.inputFire) {
-						Fire(2);
+						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
+						progress = 0;
 					}
 				}
 			}else{
 				if (playerMotor.inputFire) {
-					Fire(1);
+					bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
+					progress = 0;
 				}
 			}	
 		}else{
@@ -74,16 +77,16 @@ function Update () {
 	}
 }
 
-function Fire (style) {
-	
-	if(style == 1){
-		bulletSpawn.GetComponent(BulletSpawn).Fire();
-	}else if(style == 2){
-		bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
-	}
-	
-	progress = 0;
-}
+//function Fire (style) {
+//	
+//	if(style == 1){
+//		bulletSpawn.GetComponent(BulletSpawn).Fire();
+//	}else if(style == 2){
+//		bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
+//	}
+//	
+//	progress = 0;
+//}
 
 function Release () {
 	owner = null;

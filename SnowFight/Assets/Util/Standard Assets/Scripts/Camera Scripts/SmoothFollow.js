@@ -27,13 +27,13 @@ function LateUpdate () {
 	// Early out if we don't have a target
 	if (!target) {
 		return;
-	} else {
-		if (target.CompareTag("Player")) {
-			var playerStatus = target.GetComponent(PlayerStatus);
-			if (playerStatus.IsDead()) {
-				return;
-			}
-		}
+//	} else {
+//		if (target.CompareTag("Player")) {
+//			var playerStatus = target.GetComponent(PlayerStatus);
+//			if (playerStatus.IsDead()) {
+//				return;
+//			}
+//		}
 	}
 	
 	
@@ -59,12 +59,14 @@ function LateUpdate () {
 	
 	// Set the position of the camera on the x-z plane to:
 	// distance meters behind the target
-	transform.position = target.position;
-	transform.position -= currentRotation * Vector3.forward * distance;
+	transform.position =
+		Vector3.MoveTowards(transform.position,
+					target.position - currentRotation * Vector3.forward * distance, heightDamping * Time.deltaTime);
 
+	transform.rotation = currentRotation;
 	// Set the height of the camera
 //	transform.position.y = currentHeight;
 	
 	// Always look at the target
-	transform.LookAt (target);
+	//transform.LookAt (target);
 }

@@ -1,4 +1,5 @@
 var explosion : GameObject;
+var destructionDelay :float = 0;
 
 
 function OnCollisionEnter(collision : Collision){
@@ -14,10 +15,20 @@ function NetHitSomething (){
 	explosionClone.GetComponent("Detonator").Explode();
 	var trail :TrailRenderer = GetComponent(TrailRenderer);
 	if (trail) {
-		rigidbody.isKinematic = true;
-		rigidbody.detectCollisions = false;
-		renderer.enabled = false;
-		yield WaitForSeconds(trail.time);
+		destructionDelay = Mathf.Max(destructionDelay, trail.time); 
+	}
+	if (destructionDelay > 0) {
+		for (var rb :Rigidbody in GetComponentsInChildren(Rigidbody)) {
+			rb.isKinematic = true;
+			rb.detectCollisions = false;
+		}
+		for (var rd :MeshRenderer in GetComponentsInChildren(MeshRenderer)) {
+			rd.enabled = false;
+		}
+		for (var ps :ParticleSystem in GetComponentsInChildren(ParticleSystem)) {
+			ps.enableEmission = false;
+		}
+		yield WaitForSeconds(destructionDelay);
 	}
 	Destroy(gameObject);
 }

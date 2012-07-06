@@ -20,7 +20,6 @@ function OnHitByObject (other :GameObject) {
 		var attack :Attack = new Attack();
 		attack.damage = damageObject.GetFrontDamage();
 		attack.attacker = damageObject.GetShooter();
-		Debug.Log("Ufo hit. "+attack.damage+"  "+attack.attacker);
 		transform.parent.gameObject.SendMessage("ApplyDamage", attack);
 	}
 }

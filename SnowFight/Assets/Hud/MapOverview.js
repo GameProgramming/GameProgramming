@@ -31,7 +31,7 @@ function SetMode ( m :boolean ) {
 
 function SetPlayerCam ( c :Transform ) {
 	playerCam = c;
-	camFollow.target = playerCam;
+	if (!mode) camFollow.target = playerCam;
 }
 
 function ResetPlayerCam () {

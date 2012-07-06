@@ -9,11 +9,13 @@
     
     private var time : float = 0.0;
 
-    
+	var speed :float;
+	var maxSpeed :float;
+	var speedUp :float;
+	var turnSpeed :float;
 
     function Start(){
         transform.collider.isTrigger = true;
-        transform.Rotate(0,-180,0);
         if(missleTarget){
         	target = missleTarget.transform;
 		}
@@ -29,12 +31,12 @@
         }else if (time >= 1 && time < 30 ){
     		transform.collider.isTrigger = false;
     	}
+    	speed = Mathf.Clamp(speed + speedUp * Time.deltaTime, 0, maxSpeed);
     	if (target){
-	    	transform.LookAt(target);
-    		transform.Rotate(0,-180,0);
-	    	transform.Translate(Vector3.back * 10.0f * Time.deltaTime);
-    	}else{
-    		//Debug.Log("normal fire without target");
+    		var aimDir :Vector3 = target.position - transform.position;
+    		transform.rotation = Quaternion.RotateTowards(transform.rotation,
+    								Quaternion.LookRotation(aimDir), Time.deltaTime * turnSpeed);
+	    	transform.Translate(Vector3.forward * speed * Time.deltaTime);
     	}
     	if (time >= 30){
     		//Destroy (gameObject);
@@ -42,33 +44,3 @@
     	
 	    
     }
-
-    
-
-   // Find the closest enemy object
-function FindClosestEnemy (enemy) : GameObject {
-    // Find all game objects with tag Enemy
-    var gos : GameObject[];
-    gos = GameObject.FindGameObjectsWithTag(enemy); 
-    var closest : GameObject; 
-    var position = transform.position; 
-    var closestDistance = Mathf.Infinity; 
-    // Iterate through them and find the closest one
-	for (var go : GameObject in gos)  { 
-		var diff = (go.transform.position - position);
-		var curDistance = diff.sqrMagnitude; 
-		if (curDistance < closestDistance) { 
-			closest = go; 
-			closestDistance = curDistance; 
-		} 
-		var distance = diff.magnitude;
-		var direction = diff / distance;  // This is now the normalized direction.
-		if (curDistance < 50 * 50) {
-			// Target is within range.
-			//Debug.Log("+++++++++++"+direction);
-		}
-	} 
-    return closest;    
-}
-
-

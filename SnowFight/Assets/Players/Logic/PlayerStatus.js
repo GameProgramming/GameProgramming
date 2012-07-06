@@ -224,11 +224,6 @@ function NetRespawn ( spawnBase :int ) {
 		frozen = 0;
 		
 		gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
-		if (IsMainPlayer()) {
-			var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
-			overviewCam.ResetPlayerCam();
-			overviewCam.SetMode(false);
-		}
 	} else {
 		killTime += respawnTimeout / 2;
 	}
@@ -360,8 +355,6 @@ function SetSpawnBaseID (newSpawnBaseID : int) {
 
 private function NetSetState (s :PlayerState) {
 	if (s == PlayerState.Dead && IsMainPlayer()) {
-		var mapOverview = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
-		mapOverview.SetMode(true);
 		spawnBaseID = 0;
 	}
 	state = s;
