@@ -20,12 +20,16 @@ private var useNat = false;		// Should the server enabled NAT punchthrough featu
 
 private var windowRect;
 private var serverListRect;
-private var quitRect;
+private var creditRect;
 private var hideTest = false;
 private var testMessage = "Undetermined NAT capabilities";
 
 private var levels :String[];
 private var selectedLevelId = 0;
+
+private var creditString : String[] = ["Andreas Büscher", "Benjamin Bisping", "Tiare Feuchtner", "Hannes Rammer"];
+
+private var credits = false;
 
 // Enable this if not running a client on the server machine
 //MasterServer.dedicatedServer = true;
@@ -48,13 +52,24 @@ function OnGUI ()
 		if (GUI.Button (Rect (Screen.width - 90, Screen.height - 35, 80, 30), "Quit Game")) {
 			Application.Quit();
 		}
+		if (GUI.Button (Rect (10, Screen.height - 35, 80, 30), "Credits")) {
+			ShowCredits();
+		}
 	}
+	if (credits) {
+		creditRect = GUILayout.Window(2, creditRect, MakeCreditWindow, "Credits");
+	}
+}
+
+function ShowCredits() {
+	credits = true;
 }
 
 function Awake ()
 {
 	windowRect = Rect(Screen.width-300,0,300,100);
 	serverListRect = Rect(0, 0, Screen.width - windowRect.width, 100);
+	creditRect = Rect(Screen.width/2 - 75, Screen.height/2 - 50, 150, 100);	
 	// Start connection test
 	connectionTestResult = Network.TestConnection();
 	
@@ -150,6 +165,21 @@ function TestConnection()
 			testMessage = "Error in test routine, got " + connectionTestResult;
 	}
 	//Debug.Log(connectionTestResult + " " + probingPublicIP + " " + doneTesting);
+}
+
+function MakeCreditWindow(id : int) {
+	if (Network.peerType == NetworkPeerType.Disconnected) {
+		GUILayout.Space(10);
+		for (var name : String in creditString) {
+			GUILayout.BeginHorizontal();
+			GUILayout.Label(name);
+			GUILayout.EndHorizontal();
+		}
+		GUILayout.Space(20);
+		if (GUILayout.Button("Close")) {
+			credits = false;
+		}
+	}
 }
 
 function MakeWindow (id : int)
