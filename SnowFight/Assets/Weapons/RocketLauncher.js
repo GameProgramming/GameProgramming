@@ -37,7 +37,7 @@ function Start() {
 }
 
 function Update () {
-	if (owner) {
+	if (owner && owner.networkView.isMine) {
 	
 		AimTarget("Ufo");
 		
@@ -77,8 +77,7 @@ function Update () {
 		}else{
 			progress = 0;
 		}
-		
-		 
+
 		RenderAimingLine (); 
 	
 	} else {
