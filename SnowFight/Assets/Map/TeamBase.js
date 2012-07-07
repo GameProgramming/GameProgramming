@@ -22,6 +22,8 @@ var takeOverCurrTeam :Team = null;
 private var currentTeamTakingOver : Team;
 private var progress : float;
 
+private var mainPlayerStatus : PlayerStatus;
+
 var specialWeapons : GameObject[];
 var specialWeaponIcons : Texture2D[];
 
@@ -79,7 +81,10 @@ function Update () {
 		
 		for (var go : GameObject in gos)  {
 			if ((go.transform.position - transform.position).sqrMagnitude < takeOverDist) {
-		    	var status :PlayerStatus = go.GetComponent(PlayerStatus);
+		    	var status : PlayerStatus = go.GetComponent(PlayerStatus);
+		    	if (status.IsMainPlayer()) {
+		    		mainPlayerStatus = status;
+		    	}
 	    		if (!status.IsDead() && status.team != teamTakingOver) {
 	    			if (teamTakingOver == null) {
 	    				teamTakingOver = status.team;
@@ -109,6 +114,7 @@ function Update () {
 		} 
 		takeOverCurrTeam = teamTakingOver;
 	}
+	
 }
 
 function SetTeam (t :Team) {
@@ -176,4 +182,27 @@ function OnGUI () {
 		GUILayout.EndVertical();
 		GUILayout.EndArea();
 	}
+	if (mainPlayerStatus != null) {
+		if (takeOverProgress > 0.0 && !mainPlayerStatus.IsDead()) {
+			var texture : Texture2D = new Texture2D(1, 1);
+			var style : GUIStyle = new GUIStyle();
+			var color : Color;
+			var takeOverPercent : float = takeOverProgress;
+			color = new Color(1-takeOverPercent, takeOverPercent, 0, 0.5);
+			texture.SetPixel(0, 0, color);
+			texture.Apply();
+			style.normal.background = texture;
+		
+			var boxWidth : float= (Screen.width/8 + 10);
+			var boxHeight = 19;
+			var finalBoxWidth = takeOverPercent * boxWidth;
+			
+			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
+			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
+		}
+	}
+	if (takeOverProgress <= 0.0) {
+		mainPlayerStatus = null;
+	}
+	
 }
