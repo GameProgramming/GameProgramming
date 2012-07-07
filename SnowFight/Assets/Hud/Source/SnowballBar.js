@@ -68,6 +68,16 @@ function OnGUI() {
 	
 }
 
+function OnItemChange(itemManager :ItemManager) {
+	var item :GameObject = itemManager.GetItem();
+	if (item != null) {
+		inUFO = item && item.CompareTag("Ufo");
+	} else {
+		inUFO = false;
+	}
+	
+}
+
 function OnSetBot () {
 	enabled = false;
 }
