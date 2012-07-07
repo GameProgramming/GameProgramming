@@ -27,7 +27,7 @@ private var testMessage = "Undetermined NAT capabilities";
 private var levels :String[];
 private var selectedLevelId = 0;
 
-private var creditString : String[] = ["Andreas Büscher", "Benjamin Bisping", "Tiare Feuchtner", "Hannes Rammer"];
+private var creditString : String[] = ["Benjamin Bisping", "Tiare Feuchtner", "Hannes Rammer", "Andreas Büscher"];
 
 private var credits = false;
 
@@ -213,7 +213,7 @@ function MakeWindow (id : int)
 		
 		GUILayout.FlexibleSpace();
 	}
-	GUI.DragWindow (Rect (0,0,1000,1000));
+	//GUI.DragWindow (Rect (0,0,1000,1000));
 }
 
 function StartServer (serverName :String, level :String) {
