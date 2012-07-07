@@ -78,7 +78,7 @@ function OnGUI() {
 		if (teamScript.GetTeamNumber() == 1) {
 			for (var k : Transform in j.transform) {
 				if (k.CompareTag("Base")) {
-					GUI.Label (Rect (positionX, 50, 25, 25), blueCircle);
+					GUI.Label (Rect (positionX, 50, 25, 25), redCircle);
 					positionX += 25;
 				} 
 			}
@@ -86,7 +86,7 @@ function OnGUI() {
 		if (teamScript.GetTeamNumber() == 2) {
 			for (var k : Transform in j.transform) {
 				if (k.CompareTag("Base")) {
-					GUI.Label (Rect (positionX, 50, 25, 25), redCircle);
+					GUI.Label (Rect (positionX, 50, 25, 25), blueCircle);
 					positionX += 25;
 				} 
 			}

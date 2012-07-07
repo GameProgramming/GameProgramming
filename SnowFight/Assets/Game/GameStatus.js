@@ -135,16 +135,23 @@ function OnTriggerEnter (other : Collider) {
 	//~ playerLink=col.GetComponent (PlayerStatus);
 	if (!other.GetComponent (PlayerStatus)) { // not the player or the bots
 		//destroy the object
-		Destroy(other.gameObject);
-	}
-	else  { //otherwise tell the player to die
-		other.gameObject.SendMessage ("Respawn", null, SendMessageOptions.DontRequireReceiver);
+		if (other.networkView) {
+			if (other.networkView.isMine) {
+				Debug.Log("Destroying "+other.gameObject+" because it fell from the map.");
+				Network.Destroy(other.gameObject);
+			}
+		} else {
+			Debug.Log("Destroying "+other.gameObject+" because it fell from the map.");
+			Destroy(other.gameObject);
+		}
+	} else if (Network.isServer) { //otherwise tell the player to die
+		Debug.Log("Killing "+other.gameObject+" because he/she fell from the map.");
+		var attack = new Attack();
+		attack.damage = 10000; // lethal, i hope ;)
+		other.SendMessage("ApplyDamage", attack, SendMessageOptions.DontRequireReceiver);
+		//other.gameObject.SendMessage ("Respawn", null, SendMessageOptions.DontRequireReceiver);
 	}
 }
-
-//function GetSnowBallSpawns() : GameObject[] {
-//	return ballSpawnPoints;
-//}
 
 function GetTeams () : Team[] {
 	return teams;

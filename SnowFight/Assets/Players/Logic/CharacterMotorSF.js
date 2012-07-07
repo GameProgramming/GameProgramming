@@ -407,6 +407,8 @@ private function UpdateFunction () {
 	        movingPlatform.activeGlobalRotation = tr.rotation;
 	        movingPlatform.activeLocalRotation = Quaternion.Inverse(movingPlatform.activePlatform.rotation) * movingPlatform.activeGlobalRotation; 
 		}
+	} else if (playerState == PlayerState.Dead) {
+		movement.velocity = ApplyGravityAndJumping (movement.velocity);
 	}
 }
 

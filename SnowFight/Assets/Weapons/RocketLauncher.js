@@ -4,15 +4,21 @@ private var owner : GameObject;
 
 private var bulletSpawn : Transform;
 private var playerMotor : CharacterMotorSF;
+private var playerStatus :PlayerStatus;
 
 private var progress :float = 0.0;
 
 var c1 : Color = Color.yellow;
 var c2 : Color = Color.red;
 var lengthOfLineRenderer : int = 20;
+var lineRenderer :LineRenderer;
+var aimingCircleOuter :Transform;
+var aimingCircleInner :Transform;
+
 
 var mat1 :Material;
 
+var aimAngle :float = 15;
 var aimFor : float = 4.0; 
 var viewAngle : Vector3;
 var locked :boolean;
@@ -22,12 +28,11 @@ var target : GameObject;
 
 
 function Start() {
-    var lineRenderer : LineRenderer = GetComponent(LineRenderer);
-    lineRenderer.material = mat1;
-    lineRenderer.SetColors(c1, c2);
-    lineRenderer.SetWidth(1,1);
-    lineRenderer.SetVertexCount(2);
-
+    lineRenderer = GetComponent(LineRenderer);
+    lineRenderer.SetVertexCount(3);
+    aimingCircleOuter = transform.Find("AimingCircleOuter");
+    aimingCircleInner = transform.Find("AimingCircleInner");
+    
 	bulletSpawn = transform.Find("Weapon/BulletSpawn");
 }
 
@@ -53,37 +58,46 @@ function Update () {
 					progress += Time.deltaTime;
 					locked = true;
 					if (playerMotor.inputFire) {
-						Fire(1);
+						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
+						progress = 0;
 					}
 				}else if (progress >= aimFor) {
 					//Debug.Log("SHOOT!!!!!!!!");
 					if (playerMotor.inputFire) {
-						Fire(2);
+						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
+						progress = 0;
 					}
 				}
 			}else{
 				if (playerMotor.inputFire) {
-					Fire(1);
+					bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
+					progress = 0;
 				}
 			}	
 		}else{
 			progress = 0;
 		}
-			 
+		
+		 
+		RenderAimingLine (); 
 	
+	} else {
+		lineRenderer.enabled = false;
+		aimingCircleOuter.renderer.enabled = false;
+		aimingCircleInner.renderer.enabled = false;
 	}
 }
 
-function Fire (style) {
-	
-	if(style == 1){
-		bulletSpawn.GetComponent(BulletSpawn).Fire();
-	}else if(style == 2){
-		bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
-	}
-	
-	progress = 0;
-}
+//function Fire (style) {
+//	
+//	if(style == 1){
+//		bulletSpawn.GetComponent(BulletSpawn).Fire();
+//	}else if(style == 2){
+//		bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
+//	}
+//	
+//	progress = 0;
+//}
 
 function Release () {
 	owner = null;
@@ -96,6 +110,7 @@ function PickItem(player :GameObject) {
 	owner = player;
 	collider.enabled = false;
 	playerMotor = player.GetComponent(CharacterMotorSF);
+	playerStatus = owner.GetComponent(PlayerStatus);
 	transform.parent = owner.transform;
 	transform.localPosition = Vector3 (0.4,1,0.6);
 	//transform.localRotation = Quaternion.zero;
@@ -114,7 +129,6 @@ function AimTarget (enemyTag : String) {
     var closestDistanceToEnemy = Mathf.Infinity; 
     
     // If target
-    var lineRenderer : LineRenderer = GetComponent(LineRenderer);
     if(target){
     	//Debug.Log("has target");
      	//check if still in range
@@ -125,8 +139,6 @@ function AimTarget (enemyTag : String) {
     }
     //needs to stay in seperat if
     if(target == null){
-	    lineRenderer.SetPosition(0, transform.position);
-		lineRenderer.SetPosition(1, transform.position);
 		//Debug.Log("lost target");
 	  	target = null;
 		// Iterate through them and find the closest one
@@ -142,25 +154,67 @@ function AimTarget (enemyTag : String) {
 
 
 function InDirection( object : GameObject){
-	var enemyDirection = (object.transform.position - transform.position).normalized;
+	var enemyDirection :Vector3 = (object.transform.position - transform.position).normalized;
 	// Calculate the x-axis relative to the camera
-	var viewAngle = owner.transform.TransformDirection (Vector3.forward);
+	var viewAngle :Vector3 = transform.TransformDirection (Vector3.forward);
+	return Vector3.Angle(viewAngle, enemyDirection) < aimAngle;
+	
 	////if relativeCameraAngle [blikwinkel] ~~ enemyDirection
 	//Debug.Log("viewAngle" + viewAngle);
 	//Debug.Log("enemyDirection" + enemyDirection);
-	var targetInDirectionX : boolean = enemyDirection.x > (viewAngle.x - 0.2) && enemyDirection.x < (viewAngle.x + 0.2); 
-	if(!targetInDirectionX)
-		return false;
-	var targetInDirectionY : boolean = enemyDirection.y > (viewAngle.y - 0.2) && enemyDirection.y < (viewAngle.y + 0.2);
-	if(!targetInDirectionY)
-		return false;
-	var targetInDirectionZ : boolean = enemyDirection.z > (viewAngle.z - 0.2) && enemyDirection.z < (viewAngle.z + 0.2);
-	if(!targetInDirectionZ)
-		return false;
-	return true;
+	
+//	var targetInDirectionX : boolean = enemyDirection.x > (viewAngle.x - 0.2) && enemyDirection.x < (viewAngle.x + 0.2); 
+//	if(!targetInDirectionX)
+//		return false;
+//	var targetInDirectionY : boolean = enemyDirection.y > (viewAngle.y - 0.2) && enemyDirection.y < (viewAngle.y + 0.2);
+//	if(!targetInDirectionY)
+//		return false;
+//	var targetInDirectionZ : boolean = enemyDirection.z > (viewAngle.z - 0.2) && enemyDirection.z < (viewAngle.z + 0.2);
+//	if(!targetInDirectionZ)
+//		return false;
+//	return true;
 }
+
+function RenderAimingLine () {
+	if (playerStatus.IsMainPlayer()) {
+		var bsp :Vector3 = transform.InverseTransformPoint(bulletSpawn.transform.position);
+		lineRenderer.enabled = true;
+		lineRenderer.SetPosition(0, bsp);
+		
+		if (target) {
+			var localEnemyPos :Vector3 = transform.InverseTransformPoint(target.transform.position);
+			lineRenderer.SetPosition(1, Vector3(0,0,localEnemyPos.z));
+			lineRenderer.SetPosition(2, localEnemyPos);
+			lineRenderer.SetColors(c2,c2);
+			
+			aimingCircleOuter.localPosition = localEnemyPos;
+			aimingCircleInner.localPosition = localEnemyPos;
+			aimingCircleOuter.renderer.enabled = true;
+			aimingCircleInner.renderer.enabled = true;
+			var scale :float = Mathf.Sin(aimAngle) * localEnemyPos.z;
+			aimingCircleOuter.localScale = Vector3(scale, scale, scale);
+			scale *= (1.1 - progress/aimFor);
+			aimingCircleInner.localScale = Vector3(scale, scale, scale);
+//			 Mathf.Atan(Vector3(localEnemyPos.x, localEnemyPos.y, 0).magnitude
+//												/ localEnemyPos.z)
+//								/ aimAngle;
+//			
+		} else {
+			lineRenderer.SetPosition(1, bsp + Vector3(0,0,20));
+			lineRenderer.SetPosition(2, bsp + Vector3(0,0,40));
+			lineRenderer.SetColors(c1,c1);
+			aimingCircleOuter.renderer.enabled = false;
+			aimingCircleInner.renderer.enabled = false;
+		}
+	} else {
+		lineRenderer.enabled = false;
+		aimingCircleOuter.renderer.enabled = false;
+		aimingCircleInner.renderer.enabled = false;
+	}
+}
+
 function OnGUI(){
-	if (owner != null && owner.GetComponent(PlayerStatus).IsMainPlayer()) {
+	if (owner != null && playerStatus.IsMainPlayer()) {
 	    
 	    var crossTexture1 : Texture2D = new Texture2D(1, 1);
 	    var crossTexture2 : Texture2D = new Texture2D(1, 1);

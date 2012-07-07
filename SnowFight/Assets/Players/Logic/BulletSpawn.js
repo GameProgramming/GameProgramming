@@ -45,8 +45,10 @@ function Fire () {
 	  	if (projectile) {
 		  	var clone : Rigidbody;	
 			clone = Instantiate(projectile, transform.position, transform.rotation);
-		  	clone.velocity = clone.GetComponent(Projectile).speed * transform.TransformDirection (Vector3.forward
-									+ new Vector3(0, startYSpeed, 0) );
+			var speed :float = clone.GetComponent(Projectile).speed;
+		  	clone.velocity = Vector3.ClampMagnitude(speed
+		  				* transform.TransformDirection (Vector3.forward
+						+ new Vector3(0, startYSpeed, 0)), speed );
 			clone.GetComponent(Damage).shooter = player.gameObject;
 			SendFire(clone);
 			reloadProgress = clone.GetComponent(Projectile).reloadTime;

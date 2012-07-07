@@ -12,22 +12,14 @@ function Update () {
 //			}
 }
 
-function OnCollisionEnter (collision : Collision) {
-	var ballPosition = collision.transform.position;
+function OnHitByObject (other :GameObject) {
 	var ufoPosition = gameObject.transform.position;
-	var inversePosition = gameObject.transform.InverseTransformPoint(collision.transform.position);
-	if(collision.rigidbody && collision.rigidbody.tag.Equals("Projectile")){
-		var damageObject : Damage = collision.transform.GetComponent("Damage");
+	var inversePosition = gameObject.transform.InverseTransformPoint(other.transform.position);
+	if(other.rigidbody && other.rigidbody.tag.Equals("Projectile")){
+		var damageObject : Damage = other.GetComponent("Damage");
 		var attack :Attack = new Attack();
-		attack.damage = 0;
-		// TODO: Macht das hier beim UFO irgendeinen Sinn???
-		if (inversePosition.y > 0.9) {
-			attack.damage = damageObject.GetHeadDamage();
-		} else if (inversePosition.z < -0.3) {
-			attack.damage = damageObject.GetBehindDamage();
-		} else {
-			attack.damage = damageObject.GetFrontDamage();
-		}		
+		attack.damage = damageObject.GetFrontDamage();
+		attack.attacker = damageObject.GetShooter();
 		transform.parent.gameObject.SendMessage("ApplyDamage", attack);
 	}
 }
