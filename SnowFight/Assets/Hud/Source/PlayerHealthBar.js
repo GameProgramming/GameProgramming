@@ -67,7 +67,7 @@ function OnGUI() {
 				GUI.Box (Rect (10, Screen.height - 49, freezingRayBoxWidth, boxHeight), "", uFOFreezingStyle);
 				
 				//The player health.
-				GUI.Box (Rect (9, Screen.height - 25, (totalWidth+2)/2, (boxHeight+2)), "");
+				GUI.Box (Rect (9, Screen.height - 25, (totalWidth+2)/2, (boxHeight+2)/2), "");
 				GUI.Box (Rect (10, Screen.height - 24, boxWidth/2, boxHeight/2), "",style);
 			}
 		}
@@ -97,4 +97,13 @@ function SetInUFO (newInUFO : boolean) {
 
 function GetInUFO () : boolean {
 	return inUFO;
+}
+
+function OnItemChange(itemManager :ItemManager) {
+	var item : GameObject = itemManager.GetItem();
+	if (item != null) {
+		inUFO = item && item.CompareTag("Ufo");
+	} else {
+		inUFO = false;
+	}
 }
