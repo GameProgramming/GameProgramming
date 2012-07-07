@@ -17,6 +17,7 @@ var maxCandidateDistance : float = 1.0;
 
 private var showItemGUI : boolean = true;
 var itemGUIStyle : GUIStyle;
+var itemGUIStyle2 : GUIStyle;
 var itemGUITime : float = 0.0;
 
 private var snowResourcePick :SnowRessource; // typo im typnamen, ach mensch...
@@ -28,37 +29,54 @@ function Start () {
 	pStatus = GetComponent(PlayerStatus);
 	item = null;
 	snowResourcePick = null;
+	itemGUIStyle.clipping = TextClipping.Overflow;
+	itemGUIStyle2.clipping = TextClipping.Overflow;
 }
 
 function OnGUI () {
 	var status : PlayerStatus = transform.GetComponent(PlayerStatus);
+	var textForToolTip : String;
+	var textForToolTip2 : String;
 	if (status.IsMainPlayer() && showItemGUI) {
 		if (item != null) {
 				itemGUITime += Time.deltaTime;
-			if (item.CompareTag("Ufo") && itemGUITime <= 5.0) {
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-80, 200, 20), "Left click to shoot.", itemGUIStyle);
-				GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Right click to freeze enemies.", itemGUIStyle);
-			} else if (item.CompareTag("BigSnowball") && itemGUITime <= 5.0) {
-				GUI.Label (Rect (Screen.width/2 - 200, Screen.height-60, 400, 20), "Right click to create a Snow Ressource.", itemGUIStyle);
-			} else if (item.CompareTag("Weapon") && itemGUITime <= 5.0) {
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-60, 200, 20), "Left click to shoot.", itemGUIStyle);
+			if (item.CompareTag("Ufo")) {
+				textForToolTip = "Left click to shoot.";
+				textForToolTip2 = "Right click to freeze enemies.";
+			} else if (item.CompareTag("BigSnowball")) {
+				textForToolTip = "Right click to create a snow ressource..";
+			} else if (item.CompareTag("Weapon")) {
+				textForToolTip = "Left click to shoot.";
 			}
+
+			if (textForToolTip2 != null) {
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-79, 200, 20), textForToolTip, itemGUIStyle2);
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-80, 200, 20), textForToolTip, itemGUIStyle);
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-59, 200, 20), textForToolTip2, itemGUIStyle2);
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-60, 200, 20), textForToolTip2, itemGUIStyle);
+			} else {
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-59, 200, 20), textForToolTip, itemGUIStyle2);
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-60, 200, 20), textForToolTip, itemGUIStyle);
+			}
+
 		} else {
 			itemGUITime = 0.0;
 			if (candidateItem) {
 				if (candidateItem.CompareTag("BigSnowball") && item == null) {
-					GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Press E to move big Snowball.", itemGUIStyle);
+					textForToolTip = "Press E to move big Snowball.";
 				} else if (candidateItem.CompareTag("Weapon") && item == null) {
-					GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Press E to use Snow Rocket.", itemGUIStyle);
+					textForToolTip = "Press E to use Snow Rocket.";
 				} else if (candidateItem.CompareTag("SnowballRessource") && item == null) {
-					GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Hold E to create a big Snowball.", itemGUIStyle);
+					textForToolTip = "Hold E to create a big Snowball.";		
 				} else if (candidateItem.layer != LayerMask.NameToLayer("Item")) {
 					if (candidateItem.transform.parent != null) {
 						if (candidateItem.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
-							GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Press E to get in the UFO.", itemGUIStyle);
+							textForToolTip = "Press E to get in the UFO.";
 						}
 					}
 				}
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-59, 200, 20), textForToolTip, itemGUIStyle2);
+				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-60, 200, 20), textForToolTip, itemGUIStyle);
 			}
 		}
 		var texture : Texture2D = new Texture2D(1, 1);
@@ -158,13 +176,6 @@ function Update () {
 		} else {
 			if (candidateItem.layer != LayerMask.NameToLayer("Item") // ufo hack
 				&& candidateItem.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
-				var status : PlayerStatus = transform.GetComponent(PlayerStatus);
-				if (status.IsMainPlayer()) {
-					var playerHealth : PlayerHealthBar = transform.GetComponent(PlayerHealthBar);
-					var snowballBarPlayer : SnowballBar = transform.GetComponent(SnowballBar);
-					playerHealth.SetInUFO(true);
-					snowballBarPlayer.SetInUFO(true);
-				}
 				SetItem(candidateItem.transform.parent.gameObject);
 			} else {
 				SetItem(candidateItem);
@@ -205,12 +216,6 @@ function ReleaseItem () {
 		item.SendMessage("Release", SendMessageOptions.DontRequireReceiver);
 		
 		var status : PlayerStatus = transform.GetComponent(PlayerStatus);
-		if (item.CompareTag("Ufo") && status.IsMainPlayer()) {
-			var playerHealth : PlayerHealthBar = transform.GetComponent(PlayerHealthBar);
-			var snowballBarPlayer : SnowballBar = transform.GetComponent(SnowballBar);
-			playerHealth.SetInUFO(false);
-			snowballBarPlayer.SetInUFO(false);
-		}
 		if (item.CompareTag("BigSnowball")) {
 			item.transform.parent = null;
 		}
