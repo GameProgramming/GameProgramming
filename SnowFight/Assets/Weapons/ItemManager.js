@@ -48,13 +48,16 @@ function OnGUI () {
 			if (candidateItem) {
 				if (candidateItem.CompareTag("BigSnowball") && item == null) {
 					GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Press E to move big Snowball.", itemGUIStyle);
-				//} else if (candidateItem.layer != LayerMask.NameToLayer("Item") &&
-			    	//candidateItem.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
-					//GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Press E to get in the UFO.", itemGUIStyle);
 				} else if (candidateItem.CompareTag("Weapon") && item == null) {
 					GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Press E to use Snow Rocket.", itemGUIStyle);
 				} else if (candidateItem.CompareTag("SnowballRessource") && item == null) {
 					GUI.Label (Rect (Screen.width/2 - 150, Screen.height-60, 300, 20), "Hold E to create a big Snowball.", itemGUIStyle);
+				} else if (candidateItem.layer != LayerMask.NameToLayer("Item")) {
+					if (candidateItem.transform.parent != null) {
+						if (candidateItem.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
+							GUI.Label (Rect (Screen.width/2 - 150, Screen.height/2, 300, 20), "Press E to get in the UFO.", itemGUIStyle);
+						}
+					}
 				}
 			}
 		}
