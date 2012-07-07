@@ -60,20 +60,22 @@ function OnGUI ()
 		if (GUI.Button (Rect (100, Screen.height - 35, 80, 30), "Instructions")) {
 			ShowInstructions();
 		}
-	}
-	if (credits) {
-		creditRect = GUILayout.Window(2, creditRect, MakeCreditWindow, "Credits");
-	}
-	if (instructions) {
-		instructionsRect = GUILayout.Window(3, instructionsRect, MakeInstructionsWindow, "Instructions");
+		if (credits) {
+			creditRect = GUILayout.Window(2, creditRect, MakeCreditWindow, "Credits");
+		}
+		if (instructions) {
+			instructionsRect = GUILayout.Window(3, instructionsRect, MakeInstructionsWindow, "Instructions");
+		}
 	}
 }
 
 function ShowCredits() {
+	if (instructions) instructions = false;
 	credits = !credits;
 }
 
 function ShowInstructions() {
+	if (credits) credits = false;
 	instructions = !instructions;
 }
 
@@ -82,7 +84,7 @@ function Awake ()
 	windowRect = Rect(Screen.width-300,0,300,100);
 	serverListRect = Rect(0, 0, Screen.width - windowRect.width, 100);
 	creditRect = Rect(Screen.width/2 - 75, Screen.height/2 - 50, 150, 100);
-	instructionsRect = Rect(Screen.width/2 - 150, Screen.height/2 - 100, 300, 200);
+	instructionsRect = Rect(Screen.width/2 - 200, Screen.height/2 - 100, 400, 200);
 	// Start connection test
 	connectionTestResult = Network.TestConnection();
 	
@@ -196,7 +198,7 @@ function MakeInstructionsWindow(id : int) {
 		GUILayout.Label("Press E to use items.");
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Left click to shoot. Right click to burp.");
+		GUILayout.Label("Hold left mouse button to aim and release to shoot. Right click to burp.");
 		GUILayout.EndHorizontal();
 		GUILayout.Space(20);
 		if (GUILayout.Button("Close")) {
