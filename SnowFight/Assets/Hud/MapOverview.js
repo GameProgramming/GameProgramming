@@ -47,3 +47,7 @@ function ResetPlayerCam () {
 function SetPlayer ( p :Transform ) {
 	player = p;
 }
+
+function GetMode() : boolean {
+	return mode;
+}
