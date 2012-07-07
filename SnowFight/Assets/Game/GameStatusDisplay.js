@@ -124,10 +124,10 @@ function OnGUI() {
 		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
 		GUI.Box(Rect(0, 0, Screen.width, Screen.height), "");
 		if (status.winner.GetTeamNumber() == 1) {
-			GUI.Label (Rect (Screen.width/2 - 200, Screen.height/2-40, 350, 30), winText, styleTeam1);
+			GUI.Label (Rect (Screen.width/2 - 105, Screen.height/2-15, 210, 30), winText, styleTeam1);
 		}
 		if (status.winner.GetTeamNumber() == 2) {
-			GUI.Label (Rect (Screen.width/2 - 200, Screen.height/2-40, 350, 30), winText, styleTeam2);
+			GUI.Label (Rect (Screen.width/2 - 105, Screen.height/2-15, 210, 30), winText, styleTeam2);
 		}		
 	}
 }
