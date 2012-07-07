@@ -21,6 +21,7 @@ private var useNat = false;		// Should the server enabled NAT punchthrough featu
 private var windowRect;
 private var serverListRect;
 private var creditRect;
+private var instructionsRect;
 private var hideTest = false;
 private var testMessage = "Undetermined NAT capabilities";
 
@@ -30,6 +31,7 @@ private var selectedLevelId = 0;
 private var creditString : String[] = ["Benjamin Bisping", "Tiare Feuchtner", "Hannes Rammer", "Andreas Büscher"];
 
 private var credits = false;
+private var instructions = false;
 
 // Enable this if not running a client on the server machine
 //MasterServer.dedicatedServer = true;
@@ -55,21 +57,32 @@ function OnGUI ()
 		if (GUI.Button (Rect (10, Screen.height - 35, 80, 30), "Credits")) {
 			ShowCredits();
 		}
+		if (GUI.Button (Rect (100, Screen.height - 35, 80, 30), "Instructions")) {
+			ShowInstructions();
+		}
 	}
 	if (credits) {
 		creditRect = GUILayout.Window(2, creditRect, MakeCreditWindow, "Credits");
 	}
+	if (instructions) {
+		instructionsRect = GUILayout.Window(3, instructionsRect, MakeInstructionsWindow, "Instructions");
+	}
 }
 
 function ShowCredits() {
-	credits = true;
+	credits = !credits;
+}
+
+function ShowInstructions() {
+	instructions = !instructions;
 }
 
 function Awake ()
 {
 	windowRect = Rect(Screen.width-300,0,300,100);
 	serverListRect = Rect(0, 0, Screen.width - windowRect.width, 100);
-	creditRect = Rect(Screen.width/2 - 75, Screen.height/2 - 50, 150, 100);	
+	creditRect = Rect(Screen.width/2 - 75, Screen.height/2 - 50, 150, 100);
+	instructionsRect = Rect(Screen.width/2 - 150, Screen.height/2 - 100, 300, 200);
 	// Start connection test
 	connectionTestResult = Network.TestConnection();
 	
@@ -165,6 +178,31 @@ function TestConnection()
 			testMessage = "Error in test routine, got " + connectionTestResult;
 	}
 	//Debug.Log(connectionTestResult + " " + probingPublicIP + " " + doneTesting);
+}
+
+function MakeInstructionsWindow(id : int) {
+	if (Network.peerType == NetworkPeerType.Disconnected) {
+		GUILayout.Space(10);
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Move your character with arrow keys or WASD.");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Press M to show/close map overview.");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Press Esc to show/close ingame menu while playing.");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Press E to use items.");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Left click to shoot. Right click to burp.");
+		GUILayout.EndHorizontal();
+		GUILayout.Space(20);
+		if (GUILayout.Button("Close")) {
+			instructions = false;
+		}
+	}
 }
 
 function MakeCreditWindow(id : int) {
