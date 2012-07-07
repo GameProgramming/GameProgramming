@@ -35,6 +35,9 @@ private var shootDirection : Vector3;
 
 var snowRessource : GameObject;
 
+private var trail :ParticleSystem;
+private var terrain :Terrain;
+
 function Start () {
 	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
@@ -46,6 +49,9 @@ function Start () {
 	particleTail = transform.Find("Particles").GetComponent(ParticleSystem);
 	
 	startRadius = GetComponent(Renderer).bounds.extents.x;
+	
+	terrain = Terrain.activeTerrain;
+	trail = transform.Find("Trail").particleSystem;
 }
 
 function Awake () {
@@ -83,7 +89,17 @@ function Update () {
 	var rotAxis = Vector3.Cross(dir, Vector3.up);
 	rotAxis.Normalize();
 	var angle : float = -(2*radius*Mathf.PI)/36*dir.magnitude * ballTurnSpeed;
+	
+	trail.transform.localPosition = Vector3.zero;
 	transform.Rotate(rotAxis, angle, Space.World);
+	//make sure we don't rotate the particle effect with it
+	trail.transform.Rotate(rotAxis, -angle, Space.World);
+	
+	//create the trail behind the pushed snowball
+	trail.transform.position.y = terrain.SampleHeight(trail.transform.position) + 0.05;
+//	trail.startRotation = transform.rotation.eulerAngles.y;
+	trail.startSize = radius * 1.5;
+	//trail.Emit(1);
 	
 	//increase ball size when rolling
 	if (radius <= maxBallSize) {
