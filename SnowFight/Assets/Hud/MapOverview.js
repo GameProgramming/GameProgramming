@@ -4,6 +4,7 @@ var player :Transform;
 var playerCam :Transform;
 var camFollow :SmoothFollow;
 
+
 function Awake () {
 }
 
@@ -14,8 +15,11 @@ function Start () {
 
 function Update () {
 	if (Input.GetButtonUp("Map")) {
-		mode = !mode;
-		SetMode(mode);
+		var status : PlayerStatus = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).player.GetComponent(PlayerStatus);
+		if (!status.IsDead()) {
+			mode = !mode;
+			SetMode(mode);
+		}
 	}
 }
 
@@ -42,4 +46,8 @@ function ResetPlayerCam () {
 
 function SetPlayer ( p :Transform ) {
 	player = p;
+}
+
+function GetMode() : boolean {
+	return mode;
 }
