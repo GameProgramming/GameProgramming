@@ -8,6 +8,7 @@ var skyBox : UnityEngine.Material;
 var status :GameStatus;
 
 var skin : GUISkin;
+var fontMaterial :Material;
 private var fade = 0.0;
 
 var distFromTop = 20;
@@ -29,7 +30,16 @@ function Awake () {
 	if (skyBox && !RenderSettings.skybox) {
 		RenderSettings.skybox = skyBox;
 	}
-	
+}
+
+function Start ()  {
+	skin.font.material = fontMaterial;
+	styleTeam1.font.material = fontMaterial;
+	styleTeam1Tab.font.material = fontMaterial;
+	styleTeam2.font.material = fontMaterial;
+	styleTeam2Tab.font.material = fontMaterial;
+	neutralStyle.font.material = fontMaterial;
+	neutralStyleTab.font.material = fontMaterial;
 }
 
 function OnGUI() {

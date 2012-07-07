@@ -92,6 +92,34 @@ function OnGUI () {
 	}
 }
 
+@RPC
+function NetGrabSnowball (snowResourceId :NetworkViewID, info :NetworkMessageInfo) {
+	var snowResource :NetworkView = NetworkView.Find(snowResourceId);
+	if (!snowResource) {
+		Debug.Log("Received [NetGrabSnowball] for an unknown network view. ID: " + snowResourceId);
+		return;
+	}
+	var snowRes :SnowRessource = snowResource.GetComponent(SnowRessource);
+	if (!snowRes) {
+		Debug.Log("Received [NetGrabSnowball] for an object that is no SnowResource. ID: " + snowResource);
+		return;
+	}
+	var newItem :GameObject = snowRes.GrabBigSnowball(gameObject);
+	networkView.RPC("NetGrabSnowballCallback", info.sender, newItem.networkView.viewID);
+}
+
+@RPC
+function NetGrabSnowballCallback (snowballId :NetworkViewID) {
+	var snowballV :NetworkView = NetworkView.Find(snowballId);
+	if (!snowballV) yield; // wait....
+	snowballV = NetworkView.Find(snowballId);
+	if (!snowballV) {
+		Debug.Log("Received [NetGrabSnowballCallback] for a not existing ball. ID: " + snowballId);
+		return;
+	}
+	SetItem(snowballV.gameObject);
+}
+
 function Update () {
 	if (!networkView.isMine) return;
 	
@@ -107,7 +135,11 @@ function Update () {
 			srPickProgress += Time.deltaTime;
 
 			if (srPickProgress > srPickTime) {
-				SetItem(snowResourcePick.GrabBigSnowball(gameObject));
+				if (Network.isServer) {
+					SetItem(snowResourcePick.GrabBigSnowball(gameObject));
+				} else {
+					networkView.RPC("NetGrabSnowball", RPCMode.Server, snowResourcePick.networkView.viewID);
+				}
 				snowResourcePick = null;
 				srPickProgress = 0;
 			}

@@ -144,6 +144,7 @@ function Release () {
 			rigidbody.velocity = Vector3.zero;
 		transform.parent = null;
 		pushingPlayer = null;
+		networkView.enabled = true;
 	}
 }
 
@@ -152,6 +153,7 @@ function PickItem(player:GameObject) {
 	transform.parent = pushingPlayer.transform;
 	playerMotor = player.GetComponent(CharacterMotorSF);
 	shot = false;
+	networkView.enabled = false;
 }
 
 function OnReachBase () {
@@ -178,4 +180,5 @@ function GetCurrentSnowballs() :int {
 }
 
 @script RequireComponent (BigSnowBallDamage)
+@script RequireComponent (NetworkView)
 

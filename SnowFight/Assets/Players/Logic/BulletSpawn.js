@@ -84,7 +84,7 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
 }
 
 function FireHeatSeekingRocket (target :GameObject) {
-	if(reloadProgress <= 0.0 && player.GetCurrentSnowballs() > 0){
+	if(player && CanFire()){
 		var projectile = GetProjectile();
 	  	var clone : Rigidbody;	
 		clone = Instantiate(projectile, transform.position, transform.rotation);
@@ -94,25 +94,29 @@ function FireHeatSeekingRocket (target :GameObject) {
 		if (snowCosts > 0) {
 			player.SubtractSnowball(snowCosts);
 		}
-		
+		SendFireTarget(clone, target);
 		reloadProgress = clone.GetComponent(Projectile).reloadTime;
 	}
 }
 
 function SendFireTarget ( bullet :Rigidbody, target :GameObject ) {
 	var netId :NetworkViewID = Network.AllocateViewID();
+	var tarId :NetworkViewID = NetworkViewID.unassigned;
 	bullet.networkView.viewID = netId;
-	networkView.RPC("NetFireTarget", RPCMode.Others, netId,
-					bullet.position, bullet.velocity, target.networkView.viewID);
+	if (target && target.networkView) {
+		tarId = target.networkView.viewID;
+	}
+	networkView.RPC("NetFireTarget", RPCMode.Others, netId, bullet.position,
+					bullet.rotation.eulerAngles.x, bullet.rotation.eulerAngles.y,tarId);
 }
 
 @RPC
-function NetFireTarget ( netId :NetworkViewID, pos :Vector3, velo :Vector3, targetId :NetworkViewID ) {
+function NetFireTarget ( netId :NetworkViewID, pos :Vector3, pitch :float, yaw :float, targetId :NetworkViewID ) {
   	var projectile = GetProjectile();
   	var clone : Rigidbody;	
 	clone = Instantiate(projectile, pos, transform.rotation);
 	clone.networkView.viewID = netId;
-	clone.velocity = velo;
+	clone.rotation.SetEulerAngles(pitch, yaw, 0);
 	
 	var tar :NetworkView = NetworkView.Find(targetId);
 	if (tar) {

@@ -114,8 +114,10 @@ function Update () {
 }
 
 function Restart() {
-	var levelLoad : NetworkLevelLoad = GameObject.FindGameObjectWithTag("Main").GetComponent(NetworkLevelLoad);
-	levelLoad.LoadNewLevel(currentLevel);
+	if (Network.isServer) {
+		var levelLoad : NetworkLevelLoad = GameObject.FindGameObjectWithTag("Main").GetComponent(NetworkLevelLoad);
+		levelLoad.LoadNewLevel(currentLevel);
+	}
 }
 
 function TeamWins (t :Team) {
