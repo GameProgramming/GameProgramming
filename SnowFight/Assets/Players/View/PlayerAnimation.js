@@ -9,7 +9,7 @@ private var redTime = 0.0;
 
 private var anim : Animation;
 
-private var playerState :PlayerState;
+private var playerState :PlayerState = PlayerState.Dead;
 private var playerStatus :PlayerStatus;
 private var motor :CharacterMotorSF;
 private var camSetup :Transform;
@@ -214,12 +214,14 @@ function OnHit () {
 //}
 
 function OnPlayerStateChange (newState :PlayerState) {
+	var formerState = playerState;
 	playerState = newState;
 	switch (playerState) {
 	case PlayerState.Dead:
 		if (playerStatus.IsMainPlayer()) {
 			var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
 			overviewCam.ResetPlayerCam();
+			if (formerState != newState) yield WaitForSeconds(1.5);
 			overviewCam.SetMode(true);
 		}
 		if (frost) frost.renderer.enabled = false;

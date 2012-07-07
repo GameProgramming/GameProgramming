@@ -8,6 +8,7 @@
     private var target : Transform;
     
     private var time : float = 0.0;
+	private var maxLifeTime :float = 10;
 
 	var speed :float;
 	var maxSpeed :float;
@@ -15,32 +16,29 @@
 	var turnSpeed :float;
 
     function Start(){
-        transform.collider.isTrigger = true;
+        //transform.collider.isTrigger = true;
         if(missleTarget){
         	target = missleTarget.transform;
 		}
 		
     }   
 
-    
-
-    function Update(){   
+    function Update(){
     	time += Time.deltaTime;
-    	if (time < 1){
-	    	transform.collider.isTrigger = true;
-        }else if (time >= 1 && time < 30 ){
-    		transform.collider.isTrigger = false;
-    	}
+//    	if (time < 1){
+//	    	transform.collider.isTrigger = true;
+//        }else if (time >= 1 && time < maxLifeTime ){
+//    		transform.collider.isTrigger = false;
+//    	}
     	speed = Mathf.Clamp(speed + speedUp * Time.deltaTime, 0, maxSpeed);
-    	if (target){
+    	if (target && time > 0.5){
     		var aimDir :Vector3 = target.position - transform.position;
     		transform.rotation = Quaternion.RotateTowards(transform.rotation,
     								Quaternion.LookRotation(aimDir), Time.deltaTime * turnSpeed);
     	}
     	transform.Translate(Vector3.forward * speed * Time.deltaTime);
-    	if (time >= 30){
-    		//Destroy (gameObject);
+
+    	if (time >= maxLifeTime) {
+//    		gameObject.GetComponent<DestroyObject>().SelfDestruct();
     	}
-    	
-	    
     }
