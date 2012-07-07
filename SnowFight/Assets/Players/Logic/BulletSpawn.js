@@ -116,7 +116,7 @@ function NetFireTarget ( netId :NetworkViewID, pos :Vector3, pitch :float, yaw :
   	var clone : Rigidbody;	
 	clone = Instantiate(projectile, pos, transform.rotation);
 	clone.networkView.viewID = netId;
-	clone.rotation.SetEulerAngles(pitch, yaw, 0);
+	clone.rotation.eulerAngles = Vector3(pitch, yaw, 0);
 	
 	var tar :NetworkView = NetworkView.Find(targetId);
 	if (tar) {
@@ -172,8 +172,9 @@ function OnGUI() {
 		style.normal.background = texture;
 		
 		if (reloadPercent > 0.0) {
-			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
-			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
+			RadialProgress.SetRadialProgress("reloading", 1-reloadPercent*1.02);
+//			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
+//			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
 		}
 	}
 }
