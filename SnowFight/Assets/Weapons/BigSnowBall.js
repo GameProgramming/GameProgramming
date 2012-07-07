@@ -26,7 +26,8 @@ var fallSpeed : float = 9.81;
 //variables to increase ball size when rolling
 @System.NonSerialized
 var startSize : Vector3;
-var maxBallSize : float = 3.0;
+private var startRadius : float;
+var maxBallSize : float = 1.5;
 var sizeIncreaseRate : float = 0.05;
 private var shot : boolean = false; 
 
@@ -44,11 +45,12 @@ function Start () {
 	
 	particleTail = transform.Find("Particles").GetComponent(ParticleSystem);
 	
-	radius = GetComponent(Renderer).bounds.size.x*0.5;
+	startRadius = GetComponent(Renderer).bounds.extents.x;
 }
 
 function Awake () {
  	startSize = transform.localScale;
+	radius = startRadius;
 }
 
 function Update () {
@@ -72,8 +74,9 @@ function Update () {
 		}
 	}
 		
-	//else if (rollBall) {	
-	radius = GetComponent(Renderer).bounds.size.x*0.5;
+	//else if (rollBall) {
+	radius = startRadius * (transform.localScale.x/startSize.x);
+	//Debug.Log(radius);
 
 	//rotate ball while rolling
 	var dir :Vector3 = transform.position - lastPosition;
@@ -177,6 +180,11 @@ function GetLastOwner() : GameObject {
 
 function GetCurrentSnowballs() :int {
 	return 10;
+}
+
+function HasReachedFullSize () : boolean {
+//	Debug.Log("Full size: " + (radius >= maxBallSize));
+	return (radius >= maxBallSize);
 }
 
 @script RequireComponent (BigSnowBallDamage)

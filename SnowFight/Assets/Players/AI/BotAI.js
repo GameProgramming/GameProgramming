@@ -8,7 +8,7 @@ var attackRotateSpeed = 20.0;
 
 var idleTime = 1.6;
 
-var punchRadius = 7.1;
+var punchRadius = 10;//7.1;
 //var freezeRadius = 50.0;
 //var sightRadius = 50.0;
 
@@ -257,7 +257,6 @@ function GetUFO () {
 				motor.inputAltFire = false;
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
-				//moveDir = Vector3.zero;
 			}
 			Debug.DrawRay(transform.position, transform.up * 50, Color.blue);
 			MoveTowardsPosition(ufoPos);
@@ -463,10 +462,18 @@ function RollBall ()
 				
 //				busy = true;
 					
-				if(BallAtBase(groundBaseFlag.position))
+				if(BallAtBase(groundBaseFlag.position)) {
 					moveDir = Vector3.zero;
+				}
 				else {
-					MoveTowardsPosition(groundBaseFlag.position);
+					if (ball.GetComponent(BigSnowBall).HasReachedFullSize() || Vector3.Distance(transform.position, groundBaseFlag.position)>attackDistance) {
+						MoveTowardsPosition(groundBaseFlag.position);
+					}
+					else {
+						// walk in circles, until the ball has full size
+						var radiusWalk : float = attackDistance/2;
+						MoveTowardsPosition(groundBaseFlag.position+radiusWalk*Vector3.Slerp((transform.position-groundBaseFlag.position).normalized,Vector3.Cross(groundBaseFlag.position-transform.position, Vector3.up).normalized, 0.1));
+					}
 					Debug.DrawRay(groundBaseFlag.position, transform.up * 50, Color.green);
 				}
 			}

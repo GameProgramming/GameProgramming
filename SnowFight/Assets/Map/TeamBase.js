@@ -125,7 +125,7 @@ function SetTeam (t :Team) {
 
 function OnTriggerStay(other : Collider) {
 	if (Network.isServer) {
-		if (other.CompareTag("BigSnowball")) {
+		if (other.CompareTag("BigSnowball") && other.GetComponent(BigSnowBall).HasReachedFullSize()) {
 			enterTime += Time.deltaTime;
 			if (enterTime > 2.0 && other.GetComponent(BigSnowBall)) {
 				other.transform.parent = null;
