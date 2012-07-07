@@ -84,6 +84,8 @@ function Update () {
 		lineRenderer.enabled = false;
 		aimingCircleOuter.renderer.enabled = false;
 		aimingCircleInner.renderer.enabled = false;
+		
+		transform.position.y = Terrain.activeTerrain.SampleHeight(transform.position) + 1.8;
 	}
 }
 
