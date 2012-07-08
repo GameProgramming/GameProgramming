@@ -29,9 +29,12 @@ private var levels :String[];
 private var selectedLevelId = 0;
 
 private var creditString : String[] = ["Benjamin Bisping", "Tiare Feuchtner", "Hannes Rammer", "Andreas Büscher"];
+var skin : GUISkin;
 
 private var credits = false;
 private var instructions = false;
+private var gameInstructions = false;
+private var inputInstructions = false;
 
 // Enable this if not running a client on the server machine
 //MasterServer.dedicatedServer = true;
@@ -48,16 +51,19 @@ function OnFailedToConnect(info: NetworkConnectionError)
 
 function OnGUI ()
 {
+	if (skin) {
+		GUI.skin = skin;
+	}
 	if (Network.peerType == NetworkPeerType.Disconnected) {
 		windowRect = GUILayout.Window (0, windowRect, MakeWindow, "Server Controls");
 		serverListRect = GUILayout.Window(1, serverListRect, MakeClientWindow, "Server List");
-		if (GUI.Button (Rect (Screen.width - 90, Screen.height - 35, 80, 30), "Quit Game")) {
+		if (GUI.Button (Rect (Screen.width - 110, Screen.height - 35, 100, 30), "Quit Game")) {
 			Application.Quit();
 		}
 		if (GUI.Button (Rect (10, Screen.height - 35, 80, 30), "Credits")) {
 			ShowCredits();
 		}
-		if (GUI.Button (Rect (100, Screen.height - 35, 80, 30), "Instructions")) {
+		if (GUI.Button (Rect (100, Screen.height - 35, 110, 30), "Instructions")) {
 			ShowInstructions();
 		}
 		if (credits) {
@@ -66,25 +72,55 @@ function OnGUI ()
 		if (instructions) {
 			instructionsRect = GUILayout.Window(3, instructionsRect, MakeInstructionsWindow, "Instructions");
 		}
+		if (gameInstructions) {
+			instructionsRect = GUILayout.Window(4, instructionsRect, MakeGameInstructionsWindow, "Game Instructinons");
+		}
+		if (inputInstructions) {
+			instructionsRect = GUILayout.Window(5, instructionsRect, MakeInputInstructionsWindow, "Input Instructinons");
+		}
+		// Start a new server
+		if (GUI.Button (Rect (Screen.width - 250, Screen.height/2 - 150, 225, 30), "Start Server / Singleplayer"))
+		{
+			StartServer (serverName, levels[selectedLevelId]);
+		}
 	}
 }
 
 function ShowCredits() {
 	if (instructions) instructions = false;
+	if (gameInstructions) gameInstructions = false;
+	if (inputInstructions) inputInstructions = false; 
 	credits = !credits;
 }
 
 function ShowInstructions() {
+	instructionsRect = Rect(Screen.width/2 - 300, Screen.height/2 - 125, 600, 100);
+	if (gameInstructions) gameInstructions = false;
 	if (credits) credits = false;
+	if (inputInstructions) inputInstructions = false; 
 	instructions = !instructions;
+}
+
+function ShowGameInstructions() {
+	if (instructions) instructions = false;
+	if (credits) credits = false;
+	if (inputInstructions) inputInstructions = false; 
+	gameInstructions = !gameInstructions;
+}
+
+function ShowInputInstructions() {
+	if (instructions) instructions = false;
+	if (credits) credits = false;
+	if (gameInstructions) gameInstructions = false; 
+	inputInstructions = !inputInstructions;
 }
 
 function Awake ()
 {
 	windowRect = Rect(Screen.width-300,0,300,100);
 	serverListRect = Rect(0, 0, Screen.width - windowRect.width, 100);
-	creditRect = Rect(Screen.width/2 - 75, Screen.height/2 - 50, 150, 100);
-	instructionsRect = Rect(Screen.width/2 - 200, Screen.height/2 - 100, 400, 200);
+	creditRect = Rect(Screen.width/2 - 100, Screen.height/2 - 50, 200, 100);
+	instructionsRect = Rect(Screen.width/2 - 300, Screen.height/2 - 125, 600, 100);
 	// Start connection test
 	connectionTestResult = Network.TestConnection();
 	
@@ -182,9 +218,9 @@ function TestConnection()
 	//Debug.Log(connectionTestResult + " " + probingPublicIP + " " + doneTesting);
 }
 
-function MakeInstructionsWindow(id : int) {
+function MakeInputInstructionsWindow(id : int) {
 	if (Network.peerType == NetworkPeerType.Disconnected) {
-		GUILayout.Space(10);
+		GUILayout.Space(12);
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Move your character with arrow keys or WASD.");
 		GUILayout.EndHorizontal();
@@ -192,14 +228,67 @@ function MakeInstructionsWindow(id : int) {
 		GUILayout.Label("Press M to show/close map overview.");
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Press Esc to show/close ingame menu while playing.");
+		GUILayout.Label("Press Esc to show/close ingame menu.");
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Press E to use items.");
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Hold left mouse button to aim and release to shoot. Right click to burp.");
+		GUILayout.Label("Hold left mouse button to aim and release to shoot.");
 		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Right click to burp.");
+		GUILayout.EndHorizontal();
+		GUILayout.Space(20);
+		if (GUILayout.Button("Close")) {
+			ShowInstructions();
+		}
+	}
+}
+
+function MakeGameInstructionsWindow(id : int) {
+	if (Network.peerType == NetworkPeerType.Disconnected) {
+		GUILayout.Space(12);
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("The main goal is to decrease the ticket number of the enemy team to zero.");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("The actual tickets are shown in the upper left corner of your screen.");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("You can achieve this by killing other yetis with snowballs.");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("You can also capture flag points by standing near to them.");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("If you are standing inside a snow ressource hold E to create a big snowball.");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Bring the ball back to a base to exchange it with an item (UFO, Rocket launcher).");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("You can also left click while rolling a big snowball to shoot it.");
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Right click to make a snow ressource out of a big snowball.");
+		GUILayout.EndHorizontal();
+		GUILayout.Space(20);
+		if (GUILayout.Button("Close")) {
+			ShowInstructions();
+		}
+	}
+}
+
+function MakeInstructionsWindow(id : int) {
+	if (Network.peerType == NetworkPeerType.Disconnected) {
+		GUILayout.Space(12);
+		if (GUILayout.Button("Game Instructions")) {
+			ShowGameInstructions();
+		}
+		if (GUILayout.Button("Input Instructions")) {
+			ShowInputInstructions();
+		}
 		GUILayout.Space(20);
 		if (GUILayout.Button("Close")) {
 			instructions = false;
@@ -209,7 +298,7 @@ function MakeInstructionsWindow(id : int) {
 
 function MakeCreditWindow(id : int) {
 	if (Network.peerType == NetworkPeerType.Disconnected) {
-		GUILayout.Space(10);
+		GUILayout.Space(12);
 		for (var name : String in creditString) {
 			GUILayout.BeginHorizontal();
 			GUILayout.Label(name);
@@ -227,7 +316,7 @@ function MakeWindow (id : int)
 	if (Network.peerType == NetworkPeerType.Disconnected)
 	{
 		
-		GUILayout.Space(10);
+		GUILayout.Space(12);
 		
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Server Name");
@@ -244,13 +333,6 @@ function MakeWindow (id : int)
 		botCount = GUILayout.TextField(botCount);
 		GUILayout.EndHorizontal();
 		
-		// Start a new server
-		if (GUILayout.Button ("Start Server / Singleplayer"))
-		{
-			StartServer (serverName, levels[selectedLevelId]);
-		}
-		
-		
 		GUILayout.FlexibleSpace();
 	}
 	//GUI.DragWindow (Rect (0,0,1000,1000));
@@ -264,12 +346,11 @@ function StartServer (serverName :String, level :String) {
 
 function MakeClientWindow(id : int)
 {
+	GUILayout.Space(12);
 	GUILayout.BeginHorizontal();
 	GUILayout.Label("Player name");
 	playerName = GUILayout.TextField(playerName);
 	GUILayout.EndHorizontal();
-		
-	GUILayout.Space(5);
 
 	// Refresh hosts
 	if (GUILayout.Button ("Refresh available Servers") || Time.realtimeSinceStartup > lastHostListRequest + hostListRefreshTimeout)
