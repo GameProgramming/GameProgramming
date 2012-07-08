@@ -18,6 +18,8 @@ var shadowStyle : GUIStyle;
 
 var teamIndicator :Texture;
 
+private var infoScaling :float = 1;
+
 function Awake () {
 	status = GetComponent(GameStatus);
 	
@@ -46,6 +48,14 @@ function Start ()  {
 	shadowStyle.normal.textColor = Color.black;
 }
 
+static function ScaleRect ( factor :float, r :Rect) :Rect{
+	return Rect(factor*r.x, factor*r.y, factor*r.width, factor*r.height);
+}
+
+function SRect (x :float, y :float, w :float, h:float) :Rect{
+	return ScaleRect(infoScaling, Rect(x,y,w,h));
+}
+
 function OnGUI() {
 	if (!status.player) return;
 	
@@ -57,30 +67,38 @@ function OnGUI() {
 	var teams :Team[] = [status.GetTeamById(1), status.neutralTeam, status.GetTeamById(2)];
 
 	var posX :float = 5;
+	
+	if (status.playerS.IsDead()) {
+		infoScaling = Mathf.Clamp(infoScaling + 2*Time.deltaTime,1,2);
+	} else {
+		infoScaling = Mathf.Clamp(infoScaling - 2*Time.deltaTime,1,2);
+	}
+	
 	for (var t :Team in teams) {
 		var posY :float = 5;
 		if (t.teamNumber == 0) {
 			posY += 15+30;
-			GUI.Label (Rect(posX, posY, 35, 25), "  :", shadowStyle);
-			GUI.Label (Rect(posX-1, posY-2, 35, 25), "  :", GetTeamStyle(t));
+			GUI.Label (SRect(posX, posY, 35, 25), "  :", shadowStyle);
+			GUI.Label (SRect(posX-1, posY-2, 35, 25), "  :", GetTeamStyle(t));
 		} else {
 			if (t == status.playerS.GetTeam()) {
-				GUI.Label(Rect(posX, posY, 20,20), teamIndicator);
+				GUI.Label(SRect(posX, posY, 20,20), teamIndicator);
 			} else if (status.playerS.IsDead()) {
-				if (GUI.Button(Rect(posX, posY, 20,20), "o")) {
+				if (GUI.Button(SRect(posX, posY, 20,20), "o")) {
 					t.AddPlayer (status.player); 
 				}
 			}
 			posY += 15;
-			GUI.Label(Rect(posX-10, posY, 35,35), t.teamIcon);
+			GUI.Label(SRect(posX-10, posY, 35,35), t.teamIcon);
 			posY += 30;
-			GUI.Label (Rect(posX, posY, 35, 25), t.tickets.ToString(), shadowStyle);
-			GUI.Label (Rect(posX-1, posY-2, 35, 25), t.tickets.ToString(), GetTeamStyle(t));
+			GUI.Label (SRect(posX, posY, 35, 25), t.tickets.ToString(), shadowStyle);
+			GUI.Label (SRect(posX-1, posY-2, 35, 25), t.tickets.ToString(), GetTeamStyle(t));
 		}
 		posY += 15;
+		var offX :float = 0;
 		for (var b : Transform in t.GetAllBases()) {
-			GUI.Label (Rect (posX, posY, 20, 20), t.teamBaseIcon);
-			posX += 5;
+			GUI.Label (SRect (posX+offX, posY, 20, 20), t.teamBaseIcon);
+			offX += 5;
 			posY += 5;
 		}
 
