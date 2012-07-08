@@ -24,23 +24,23 @@ function OnPlayerDeath (pl :PlayerStatus) {
 }
 
 function OnGUI () {
-    GUILayout.BeginArea (Rect (Screen.width-200,0,200,200));
-    for (var i :int = Mathf.Max(0, fragLog.length-5); i < fragLog.length; i++) {
-    	if (i < fragLog.length - 5) break;
-    	var f :Frag = fragLog[i];
-    	if (f.time < Time.time - 10) continue;
-	    GUILayout.BeginHorizontal();
-	    if (f.attacker) {
-	    	GUILayout.Label(f.attacker.playerName, statusDisplay.GetTeamStyle(f.attacker.GetTeam()));
-	    	GUILayout.Label(" killed ", statusDisplay.neutralStyle);
+    for (var off :float = 0; off <= 1; off++) {
+	    GUILayout.BeginArea (Rect (Screen.width-200,1-off,200,201-off));
+	    for (var i :int = Mathf.Max(0, fragLog.length-5); i < fragLog.length; i++) {
+	    	if (i < fragLog.length - 5) break;
+	    	var f :Frag = fragLog[i];
+	    	if (f.time < Time.time - 10) continue;
+		    GUILayout.BeginHorizontal();
+		    if (f.attacker) {
+		    	GUILayout.Label(f.attacker.playerName, off==1 ? statusDisplay.GetTeamStyle(f.attacker.GetTeam()) : statusDisplay.shadowStyle);
+		    	GUILayout.Label(" killed ", off==1 ? statusDisplay.neutralStyle : statusDisplay.shadowStyle);
+		    }
+		    GUILayout.Label(f.victim.playerName, off==1 ? statusDisplay.GetTeamStyle(f.victim.GetTeam()) : statusDisplay.shadowStyle);
+		    if (!f.attacker) {
+		    	GUILayout.Label(" died.", off==1 ? statusDisplay.neutralStyle : statusDisplay.shadowStyle);
+		    }
+		    GUILayout.EndHorizontal();
 	    }
-	    GUILayout.Label(f.victim.playerName, statusDisplay.GetTeamStyle(f.victim.GetTeam()));
-	    if (f.attacker) {
-	    	GUILayout.Label(".", statusDisplay.neutralStyle);
-	    } else {
-	    	GUILayout.Label(" died.", statusDisplay.neutralStyle);
-	    }
-	    GUILayout.EndHorizontal();
+	    GUILayout.EndArea ();
     }
-    GUILayout.EndArea ();
 }
