@@ -12,8 +12,9 @@ var c1 : Color = Color.yellow;
 var c2 : Color = Color.red;
 var lengthOfLineRenderer : int = 20;
 var lineRenderer :LineRenderer;
-var aimingCircleOuter :Transform;
-var aimingCircleInner :Transform;
+private var weaponModel :Transform;
+private var aimingCircleOuter :Transform;
+private var aimingCircleInner :Transform;
 
 
 var mat1 :Material;
@@ -23,16 +24,18 @@ var aimFor : float = 4.0;
 var viewAngle : Vector3;
 var locked :boolean;
 
-
 var target : GameObject; 
 
+var lifeTime :float = 15;
+private var everUsed :boolean = false;
+private var unusedTime :float = 0;
 
 function Start() {
     lineRenderer = GetComponent(LineRenderer);
     lineRenderer.SetVertexCount(3);
     aimingCircleOuter = transform.Find("AimingCircleOuter");
     aimingCircleInner = transform.Find("AimingCircleInner");
-    
+    weaponModel = transform.Find("Weapon");
 	bulletSpawn = transform.Find("Weapon/BulletSpawn");
 }
 
@@ -77,8 +80,9 @@ function Update () {
 		}else{
 			progress = 0;
 		}
-
-		RenderAimingLine (); 
+		weaponModel.renderer.enabled = true;
+		RenderAimingLine ();
+		unusedTime = 0;
 	
 	} else {
 		lineRenderer.enabled = false;
@@ -86,6 +90,19 @@ function Update () {
 		aimingCircleInner.renderer.enabled = false;
 		
 		transform.position.y = Terrain.activeTerrain.SampleHeight(transform.position) + 1.8;
+		if (everUsed) {
+			unusedTime += Time.deltaTime;
+			if (unusedTime > lifeTime - 2) {
+				if (unusedTime % 0.5 > 0.25) {
+					weaponModel.renderer.enabled = true;
+				} else {
+					weaponModel.renderer.enabled = false;
+				}
+			}
+			if (unusedTime > lifeTime && Network.isServer) {
+				Network.Destroy(gameObject);
+			}
+		}
 	}
 }
 
@@ -102,6 +119,7 @@ function Update () {
 
 function Release () {
 	owner = null;
+	everUsed = true;
 	transform.parent = null;
 	collider.enabled = true;
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer(null);
