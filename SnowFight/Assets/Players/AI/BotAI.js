@@ -39,25 +39,32 @@ private var teamAI : TeamAI;
 private var lostTarget : int = 0;
 var newTransform : Transform = null;
 
-function Start ()
-{
+function Awake () {
 	var game : GameStatus = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
 	motor = GetComponent(CharacterMotorSF);
 	pStatus = GetComponent(PlayerStatus);
 	itemManager = GetComponent(ItemManager);
-	teamAI = transform.parent.GetComponent(TeamAI);
-	
+}
+
+function Start ()
+{	
 	yield WaitForSeconds(Random.value);
 			
 	//Idle might be the wrong name for the function.. this does it all
 	yield Idle();
 }
 
-function Awake () {
-
+function OnJoinTeam (t :Team) {
+	teamAI = t.gameObject.GetComponent(TeamAI);
 }
 
 function Update () {
+	// find a new respawning base.
+	if (teamAI && pStatus.IsDead() && pStatus.GetSpawnBaseID() < 0) {
+		var spawnBase = teamAI.GetClosestOwnBase (gameObject);
+		if (spawnBase)
+			pStatus.SetSpawnBaseID(spawnBase.GetComponent(TeamBase).GetID());
+	}
 
 	//we're probably not moving forward although we want to
 	if (moveDir != Vector3.zero && !ball && !(target && target.CompareTag("BigSnowball")) 
@@ -767,11 +774,6 @@ function OnSetRemote () {
 }
 
 function OnDeath () {
-	if (teamAI) {
-		var spawnBase = teamAI.GetClosestOwnBase (gameObject);
-		if (spawnBase)
-			pStatus.SetSpawnBaseID(spawnBase.GetComponent(TeamBase).GetID());
-	}
 	StopAllCoroutines();
 	if (this.enabled) StartCoroutine("Start");
 }

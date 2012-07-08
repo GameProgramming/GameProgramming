@@ -1,3 +1,4 @@
+private var teamColor :Color;
 
 var redDuration = 0.2;
 var hideDuration = 0.1;
@@ -73,7 +74,10 @@ function OnJoinTeam (t :Team) {
 	if (team == null) {
 		Debug.LogError("Could not determine Player team. (Player object has to be child of Team object!)");
 	}
-
+	
+	teamColor = team.GetColor();
+	transform.Find("Arrow").SendMessage("SetColor", teamColor);
+	
 	//make sure the player is visible on start
 	for (var rend : MeshRenderer in meshRenderers) {
 		rend.enabled = true;
@@ -260,6 +264,18 @@ function OnItemChange(itemManager :ItemManager) {
 
 function GameOver () {
 	anim.enabled = false;
+}
+
+function OnSetMainPlayer () {
+	transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.Jumping);
+}
+
+function OnSetBot () {
+	transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.Disabled);
+}
+
+function OnSetRemote () {
+	transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.Disabled);
 }
 
 @script RequireComponent (NetworkView)

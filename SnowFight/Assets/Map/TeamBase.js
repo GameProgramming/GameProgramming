@@ -120,7 +120,7 @@ function Update () {
 function SetTeam (t :Team) {
 	transform.parent = t.transform;
 	team = t;
-	transform.GetComponentInChildren(TeamFlagColor).SetColor(team.color);
+	gameObject.BroadcastMessage("SetColor", team.color, SendMessageOptions.DontRequireReceiver);
 }
 
 function OnTriggerStay(other : Collider) {

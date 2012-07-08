@@ -70,7 +70,7 @@ function Update () {
 				SmashBallToSnowfield();
 			} else if (playerMotor.inputFire) {
 				shot = true;
-
+				if (radius < 0.01) radius = 0.01;
 				rigidbody.velocity = (GetComponent(BigSnowBallDamage).GetSpeed() / radius)
 									* pushingPlayer.transform.forward.normalized;//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;

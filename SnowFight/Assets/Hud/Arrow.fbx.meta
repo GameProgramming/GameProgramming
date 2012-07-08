@@ -5,11 +5,11 @@ ModelImporter:
     4300000: arrow
   serializedVersion: 10
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
   animations:
-    generateAnimations: 3
+    generateAnimations: 0
     bakeSimulation: 0
     splitAnimations: 1
     animationCompression: 1
@@ -20,7 +20,7 @@ ModelImporter:
     clipAnimations: []
   meshes:
     lODScreenPercentages: []
-    globalScale: .00999999978
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     swapUVChannels: 0
@@ -50,6 +50,3 @@ ModelImporter:
       data:
         first: 33
         second: a05a3200
-      data:
-        first: 111
-        second: 605fa900

@@ -59,8 +59,12 @@ function JoinTeam (t :Team) {
 
 @RPC
 function NetJoinTeam (teamId : int) {
+	if (team && team.GetTeamNumber() != teamId) {
+		team.OnPlayerLeft(this);
+	}
 	team = game.GetTeamById(teamId);
 	transform.parent = team.transform;
+	SetSpawnBaseID(-1);
 	gameObject.SendMessage("OnJoinTeam", team, SendMessageOptions.DontRequireReceiver);
 }
 
@@ -354,9 +358,8 @@ function SetSpawnBaseID (newSpawnBaseID : int) {
 }
 
 private function NetSetState (s :PlayerState) {
-	if (s == PlayerState.Dead && IsMainPlayer()) {
-		spawnBaseID = 0;
-	}
+	//if (s == PlayerState.Dead && IsMainPlayer()) {
+		SetSpawnBaseID(-1);
 	state = s;
 	SendMessage("OnPlayerStateChange", state, SendMessageOptions.DontRequireReceiver);
 }
