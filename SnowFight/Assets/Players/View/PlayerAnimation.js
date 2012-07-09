@@ -226,6 +226,7 @@ function OnPlayerStateChange (newState :PlayerState) {
 			var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
 			overviewCam.ResetPlayerCam();
 			if (formerState != newState) yield WaitForSeconds(1.5);
+			transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.UpOut);
 			overviewCam.SetMode(true);
 		}
 		if (frost) frost.renderer.enabled = false;
@@ -233,6 +234,9 @@ function OnPlayerStateChange (newState :PlayerState) {
 	case PlayerState.Alive:
 	case PlayerState.InVehicle:
 		if (frost) frost.renderer.enabled = false;
+		if (playerStatus.IsMainPlayer()) {
+			transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.Jumping);
+		}
 		break;
 	case PlayerState.Frozen:
 		if (frost) frost.renderer.enabled = true;

@@ -409,6 +409,7 @@ private function UpdateFunction () {
 		}
 	} else if (playerState == PlayerState.Dead) {
 		movement.velocity = ApplyGravityAndJumping (movement.velocity);
+		controller.Move(movement.velocity);
 	}
 }
 
