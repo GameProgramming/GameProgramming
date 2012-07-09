@@ -786,7 +786,7 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 	stream.Serialize(rotationX);
 	stream.Serialize(rotationY);
 	if (!networkView.isMine) {
-		if (oldFire != inputFire) {
+		if (oldFire != inputFire && !itemManager.GetItem()) {
 			if (inputFire) {
 				gameObject.SendMessage ("OnLoadThrow", SendMessageOptions.DontRequireReceiver);
 			} else {

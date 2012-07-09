@@ -57,6 +57,7 @@ function Fire () {
 						+ new Vector3(0, startYSpeed, 0)), speed );
 			clone.GetComponent(Damage).shooter = player.gameObject;
 			SendFire(clone);
+			player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
 			reloadProgress = clone.GetComponent(Projectile).reloadTime;
 			
 			snowCosts = projectile.GetComponent(Projectile).snowCosts;
@@ -88,6 +89,7 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
 	clone.networkView.viewID = netId;
 	if (player) clone.GetComponent(Damage).shooter = player.gameObject;
 	clone.velocity = velo;
+	SendMessageUpwards("BulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
 //	Debug.Log ("Rcv fire "+netId);
 }
 
@@ -103,6 +105,7 @@ function FireHeatSeekingRocket (target :GameObject) {
 			player.SubtractSnowball(snowCosts);
 		}
 		SendFireTarget(clone, target);
+		player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
 		reloadProgress = clone.GetComponent(Projectile).reloadTime;
 	}
 }
@@ -127,7 +130,7 @@ function NetFireTarget ( netId :NetworkViewID, pos :Vector3, pitch :float, yaw :
 	clone.networkView.viewID = netId;
 	if (player) clone.GetComponent(Damage).shooter = player.gameObject;
 	clone.rotation.eulerAngles = Vector3(pitch, yaw, 0);
-	
+	player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
 	var tar :NetworkView = NetworkView.Find(targetId);
 	if (tar) {
 		clone.GetComponent(HeatSeeking).missleTarget = tar.gameObject;

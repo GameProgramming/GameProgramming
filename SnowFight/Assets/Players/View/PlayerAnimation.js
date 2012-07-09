@@ -63,6 +63,10 @@ function Awake() {
 	anim["rocketlauncher"].speed = 20;
 	anim["rocketlauncher"].weight = 10;
 	
+	anim["rocketfire"].layer = 1;
+	anim["rocketfire"].speed = 14;
+	anim["rocketfire"].weight = 10;
+	
 	anim.enabled = true;
 	
 	body = transform.Find("Model");
@@ -312,6 +316,12 @@ function OnSetBot () {
 
 function OnSetRemote () {
 	transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.Disabled);
+}
+
+function OnBulletSpawnFired (bs :BulletSpawn) {
+	if (item && item.CompareTag("Weapon")) {
+		anim.CrossFade("rocketfire");
+	}
 }
 
 @script RequireComponent (NetworkView)
