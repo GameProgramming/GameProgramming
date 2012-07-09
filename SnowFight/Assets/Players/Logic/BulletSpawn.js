@@ -54,33 +54,35 @@ function CanFire () {
 }
 
 function Fire () {
-	if(player && CanFire()){
-	  	var projectile = GetProjectile();
-	  	
-	  	if (projectile) {
-		  	var clone : Rigidbody;	
-			clone = Instantiate(projectile, transform.position, transform.rotation);
-			var speed :float = clone.GetComponent(Projectile).speed;
-		  	clone.velocity = Vector3.ClampMagnitude(speed
-		  				* transform.TransformDirection (Vector3.forward
-						+ new Vector3(0, startYSpeed, 0)), speed );
-			clone.GetComponent(Damage).shooter = player.gameObject;
-			SendFire(clone);
-			player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
-			reloadProgress = clone.GetComponent(Projectile).reloadTime;
+	if(player){
+		if(CanFire()){
+		  	var projectile = GetProjectile();
+		  	
+		  	if (projectile) {
+			  	var clone : Rigidbody;	
+				clone = Instantiate(projectile, transform.position, transform.rotation);
+				var speed :float = clone.GetComponent(Projectile).speed;
+			  	clone.velocity = Vector3.ClampMagnitude(speed
+			  				* transform.TransformDirection (Vector3.forward
+							+ new Vector3(0, startYSpeed, 0)), speed );
+				clone.GetComponent(Damage).shooter = player.gameObject;
+				SendFire(clone);
+				player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
+				reloadProgress = clone.GetComponent(Projectile).reloadTime;
+				
+				snowCosts = projectile.GetComponent(Projectile).snowCosts;
+				if (snowCosts > 0) {
+					player.SubtractSnowball(snowCosts);
+				}
+			} else {
+				for (var child : Object in transform) {
+					(child as Transform).gameObject.SendMessage("Fire", SendMessageOptions.DontRequireReceiver);
+				}
+			}
 			
-			snowCosts = projectile.GetComponent(Projectile).snowCosts;
-			if (snowCosts > 0) {
-				player.SubtractSnowball(snowCosts);
-			}
-		} else {
-			for (var child : Object in transform) {
-				(child as Transform).gameObject.SendMessage("Fire", SendMessageOptions.DontRequireReceiver);
-			}
+		}else{
+			PlayAudio(onNoSnowballs);
 		}
-		
-	}else{
-		PlayAudio(onNoSnowballs);
 	}
 }
 
@@ -105,21 +107,23 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
 }
 
 function FireHeatSeekingRocket (target :GameObject) {
-	if(player && CanFire()){
-		var projectile = GetProjectile();
-	  	var clone : Rigidbody;	
-		clone = Instantiate(projectile, transform.position, transform.rotation);
-		clone.GetComponent(HeatSeeking).missleTarget = target;
-		
-		snowCosts = projectile.GetComponent(Projectile).snowCosts;
-		if (snowCosts > 0) {
-			player.SubtractSnowball(snowCosts);
+	if(player){
+		if(CanFire()){
+			var projectile = GetProjectile();
+		  	var clone : Rigidbody;	
+			clone = Instantiate(projectile, transform.position, transform.rotation);
+			clone.GetComponent(HeatSeeking).missleTarget = target;
+			
+			snowCosts = projectile.GetComponent(Projectile).snowCosts;
+			if (snowCosts > 0) {
+				player.SubtractSnowball(snowCosts);
+			}
+			SendFireTarget(clone, target);
+			player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
+			reloadProgress = clone.GetComponent(Projectile).reloadTime;
+		}else{
+			PlayAudio(onNoRockets);
 		}
-		SendFireTarget(clone, target);
-		player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
-		reloadProgress = clone.GetComponent(Projectile).reloadTime;
-	}else{
-		PlayAudio(onNoRockets);
 	}
 }
 
