@@ -221,6 +221,7 @@ function RenderAimingLine () {
 			lineRenderer.SetPosition(2, localEnemyPos);
 			lineRenderer.SetColors(c2,c2);
 			
+			
 			aimingCircleOuter.localPosition = localEnemyPos;
 			aimingCircleInner.localPosition = localEnemyPos;
 			aimingCircleOuter.renderer.enabled = true;
@@ -238,7 +239,7 @@ function RenderAimingLine () {
 			lineRenderer.SetPosition(2, bsp + Vector3(0,0,40));
 			lineRenderer.SetColors(c1,c1);
 			aimingCircleOuter.renderer.enabled = false;
-			aimingCircleInner.renderer.enabled = false;
+			aimingCircleInner.renderer.enabled = false;			
 		}
 	} else {
 		lineRenderer.enabled = false;
@@ -273,6 +274,7 @@ function OnGUI(){
 			crossColor2 = new Color(1, 1, 0,0.2);
 			outerColor = new Color(0, 0, 0,0.5);
 			aiming = "No Target";
+			StopAudio();
 		}else if (target){
 			
 		    
@@ -291,6 +293,7 @@ function OnGUI(){
 				aiming = "Locking target";
 				PlayAudio(onLockingSound);
 			}else{
+				StopAudio();
 				progrAim = 1 ;
 				crossColor1 = new Color(1, 1, 0,0.5);
 				crossColor2 = new Color(1, 1, 0,0.2);
@@ -307,6 +310,10 @@ function OnGUI(){
 		outerTexture.SetPixel(0, 0, outerColor);
 		outerTexture.Apply();
 		outerStyle.normal.background = outerTexture;
+		
+		aimingCircleInner.renderer.material.SetColor ("_Color", crossColor1);
+		aimingCircleOuter.renderer.material.SetColor ("_Color", Color.red);
+		
 		
 		if(target){
 			var cam : Camera = Camera.main;
@@ -338,5 +345,10 @@ function PlayAudio(audio : AudioClip){
 	transform.audio.clip=audio;
 	if(!transform.audio.isPlaying){
 	    	   	transform.audio.Play();
+	}
+}
+function StopAudio(){
+	if(transform.audio.isPlaying){
+	    	   	transform.audio.Pause();
 	}
 }
