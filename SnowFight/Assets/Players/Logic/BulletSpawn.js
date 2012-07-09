@@ -11,6 +11,15 @@ var reloadProgress : float = 0.0;
 var startYSpeed :float = 0.0;
 
 var snowCosts :int = 1;
+var onNoSnowballs : AudioClip;
+var onNoRockets : AudioClip;
+
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	    	   	transform.audio.Play();
+	}
+}
 
 class BufferedShot {
 	var time :float;
@@ -69,6 +78,8 @@ function Fire () {
 			}
 		}
 		
+	}else{
+		PlayAudio(onNoNormalAmmo);
 	}
 }
 
@@ -104,6 +115,8 @@ function FireHeatSeekingRocket (target :GameObject) {
 		}
 		SendFireTarget(clone, target);
 		reloadProgress = clone.GetComponent(Projectile).reloadTime;
+	}else{
+		PlayAudio(onNoRocketAmmo);
 	}
 }
 

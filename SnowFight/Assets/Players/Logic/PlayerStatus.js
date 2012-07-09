@@ -32,6 +32,10 @@ private var isMainPlayer :boolean = false;
 private var game :GameStatus;
 var isLockedTarget : boolean = false;
 
+var onDamageSound : AudioClip;
+var onDieSound : AudioClip;
+
+
 class Attack {
 	var attacker :GameObject;
 	var damageType :DamageType;
@@ -154,6 +158,8 @@ function Die () {
 	if (IsDead()) {
 		return;
 	}
+	PlayAudio(onDieSound);
+	
 	if (Network.isServer) {
 		var attacker :NetworkViewID = NetworkViewID.unassigned;
 		if (lastAttack && lastAttack.attacker) {
@@ -162,6 +168,12 @@ function Die () {
 		networkView.RPC("NetDie", RPCMode.Others, attacker);
 		NetDie(attacker);
 		team.LoseTickets(1);
+	}
+}
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	    	   	transform.audio.Play();
 	}
 }
 
@@ -288,6 +300,8 @@ function ApplyDamage (attack :Attack) {
 			&& networkView.isMine) {
 			frozen = attack.damage * 0.1;
 			SetState(PlayerState.Frozen);
+		}else{
+			PlayAudio(onDamageSound);
 		}
 		
 //s		Debug.Log("NetHit Send");

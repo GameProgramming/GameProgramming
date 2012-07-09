@@ -30,6 +30,9 @@ var lifeTime :float = 15;
 private var everUsed :boolean = false;
 private var unusedTime :float = 0;
 
+var onLockingSound : AudioClip;
+var onLockedSound : AudioClip;
+
 function Start() {
     lineRenderer = GetComponent(LineRenderer);
     lineRenderer.SetVertexCount(3);
@@ -267,12 +270,14 @@ function OnGUI(){
 				outerColor = new Color(1, 0, 0,0.8);
 				progrAim = 1 ;
 				aiming = "Target locked";
+				PlayAudio(onLockedSound);
 		    }else if(progress > 0 && progress < aimFor){
 				crossColor1 = new Color(0, 1, progress,0.4);
 				crossColor2 = new Color(0, 1, progress,0.4);
 				outerColor = new Color(0, 0, 0,0.5);
 				progrAim = progress/aimFor ;
 				aiming = "Locking target";
+				PlayAudio(onLockingSound);
 			}else{
 				progrAim = 1 ;
 				crossColor1 = new Color(1, 1, 0,0.5);
@@ -316,4 +321,10 @@ function getProgress(){
 function addToProgress(progr:float){
 	progress += progr ;
 	return progress ;
+}
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	    	   	transform.audio.Play();
+	}
 }

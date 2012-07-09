@@ -5,6 +5,9 @@ private var terrain :Terrain;
 
 static private var initialized = false;
 
+var onLeftSound : AudioClip;
+var onRightSound : AudioClip;
+
 function Awake() {
 	anim = GetComponent(Animation);
 	
@@ -32,10 +35,18 @@ function OnRightStep () {
 		 terrain.SampleHeight(rightFootEmitter.transform.position) + 0.05;
 	rightFootEmitter.startRotation = transform.rotation.eulerAngles.y;
 	rightFootEmitter.Emit(1);
+	audio.clip = onRightSound;
+	if(!audio.isPlaying){
+	    	   	audio.Play();
+			}
 }
 function OnLeftStep () {
 	leftFootEmitter.transform.position.y =
 		 terrain.SampleHeight(leftFootEmitter.transform.position) + 0.05;
 	leftFootEmitter.startRotation = transform.rotation.eulerAngles.y;
 	leftFootEmitter.Emit(1);
+	audio.clip = onLeftSound;
+	if(!audio.isPlaying){
+	    	   	audio.Play();
+			}
 }
