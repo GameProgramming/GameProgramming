@@ -80,7 +80,7 @@ function Fire () {
 		}
 		
 	}else{
-		PlayAudio(onNoNormalAmmo);
+		PlayAudio(onNoSnowballs);
 	}
 }
 
@@ -119,7 +119,7 @@ function FireHeatSeekingRocket (target :GameObject) {
 		player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
 		reloadProgress = clone.GetComponent(Projectile).reloadTime;
 	}else{
-		PlayAudio(onNoRocketAmmo);
+		PlayAudio(onNoRockets);
 	}
 }
 
