@@ -429,6 +429,11 @@ function OnPlayerConnected(newPlayer: NetworkPlayer) {
 	}
 }
 
+function Regenerate (hpAmount :int) {
+	hp = Mathf.Clamp(hp + hpAmount, 0, fullHp);
+	SendMessage("OnRegenerate", hpAmount, SendMessageOptions.DontRequireReceiver);
+}
+
 function OnGUI() {
 	 if (isLockedTarget) {
     	var innerTexture : Texture2D = new Texture2D(1, 1);

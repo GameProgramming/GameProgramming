@@ -21,6 +21,9 @@ var takeOverCurrTeam :Team = null;
 
 private var currentTeamTakingOver : Team;
 private var progress : float;
+private var regenerationProgress :float = 0;
+var regenerationTime :float = 0.5;
+var regenerationAmount :float = 5;
 
 private var mainPlayerStatus : PlayerStatus;
 
@@ -72,6 +75,12 @@ function FillPipeline() {
 
 function Update () {
 	if (Network.isServer) {
+		regenerationProgress += Time.deltaTime;
+		var regenerationFrame = false;
+		if (regenerationProgress > regenerationTime) {
+			regenerationProgress = 0;
+			regenerationFrame = true;
+		}
 		var takeOverDist = takeOverRadius * takeOverRadius;
 		
 		var gos : GameObject[];
@@ -85,12 +94,17 @@ function Update () {
 		    	if (status.IsMainPlayer()) {
 		    		mainPlayerStatus = status;
 		    	}
-	    		if (!status.IsDead() && status.team != teamTakingOver) {
-	    			if (teamTakingOver == null) {
-	    				teamTakingOver = status.team;
-	    			} else {
-	    				teamTakingOver = neutralTeam;
-	    			}
+	    		if (!status.IsDead()) {
+	    			if (status.team != teamTakingOver) {
+		    			if (teamTakingOver == null) {
+		    				teamTakingOver = status.team;
+		    			} else {
+		    				teamTakingOver = neutralTeam;
+		    			}
+		    		}
+		    		if (regenerationFrame && status.team == team) {
+		    			status.Regenerate(regenerationAmount);
+		    		}
 	    		}
 	    	}
 		}
@@ -204,5 +218,4 @@ function OnGUI () {
 	if (takeOverProgress <= 0.0) {
 		mainPlayerStatus = null;
 	}
-	
 }

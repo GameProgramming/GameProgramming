@@ -1,6 +1,6 @@
 #pragma strict
 private var owner : GameObject;
-
+private var ownerArmJoint :Transform;
 
 private var bulletSpawn : Transform;
 private var playerMotor : CharacterMotorSF;
@@ -130,9 +130,21 @@ function Release () {
 
 function PickItem(player :GameObject) {
 	owner = player;
+//	ownerArmJoint = owner.transform.Find("Model/joint29/joint1/joint2/joint3");
 	collider.enabled = false;
 	playerMotor = player.GetComponent(CharacterMotorSF);
 	playerStatus = owner.GetComponent(PlayerStatus);
+//	if (!ownerArmJoint) {
+//		Debug.Log("Rocketlauncher didnt find Player Arm to attach.");
+//	} else {
+//		transform.parent = ownerArmJoint;
+//		transform.localPosition = Vector3 (-1,-1,1);
+//		//transform.localRotation = Quaternion.zero;
+//		transform.localRotation.x = 0;
+//		transform.localRotation.y = 0;
+//		transform.localRotation.z = 270;
+//	}
+	
 	transform.parent = owner.transform;
 	transform.localPosition = Vector3 (0.4,1,0.6);
 	//transform.localRotation = Quaternion.zero;
