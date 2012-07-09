@@ -44,3 +44,7 @@ function OnGUI () {
 	    GUILayout.EndArea ();
     }
 }
+
+function GetLastFrag () :Frag {
+	return fragLog[fragLog.length-1];
+}

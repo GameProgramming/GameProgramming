@@ -115,7 +115,7 @@ function Update () {
 	}
 	
 	if (Input.GetButtonDown ("Restart")) {
-		Restart();
+		SendMessage("Restart");
 	}
 }
 

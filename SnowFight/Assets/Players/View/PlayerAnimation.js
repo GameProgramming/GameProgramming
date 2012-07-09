@@ -224,8 +224,10 @@ function OnPlayerStateChange (newState :PlayerState) {
 	case PlayerState.Dead:
 		if (playerStatus.IsMainPlayer()) {
 			var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+			if (formerState != newState) yield WaitForSeconds(.3);
+			overviewCam.SetPlayerCam(transform.Find("CameraSetup/CameraDeath"));
+			if (formerState != newState) yield WaitForSeconds(1.3);
 			overviewCam.ResetPlayerCam();
-			if (formerState != newState) yield WaitForSeconds(1.5);
 			transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.UpOut);
 			overviewCam.SetMode(true);
 		}
@@ -267,6 +269,7 @@ function OnItemChange(itemManager :ItemManager) {
 }
 
 function GameOver () {
+	yield WaitForSeconds(.7);
 	anim.enabled = false;
 }
 

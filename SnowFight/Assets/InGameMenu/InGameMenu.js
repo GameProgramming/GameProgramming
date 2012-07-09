@@ -74,7 +74,7 @@ function MakeIngameMenuRect(id : int) {
 		GUILayout.BeginVertical();
 		if (Network.isServer) {
 			if (GUILayout.Button ("Restart Map")) {
-				GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).Restart();
+				GameObject.FindGameObjectWithTag("Game").SendMessage("Restart");;
 			}
 			if (GUILayout.Button ("Change Map")) {
 				showChangeMap = true;

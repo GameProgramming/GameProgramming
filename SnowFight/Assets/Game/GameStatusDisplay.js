@@ -18,6 +18,8 @@ var shadowStyle : GUIStyle;
 
 var teamIndicator :Texture;
 
+private var displayGameOver = false;
+
 private var infoScaling :float = 1;
 
 function Awake () {
@@ -106,7 +108,7 @@ function OnGUI() {
 	}
 	
 	//Show the win message.
-	if (status.gameOver && Time.time > status.gameOverTime + .2) {
+	if (displayGameOver) {
 		var winText : String;
 		winText = "Team "+ status.winner.ToString() + " wins!";
 		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
@@ -129,10 +131,18 @@ function GetTeamStyle (t :Team) :GUIStyle {
 }
 
 function GameOver () {
+	yield WaitForSeconds(0.2);
+	var lastFrag :Frag = GetComponent(FragMonitor).GetLastFrag();
+	if (lastFrag && lastFrag.victim) {
+		var overview :MapOverview = GameObject.FindGameObjectWithTag("OverviewCam")
+				.GetComponent(MapOverview);
+		overview.SetPlayerCam(lastFrag.victim.transform.Find("CameraSetup/CameraDeath"));
+	}
 	yield WaitForSeconds(0.4);
+	displayGameOver = true;
 	while (true) {
 		if (status.gameOver && Input.GetKeyDown("space")) {
-			status.Restart();
+			status.SendMessage("Restart");
 		}
 		yield;
 	}
