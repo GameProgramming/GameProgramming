@@ -6,6 +6,8 @@ var serverName = "SomeServer";
 var botCount = "10";
 
 var playerName = "Player01";
+var iPAdress = "0.0.0.0:0000";
+
 
 private var timeoutHostList = 0.0;
 private var lastHostListRequest = -1000.0;
@@ -352,6 +354,11 @@ function MakeClientWindow(id : int)
 	playerName = GUILayout.TextField(playerName);
 	GUILayout.EndHorizontal();
 
+	GUILayout.BeginHorizontal();
+	GUILayout.Label("IP-Adress of network server");
+	iPAdress = GUILayout.TextField(iPAdress);
+	GUILayout.EndHorizontal();
+
 	// Refresh hosts
 	if (GUILayout.Button ("Refresh available Servers") || Time.realtimeSinceStartup > lastHostListRequest + hostListRefreshTimeout)
 	{
@@ -400,6 +407,7 @@ function MakeClientWindow(id : int)
 				Network.Connect(element);
 		}
 		GUILayout.EndHorizontal();	
+
 	}
 }
 
