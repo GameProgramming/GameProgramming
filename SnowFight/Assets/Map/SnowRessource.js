@@ -73,7 +73,6 @@ function GrabBigSnowball(player : GameObject) :GameObject {
 	currentSnowballs -= bigSnowballAmount;
 	var spawnPos :Vector3 = player.transform.position + player.transform.forward;
 	return Network.Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity, 0);
-	//bigSnowballPrefab.GetComponent(BigSnowBall).Respawn(spawnPos);
 }
 
 //We need to restore all balls when restarting the level.
@@ -114,11 +113,9 @@ function OnTriggerStay(other : Collider) {
 	}
 }
 
-function CreateResourceFromSnowball(ballSize : float, maxBallSize : float) {
+function CreateResourceFromSnowball(ballSize : float) {
 	creationTime = Time.time;
-	currentSnowballs = Mathf.Min(Mathf.Round(30.0 * ballSize/maxBallSize), maxSnowballs);
-	
-	//Do some other important stuff	
+	currentSnowballs = Mathf.Min(Mathf.Round(ballSize), maxSnowballs);
 	snowballRessource = transform.Find("SnowballRessource");
 	GetComponent(Collider).isTrigger = true;
 }
