@@ -143,15 +143,15 @@ function OnTriggerEnter (other : Collider) {
 	//~ playerLink=col.GetComponent (PlayerStatus);
 	if (!other.GetComponent (PlayerStatus)) { // not the player or the bots
 		//destroy the object
-		if (other.networkView) {
-			if (other.networkView.isMine) {
-				Debug.Log("Destroying "+other.gameObject+" because it fell from the map.");
-				Network.Destroy(other.gameObject);
-			}
-		} else {
-			Debug.Log("Destroying "+other.gameObject+" because it fell from the map.");
-			Destroy(other.gameObject);
-		}
+//		if (other.networkView) {
+//			if (other.networkView.isMine) {
+//				Debug.Log("Destroying "+other.gameObject+" because it fell from the map.");
+//				Network.Destroy(other.gameObject);
+//			}
+//		} else {
+//			Debug.Log("Destroying "+other.gameObject+" because it fell from the map.");
+//			Destroy(other.gameObject);
+//		}
 	} else if (Network.isServer) { //otherwise tell the player to die
 		Debug.Log("Killing "+other.gameObject+" because he/she fell from the map.");
 		var attack = new Attack();

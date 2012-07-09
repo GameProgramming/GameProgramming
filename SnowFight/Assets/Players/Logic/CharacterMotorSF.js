@@ -11,7 +11,7 @@ private var gameOverTime = 0.0;
 // Does this script currently respond to input?
 var canControl : boolean = true;
 
-var useFixedUpdate : boolean = true;
+//var useFixedUpdate : boolean = true;
 
 // For the next variables, @System.NonSerialized tells Unity to not serialize the variable or show it in the inspector view.
 // Very handy for organization!
@@ -38,6 +38,8 @@ private var itemInputBlock :float = 0;
 
 var rotationY = 0.0;
 var rotationX = 0.0;
+private var extrapolatedPosition :Vector3;
+private var extrapolationInterval :float;
 
 class CharacterMotorMovement {
 	// The maximum horizontal speed when moving
@@ -210,6 +212,8 @@ private var playerState :PlayerState;
 function Start () {
 	gameOver = false;
 	canControl = false;
+	extrapolatedPosition = transform.position;
+	extrapolationInterval = 1 / Network.sendRate;
 }
 
 function Awake () {
@@ -229,9 +233,6 @@ function Awake () {
 }
 
 private function UpdateFunction () {
-	if(gameOver || !networkView.isMine)
-		return;
-	
 	itemManager.inputAction = inputAction;
 	itemManager.inputAltFire = inputAltFire;
 
@@ -411,6 +412,8 @@ private function UpdateFunction () {
 		movement.velocity = ApplyGravityAndJumping (movement.velocity);
 		controller.Move(movement.velocity);
 	}
+	extrapolatedPosition = transform.position + Vector3.ClampMagnitude(extrapolationInterval
+																* movement.velocity, 2);
 }
 
 function Rotate (x :float, y :float) {
@@ -426,32 +429,50 @@ function FixedUpdate () {
 	if(gameOver)
 		return;
 
-	if (movingPlatform.enabled) {
-		if (movingPlatform.activePlatform != null) {
-			if (!movingPlatform.newPlatform) {
-				var lastVelocity : Vector3 = movingPlatform.platformVelocity;
-				
-				movingPlatform.platformVelocity = (
-					movingPlatform.activePlatform.localToWorldMatrix.MultiplyPoint3x4(movingPlatform.activeLocalPoint)
-					- movingPlatform.lastMatrix.MultiplyPoint3x4(movingPlatform.activeLocalPoint)
-				) / Time.deltaTime;
+	if (networkView.isMine) {
+		
+		if (movingPlatform.enabled) {
+			if (movingPlatform.activePlatform != null) {
+				if (!movingPlatform.newPlatform) {
+					var lastVelocity : Vector3 = movingPlatform.platformVelocity;
+					
+					movingPlatform.platformVelocity = (
+						movingPlatform.activePlatform.localToWorldMatrix.MultiplyPoint3x4(movingPlatform.activeLocalPoint)
+						- movingPlatform.lastMatrix.MultiplyPoint3x4(movingPlatform.activeLocalPoint)
+					) / Time.deltaTime;
+				}
+				movingPlatform.lastMatrix = movingPlatform.activePlatform.localToWorldMatrix;
+				movingPlatform.newPlatform = false;
 			}
-			movingPlatform.lastMatrix = movingPlatform.activePlatform.localToWorldMatrix;
-			movingPlatform.newPlatform = false;
+			else {
+				movingPlatform.platformVelocity = Vector3.zero;	
+			}
 		}
-		else {
-			movingPlatform.platformVelocity = Vector3.zero;	
-		}
-	}
-	
-	if (useFixedUpdate)
+		
 		UpdateFunction();
+	
+	} else {
+		NetUpdateFunction();
+	}
 }
 
-function Update () {
-	if (!useFixedUpdate && !gameOver)
-		UpdateFunction();
+function NetUpdateFunction () {
+	transform.localEulerAngles = new Vector3(0, rotationX, 0);
+	var newPosition :Vector3;
+	if ((transform.position - extrapolatedPosition).sqrMagnitude > 5) {
+		newPosition = extrapolatedPosition;
+	} else {
+		var velocity = (controller.velocity);
+		newPosition = Vector3.SmoothDamp(transform.position, extrapolatedPosition,
+                                velocity , 1.2*extrapolationInterval);
+	}
+	controller.Move(newPosition - transform.position);
 }
+
+//function Update () {
+//	if (!useFixedUpdate && !gameOver)
+//		UpdateFunction();
+//}
 
 private function ApplyInputVelocityChange (velocity : Vector3) {	
 	if (!canControl) {
@@ -761,6 +782,9 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 	stream.Serialize(inputFire);
 	stream.Serialize(inputAltFire);
 	stream.Serialize(grounded);
+	stream.Serialize(extrapolatedPosition);
+	stream.Serialize(rotationX);
+	stream.Serialize(rotationY);
 	if (!networkView.isMine) {
 		if (oldFire != inputFire) {
 			if (inputFire) {

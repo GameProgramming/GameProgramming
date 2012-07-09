@@ -12,6 +12,12 @@ var startYSpeed :float = 0.0;
 
 var snowCosts :int = 1;
 
+class BufferedShot {
+	var time :float;
+	var bullet :GameObject;
+}
+private var bufferedShots :Array = Array();
+
 function Start() {
 	ConnectToPlayer(transform.parent);
 	startYSpeed = 0.0;
@@ -69,6 +75,7 @@ function Fire () {
 function SendFire ( bullet :Rigidbody ) {
 	var netId :NetworkViewID = Network.AllocateViewID();
 	bullet.networkView.viewID = netId;
+	BufferShot(bullet.gameObject);
 //	Debug.Log ("Send fire "+netId);
 	this.networkView.RPC("NetFire", RPCMode.Others, netId, bullet.position, bullet.velocity);
 }
@@ -79,8 +86,9 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
   	var clone : Rigidbody;	
 	clone = Instantiate(projectile, pos, transform.rotation);
 	clone.networkView.viewID = netId;
+	if (player) clone.GetComponent(Damage).shooter = player.gameObject;
 	clone.velocity = velo;
-	Debug.Log ("Rcv fire "+netId);
+//	Debug.Log ("Rcv fire "+netId);
 }
 
 function FireHeatSeekingRocket (target :GameObject) {
@@ -106,6 +114,7 @@ function SendFireTarget ( bullet :Rigidbody, target :GameObject ) {
 	if (target && target.networkView) {
 		tarId = target.networkView.viewID;
 	}
+	BufferShot(bullet.gameObject);
 	networkView.RPC("NetFireTarget", RPCMode.Others, netId, bullet.position,
 					bullet.rotation.eulerAngles.x, bullet.rotation.eulerAngles.y,tarId);
 }
@@ -116,6 +125,7 @@ function NetFireTarget ( netId :NetworkViewID, pos :Vector3, pitch :float, yaw :
   	var clone : Rigidbody;	
 	clone = Instantiate(projectile, pos, transform.rotation);
 	clone.networkView.viewID = netId;
+	if (player) clone.GetComponent(Damage).shooter = player.gameObject;
 	clone.rotation.eulerAngles = Vector3(pitch, yaw, 0);
 	
 	var tar :NetworkView = NetworkView.Find(targetId);
@@ -126,6 +136,35 @@ function NetFireTarget ( netId :NetworkViewID, pos :Vector3, pitch :float, yaw :
 	}
 }
 
+function BufferShot(shot :GameObject) {
+	var bs :BufferedShot = new BufferedShot();
+	bs.bullet = shot;
+	bs.time = Time.time;
+}
+
+function OnPlayerConnected(newPlayer: NetworkPlayer) {
+	var newBufferedShots = Array();
+	for (var bs :BufferedShot in bufferedShots) {
+		if (bs.bullet && bs.bullet.active) {
+			newBufferedShots.Add(bs);
+		}
+	}
+	bufferedShots = newBufferedShots;
+	for (var bs :BufferedShot in bufferedShots) {
+		var b :GameObject = bs.bullet;
+		var hs :HeatSeeking = b.GetComponent(HeatSeeking);
+		if (hs) {
+			var tarId :NetworkViewID = NetworkViewID.unassigned;
+			if (hs.GetTarget() && hs.GetTarget().networkView) {
+				tarId = hs.GetTarget().networkView.viewID;
+			}
+			networkView.RPC("NetFireTarget", newPlayer, b.networkView.viewID, b.transform.position,
+					b.rigidbody.rotation.eulerAngles.x, b.rigidbody.rotation.eulerAngles.y,tarId);
+		} else {
+			this.networkView.RPC("NetFire", newPlayer, b.networkView.viewID, b.rigidbody.position, b.rigidbody.velocity);
+		}
+	}
+}
 
 function GetProjectile(){
 	return bullet;

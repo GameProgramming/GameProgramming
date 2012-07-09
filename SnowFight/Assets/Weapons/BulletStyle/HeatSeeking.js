@@ -42,3 +42,7 @@
 //    		gameObject.GetComponent<DestroyObject>().SelfDestruct();
     	}
     }
+    
+    function GetTarget () : Transform {
+    	return target;
+    }
