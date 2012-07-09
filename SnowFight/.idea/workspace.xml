@@ -25,16 +25,25 @@
       <file leaf-file-name="Assembly-UnityScript-vs.unityproj" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assembly-UnityScript-vs.unityproj">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="75" column="43" selection-start="3806" selection-end="3806" vertical-scroll-proportion="0.0">
+            <state line="73" column="43" selection-start="3684" selection-end="3684" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlayerStepAnimation.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="PlayerStepAnimation.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/Players/View/PlayerStepAnimation.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="54" selection-start="270" selection-end="270" vertical-scroll-proportion="-1.0176767">
+            <state line="10" column="54" selection-start="270" selection-end="270" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BotAI.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assets/Players/AI/BotAI.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="618" column="35" selection-start="18324" selection-end="18324" vertical-scroll-proportion="1.2637075">
               <folding />
             </state>
           </provider>
@@ -278,14 +287,21 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Assembly-UnityScript-vs.unityproj">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="75" column="43" selection-start="3806" selection-end="3806" vertical-scroll-proportion="0.0">
+        <state line="73" column="43" selection-start="3684" selection-end="3684" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Players/View/PlayerStepAnimation.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="54" selection-start="270" selection-end="270" vertical-scroll-proportion="-1.0176767">
+        <state line="10" column="54" selection-start="270" selection-end="270" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Players/AI/BotAI.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="618" column="35" selection-start="18324" selection-end="18324" vertical-scroll-proportion="1.2637075">
           <folding />
         </state>
       </provider>
