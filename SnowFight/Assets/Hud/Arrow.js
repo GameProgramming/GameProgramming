@@ -38,7 +38,9 @@ function FixedUpdate () {
 				transform.rotation.eulerAngles.x = 0;
 			}
 		} else if (mode == ArrowMode.UpOut) {
-			transform.localPosition.y += (2+transform.localPosition.y)*Time.deltaTime;
+			if (Mathf.Abs(transform.localPosition.y) < 1000) {
+				transform.localPosition.y += (2+transform.localPosition.y)*Time.deltaTime;
+			}
 		} else {
 			transform.localPosition.y = Mathf.Lerp(transform.localPosition.y, minHeight, 0.3);
 			transform.rotation.eulerAngles.x = 0;
