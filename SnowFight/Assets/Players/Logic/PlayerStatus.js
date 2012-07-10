@@ -305,14 +305,10 @@ function ApplyDamage (attack :Attack) {
 			&& networkView.isMine) {
 			frozen = attack.damage * 0.1;
 			SetState(PlayerState.Frozen);
-		}else{
-			if(attack.attacker.GetComponent(BotAI).enabled){
-				if(Random.Range(0.0, 100.0)<33.0){
-					PlayAudio(onDamageSound);
-				}
-			}else if(!attack.attacker.GetComponent(BotAI).enabled){
-				PlayAudio(onDamageSound);
-			}
+		} else if (attack.attacker && attack.attacker.GetComponent(PlayerStatus)
+					 && attack.attacker.GetComponent(PlayerStatus).IsMainPlayer()
+				|| Random.Range(0.0, 100.0)<33.0) {
+			PlayAudio(onDamageSound);
 		}
 		
 //s		Debug.Log("NetHit Send");
@@ -342,6 +338,10 @@ function NetApplyDamage (newHp :int, damageType :int) {
 		&& networkView.isMine) {
 		frozen = lastAttack.damage * 0.1;
 		SetState(PlayerState.Frozen);
+	} else {
+		if (Random.Range(0.0, 100.0)<33.0) {
+			PlayAudio(onDamageSound);
+		}
 	}
 	
 	gameObject.SendMessage ("OnHit", lastAttack, SendMessageOptions.DontRequireReceiver);										
