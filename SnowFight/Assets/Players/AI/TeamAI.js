@@ -70,7 +70,7 @@ function GetTargets (player : GameObject) : GameObject[] {
 		}
 	}
 	
-	//we're still here, so there's no ufo or bazooka for us to get
+	//there might be no ufo or bazooka for us to get
 	//so perhaps get snowballs
 	if (snowBalls.Length > 0) {
 		closestBall = GetClosestObjectInArray(player, snowBalls);
@@ -78,18 +78,18 @@ function GetTargets (player : GameObject) : GameObject[] {
 			targets += [closestBall];
 		}
 	}
-	
-	
-	//if there's a bazooka somewhere
-	if (bazookas.Length > 0) {
-		for (baz in bazookas) {
-			//and we're the closest bot, return that bazooka
-			if (IsClosestTeamMember(player, baz.transform.position)) {
-				targets += [baz];
-				break;
-			}
-		}
-	}
+//	
+//	
+//	//if there's a bazooka somewhere
+//	if (bazookas.Length > 0) {
+//		for (baz in bazookas) {
+//			//and we're the closest bot, return that bazooka
+//			if (IsClosestTeamMember(player, baz.transform.position)) {
+//				targets += [baz];
+//				break;
+//			}
+//		}
+//	}
 	
 	//Get bazookas if they're around
 	//or go make a snowball at a snowressource
