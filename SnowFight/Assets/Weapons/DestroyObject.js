@@ -1,5 +1,11 @@
 var explosion : GameObject;
 var destructionDelay :float = 0;
+var selfDestructionTime :float = 99999;
+
+function Start () {
+	yield WaitForSeconds(selfDestructionTime);
+	SelfDestruct();
+}
 
 
 function OnCollisionEnter(collision : Collision){

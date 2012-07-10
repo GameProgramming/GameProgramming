@@ -18,6 +18,7 @@ private var weaponModel :Transform;
 private var aimingCircleOuter :Transform;
 private var aimingCircleInner :Transform;
 
+private var itemModel :Transform;
 
 var mat1 :Material;
 
@@ -29,12 +30,16 @@ var locked :boolean;
 private var target : GameObject; 
 var targetName : String = "Ufo"; 
 
-var lifeTime :float = 15;
-private var everUsed :boolean = false;
-private var unusedTime :float = 0;
+//var lifeTime :float = 15;
+//private var everUsed :boolean = false;
+//private var unusedTime :float = 0;
 
 var onLockingSound : AudioClip;
 var onLockedSound : AudioClip;
+
+var initialAmmo :int = 4;
+private var ammo :int = initialAmmo;
+private var alive :boolean = true;
 
 function Start() {
     lineRenderer = GetComponent(LineRenderer);
@@ -44,6 +49,10 @@ function Start() {
     aimingCircleInner = transform.Find("AimingCircleInner");
     weaponModel = transform.Find("Weapon");
 	bulletSpawn = transform.Find("Weapon/BulletSpawn");
+	itemModel = transform.Find("Item");
+	
+	weaponModel.gameObject.active = false;
+	itemModel.gameObject.SetActiveRecursively(true);
 }
 
 function Update () {
@@ -67,21 +76,26 @@ function Update () {
 				if (progress < aimFor){
 					progress += Time.deltaTime;
 					locked = true;
-					if (playerMotor.inputFire) {
+					if (playerMotor.inputFire && ammo > 0) {
 						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
+						ammo--;
 						progress = 0;
 					}
 				}else if (progress >= aimFor) {
 					//Debug.Log("SHOOT!!!!!!!!");
-					if (playerMotor.inputFire) {
+					if (playerMotor.inputFire && ammo > 0) {
 						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
 						progress = 0;
+						ammo--;
+						networkView.RPC("SetAmmo", RPCMode.Others, ammo);
 					}
 				}
 			}else{
-				if (playerMotor.inputFire) {
+				if (playerMotor.inputFire && ammo > 0) {
 					bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
 					progress = 0;
+					ammo--;
+					networkView.RPC("SetAmmo", RPCMode.Others, ammo);
 				}
 			}	
 		}else{
@@ -89,26 +103,29 @@ function Update () {
 		}
 		weaponModel.renderer.enabled = true;
 		RenderAimingLine ();
-		unusedTime = 0;
-	
-	} else {
+	} else if (alive) {
 		lineRenderer.enabled = false;
 		aimingCircleOuter.renderer.enabled = false;
 		aimingCircleInner.renderer.enabled = false;
 		
-		transform.position.y = Terrain.activeTerrain.SampleHeight(transform.position) + 1.8;
-		if (everUsed) {
-			unusedTime += Time.deltaTime;
-			if (unusedTime > lifeTime - 2) {
-				if (unusedTime % 0.5 > 0.25) {
-					weaponModel.renderer.enabled = true;
-				} else {
-					weaponModel.renderer.enabled = false;
-				}
-			}
-			if (unusedTime > lifeTime && Network.isServer) {
-				Network.Destroy(gameObject);
-			}
+//		if (everUsed) {
+//			unusedTime += Time.deltaTime;
+//			if (unusedTime > lifeTime - 2) {
+//				if (unusedTime % 0.5 > 0.25) {
+//					weaponModel.renderer.enabled = true;
+//				} else {
+//					weaponModel.renderer.enabled = false;
+//				}
+//			}
+//			if (unusedTime > lifeTime && Network.isServer) {
+//				Network.Destroy(gameObject);
+//			}
+//		}
+		if (ammo <= 0) alive = false;
+	} else {
+		transform.position.y += Time.deltaTime * (10+transform.position.y);
+		if (transform.position.y > 100 && Network.isServer) {
+			Network.Destroy(gameObject);
 		}
 	}
 }
@@ -126,10 +143,13 @@ function Update () {
 
 function Release () {
 	owner = null;
-	everUsed = true;
 	transform.parent = null;
 	collider.enabled = true;
+	weaponModel.gameObject.active = false;
+	itemModel.gameObject.SetActiveRecursively(true);
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer(null);
+	transform.position.y = Terrain.activeTerrain.SampleHeight(transform.position) + 1;
+	transform.localRotation = Quaternion.identity;
 }
 
 function PickItem(player :GameObject) {
@@ -156,6 +176,8 @@ function PickItem(player :GameObject) {
 	transform.localRotation.y = 0;
 	transform.localRotation.z = 0;
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer (player.transform);
+	weaponModel.gameObject.active = true;
+	itemModel.gameObject.SetActiveRecursively(false);
 }
 
    // Find the name of the closest enemy
@@ -368,3 +390,19 @@ function StopAudio(){
 	    	   	transform.audio.Pause();
 	}
 }
+
+
+@RPC
+function SetAmmo (newAmmo :int) {
+	ammo = newAmmo;
+}
+
+function GetAmmo () :int {
+	return ammo;
+}
+
+function HasAmmo () :boolean {
+	return ammo > 0;
+}
+
+@script RequireComponent (NetworkView)

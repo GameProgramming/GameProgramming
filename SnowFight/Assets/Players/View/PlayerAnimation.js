@@ -292,14 +292,16 @@ function OnItemChange(itemManager :ItemManager) {
 	} else {
 		viewMode = PlayerViewMode.Default;
 	}
-	anim.Stop("push");
-	anim.Stop("rocketlauncher");
-	anim.Stop("throw1");
-	anim.Stop("throw2");
-	if (item && item.CompareTag("BigSnowball")) {
-		anim.CrossFade("push");
-	} else if (item && item.CompareTag("Weapon")) {
-		anim.CrossFade("rocketlauncher");
+	if (anim) {
+		anim.Stop("push");
+		anim.Stop("rocketlauncher");
+		anim.Stop("throw1");
+		anim.Stop("throw2");
+		if (item && item.CompareTag("BigSnowball")) {
+			anim.CrossFade("push");
+		} else if (item && item.CompareTag("Weapon")) {
+			anim.CrossFade("rocketlauncher");
+		}
 	}
 	if (playerStatus.IsMainPlayer()) {
 		var overview :MapOverview = GameObject.FindGameObjectWithTag("OverviewCam")
