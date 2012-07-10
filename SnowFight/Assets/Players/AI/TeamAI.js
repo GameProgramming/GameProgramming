@@ -11,11 +11,14 @@ private var ufos : GameObject[];
 private var bazookas : GameObject[];
 private var snowBalls : GameObject[];
 private var snowRessources : GameObject[];
+private var firstBot : boolean;
 
 function Start () {
 	teamComponent = GetComponent(Team);
 	teamNumber = teamComponent.GetTeamNumber();
 	teamMembers = teamComponent.GetAllPlayers();
+	
+	firstBot = true;
 }
 
 function Update () {
@@ -35,7 +38,7 @@ function GetTargets (player : GameObject) : GameObject[] {
 	UpdateBases();
 	
 	//if there'still a free base, return that as targets!
-	if (unoccupiedBases.Length > 0) {
+	if (!firstBot && unoccupiedBases.Length > 0) {
 		targets += [GetClosestObjectInArray (player,unoccupiedBases)];
 	}
 	
@@ -78,22 +81,10 @@ function GetTargets (player : GameObject) : GameObject[] {
 			targets += [closestBall];
 		}
 	}
-//	
-//	
-//	//if there's a bazooka somewhere
-//	if (bazookas.Length > 0) {
-//		for (baz in bazookas) {
-//			//and we're the closest bot, return that bazooka
-//			if (IsClosestTeamMember(player, baz.transform.position)) {
-//				targets += [baz];
-//				break;
-//			}
-//		}
-//	}
 	
 	//Get bazookas if they're around
 	//or go make a snowball at a snowressource
-	if (Random.value > 0.8) {
+	if (Random.value > 0.8 || firstBot) {
 		if (bazookas.Length > 0) {
 			var closestBazooka = GetClosestObjectInArray(player, bazookas);
 			if (IsClosestTeamMember(player, closestBazooka.transform.position)) {
@@ -117,6 +108,9 @@ function GetTargets (player : GameObject) : GameObject[] {
 			targets += [GetClosestObjectInArray (player,ownBases)];
 	}
 	
+	if(firstBot)
+		firstBot = false;
+		
 	return targets;
 }
 
