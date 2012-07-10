@@ -32,7 +32,10 @@ private var isMainPlayer :boolean = false;
 private var game :GameStatus;
 var isLockedTarget : boolean = false;
 
-var onDamageSound : AudioClip;
+var onDamageSound1 : AudioClip;
+var onDamageSound2 : AudioClip;
+var onDamageSound3 : AudioClip;
+private var onDamageSound : AudioClip;
 var onDieSound : AudioClip;
 
 
@@ -169,6 +172,21 @@ function Die () {
 		NetDie(attacker);
 		team.LoseTickets(1);
 	}
+}
+function PlayHitAudio(){
+	var soundNumber : float = Random.Range(0.1,0.3);
+	switch (state) {
+	case 0.1:
+		PlayAudio(onDamageSound1);
+		break;
+	case 0.2:
+		PlayAudio(onDamageSound2);
+		break;
+	case 0.3:
+		PlayAudio(onDamageSound3);
+		break;
+	}
+		
 }
 function PlayAudio(audio : AudioClip){
 	transform.audio.clip=audio;
@@ -308,7 +326,7 @@ function ApplyDamage (attack :Attack) {
 		} else if (attack.attacker && attack.attacker.GetComponent(PlayerStatus)
 					 && attack.attacker.GetComponent(PlayerStatus).IsMainPlayer()
 				|| Random.Range(0.0, 100.0)<33.0) {
-			PlayAudio(onDamageSound);
+			PlayHitAudio();
 		}
 		
 //s		Debug.Log("NetHit Send");
@@ -340,7 +358,7 @@ function NetApplyDamage (newHp :int, damageType :int) {
 		SetState(PlayerState.Frozen);
 	} else {
 		if (Random.Range(0.0, 100.0)<33.0) {
-			PlayAudio(onDamageSound);
+			PlayHitAudio();
 		}
 	}
 	
