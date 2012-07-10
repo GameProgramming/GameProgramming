@@ -6,7 +6,8 @@ var serverName = "SomeServer";
 var botCount = "10";
 
 var playerName = "Player01";
-var iPAdress = "0.0.0.0:0000";
+var iPAdress = "0.0.0.0";
+var iPort = serverPort.ToString();
 
 
 private var timeoutHostList = 0.0;
@@ -355,8 +356,16 @@ function MakeClientWindow(id : int)
 	GUILayout.EndHorizontal();
 
 	GUILayout.BeginHorizontal();
-	GUILayout.Label("IP-Adress of network server");
+	GUILayout.Label("Sever IP");
 	iPAdress = GUILayout.TextField(iPAdress);
+	GUILayout.Label("Port");
+	iPort = GUILayout.TextField(iPort);
+	if (GUILayout.Button("Connect")) {
+		var error :NetworkConnectionError = Network.Connect(iPAdress, iPort);
+		if (error && error != NetworkConnectionError.NoError) {
+			Debug.Log ("Connection failed "+error);
+		}
+	}
 	GUILayout.EndHorizontal();
 
 	// Refresh hosts
