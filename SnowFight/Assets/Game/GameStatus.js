@@ -1,6 +1,7 @@
 #pragma strict
 
 var teams :Team[];
+var neutralTeam :Team;
 
 var currentLevel : String;
 var allLevels : String[];
@@ -16,6 +17,7 @@ var gameOverTime = 0.0;
 
 var playerPrefab : GameObject;
 var player : GameObject; // the human player on this side of the connection.
+var playerS :PlayerStatus;
 
 var overviewCam : MapOverview;
 
@@ -29,8 +31,11 @@ function Awake () {
 	gameOver = false;
 	
 	for (var t in GameObject.FindObjectsOfType(Team)) {
-		if (t.GetComponent(Team).GetTeamNumber() != 0)
+		if (t.GetComponent(Team).GetTeamNumber() != 0) {
 			teams += [t.GetComponent(Team)];
+		} else {
+			neutralTeam = t;
+		}
 	}
 
 	overviewCam = transform.FindChild("OverviewCam").GetComponent(MapOverview);
@@ -61,6 +66,7 @@ function OnNetworkLoadedLevel () {
 
 function SetMainPlayer (pl :GameObject) {
 	player = pl;
+	playerS = pl.GetComponent(PlayerStatus);
 	overviewCam.SetPlayer(pl.transform);
 	overviewCam.ResetPlayerCam();
 	pl.SendMessage("OnSetMainPlayer");
@@ -109,7 +115,7 @@ function Update () {
 	}
 	
 	if (Input.GetButtonDown ("Restart")) {
-		Restart();
+		SendMessage("Restart");
 	}
 }
 
@@ -137,15 +143,15 @@ function OnTriggerEnter (other : Collider) {
 	//~ playerLink=col.GetComponent (PlayerStatus);
 	if (!other.GetComponent (PlayerStatus)) { // not the player or the bots
 		//destroy the object
-		if (other.networkView) {
-			if (other.networkView.isMine) {
-				Debug.Log("Destroying "+other.gameObject+" because it fell from the map.");
-				Network.Destroy(other.gameObject);
-			}
-		} else {
-			Debug.Log("Destroying "+other.gameObject+" because it fell from the map.");
-			Destroy(other.gameObject);
-		}
+//		if (other.networkView) {
+//			if (other.networkView.isMine) {
+//				Debug.Log("Destroying "+other.gameObject+" because it fell from the map.");
+//				Network.Destroy(other.gameObject);
+//			}
+//		} else {
+//			Debug.Log("Destroying "+other.gameObject+" because it fell from the map.");
+//			Destroy(other.gameObject);
+//		}
 	} else if (Network.isServer) { //otherwise tell the player to die
 		Debug.Log("Killing "+other.gameObject+" because he/she fell from the map.");
 		var attack = new Attack();

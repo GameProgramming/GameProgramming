@@ -1,19 +1,41 @@
 private var game :GameStatus;
+private var arrow :Arrow;
+private var mouseOver :boolean;
+private var teamBase :TeamBase;
 
 function Start () {
 	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+	arrow = transform.Find("Arrow").GetComponent(Arrow);
+	teamBase = transform.parent.GetComponent(TeamBase);
 }
 
 function Update () {
+	if (game.playerS && game.playerS.IsDead()) {
+		if (game.playerS.spawnBaseID == teamBase.GetID() || mouseOver) {
+			arrow.SetArrowMode(ArrowMode.Jumping);
+		} else {
+			if (game.playerS.GetTeamNumber() == teamBase.team.GetTeamNumber()) {
+				if (game.playerS.spawnBaseID == -1) {
+					arrow.SetArrowMode(ArrowMode.Hinting);
+				} else {
+					arrow.SetArrowMode(ArrowMode.Idle);
+				}
+			} else {
+				arrow.SetArrowMode(ArrowMode.Disabled);
+			}
+		}
+	} else {
+		arrow.SetArrowMode(ArrowMode.Disabled);
+	}
 }
 
 //TODO: Was ist das hier fuer ein Script? Wird das noch verwendet? --- Ben, 24.6.
 
 function OnMouseDown() {
-	var teamNumber = transform.parent.transform.parent.GetComponent(Team).GetTeamNumber();
-	var playerStatus = game.player.GetComponent(PlayerStatus);
-	var playerTeamNumber = playerStatus.GetTeamNumber();
-	if (playerStatus.IsDead() && teamNumber == playerTeamNumber) {
+	if (!game.playerS) return;
+	var teamNumber = teamBase.team.GetTeamNumber();
+	var playerTeamNumber = game.playerS.GetTeamNumber();
+	if (game.playerS.IsDead() && teamNumber == playerTeamNumber) {
 //		var teamOfBase = transform.parent.transform.parent.GetComponent(Team);
 //		var baseTeamNumber = teamOfBase.GetTeamNumber();
 //	
@@ -22,12 +44,24 @@ function OnMouseDown() {
 //		
 //		var playerTeamNumber = teamOfPlayer.GetTeamNumber();
 //		if (baseTeamNumber == playerTeamNumber) {
-			var teamBase = transform.parent.GetComponent(TeamBase);
 			var spawnBaseID = teamBase.GetID();
-			playerStatus.SetSpawnBaseID(spawnBaseID);
+			game.playerS.SetSpawnBaseID(spawnBaseID);
 //		}
 		var showSpawn = GameObject.FindGameObjectWithTag("Game").GetComponent(ShowRespawn);
 		showSpawn.ActivateRespawn();
 	}
 	
+}
+
+function OnMouseOver() {
+	if (!game.playerS) return;
+	var teamNumber = teamBase.team.GetTeamNumber();
+	var playerTeamNumber = game.playerS.GetTeamNumber();
+	if (game.playerS.IsDead() && teamNumber == playerTeamNumber) {
+		mouseOver = true;
+	}
+}
+
+function OnMouseExit() {
+	mouseOver = false;
 }

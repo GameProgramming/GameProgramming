@@ -6,6 +6,8 @@ var color : Color = Color.gray;
 var balancingFactor :float = 1.0;
 
 var playerSkin :Texture;
+var teamIcon :Texture;
+var teamBaseIcon :Texture;
 
 private var size : int = 0;
 
@@ -129,12 +131,17 @@ function AddPlayer (p :GameObject) {
 	
 	pStatus.JoinTeam(this);
 	
-	if (GetBase()) {
-		var base : TeamBase = GetBase().GetComponent(TeamBase);
-		pStatus.spawnBaseID = base.GetID();
-	} // otherwise the team apparently has no bases.
-	
+//	
+//	if (GetBase()) {
+//		var base : TeamBase = GetBase().GetComponent(TeamBase);
+//		pStatus.spawnBaseID = base.GetID();
+//	} // otherwise the team apparently has no bases.
+//	
 	size++;
+}
+
+function OnPlayerLeft (player :PlayerStatus) {
+	size--;
 }
 
 function GetSize () : int {

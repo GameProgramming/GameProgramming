@@ -14,6 +14,9 @@ private var particleTail :ParticleSystem;
 //private var rollBall : boolean;
 private var lastPosition : Vector3;
 private var radius : float;
+private var ballSize : float;
+var maxBallSize : float = 30;
+var sizeIncreaseRate : float = 0.5;
 //private var perimeter : float;
 var ballTurnSpeed = 150;
 
@@ -27,8 +30,6 @@ var fallSpeed : float = 9.81;
 @System.NonSerialized
 var startSize : Vector3;
 private var startRadius : float;
-var maxBallSize : float = 1.5;
-var sizeIncreaseRate : float = 0.05;
 private var shot : boolean = false; 
 
 private var shootDirection : Vector3;
@@ -36,12 +37,14 @@ private var shootDirection : Vector3;
 var snowRessource : GameObject;
 
 private var trail :ParticleSystem;
+private var appearing :float;
 private var terrain :Terrain;
 
 function Start () {
 	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
 	shot = false;
+	appearing = 0;
 	
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
@@ -52,11 +55,12 @@ function Start () {
 	
 	terrain = Terrain.activeTerrain;
 	trail = transform.Find("Trail").particleSystem;
+	transform.localScale = Vector3.zero; 
 }
 
 function Awake () {
  	startSize = transform.localScale;
-	radius = startRadius;
+	ballSize = 10;
 }
 
 function Update () {
@@ -70,8 +74,7 @@ function Update () {
 				SmashBallToSnowfield();
 			} else if (playerMotor.inputFire) {
 				shot = true;
-
-				rigidbody.velocity = (GetComponent(BigSnowBallDamage).GetSpeed() / radius)
+				rigidbody.velocity = (GetComponent(BigSnowBallDamage).GetSpeed() * 10 / ballSize)
 									* pushingPlayer.transform.forward.normalized;//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;
 
@@ -81,7 +84,7 @@ function Update () {
 	}
 		
 	//else if (rollBall) {
-	radius = startRadius * (transform.localScale.x/startSize.x);
+	radius = startRadius * ballSize / 10;
 	//Debug.Log(radius);
 
 	//rotate ball while rolling
@@ -102,18 +105,20 @@ function Update () {
 	//trail.Emit(1);
 	
 	//increase ball size when rolling
-	if (radius <= maxBallSize) {
-		var parent = transform.parent;
-		transform.parent = null;
-		var increase :float = sizeIncreaseRate * dir.magnitude;
-		transform.localScale += Vector3(increase,increase,increase);
-		transform.parent = parent;
+	if (ballSize <= maxBallSize) {
+		ballSize += sizeIncreaseRate * dir.magnitude;
+		particleSystem.enableEmission = false;
+	} else {
+		particleSystem.enableEmission = true;
 	}
 	
+	appearing = Mathf.Clamp01(appearing + Time.deltaTime);
+	
+	transform.localScale = appearing * Vector3(radius,radius,radius);
 	particleTail.emissionRate = dir.magnitude * 10;
 		
 	if (shot && dir.sqrMagnitude < 0.025) {
-		shot = false;	
+		shot = false;
 	}
 }
 
@@ -186,7 +191,7 @@ function OnReachBase () {
 function SmashBallToSnowfield () {
 //	transform.parent = null;
 	var res :GameObject = Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
-	res.GetComponent(SnowRessource).CreateResourceFromSnowball(radius, maxBallSize);
+	res.GetComponent(SnowRessource).CreateResourceFromSnowball(ballSize);
 	Network.Destroy(gameObject);
 }
 
@@ -195,12 +200,12 @@ function GetLastOwner() : GameObject {
 }
 
 function GetCurrentSnowballs() :int {
-	return 10;
+	return ballSize;
 }
 
 function HasReachedFullSize () : boolean {
 //	Debug.Log("Full size: " + (radius >= maxBallSize));
-	return (radius >= maxBallSize);
+	return (ballSize >= maxBallSize);
 }
 
 @script RequireComponent (BigSnowBallDamage)

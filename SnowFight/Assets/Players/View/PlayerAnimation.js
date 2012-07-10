@@ -1,3 +1,4 @@
+private var teamColor :Color;
 
 var redDuration = 0.2;
 var hideDuration = 0.1;
@@ -11,6 +12,7 @@ private var anim : Animation;
 
 private var playerState :PlayerState = PlayerState.Dead;
 private var playerStatus :PlayerStatus;
+private var item :GameObject;
 private var motor :CharacterMotorSF;
 private var camSetup :Transform;
 private var throwPreview :ThrowPreview;
@@ -37,7 +39,7 @@ function Awake() {
 	
 	controller = GetComponent (CharacterController);
 	
-	anim["hit"].speed = 10;
+	anim["hit"].speed = 20;
 	anim["hit"].layer = 2;
 	anim["hit"].wrapMode = WrapMode.Once;
 	anim["hit"].blendMode = AnimationBlendMode.Additive;
@@ -52,6 +54,18 @@ function Awake() {
 	
 	anim["throw2"].layer = 1;
 	anim["throw2"].blendMode = AnimationBlendMode.Additive;
+	
+	anim["push"].layer = 0;
+	anim["push"].speed = 20;
+	anim["push"].weight = 10;
+	
+	anim["rocketlauncher"].layer = 0;
+	anim["rocketlauncher"].speed = 20;
+	anim["rocketlauncher"].weight = 10;
+	
+	anim["rocketfire"].layer = 1;
+	anim["rocketfire"].speed = 14;
+	anim["rocketfire"].weight = 10;
 	
 	anim.enabled = true;
 	
@@ -73,7 +87,10 @@ function OnJoinTeam (t :Team) {
 	if (team == null) {
 		Debug.LogError("Could not determine Player team. (Player object has to be child of Team object!)");
 	}
-
+	
+	teamColor = team.GetColor();
+	transform.Find("Arrow").SendMessage("SetColor", teamColor);
+	
 	//make sure the player is visible on start
 	for (var rend : MeshRenderer in meshRenderers) {
 		rend.enabled = true;
@@ -98,14 +115,23 @@ function Update () {
 		goRed = false;
 	}
 	
-	var posVelo = (transform.position - lastPosition)/Time.deltaTime;
+	var posVelo = Vector3.Scale(Vector3(1,0,1),(transform.position - lastPosition))/Time.deltaTime;
 	lastPosition = transform.position;
 	
-	if (motor.grounded) {
-		var speed = 0.15 * posVelo.magnitude;
+	var speed = 0.15 * posVelo.magnitude;
+	
+	if (item) {
+		if (item.CompareTag("BigSnowball")) {
+			anim.CrossFade("push");
+			anim["push"].speed = speed * 60;
+		} else if (item.CompareTag("Weapon")) {
+			anim.CrossFade("rocketlauncher");
+			anim["rocketlauncher"].speed = speed * 60;
+		}
+	} else if (motor.grounded) {
 		if (speed > 0.01) {
 			anim.CrossFade("walk");
-			anim["walk"].speed = speed * 90;
+			anim["walk"].speed = speed * 60;
 		} else {
 			anim.CrossFade("idle");
 			anim["idle"].speed = 10;
@@ -159,6 +185,8 @@ function OnUnloadThrow () {
 
 function OnDeath () {
 	anim.CrossFade("die");
+	anim.Stop("hit");
+	anim.Stop("push");
 	anim.Stop("throw1");
 	anim.Stop("throw2");
 	if (playerStatus.IsMainPlayer()) {
@@ -220,8 +248,11 @@ function OnPlayerStateChange (newState :PlayerState) {
 	case PlayerState.Dead:
 		if (playerStatus.IsMainPlayer()) {
 			var overviewCam = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
+			if (formerState != newState) yield WaitForSeconds(.3);
+			overviewCam.SetPlayerCam(transform.Find("CameraSetup/CameraDeath"));
+			if (formerState != newState) yield WaitForSeconds(1.3);
 			overviewCam.ResetPlayerCam();
-			if (formerState != newState) yield WaitForSeconds(1.5);
+			transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.UpOut);
 			overviewCam.SetMode(true);
 		}
 		if (frost) frost.renderer.enabled = false;
@@ -229,6 +260,9 @@ function OnPlayerStateChange (newState :PlayerState) {
 	case PlayerState.Alive:
 	case PlayerState.InVehicle:
 		if (frost) frost.renderer.enabled = false;
+		if (playerStatus.IsMainPlayer()) {
+			transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.Jumping);
+		}
 		break;
 	case PlayerState.Frozen:
 		if (frost) frost.renderer.enabled = true;
@@ -237,11 +271,20 @@ function OnPlayerStateChange (newState :PlayerState) {
 }
 
 function OnItemChange(itemManager :ItemManager) {
-	var item :GameObject = itemManager.GetItem();
+	item = itemManager.GetItem();
 	if (item && item.GetComponent(RocketLauncher)){
 		viewMode = PlayerViewMode.AimUp;
 	} else {
 		viewMode = PlayerViewMode.Default;
+	}
+	anim.Stop("push");
+	anim.Stop("rocketlauncher");
+	anim.Stop("throw1");
+	anim.Stop("throw2");
+	if (item && item.CompareTag("BigSnowball")) {
+		anim.CrossFade("push");
+	} else if (item && item.CompareTag("Weapon")) {
+		anim.CrossFade("rocketlauncher");
 	}
 	if (playerStatus.IsMainPlayer()) {
 		var overview :MapOverview = GameObject.FindGameObjectWithTag("OverviewCam")
@@ -259,7 +302,26 @@ function OnItemChange(itemManager :ItemManager) {
 }
 
 function GameOver () {
+	yield WaitForSeconds(.7);
 	anim.enabled = false;
+}
+
+function OnSetMainPlayer () {
+	transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.Jumping);
+}
+
+function OnSetBot () {
+	transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.Disabled);
+}
+
+function OnSetRemote () {
+	transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.Disabled);
+}
+
+function OnBulletSpawnFired (bs :BulletSpawn) {
+	if (item && item.CompareTag("Weapon")) {
+		anim.CrossFade("rocketfire");
+	}
 }
 
 @script RequireComponent (NetworkView)

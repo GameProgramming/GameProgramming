@@ -11,6 +11,21 @@ var reloadProgress : float = 0.0;
 var startYSpeed :float = 0.0;
 
 var snowCosts :int = 1;
+var onNoSnowballs : AudioClip;
+var onNoRockets : AudioClip;
+
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	    	   	transform.audio.Play();
+	}
+}
+
+class BufferedShot {
+	var time :float;
+	var bullet :GameObject;
+}
+private var bufferedShots :Array = Array();
 
 function Start() {
 	ConnectToPlayer(transform.parent);
@@ -39,36 +54,42 @@ function CanFire () {
 }
 
 function Fire () {
-	if(player && CanFire()){
-	  	var projectile = GetProjectile();
-	  	
-	  	if (projectile) {
-		  	var clone : Rigidbody;	
-			clone = Instantiate(projectile, transform.position, transform.rotation);
-			var speed :float = clone.GetComponent(Projectile).speed;
-		  	clone.velocity = Vector3.ClampMagnitude(speed
-		  				* transform.TransformDirection (Vector3.forward
-						+ new Vector3(0, startYSpeed, 0)), speed );
-			clone.GetComponent(Damage).shooter = player.gameObject;
-			SendFire(clone);
-			reloadProgress = clone.GetComponent(Projectile).reloadTime;
+	if(player){
+		if(CanFire()){
+		  	var projectile = GetProjectile();
+		  	
+		  	if (projectile) {
+			  	var clone : Rigidbody;	
+				clone = Instantiate(projectile, transform.position, transform.rotation);
+				var speed :float = clone.GetComponent(Projectile).speed;
+			  	clone.velocity = Vector3.ClampMagnitude(speed
+			  				* transform.TransformDirection (Vector3.forward
+							+ new Vector3(0, startYSpeed, 0)), speed );
+				clone.GetComponent(Damage).shooter = player.gameObject;
+				SendFire(clone);
+				player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
+				reloadProgress = clone.GetComponent(Projectile).reloadTime;
+				
+				snowCosts = projectile.GetComponent(Projectile).snowCosts;
+				if (snowCosts > 0) {
+					player.SubtractSnowball(snowCosts);
+				}
+			} else {
+				for (var child : Object in transform) {
+					(child as Transform).gameObject.SendMessage("Fire", SendMessageOptions.DontRequireReceiver);
+				}
+			}
 			
-			snowCosts = projectile.GetComponent(Projectile).snowCosts;
-			if (snowCosts > 0) {
-				player.SubtractSnowball(snowCosts);
-			}
-		} else {
-			for (var child : Object in transform) {
-				(child as Transform).gameObject.SendMessage("Fire", SendMessageOptions.DontRequireReceiver);
-			}
+		}else{
+			PlayAudio(onNoSnowballs);
 		}
-		
 	}
 }
 
 function SendFire ( bullet :Rigidbody ) {
 	var netId :NetworkViewID = Network.AllocateViewID();
 	bullet.networkView.viewID = netId;
+	BufferShot(bullet.gameObject);
 //	Debug.Log ("Send fire "+netId);
 	this.networkView.RPC("NetFire", RPCMode.Others, netId, bullet.position, bullet.velocity);
 }
@@ -79,23 +100,30 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
   	var clone : Rigidbody;	
 	clone = Instantiate(projectile, pos, transform.rotation);
 	clone.networkView.viewID = netId;
+	if (player) clone.GetComponent(Damage).shooter = player.gameObject;
 	clone.velocity = velo;
-	Debug.Log ("Rcv fire "+netId);
+	SendMessageUpwards("BulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
+//	Debug.Log ("Rcv fire "+netId);
 }
 
 function FireHeatSeekingRocket (target :GameObject) {
-	if(player && CanFire()){
-		var projectile = GetProjectile();
-	  	var clone : Rigidbody;	
-		clone = Instantiate(projectile, transform.position, transform.rotation);
-		clone.GetComponent(HeatSeeking).missleTarget = target;
-		
-		snowCosts = projectile.GetComponent(Projectile).snowCosts;
-		if (snowCosts > 0) {
-			player.SubtractSnowball(snowCosts);
+	if(player){
+		if(CanFire()){
+			var projectile = GetProjectile();
+		  	var clone : Rigidbody;	
+			clone = Instantiate(projectile, transform.position, transform.rotation);
+			clone.GetComponent(HeatSeeking).missleTarget = target;
+			
+			snowCosts = projectile.GetComponent(Projectile).snowCosts;
+			if (snowCosts > 0) {
+				player.SubtractSnowball(snowCosts);
+			}
+			SendFireTarget(clone, target);
+			player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
+			reloadProgress = clone.GetComponent(Projectile).reloadTime;
+		}else{
+			PlayAudio(onNoRockets);
 		}
-		SendFireTarget(clone, target);
-		reloadProgress = clone.GetComponent(Projectile).reloadTime;
 	}
 }
 
@@ -106,6 +134,7 @@ function SendFireTarget ( bullet :Rigidbody, target :GameObject ) {
 	if (target && target.networkView) {
 		tarId = target.networkView.viewID;
 	}
+	BufferShot(bullet.gameObject);
 	networkView.RPC("NetFireTarget", RPCMode.Others, netId, bullet.position,
 					bullet.rotation.eulerAngles.x, bullet.rotation.eulerAngles.y,tarId);
 }
@@ -116,8 +145,9 @@ function NetFireTarget ( netId :NetworkViewID, pos :Vector3, pitch :float, yaw :
   	var clone : Rigidbody;	
 	clone = Instantiate(projectile, pos, transform.rotation);
 	clone.networkView.viewID = netId;
+	if (player) clone.GetComponent(Damage).shooter = player.gameObject;
 	clone.rotation.eulerAngles = Vector3(pitch, yaw, 0);
-	
+	player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
 	var tar :NetworkView = NetworkView.Find(targetId);
 	if (tar) {
 		clone.GetComponent(HeatSeeking).missleTarget = tar.gameObject;
@@ -126,6 +156,35 @@ function NetFireTarget ( netId :NetworkViewID, pos :Vector3, pitch :float, yaw :
 	}
 }
 
+function BufferShot(shot :GameObject) {
+	var bs :BufferedShot = new BufferedShot();
+	bs.bullet = shot;
+	bs.time = Time.time;
+}
+
+function OnPlayerConnected(newPlayer: NetworkPlayer) {
+	var newBufferedShots = Array();
+	for (var bs :BufferedShot in bufferedShots) {
+		if (bs.bullet && bs.bullet.active) {
+			newBufferedShots.Add(bs);
+		}
+	}
+	bufferedShots = newBufferedShots;
+	for (var bs :BufferedShot in bufferedShots) {
+		var b :GameObject = bs.bullet;
+		var hs :HeatSeeking = b.GetComponent(HeatSeeking);
+		if (hs) {
+			var tarId :NetworkViewID = NetworkViewID.unassigned;
+			if (hs.GetTarget() && hs.GetTarget().networkView) {
+				tarId = hs.GetTarget().networkView.viewID;
+			}
+			networkView.RPC("NetFireTarget", newPlayer, b.networkView.viewID, b.transform.position,
+					b.rigidbody.rotation.eulerAngles.x, b.rigidbody.rotation.eulerAngles.y,tarId);
+		} else {
+			this.networkView.RPC("NetFire", newPlayer, b.networkView.viewID, b.rigidbody.position, b.rigidbody.velocity);
+		}
+	}
+}
 
 function GetProjectile(){
 	return bullet;

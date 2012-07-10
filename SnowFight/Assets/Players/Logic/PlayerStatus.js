@@ -32,6 +32,10 @@ private var isMainPlayer :boolean = false;
 private var game :GameStatus;
 var isLockedTarget : boolean = false;
 
+var onDamageSound : AudioClip;
+var onDieSound : AudioClip;
+
+
 class Attack {
 	var attacker :GameObject;
 	var damageType :DamageType;
@@ -59,8 +63,12 @@ function JoinTeam (t :Team) {
 
 @RPC
 function NetJoinTeam (teamId : int) {
+	if (team && team.GetTeamNumber() != teamId) {
+		team.OnPlayerLeft(this);
+	}
 	team = game.GetTeamById(teamId);
 	transform.parent = team.transform;
+	SetSpawnBaseID(-1);
 	gameObject.SendMessage("OnJoinTeam", team, SendMessageOptions.DontRequireReceiver);
 }
 
@@ -149,6 +157,8 @@ function OnHitByObject (otherObj : GameObject) {
 function Die () {
 	if (IsDead()) {
 		return;
+	}else{
+		PlayAudio(onDieSound);
 	}
 	if (Network.isServer) {
 		var attacker :NetworkViewID = NetworkViewID.unassigned;
@@ -158,6 +168,17 @@ function Die () {
 		networkView.RPC("NetDie", RPCMode.Others, attacker);
 		NetDie(attacker);
 		team.LoseTickets(1);
+	}
+}
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	    	   	transform.audio.Play();
+	}
+}
+function StopAudio(){
+	if(transform.audio.isPlaying){
+	    	   	transform.audio.Pause();
 	}
 }
 
@@ -284,6 +305,14 @@ function ApplyDamage (attack :Attack) {
 			&& networkView.isMine) {
 			frozen = attack.damage * 0.1;
 			SetState(PlayerState.Frozen);
+		}else{
+			if(attack.attacker.GetComponent(BotAI).enabled){
+				if(Random.Range(0.0, 100.0)<33.0){
+					PlayAudio(onDamageSound);
+				}
+			}else if(!attack.attacker.GetComponent(BotAI).enabled){
+				PlayAudio(onDamageSound);
+			}
 		}
 		
 //s		Debug.Log("NetHit Send");
@@ -354,9 +383,8 @@ function SetSpawnBaseID (newSpawnBaseID : int) {
 }
 
 private function NetSetState (s :PlayerState) {
-	if (s == PlayerState.Dead && IsMainPlayer()) {
-		spawnBaseID = 0;
-	}
+	//if (s == PlayerState.Dead && IsMainPlayer()) {
+		SetSpawnBaseID(-1);
 	state = s;
 	SendMessage("OnPlayerStateChange", state, SendMessageOptions.DontRequireReceiver);
 }
@@ -410,6 +438,11 @@ function OnPlayerConnected(newPlayer: NetworkPlayer) {
 	if (state != PlayerState.Dead) {
 		networkView.RPC("NetRespawn", newPlayer, spawnBaseID);
 	}
+}
+
+function Regenerate (hpAmount :int) {
+	hp = Mathf.Clamp(hp + hpAmount, 0, fullHp);
+	SendMessage("OnRegenerate", hpAmount, SendMessageOptions.DontRequireReceiver);
 }
 
 function OnGUI() {
