@@ -21,6 +21,8 @@ function FixedUpdate () {
 	} else {
 		renderer.enabled = true;
 		if (mode == ArrowMode.Jumping || mode == ArrowMode.Hinting) {
+			var speed = jumpSpeed * Time.deltaTime;
+			if (mode == ArrowMode.Hinting) speed /= 2;
 			if (transform.localPosition.y <= minHeight) {
 				direction = true;
 			}
@@ -28,9 +30,9 @@ function FixedUpdate () {
 				direction = false;
 			}
 			if (direction) {
-				transform.localPosition.y += jumpSpeed*Time.deltaTime;
+				transform.localPosition.y += speed;
 			} else {
-				transform.localPosition.y -= jumpSpeed*Time.deltaTime;
+				transform.localPosition.y -= speed;
 			}
 			if (mode == ArrowMode.Hinting) {
 				transform.rotation.eulerAngles.x = 4*(transform.localPosition.y - minHeight);
