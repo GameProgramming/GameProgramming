@@ -9,6 +9,8 @@ var playerSkin :Texture;
 var teamIcon :Texture;
 var teamBaseIcon :Texture;
 
+private var bases :Array = new Array();
+
 private var size : int = 0;
 
 //private var ticketReduceTime = 0.5;
@@ -19,6 +21,11 @@ function Awake () {
 }
 
 function Start() {
+	for (var b : Transform in transform) {
+		if (b.CompareTag("Base")) {
+			bases.Add(b.gameObject);
+		}
+	}
 }
 
 function FixedUpdate () {
@@ -71,23 +78,14 @@ function GetSpawnPoint(spawnPointID : int) : Vector3 {
 }
 
 function GetBase () : Transform {
-	var base : Transform = null;
-	for (var t :Transform in transform) {
-		if (t.tag == "Base") {
-			base = t;
-		}
-	}
-	return base;
+	if (bases.length > 0)
+		return bases[0];
+	else
+		return null;
 }
 
-function GetAllBases () : Transform[] {
-	var bases : Transform[] = [];
-	for (var b : Transform in transform) {
-		if (b.CompareTag("Base")) {
-			bases += [b];
-		}
-	}
-	return bases;
+function GetAllBases () : GameObject[] {
+	return bases.ToBuiltin(GameObject);
 }
 
 function GetAllPlayers () : Transform[] {
@@ -150,6 +148,13 @@ function GetSize () : int {
 
 function GetBalancedSize () : float {
 	return size / balancingFactor;
+}
+
+function OnBaseSwitchesTeam (b :TeamBase) {
+	bases.Remove(b.gameObject);
+	if (b.team == this) {
+		bases.Add(b.gameObject);
+	}
 }
 
 @script RequireComponent (NetworkView)
