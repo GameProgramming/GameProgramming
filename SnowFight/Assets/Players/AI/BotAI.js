@@ -509,6 +509,7 @@ function Attack ()
 	var pos : Vector3 = Vector3.zero;
 	var distanceToEnemy : float = 0.0;
 	var shootDistance = punchRadius;
+	var RL = null;
 	
 	while (true) {
 		//if our target is dead, stop
@@ -563,7 +564,7 @@ function Attack ()
 		 				
 			
 			//we're getting too close, move back!
-			if (distanceToEnemy < shootDistance*0.1)
+			if (distanceToEnemy < shootDistance*0.1 && !pStatus.IsRidingUfo())
 				backup = true;
 			
 			//we're far away now, move closer again
@@ -595,7 +596,7 @@ function Attack ()
 	 			//when lock-time is over, shoot
 	 			//motor.inputFire = !motor.inputFire;
 		 		if (weapon && weapon.CompareTag("Weapon")) {
-	 				RL = weapon.GetComponent("RocketLauncher");
+	 				RL = weapon.GetComponent(RocketLauncher);
 		 			if(RL) {		 		
 		 				if (!RL.HasAmmo()) {
 		 					itemManager.ReleaseItem();
@@ -642,10 +643,11 @@ function Attack ()
 
 			//shoot and move around a bit ;)
 //			if((pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
-			if (distanceToEnemy < shootDistance && !weapon) {
+			if (distanceToEnemy < shootDistance && !RL) {
 				if (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3)
 					motor.inputAltFire = !motor.inputAltFire;
-				else
+				//either we're on foot, or we're in a ufo and so is our target
+				else if (!pStatus.IsRidingUfo() || (pStatus.IsRidingUfo() && target.GetComponent(PlayerStatus).IsRidingUfo()))
 					motor.inputFire = !motor.inputFire;
 				
 				direction = Vector3.left * strafing;
