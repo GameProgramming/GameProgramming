@@ -107,6 +107,15 @@ function OnGUI() {
 		posX += 20;
 	}
 	
+	if (Network.isServer) {
+		var txt :String = Network.player.ipAddress.ToString() + "\n"
+							+ Network.player.externalIP.ToString() + ":" + Network.player.externalPort;
+		GUI.Label( Rect(Screen.width-180, Screen.height-40, 180,40),
+						txt, shadowStyle );
+		GUI.Label( Rect(Screen.width-181, Screen.height-42, 180,40),
+						txt, neutralStyle );
+	}
+	
 	//Show the win message.
 	if (displayGameOver) {
 		var winText : String;

@@ -21,6 +21,7 @@ function Start () {
 	freezer = transform.Find("Ufo/FreezingRay").GetComponent(FreezingRay);
 	velo = Vector3.zero;
 	terrain = Terrain.activeTerrain;
+	transform.Find("EngineParticles").particleSystem.enableEmission = false;
 }
 
 function Update () {
@@ -77,6 +78,7 @@ function Release () {
 	
 	owner = null;
 	transform.parent = null;
+	transform.Find("EngineParticles").particleSystem.enableEmission = false;
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer(null);
 }
 
@@ -91,6 +93,9 @@ function PickItem(player :GameObject) {
 	transform.localRotation = Quaternion.identity;
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer (player.transform);
 	freezer.ConnectToPlayer (player.transform);
+	var ps :ParticleSystem = transform.Find("EngineParticles").particleSystem;
+	ps.enableEmission = true;
+	ps.startColor = player.GetComponent(PlayerStatus).team.color;
 }
 
 function ApplyDamage (attack :Attack) {
