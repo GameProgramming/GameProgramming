@@ -56,7 +56,8 @@ function OnGUI ()
 		GUI.skin = skin;
 	}
 	if (Network.peerType == NetworkPeerType.Disconnected) {
-	
+		Screen.showCursor = true;
+		Screen.lockCursor = false;
 		mainRect = GUILayout.Window (0, mainRect, MakeMainWindow, "");	
 		
 		if (startGame) {

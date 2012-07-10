@@ -75,7 +75,24 @@ function NetJoinTeam (teamId : int) {
 }
 
 function Update () {
+
 	if (!gameOver) {
+		//Check if we are the main and dead.
+		if (IsMainPlayer()) {
+			if (IsDead()) {
+				Screen.showCursor = true;
+				Screen.lockCursor = false;
+			} else {
+				var igMenu : InGameMenu = GameObject.FindGameObjectWithTag("Game").GetComponent(InGameMenu);
+				if (igMenu.GetShowIngameMenu() || igMenu.GetShowChangeMap()) {
+					Screen.showCursor = true;
+					Screen.lockCursor = false;
+				} else {
+					Screen.showCursor = false;
+					Screen.lockCursor = true;
+				}
+			}
+		}
 		switch (state) {
 		case PlayerState.Dead:
 			if (Time.time > killTime + respawnTimeout && spawnBaseID > 0) {

@@ -94,3 +94,11 @@ function MakeIngameMenuRect(id : int) {
 		GUILayout.EndVertical();
 		GUILayout.FlexibleSpace();
 }
+
+function GetShowIngameMenu() : boolean {
+	return showIngameMenu;
+}
+
+function GetShowChangeMap() : boolean {
+	return showChangeMap;
+}

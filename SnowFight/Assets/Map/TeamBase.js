@@ -94,7 +94,6 @@ function Update () {
 		regenerationProgress = 0;
 		regenerationFrame = Network.isServer;
 	}
-	
 	var gos : GameObject[];
     gos = GameObject.FindGameObjectsWithTag("Player");  
 	
