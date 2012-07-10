@@ -52,7 +52,6 @@ function GetTargets (player : GameObject) : GameObject[] {
 		}
 		//if there's an enemy in a ufo
 		else if (IsUfoOccupiedByEnemy(ufo)) {
-			wantBazooka = true;
 			//if there's a bazooka somewhere
 			if (bazookas.Length > 0) {
 				for (baz in bazookas) {
@@ -64,7 +63,8 @@ function GetTargets (player : GameObject) : GameObject[] {
 				}
 			}
 			//if there's no bazooka find a snowball or snowfield to take to the base
-			else {			
+			else {	
+				wantBazooka = true;		
 				closestBall = GetClosestObjectInArray(player, snowBalls);
 				var closestRessource = GetClosestObjectInArray(player, snowRessources);
 				if (closestBall && Vector3.Distance(player.transform.position, closestBall.transform.position) < 
