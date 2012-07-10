@@ -15,6 +15,7 @@ private var game :GameStatus;
 var points : int = 3;
 
 var takeOverRadius :int = 10;
+private var takeOverDist :float;
 var takeOverTime :float = 5.0;
 var takeOverProgress :float = 0.0;
 @System.NonSerialized
@@ -57,6 +58,7 @@ function GetSpawnPoint() : Vector3 {
 
 function Awake () {
 	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+	takeOverDist = takeOverRadius * takeOverRadius;
 	//spawnWeaponPipeline = new Array();
 	//FillPipeline();
 }
@@ -81,62 +83,60 @@ function Start () {
 //	}
 //}
 
+function PlayerInRange (go :GameObject) {
+	return (go.transform.position - transform.position).sqrMagnitude < takeOverDist;
+}
+
 function Update () {
-	if (Network.isServer) {
-		regenerationProgress += Time.deltaTime;
-		var regenerationFrame = false;
-		if (regenerationProgress > regenerationTime) {
-			regenerationProgress = 0;
-			regenerationFrame = true;
-		}
-		var takeOverDist = takeOverRadius * takeOverRadius;
-		
-		var gos : GameObject[];
-	    gos = GameObject.FindGameObjectsWithTag("Player");  
-		
-		var teamTakingOver :Team = null;
-		
-		for (var go : GameObject in gos)  {
-			if ((go.transform.position - transform.position).sqrMagnitude < takeOverDist) {
-		    	var status : PlayerStatus = go.GetComponent(PlayerStatus);
-		    	if (status.IsMainPlayer()) {
-		    		mainPlayerStatus = status;
-		    	}
-	    		if (!status.IsDead()) {
-	    			if (status.team != teamTakingOver) {
-		    			if (teamTakingOver == null) {
-		    				teamTakingOver = status.team;
-		    			} else {
-		    				teamTakingOver = neutralTeam;
-		    			}
-		    		}
-		    		if (regenerationFrame && status.team == team) {
-		    			status.Regenerate(regenerationAmount);
-		    		}
-	    		}
-	    	}
-		}
-		
-	//	Debug.Log("taking over "+teamTakingOver);
-		if (teamTakingOver != team && team != neutralTeam && teamTakingOver != null) {
-			teamTakingOver = neutralTeam;
-		}
-		
-		if (teamTakingOver == null || teamTakingOver != takeOverCurrTeam) {
-			//Debug.Log("takeOverReset");
-			takeOverProgress = 0;
-			takeOverCurrTeam = null;
-		} else if (teamTakingOver != team) {
-			takeOverProgress += Time.deltaTime / takeOverTime;
-	//		Debug.Log("taking over "+takeOverProgress);
-			if (takeOverProgress >= 1) {
-	//			Debug.Log("takeOverFinished");
-				SetTeam(teamTakingOver);
-			}
-		} 
-		takeOverCurrTeam = teamTakingOver;
+	regenerationProgress += Time.deltaTime;
+	var regenerationFrame = false;
+	if (regenerationProgress > regenerationTime) {
+		regenerationProgress = 0;
+		regenerationFrame = Network.isServer;
 	}
 	
+	var gos : GameObject[];
+    gos = GameObject.FindGameObjectsWithTag("Player");  
+	
+	var teamTakingOver :Team = null;
+	
+	for (var go : GameObject in gos)  {
+		if (PlayerInRange(go)) {
+	    	var status : PlayerStatus = go.GetComponent(PlayerStatus);
+	    	go.SendMessage("SetClosestBase", this, SendMessageOptions.DontRequireReceiver);
+    		if (!status.IsDead()) {
+    			if (status.team != teamTakingOver) {
+	    			if (teamTakingOver == null) {
+	    				teamTakingOver = status.team;
+	    			} else {
+	    				teamTakingOver = neutralTeam;
+	    			}
+	    		}
+	    		if (regenerationFrame && status.team == team) {
+	    			status.Regenerate(regenerationAmount);
+	    		}
+    		}
+    	}
+	}
+	
+//	Debug.Log("taking over "+teamTakingOver);
+	if (teamTakingOver != team && team != neutralTeam && teamTakingOver != null) {
+		teamTakingOver = neutralTeam;
+	}
+	
+	if (teamTakingOver == null || teamTakingOver != takeOverCurrTeam) {
+		//Debug.Log("takeOverReset");
+		takeOverProgress = 0;
+		takeOverCurrTeam = null;
+	} else if (teamTakingOver != team) {
+		takeOverProgress += Time.deltaTime / takeOverTime;
+//		Debug.Log("taking over "+takeOverProgress);
+		if (takeOverProgress >= 1 && Network.isServer) {
+//			Debug.Log("takeOverFinished");
+			SetTeam(teamTakingOver);
+		}
+	} 
+	takeOverCurrTeam = teamTakingOver;
 }
 
 function SetTeam (t :Team) {
@@ -146,7 +146,7 @@ function SetTeam (t :Team) {
 	if (oldTeam) oldTeam.SendMessage("OnBaseSwitchesTeam", this);
 	if (t) t.SendMessage("OnBaseSwitchesTeam", this);
 	gameObject.BroadcastMessage("SetColor", team.color, SendMessageOptions.DontRequireReceiver);
-	PlayAudio(onFlagWonSound);
+	if (oldTeam != team) PlayAudio(onFlagWonSound);
 }
 
 function OnTriggerStay(other : Collider) {

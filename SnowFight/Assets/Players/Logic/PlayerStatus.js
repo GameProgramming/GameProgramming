@@ -281,6 +281,10 @@ function GetFullHp () : int {
 	return fullHp;
 }
 
+function HasFullHp () : boolean {
+	return hp >= fullHp;
+}
+
 function GetHp () : int {
 	return hp;
 }

@@ -1,3 +1,7 @@
+#pragma strict
+#pragma downcast
+
+private var team :Team;
 private var teamColor :Color;
 
 var redDuration = 0.2;
@@ -18,13 +22,16 @@ private var camSetup :Transform;
 private var throwPreview :ThrowPreview;
 private var frost :Transform;
 
+private var healthParticles :ParticleSystem;
 private var body :Transform;
-private var meshRenderers :Component[];
-private var skinnedRenderers :Component[];
+private var meshRenderers :MeshRenderer[];
+private var skinnedRenderers :SkinnedMeshRenderer[];
 private var controller :CharacterController;
 
 enum PlayerViewMode {Default, AimUp}
 private var viewMode :PlayerViewMode = PlayerViewMode.Default;
+
+private var closestBase :TeamBase;
 
 function Awake() {
 	viewMode = PlayerViewMode.Default;
@@ -34,6 +41,7 @@ function Awake() {
 	camSetup = transform.Find("CameraSetup");
 	throwPreview = transform.Find("BulletSpawn").GetComponent(ThrowPreview);
 	frost = transform.Find("Frost");
+	healthParticles = transform.Find("HealthParticles").particleSystem;
 	
 	anim = transform.Find("Model").GetComponent(Animation);
 	
@@ -70,8 +78,8 @@ function Awake() {
 	anim.enabled = true;
 	
 	body = transform.Find("Model");
-	meshRenderers = body.GetComponentsInChildren (MeshRenderer);
-	skinnedRenderers = body.GetComponentsInChildren (SkinnedMeshRenderer);
+	meshRenderers = body.GetComponentsInChildren.<MeshRenderer> ();
+	skinnedRenderers = body.GetComponentsInChildren.<SkinnedMeshRenderer> ();
 
 	//make sure the player is visible on start
 	for (var rend : MeshRenderer in meshRenderers) {
@@ -140,6 +148,12 @@ function Update () {
 		anim.CrossFade("jumping");
 		anim["jumping"].speed = 10;
 	}
+	
+	if (!closestBase || !closestBase.PlayerInRange(gameObject)) {
+		closestBase = null;
+		healthParticles.enableEmission = false;
+	}
+	
 //	
 //	if (motor.throwProgress == 0) {
 //		anim.Stop("throw1");
@@ -242,6 +256,7 @@ function OnHit () {
 //}
 
 function OnPlayerStateChange (newState :PlayerState) {
+	healthParticles.enableEmission = false;
 	var formerState = playerState;
 	playerState = newState;
 	switch (playerState) {
@@ -322,6 +337,11 @@ function OnBulletSpawnFired (bs :BulletSpawn) {
 	if (item && item.CompareTag("Weapon")) {
 		anim.CrossFade("rocketfire");
 	}
+}
+
+function SetClosestBase (base :TeamBase) {
+	closestBase = base;
+	healthParticles.enableEmission = base.team == team && !playerStatus.HasFullHp();
 }
 
 @script RequireComponent (NetworkView)
