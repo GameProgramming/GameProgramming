@@ -19,17 +19,24 @@ function PlayAudio(audio : AudioClip){
 	    	   	transform.audio.Play();
 	}
 }
+function StopAudio(){
+	if(transform.audio.isPlaying){
+	    	   	transform.audio.Pause();
+	}
+}
 
 function Start() {
 	freezingCurr = null;
 }
 
 function Update () {
-	PlayAudio(onFreezingSound);
 	energy += Time.deltaTime;
 	if (inputFire) {
+		PlayAudio(onFreezingSound);
 		energy -= Time.deltaTime * 2;
 		this.transform.Rotate(0,Time.deltaTime * (5.0+energy) * 100.0,0);
+	}else{
+		StopAudio();
 	}
 	if (energy <= 0) {
 		SetActive(false);

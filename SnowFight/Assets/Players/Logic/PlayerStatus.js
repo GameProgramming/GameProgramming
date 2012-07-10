@@ -175,7 +175,7 @@ function Die () {
 }
 function PlayHitAudio(){
 	var soundNumber : float = Random.Range(0.0,0.3);
-	Debug.Log(soundNumber);
+	//Debug.Log(soundNumber);
 	if(soundNumber <= 0.1){
 		PlayAudio(onDamageSound1);
 	}
