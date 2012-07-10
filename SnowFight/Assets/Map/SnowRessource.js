@@ -70,9 +70,16 @@ function Restock() {
 
 //This function will be called when a player want to create a big snowball.
 function GrabBigSnowball(player : GameObject) :GameObject {
-	currentSnowballs -= bigSnowballAmount;
-	var spawnPos :Vector3 = player.transform.position + player.transform.forward;
-	return Network.Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity, 0);
+	if (Network.isServer) {
+		currentSnowballs -= bigSnowballAmount;
+		var spawnPos :Vector3 = player.transform.position + player.transform.forward;
+		var bigSnowball :GameObject = Network.Instantiate(bigSnowballPrefab, spawnPos, Quaternion.identity, 0);
+		Debug.Log("[NetServer] Create Big Snowball " + bigSnowball.networkView.viewID);
+		return bigSnowball;
+	} else {
+		Debug.LogWarning("[NetClient] Only the server may create new big snowballs");
+		return null;
+	}
 }
 
 //We need to restore all balls when restarting the level.

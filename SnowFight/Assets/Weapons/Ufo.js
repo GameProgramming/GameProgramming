@@ -36,29 +36,27 @@ function Update () {
 function FixedUpdate () {
 	var terrH :float = terrain.SampleHeight(transform.position) + 2.0 + 0.5 * Mathf.Sin(Time.time*2);
 	
-	var transf :Transform = transform;
-	if (owner && owner.networkView.isMine)
-		transf = owner.transform;
-	
 	if (hp > 0) {
 		if (owner && owner.networkView.isMine) {
 			velo += Time.deltaTime * playerMotor.inputMoveDirection;
 			terrH += 10.0;
 		}
 		velo.y = 0.03*(terrH - transform.position.y);
-		velo *= 0.95;
+		velo *= 0.91;
 	} else {
-		velo.y -= 0.002;
-		transf.eulerAngles.y += velo.y * 30.0;
-		transf.eulerAngles.z += 1.0;
-		velo += transf.forward * 0.002;
-		if (transf.position.y <= terrH + 2) {
+		velo.y -= 0.003;
+		transform.eulerAngles.y += velo.y * 30.0;
+		transform.eulerAngles.z += 1.0;
+		velo += transform.forward * 0.002;
+		if (transform.position.y <= terrH + 2) {
 			// hit the ground
 			Crash();
 		}
 	}
-	if (owner == null || owner && owner.networkView.isMine) {
-		transf.position += velo;
+	if (owner && owner.networkView.isMine) {
+		playerMotor.SetVelocity(1.0*velo);
+	} else if (owner == null) {
+		transform.position += velo;
 	}
 }
 
@@ -125,12 +123,13 @@ function Crash () {
 	if (Network.isServer) {
 		Network.Destroy (gameObject);
 	}
-	else
-		Destroy(gameObject);
+//	else
+//		Destroy(gameObject);
 }
 
 function OnDestroy() {
 	if (owner) {
+		owner.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
 		var attack = new Attack();
 		attack.damageType = DamageType.Crash;
 		attack.damage = 10000; // lethal, i hope ;)
