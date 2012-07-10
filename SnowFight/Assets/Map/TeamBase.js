@@ -24,7 +24,7 @@ var takeOverCurrTeam :Team = null;
 private var currentTeamTakingOver : Team;
 private var progress : float;
 private var regenerationProgress :float = 0;
-var regenerationTime :float = 0.5;
+var regenerationTime :float = 1;
 var regenerationAmount :float = 5;
 
 private var mainPlayerStatus : PlayerStatus;

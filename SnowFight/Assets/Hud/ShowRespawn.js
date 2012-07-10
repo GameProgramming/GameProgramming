@@ -10,15 +10,15 @@ function Start () {
 }
 
 function Update () {
-	if (respawn) {
-		respawnTimer -= Time.deltaTime;
-		RadialProgress.SetRadialProgress("respawning", 1-respawnTimer/3.0);
-		if (respawnTimer < 0.0) {
-			respawn = false;
-			respawnTimer = 3.0;
-			RadialProgress.SetRadialProgress("respawning", 1);
-		}
-	}
+//	if (respawn) {
+//		respawnTimer -= Time.deltaTime;
+//		RadialProgress.SetRadialProgress("respawning", 1-respawnTimer/3.0);
+//		if (respawnTimer < 0.0) {
+//			respawn = false;
+//			respawnTimer = 3.0;
+//			RadialProgress.SetRadialProgress("respawning", 1);
+//		}
+//	}
 }
 
 //function OnGUI () {

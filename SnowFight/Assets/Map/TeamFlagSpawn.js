@@ -11,7 +11,9 @@ function Start () {
 
 function Update () {
 	if (game.playerS && game.playerS.IsDead()) {
-		if (game.playerS.spawnBaseID == teamBase.GetID() || mouseOver) {
+		if (game.playerS.spawnBaseID == teamBase.GetID()) {
+			arrow.SetArrowMode(ArrowMode.DownOn);
+		} else if (mouseOver) {
 			arrow.SetArrowMode(ArrowMode.Jumping);
 		} else {
 			if (game.playerS.GetTeamNumber() == teamBase.team.GetTeamNumber()) {
@@ -47,8 +49,8 @@ function OnMouseDown() {
 			var spawnBaseID = teamBase.GetID();
 			game.playerS.SetSpawnBaseID(spawnBaseID);
 //		}
-		var showSpawn = GameObject.FindGameObjectWithTag("Game").GetComponent(ShowRespawn);
-		showSpawn.ActivateRespawn();
+//		var showSpawn = GameObject.FindGameObjectWithTag("Game").GetComponent(ShowRespawn);
+//		showSpawn.ActivateRespawn();
 	}
 	
 }

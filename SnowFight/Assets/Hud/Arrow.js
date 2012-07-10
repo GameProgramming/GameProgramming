@@ -6,7 +6,7 @@ private var map : MapOverview;
 //False means downwards, true means upwards.
 private var direction : boolean;
 
-enum ArrowMode {Disabled, Jumping, Idle, Hinting, UpOut};
+enum ArrowMode {Disabled, Jumping, Idle, Hinting, UpOut, DownOn};
 private var mode :ArrowMode = ArrowMode.Disabled;
 
 function Start () {
@@ -20,8 +20,8 @@ function FixedUpdate () {
 		renderer.enabled = false;
 	} else {
 		renderer.enabled = true;
+		var speed = jumpSpeed * Time.deltaTime;
 		if (mode == ArrowMode.Jumping || mode == ArrowMode.Hinting) {
-			var speed = jumpSpeed * Time.deltaTime;
 			if (mode == ArrowMode.Hinting) speed /= 2;
 			if (transform.localPosition.y <= minHeight) {
 				direction = true;
@@ -43,6 +43,9 @@ function FixedUpdate () {
 			if (Mathf.Abs(transform.localPosition.y) < 1000) {
 				transform.localPosition.y += (2+transform.localPosition.y)*Time.deltaTime;
 			}
+		} else if (mode == ArrowMode.DownOn) {
+			transform.localPosition.y = Mathf.MoveTowards(transform.localPosition.y, minHeight, 2*speed);
+			transform.rotation.eulerAngles.y += 40*Time.deltaTime;		
 		} else {
 			transform.localPosition.y = Mathf.Lerp(transform.localPosition.y, minHeight, 0.3);
 			transform.rotation.eulerAngles.x = 0;
