@@ -312,6 +312,7 @@ function GetBazooka () {
 				yield WaitForSeconds(0.01);
 				motor.inputAction = false;
 				moveDir = Vector3.zero;
+				if (!target) return;
 				
 				if (itemManager.GetItem()) {
 					RemoveTarget();
