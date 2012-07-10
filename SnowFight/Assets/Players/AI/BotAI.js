@@ -474,7 +474,7 @@ function RollBall ()
 					moveDir = Vector3.zero;
 				}
 				else {
-					if (ball.GetComponent(BigSnowBall).HasReachedFullSize() || Vector3.Distance(transform.position, groundBaseFlag.position)>attackDistance) {
+					if (teamAI.WantsBazooka() || ball.GetComponent(BigSnowBall).HasReachedFullSize() || Vector3.Distance(transform.position, groundBaseFlag.position)>attackDistance) {
 						MoveTowardsPosition(groundBaseFlag.position);
 					}
 					else {

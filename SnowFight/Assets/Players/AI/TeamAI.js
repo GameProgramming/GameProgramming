@@ -12,6 +12,7 @@ private var bazookas : GameObject[];
 private var snowBalls : GameObject[];
 private var snowRessources : GameObject[];
 private var firstBot : boolean;
+private var wantBazooka : boolean = false;
 
 function Start () {
 	teamComponent = GetComponent(Team);
@@ -28,6 +29,7 @@ function Update () {
 function GetTargets (player : GameObject) : GameObject[] {
 	var closestBall : GameObject;
 	var targets : GameObject[] = [];
+	wantBazooka = false;
 	
 	//find all relevant objects - we will probably need them anyways
 	GetUfos ();
@@ -50,6 +52,7 @@ function GetTargets (player : GameObject) : GameObject[] {
 		}
 		//if there's an enemy in a ufo
 		else if (IsUfoOccupiedByEnemy(ufo)) {
+			wantBazooka = true;
 			//if there's a bazooka somewhere
 			if (bazookas.Length > 0) {
 				for (baz in bazookas) {
@@ -275,4 +278,8 @@ function FindClosestEnemy () : GameObject {
         }
     } 
     return closest;    
+}
+
+function WantsBazooka () : boolean {
+	return wantBazooka;
 }
