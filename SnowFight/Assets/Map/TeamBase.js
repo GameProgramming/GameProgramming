@@ -30,8 +30,8 @@ private var mainPlayerStatus : PlayerStatus;
 var specialWeapons : GameObject[];
 var specialWeaponIcons : Texture2D[];
 
-var spawnWeaponPipelineLength :int = 4;
-var spawnWeaponPipeline : Array;
+//var spawnWeaponPipelineLength :int = 4;
+//var spawnWeaponPipeline : Array;
 
 
 function GetSpawnPoint() : Vector3 {
@@ -49,8 +49,8 @@ function GetSpawnPoint() : Vector3 {
 
 function Awake () {
 	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
-	spawnWeaponPipeline = new Array();
-	FillPipeline();
+	//spawnWeaponPipeline = new Array();
+	//FillPipeline();
 }
 
 function Start () {
@@ -65,13 +65,13 @@ function Start () {
 	progress = 0.0;
 }
 
-function FillPipeline() {
-	if (Network.isServer) {
-		while (spawnWeaponPipeline.length < spawnWeaponPipelineLength) {
-			spawnWeaponPipeline.Add(Random.Range(0,specialWeapons.Length));
-		}
-	}
-}
+//function FillPipeline() {
+//	if (Network.isServer) {
+//		while (spawnWeaponPipeline.length < spawnWeaponPipelineLength) {
+//			spawnWeaponPipeline.Add(Random.Range(0,specialWeapons.Length));
+//		}
+//	}
+//}
 
 function Update () {
 	if (Network.isServer) {
@@ -139,13 +139,17 @@ function SetTeam (t :Team) {
 
 function OnTriggerStay(other : Collider) {
 	if (Network.isServer) {
-		if (other.CompareTag("BigSnowball") && other.GetComponent(BigSnowBall).HasReachedFullSize()) {
+		if (other.CompareTag("BigSnowball")) {
 			enterTime += Time.deltaTime;
 			if (enterTime > 2.0 && other.GetComponent(BigSnowBall)) {
 				other.transform.parent = null;
-				var weapon = specialWeapons[spawnWeaponPipeline.Shift()];
-				FillPipeline();
-				Network.Instantiate(weapon, other.transform.position, Quaternion.identity,0);
+				//var weapon = specialWeapons[spawnWeaponPipeline.Shift()];
+				//FillPipeline();
+				if(other.GetComponent(BigSnowBall).HasReachedFullSize())
+					Network.Instantiate(specialWeapons[1], other.transform.position, Quaternion.identity,0);
+				else
+					Network.Instantiate(specialWeapons[0], other.transform.position, Quaternion.identity,0);
+					
 				other.gameObject.SendMessage("OnReachBase", SendMessageOptions.DontRequireReceiver);
 				enterTime = 0.0;
 			}
@@ -165,15 +169,15 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     var teamNumber :int = team.GetTeamNumber();
     stream.Serialize(teamNumber);
     var newSWP :Array = new Array();
-    for (var i = 0; i < spawnWeaponPipelineLength; i++) {
-    	var itemId :int = 0;
-    	if (spawnWeaponPipeline.length > i) {
-    		itemId = spawnWeaponPipeline[i];
-    	}
-    	stream.Serialize(itemId);
-    	newSWP.Add(itemId);
-    }
-    spawnWeaponPipeline = newSWP;
+//    for (var i = 0; i < spawnWeaponPipelineLength; i++) {
+//    	var itemId :int = 0;
+//    	if (spawnWeaponPipeline.length > i) {
+//    		itemId = spawnWeaponPipeline[i];
+//    	}
+//    	stream.Serialize(itemId);
+//    	newSWP.Add(itemId);
+//    }
+//    spawnWeaponPipeline = newSWP;
     if (!stream.isWriting) {
         if (team == null || team.GetTeamNumber() != teamNumber) {
         	var t :Team = game.GetTeamById(teamNumber);
@@ -185,17 +189,17 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 
 function OnGUI () {
 	var pos :Vector3 = Camera.main.WorldToScreenPoint(transform.position);
-	if (pos.z > 1 && pos.z < 70 && pos.x > -10 && pos.y > -10
-				  			    && pos.x < Screen.width-10 && pos.y < Screen.height-10) {
-		GUILayout.BeginArea(Rect(pos.x, Screen.height-pos.y, 20,150));
-		GUILayout.BeginVertical();
-		for (var itemId :int in spawnWeaponPipeline) {
-			if (itemId < specialWeaponIcons.Length)
-				GUILayout.Label(specialWeaponIcons[itemId],GUILayout.Height(25));
-		}
-		GUILayout.EndVertical();
-		GUILayout.EndArea();
-	}
+//	if (pos.z > 1 && pos.z < 70 && pos.x > -10 && pos.y > -10
+//				  			    && pos.x < Screen.width-10 && pos.y < Screen.height-10) {
+//		GUILayout.BeginArea(Rect(pos.x, Screen.height-pos.y, 20,150));
+//		GUILayout.BeginVertical();
+//		for (var itemId :int in spawnWeaponPipeline) {
+//			if (itemId < specialWeaponIcons.Length)
+//				GUILayout.Label(specialWeaponIcons[itemId],GUILayout.Height(25));
+//		}
+//		GUILayout.EndVertical();
+//		GUILayout.EndArea();
+//	}
 	if (mainPlayerStatus != null) {
 		if (takeOverProgress > 0.0 && !mainPlayerStatus.IsDead()) {
 			var texture : Texture2D = new Texture2D(1, 1);
