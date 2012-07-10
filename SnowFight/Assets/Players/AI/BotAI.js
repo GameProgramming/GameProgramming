@@ -595,8 +595,14 @@ function Attack ()
 	 			//when lock-time is over, shoot
 	 			//motor.inputFire = !motor.inputFire;
 		 		if (weapon && weapon.CompareTag("Weapon")) {
-		 				
-		 			if(weapon.GetComponent("RocketLauncher")) {		 			
+	 				RL = weapon.GetComponent("RocketLauncher");
+		 			if(RL) {		 		
+		 				if (!RL.HasAmmo()) {
+		 					itemManager.ReleaseItem();
+		 					RemoveTarget();
+		 					return;
+		 				}
+		 					
 		 				if(newTransform == null){
 		 					newTransform = target.transform;
 		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
@@ -607,7 +613,6 @@ function Attack ()
 		 			  	//	lostTarget +=1;
 		 				//}
 		 				
-		 				RL = weapon.GetComponent("RocketLauncher");
 		 			  	if (RL.getProgress() < RL.aimFor){
 		 			  		RL.addToProgress(Time.deltaTime);
 		 			  		
