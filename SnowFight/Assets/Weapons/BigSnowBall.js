@@ -82,7 +82,7 @@ function Update () {
 			}
 		}
 	}
-		
+	
 	//else if (rollBall) {
 	radius = startRadius * ballSize / 10;
 	//Debug.Log(radius);

@@ -129,7 +129,7 @@ function NetGrabSnowball (snowResourceId :NetworkViewID, info :NetworkMessageInf
 @RPC
 function NetGrabSnowballCallback (snowballId :NetworkViewID) {
 	var snowballV :NetworkView = NetworkView.Find(snowballId);
-	if (!snowballV) yield; // wait....
+	if (!snowballV) yield WaitForSeconds(0.02); // wait....
 	snowballV = NetworkView.Find(snowballId);
 	if (!snowballV) {
 		Debug.Log("Received [NetGrabSnowballCallback] for a not existing ball. ID: " + snowballId);
