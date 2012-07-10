@@ -3,6 +3,7 @@ var inputFire : boolean = false;
 
 var energyMax : float = 5.0;
 var energy : float = energyMax;
+var onFreezingSound : AudioClip;
 
 var freezingTime = 0.2f;
 private var freezingProgress = 0.0f;
@@ -12,11 +13,19 @@ private var player :GameObject;
 
 var freezingStrength = 2.5f;
 
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	    	   	transform.audio.Play();
+	}
+}
+
 function Start() {
 	freezingCurr = null;
 }
 
 function Update () {
+	PlayAudio(onFreezingSound);
 	energy += Time.deltaTime;
 	if (inputFire) {
 		energy -= Time.deltaTime * 2;
