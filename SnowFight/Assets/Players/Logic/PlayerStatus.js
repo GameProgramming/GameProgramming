@@ -174,17 +174,16 @@ function Die () {
 	}
 }
 function PlayHitAudio(){
-	var soundNumber : float = Random.Range(0.1,0.3);
-	switch (state) {
-	case 0.1:
+	var soundNumber : float = Random.Range(0.0,0.3);
+	Debug.Log(soundNumber);
+	if(soundNumber <= 0.1){
 		PlayAudio(onDamageSound1);
-		break;
-	case 0.2:
+	}
+	if(soundNumber > 0.1 && soundNumber <= 0.2){
 		PlayAudio(onDamageSound2);
-		break;
-	case 0.3:
+	}
+	if(soundNumber > 0.2){
 		PlayAudio(onDamageSound3);
-		break;
 	}
 		
 }
