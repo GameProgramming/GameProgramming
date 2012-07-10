@@ -244,7 +244,7 @@ function MakeStartWindow (id : int) {
 }
 
 function StartServer (serverName :String, level :String) {
-	Network.InitializeServer(parseInt(humanPlayers), serverPort, false);
+	Network.InitializeServer(parseInt(humanPlayers), serverPort, useNat);
 	MasterServer.RegisterHost(gameName, serverName, "Map: "+level);
 	GetComponent(NetworkLevelLoad).LoadNewLevel(level);
 }
@@ -264,9 +264,12 @@ function MakeJoinWindow(id : int)
 	GUILayout.Label("Port");
 	iPort = GUILayout.TextField(iPort);
 	if (GUILayout.Button("Connect")) {
-		var error :NetworkConnectionError = Network.Connect(iPAdress, iPort);
+		Debug.Log ("Trying to connect to "+iPAdress);
+		var error :NetworkConnectionError = Network.Connect(iPAdress, parseInt(iPort));
 		if (error && error != NetworkConnectionError.NoError) {
 			Debug.Log ("Connection failed "+error);
+		} else {
+			Debug.Log ("Connection successfull "+error);
 		}
 	}
 	GUILayout.EndHorizontal();
