@@ -18,14 +18,14 @@ private var size : int = 0;
 
 function Awake () {
 	size = 0;
-}
-
-function Start() {
 	for (var b : Transform in transform) {
 		if (b.CompareTag("Base")) {
 			bases.Add(b.gameObject);
 		}
 	}
+}
+
+function Start() {
 }
 
 function FixedUpdate () {
