@@ -167,6 +167,7 @@ function Crash () {
 
 function OnDestroy() {
 	if (owner) {
+		Debug.Log("Destroy UFO");
 		owner.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
 		var attack = new Attack();
 		attack.damageType = DamageType.Crash;

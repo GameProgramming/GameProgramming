@@ -169,7 +169,7 @@ function Release () {
 		transform.parent = null;
 		pushingPlayer = null;
 	}
-	networkView.enabled = true;
+	//networkView.enabled = true;
 }
 
 function PickItem(player:GameObject) {
@@ -177,7 +177,7 @@ function PickItem(player:GameObject) {
 	transform.parent = pushingPlayer.transform;
 	playerMotor = player.GetComponent(CharacterMotorSF);
 	shot = false;
-	networkView.enabled = false;
+	//networkView.enabled = false;
 }
 
 function OnReachBase () {
@@ -226,4 +226,3 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 
 @script RequireComponent (BigSnowBallDamage)
 @script RequireComponent (NetworkView)
-

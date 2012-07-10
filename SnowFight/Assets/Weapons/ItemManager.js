@@ -132,7 +132,7 @@ function NetGrabSnowballCallback (snowballId :NetworkViewID) {
 	if (!snowballV) yield WaitForSeconds(0.02); // wait....
 	snowballV = NetworkView.Find(snowballId);
 	if (!snowballV) {
-		Debug.Log("Received [NetGrabSnowballCallback] for a not existing ball. ID: " + snowballId);
+		Debug.Log("Received [NetGrabSnowballCallback] for a non existing ball. ID: " + snowballId);
 		return;
 	}
 	SetItem(snowballV.gameObject);
