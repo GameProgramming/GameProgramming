@@ -411,6 +411,8 @@ private function UpdateFunction () {
 	} else if (playerState == PlayerState.Dead) {
 		movement.velocity = ApplyGravityAndJumping (movement.velocity);
 		controller.Move(movement.velocity);
+	} else if (playerState == PlayerState.InVehicle) {
+		transform.position += movement.velocity;
 	}
 	extrapolatedPosition = transform.position + Vector3.ClampMagnitude(extrapolationInterval
 																* movement.velocity, 2);
@@ -466,7 +468,14 @@ function NetUpdateFunction () {
 		newPosition = Vector3.SmoothDamp(transform.position, extrapolatedPosition,
                                 velocity , 1.2*extrapolationInterval);
 	}
-	controller.Move(newPosition - transform.position);
+	itemManager.PassOnMovementOffset (newPosition - transform.position);
+	transform.position = newPosition;
+//	if (playerState == PlayerState.InVehicle) {
+//		transform.position = newPosition;
+//	} else {
+//		transform.position += movement.velocity;
+//		//controller.Move(newPosition - transform.position);
+//	}
 }
 
 //function Update () {

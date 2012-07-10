@@ -64,7 +64,7 @@ function Awake () {
 }
 
 function Update () {
-	if (pushingPlayer) {
+	if (pushingPlayer && pushingPlayer.networkView.isMine) {
 		if (playerMotor.IsMovingBackward() || playerMotor.IsJumping() || IsBallTooFarAway (pushingPlayer)) {
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);		}
 		else {
@@ -82,7 +82,7 @@ function Update () {
 			}
 		}
 	}
-		
+	
 	//else if (rollBall) {
 	radius = startRadius * ballSize / 10;
 	//Debug.Log(radius);
@@ -168,8 +168,8 @@ function Release () {
 			rigidbody.velocity = Vector3.zero;
 		transform.parent = null;
 		pushingPlayer = null;
-		networkView.enabled = true;
 	}
+	networkView.enabled = true;
 }
 
 function PickItem(player:GameObject) {
@@ -184,7 +184,8 @@ function OnReachBase () {
 	if (pushingPlayer) { //tell the bot that his ball has reached the base
 		pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 	}
-	
+	collider.enabled = false;
+	yield WaitForSeconds(0.5);
 	Network.Destroy(gameObject);
 }
 
@@ -192,6 +193,8 @@ function SmashBallToSnowfield () {
 //	transform.parent = null;
 	var res :GameObject = Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
 	res.GetComponent(SnowRessource).CreateResourceFromSnowball(ballSize);
+	collider.enabled = false;
+	yield WaitForSeconds(0.5);
 	Network.Destroy(gameObject);
 }
 
@@ -206,6 +209,19 @@ function GetCurrentSnowballs() :int {
 function HasReachedFullSize () : boolean {
 //	Debug.Log("Full size: " + (radius >= maxBallSize));
 	return (ballSize >= maxBallSize);
+}
+
+function OnDestroy () {
+	if (pushingPlayer) {
+		pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
+	}
+}
+
+function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
+    stream.Serialize(ballSize);
+    var pos :Vector3 = transform.localPosition;
+    stream.Serialize(pos);
+    transform.localPosition = pos;
 }
 
 @script RequireComponent (BigSnowBallDamage)

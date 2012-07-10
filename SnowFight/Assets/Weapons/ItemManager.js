@@ -114,12 +114,12 @@ function OnGUI () {
 function NetGrabSnowball (snowResourceId :NetworkViewID, info :NetworkMessageInfo) {
 	var snowResource :NetworkView = NetworkView.Find(snowResourceId);
 	if (!snowResource) {
-		Debug.Log("Received [NetGrabSnowball] for an unknown network view. ID: " + snowResourceId);
+		Debug.LogWarning("Received [NetGrabSnowball] for an unknown network view. ID: " + snowResourceId);
 		return;
 	}
 	var snowRes :SnowRessource = snowResource.GetComponent(SnowRessource);
 	if (!snowRes) {
-		Debug.Log("Received [NetGrabSnowball] for an object that is no SnowResource. ID: " + snowResource);
+		Debug.LogWarning("Received [NetGrabSnowball] for an object that is no SnowResource. ID: " + snowResource);
 		return;
 	}
 	var newItem :GameObject = snowRes.GrabBigSnowball(gameObject);
@@ -129,7 +129,7 @@ function NetGrabSnowball (snowResourceId :NetworkViewID, info :NetworkMessageInf
 @RPC
 function NetGrabSnowballCallback (snowballId :NetworkViewID) {
 	var snowballV :NetworkView = NetworkView.Find(snowballId);
-	if (!snowballV) yield; // wait....
+	if (!snowballV) yield WaitForSeconds(0.02); // wait....
 	snowballV = NetworkView.Find(snowballId);
 	if (!snowballV) {
 		Debug.Log("Received [NetGrabSnowballCallback] for a not existing ball. ID: " + snowballId);
