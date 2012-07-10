@@ -151,10 +151,13 @@ function OnTriggerStay(other : Collider) {
 				other.transform.parent = null;
 				//var weapon = specialWeapons[spawnWeaponPipeline.Shift()];
 				//FillPipeline();
+				var weapon;
 				if(other.GetComponent(BigSnowBall).HasReachedFullSize())
-					Network.Instantiate(specialWeapons[1], other.transform.position, Quaternion.identity,0);
+					weapon = specialWeapons[1];
 				else
-					Network.Instantiate(specialWeapons[0], other.transform.position, Quaternion.identity,0);
+					weapon = specialWeapons[0];
+					
+				Network.Instantiate(weapon, other.transform.position, Quaternion.identity,0);
 					
 				other.gameObject.SendMessage("OnReachBase", SendMessageOptions.DontRequireReceiver);
 				enterTime = 0.0;
@@ -174,7 +177,7 @@ function GetID () : int {
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     var teamNumber :int = team.GetTeamNumber();
     stream.Serialize(teamNumber);
-    var newSWP :Array = new Array();
+//    var newSWP :Array = new Array();
 //    for (var i = 0; i < spawnWeaponPipelineLength; i++) {
 //    	var itemId :int = 0;
 //    	if (spawnWeaponPipeline.length > i) {
