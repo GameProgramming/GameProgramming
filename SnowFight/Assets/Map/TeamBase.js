@@ -133,12 +133,9 @@ function Update () {
 
 function SetTeam (t :Team) {
 	transform.parent = t.transform;
-	if (team) {
-		team = t;
-		team.SendMessage("OnBaseSwitchesTeam", this);
-	} else {
-		team = t;
-	}
+	var oldTeam :Team = team;
+	team = t;
+	if (oldTeam) oldTeam.SendMessage("OnBaseSwitchesTeam", this);
 	if (t) t.SendMessage("OnBaseSwitchesTeam", this);
 	gameObject.BroadcastMessage("SetColor", team.color, SendMessageOptions.DontRequireReceiver);
 }
