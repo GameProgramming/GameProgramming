@@ -157,9 +157,10 @@ function OnHitByObject (otherObj : GameObject) {
 function Die () {
 	if (IsDead()) {
 		return;
+		StopAudio();
+	}else{
+		PlayAudio(onDieSound);
 	}
-	PlayAudio(onDieSound);
-	
 	if (Network.isServer) {
 		var attacker :NetworkViewID = NetworkViewID.unassigned;
 		if (lastAttack && lastAttack.attacker) {
@@ -174,6 +175,11 @@ function PlayAudio(audio : AudioClip){
 	transform.audio.clip=audio;
 	if(!transform.audio.isPlaying){
 	    	   	transform.audio.Play();
+	}
+}
+function StopAudio(){
+	if(transform.audio.isPlaying){
+	    	   	transform.audio.Pause();
 	}
 }
 
