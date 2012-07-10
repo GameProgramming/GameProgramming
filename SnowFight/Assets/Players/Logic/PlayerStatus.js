@@ -157,7 +157,6 @@ function OnHitByObject (otherObj : GameObject) {
 function Die () {
 	if (IsDead()) {
 		return;
-		StopAudio();
 	}else{
 		PlayAudio(onDieSound);
 	}
@@ -307,7 +306,13 @@ function ApplyDamage (attack :Attack) {
 			frozen = attack.damage * 0.1;
 			SetState(PlayerState.Frozen);
 		}else{
-			PlayAudio(onDamageSound);
+			if(attack.attacker.GetComponent(BotAI).enabled){
+				if(Random.Range(0.0, 100.0)<33.0){
+					PlayAudio(onDamageSound);
+				}
+			}else if(!attack.attacker.GetComponent(BotAI).enabled){
+				PlayAudio(onDamageSound);
+			}
 		}
 		
 //s		Debug.Log("NetHit Send");
