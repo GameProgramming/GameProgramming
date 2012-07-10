@@ -8,7 +8,6 @@
     private var target : Transform;
     
     private var time : float = 0.0;
-	private var maxLifeTime :float = 10;
 
 	var speed :float;
 	var maxSpeed :float;
@@ -37,10 +36,6 @@
     								Quaternion.LookRotation(aimDir), Time.deltaTime * turnSpeed);
     	}
     	transform.Translate(Vector3.forward * speed * Time.deltaTime);
-
-    	if (time >= maxLifeTime) {
-//    		gameObject.GetComponent<DestroyObject>().SelfDestruct();
-    	}
     }
     
     function GetTarget () : Transform {

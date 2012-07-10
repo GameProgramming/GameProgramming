@@ -1,9 +1,11 @@
 private var inUFO : boolean = false;
 private var blinkingTime : float = 0.0;
 private var hasRocketLauncher : boolean = false;
+private var rocketLauncher :RocketLauncher;
 
 var neutralStyle : GUIStyle;
 var snowballTexture : Texture2D;
+var rocketTexture : Texture2D;
 
 function OnGUI() {
 
@@ -34,12 +36,12 @@ function OnGUI() {
 		if (!inUFO) {
 			//Create the boxes for the rocket launcher.
 			if (hasRocketLauncher) {
-				var maxNumberOfRockets : int = numberOfBoxes/3;
-				var numberOfRockets : int = numberOfSnowballs/3;
+				var maxNumberOfRockets : int = rocketLauncher.initialAmmo;
+				var numberOfRockets : int = rocketLauncher.GetAmmo();
 				j = boxWidth*2*maxNumberOfRockets + 50;
 				for (i=0; i<maxNumberOfRockets; i++) {
 					if (i < numberOfRockets) {
-						GUI.Label (Rect (Screen.width - j, Screen.height - boxHeight * 4, boxWidth*4, boxHeight*4), snowballTexture);
+						GUI.Label (Rect (Screen.width - j, Screen.height - boxHeight * 4, boxWidth*4, boxHeight*4), rocketTexture);
 					}
 					j -= boxWidth * 2;
 				}
@@ -84,6 +86,9 @@ function OnItemChange(itemManager :ItemManager) {
 	if (item != null) {
 		hasRocketLauncher = item && item.CompareTag("Weapon");
 		inUFO = item && item.CompareTag("Ufo");
+		if (hasRocketLauncher) {
+			rocketLauncher = item.GetComponent(RocketLauncher);
+		}
 	} else {
 		inUFO = false;
 		hasRocketLauncher = false;
