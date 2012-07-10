@@ -244,7 +244,7 @@ function MakeStartWindow (id : int) {
 }
 
 function StartServer (serverName :String, level :String) {
-	Network.InitializeServer(parseInt(humanPlayers), serverPort, useNat);
+	Network.InitializeServer(parseInt(humanPlayers), serverPort, false);
 	MasterServer.RegisterHost(gameName, serverName, "Map: "+level);
 	GetComponent(NetworkLevelLoad).LoadNewLevel(level);
 }
