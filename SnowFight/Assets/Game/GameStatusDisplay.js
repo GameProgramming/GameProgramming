@@ -98,7 +98,7 @@ function OnGUI() {
 		}
 		posY += 15;
 		var offX :float = 0;
-		for (var b : Transform in t.GetAllBases()) {
+		for (var b : GameObject in t.GetAllBases()) {
 			GUI.Label (SRect (posX+offX, posY, 20, 20), t.teamBaseIcon);
 			offX += 5;
 			posY += 5;
