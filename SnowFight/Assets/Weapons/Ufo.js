@@ -7,15 +7,37 @@ private var freezer : FreezingRay;
 
 private var velo :Vector3 = Vector3.zero;
 
+var onHoverSound  : AudioClip;
+var onMovingSound  : AudioClip;
+
 @System.NonSerialized
 private var terrain :Terrain;
 
 var hp : int = 100;
 var maxHp : int = 100;
-private var lastAttack :Attack;
+private var lastAttack : Attack;
 
+
+private var px : float; 
+private var pz : float; 
+
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	    	   	transform.audio.Play();
+	}
+}
+function StopAudio(){
+	if(transform.audio.isPlaying){
+	    	   	transform.audio.Pause();
+	}
+}
 
 function Start () {
+	px = transform.position.x;
+	pz = transform.position.z;
+	
+	
 	mesh = transform.Find("Ufo");
 	bulletSpawn = transform.Find("Ufo/BulletSpawn");
 	freezer = transform.Find("Ufo/FreezingRay").GetComponent(FreezingRay);
@@ -25,6 +47,22 @@ function Start () {
 }
 
 function Update () {
+
+	var pxRound:float = Mathf.Round(px * 10.0f) / 10.0f;
+	var pzRound:float = Mathf.Round(pz * 10.0f) / 10.0f;
+	
+	var posXRound:float = Mathf.Round(transform.position.x  * 10.0f) / 10.0f;
+	var posZRound:float = Mathf.Round(transform.position.z * 10.0f) / 10.0f;
+
+
+	if(pxRound != posXRound || pzRound != posZRound){
+		px = transform.position.x;
+		pz = transform.position.z;
+		PlayAudio(onMovingSound);
+		
+	}else if(pxRound == posXRound && pzRound == posZRound){
+		PlayAudio(onHoverSound);
+	}
 	if (owner && networkView.isMine) {
 		if (playerMotor.inputFire && bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0) {
 			bulletSpawn.GetComponent(BulletSpawn).Fire();

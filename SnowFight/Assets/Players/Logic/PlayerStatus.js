@@ -35,7 +35,6 @@ var isLockedTarget : boolean = false;
 var onDamageSound1 : AudioClip;
 var onDamageSound2 : AudioClip;
 var onDamageSound3 : AudioClip;
-private var onDamageSound : AudioClip;
 var onDieSound : AudioClip;
 
 
@@ -317,6 +316,8 @@ function ApplyDamage (attack :Attack) {
 		var dT :int = attack.damageType;
 		networkView.RPC("NetApplyDamage", RPCMode.Others, hp, dT);
 		
+		
+		
 		if (attack.damageType == DamageType.Freeze
 			&& state == PlayerState.Alive
 			&& networkView.isMine) {
@@ -324,7 +325,8 @@ function ApplyDamage (attack :Attack) {
 			SetState(PlayerState.Frozen);
 		} else if (attack.attacker && attack.attacker.GetComponent(PlayerStatus)
 					 && attack.attacker.GetComponent(PlayerStatus).IsMainPlayer()
-				|| Random.Range(0.0, 100.0)<33.0) {
+				|| Random.Range(0.0, 100.0)<33.0 
+				|| transform.GetComponent(PlayerStatus).IsMainPlayer()) {
 			PlayHitAudio();
 		}
 		
