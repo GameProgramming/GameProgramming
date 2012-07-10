@@ -13,6 +13,7 @@ var startYSpeed :float = 0.0;
 var snowCosts :int = 1;
 var onNoSnowballs : AudioClip;
 var onNoRockets : AudioClip;
+var onUfoShotSound : AudioClip;
 
 function PlayAudio(audio : AudioClip){
 	transform.audio.clip=audio;
@@ -56,6 +57,9 @@ function CanFire () {
 function Fire () {
 	if(player){
 		if(CanFire()){
+			if (player.IsRidingUfo()){
+				PlayAudio(onUfoShotSound);
+			}
 		  	var projectile = GetProjectile();
 		  	
 		  	if (projectile) {
