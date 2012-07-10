@@ -1,5 +1,7 @@
 private var inUFO : boolean = false;
 private var blinkingTime : float = 0.0;
+private var hasRocketLauncher : boolean = false;
+
 
 function OnGUI() {
 
@@ -28,30 +30,63 @@ function OnGUI() {
 		var j : int = boxWidth * numberOfBoxes + 50;
 		
 		if (!inUFO) {
-			//Now create the boxes.
-			for (i=0; i<numberOfBoxes; i++) {			
-				GUI.Box (Rect (Screen.width - j - 1, Screen.height-25, boxWidth+2, boxHeight+2), "");
-				if (i < numberOfSnowballs) {
-					GUI.Box(Rect (Screen.width - j, Screen.height-25, boxWidth, boxHeight), "", style);
+			//Create the boxes for the rocket launcher.
+			if (hasRocketLauncher) {
+				var maxNumberOfRockets : int = numberOfBoxes/3;
+				var numberOfRockets : int = numberOfSnowballs/3;
+				j = boxWidth*2*maxNumberOfRockets + 50;
+				for (i=0; i<maxNumberOfRockets; i++) {
+					GUI.Box (Rect (Screen.width - j - 2, Screen.height-50, boxWidth*2+4, boxHeight*2+4), "");
+					if (i < numberOfRockets) {
+						GUI.Box(Rect (Screen.width - j, Screen.height-50, boxWidth*2, boxHeight*2+2), "", style);
+					}
+					j -= boxWidth * 2 + 2;
 				}
-				j -= boxWidth;
-			}
-			if (numberOfSnowballs == 0) {
-				blinkingTime += Time.deltaTime;
-				//Create the red layout if there is no ammu anymore.
-				var noAmmuTexture : Texture2D = new Texture2D(1, 1);
-				var noAmmuStyle : GUIStyle = new GUIStyle();
-				var noAmmuColor : Color = new Color(1, 0, 0, 0.5);
-				noAmmuTexture.SetPixel(0, 0, noAmmuColor);
-				noAmmuTexture.Apply();
-				noAmmuStyle.normal.background = noAmmuTexture;
-				if (blinkingTime <= 0.3) {
-					GUI.Box (Rect (Screen.width - 231, Screen.height - 25, 181, 20), "");
-					GUI.Box (Rect (Screen.width - 230, Screen.height - 25, 180, 20), "", noAmmuStyle);
-				} else if (blinkingTime >= 0.6) {
-					blinkingTime = 0.0;
+				if (numberOfRockets == 0) {
+					blinkingTime += Time.deltaTime;
+					//Create the red layout if there is no ammu anymore.
+					var noRocketsTexture : Texture2D = new Texture2D(1, 1);
+					var noRocketsStyle : GUIStyle = new GUIStyle();
+					var noRocketsColor : Color = new Color(1, 0, 0, 0.5);
+					noRocketsTexture.SetPixel(0, 0, noRocketsColor);
+					noRocketsTexture.Apply();
+					noRocketsStyle.normal.background = noRocketsTexture;
+					if (blinkingTime <= 0.3) {
+						GUI.Box (Rect (Screen.width - 160, Screen.height - 50, 115, 39), "");
+						GUI.Box (Rect (Screen.width - 159, Screen.height - 50, 115, 39), "", noRocketsStyle);
+					} else if (blinkingTime >= 0.6) {
+						blinkingTime = 0.0;
+					}
+				}
+			} else {
+
+				//Now create the boxes.
+				for (i=0; i<numberOfBoxes; i++) {			
+					GUI.Box (Rect (Screen.width - j - 1, Screen.height-25, boxWidth+2, boxHeight+2), "");
+					if (i < numberOfSnowballs) {
+						GUI.Box(Rect (Screen.width - j, Screen.height-25, boxWidth, boxHeight), "", style);
+					}
+					j -= boxWidth;
+				}
+				if (numberOfSnowballs == 0) {
+					blinkingTime += Time.deltaTime;
+					//Create the red layout if there is no ammu anymore.
+					var noAmmuTexture : Texture2D = new Texture2D(1, 1);
+					var noAmmuStyle : GUIStyle = new GUIStyle();
+					var noAmmuColor : Color = new Color(1, 0, 0, 0.5);
+					noAmmuTexture.SetPixel(0, 0, noAmmuColor);
+					noAmmuTexture.Apply();
+					noAmmuStyle.normal.background = noAmmuTexture;
+					if (blinkingTime <= 0.3) {
+						GUI.Box (Rect (Screen.width - 231, Screen.height - 25, 181, 20), "");
+						GUI.Box (Rect (Screen.width - 230, Screen.height - 25, 180, 20), "", noAmmuStyle);
+					} else if (blinkingTime >= 0.6) {
+						blinkingTime = 0.0;
+					}
 				}
 			}
+
+
 		} else {
 			//Now create the boxes.
 			for (i=0; i<numberOfBoxes; i++) {			
@@ -69,11 +104,13 @@ function OnGUI() {
 }
 
 function OnItemChange(itemManager :ItemManager) {
-	var item :GameObject = itemManager.GetItem();
+	var item : GameObject = itemManager.GetItem();
 	if (item != null) {
+		hasRocketLauncher = item && item.CompareTag("Weapon");
 		inUFO = item && item.CompareTag("Ufo");
 	} else {
 		inUFO = false;
+		hasRocketLauncher = false;
 	}
 	
 }
