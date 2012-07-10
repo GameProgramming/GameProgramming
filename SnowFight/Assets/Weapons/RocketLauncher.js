@@ -19,6 +19,7 @@ private var aimingCircleOuter :Transform;
 private var aimingCircleInner :Transform;
 
 private var itemModel :Transform;
+private var ammoModels :Transform[];
 
 var mat1 :Material;
 
@@ -50,6 +51,10 @@ function Start() {
     weaponModel = transform.Find("Weapon");
 	bulletSpawn = transform.Find("Weapon/BulletSpawn");
 	itemModel = transform.Find("Item");
+	ammoModels = new Transform[initialAmmo];
+	for (var i :int = 0; i < initialAmmo; i++) {
+		ammoModels[i] = transform.Find("Item/Ammo"+i.ToString());
+	}
 	
 	weaponModel.gameObject.active = false;
 	itemModel.gameObject.SetActiveRecursively(true);
@@ -150,6 +155,9 @@ function Release () {
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer(null);
 	transform.position.y = Terrain.activeTerrain.SampleHeight(transform.position) + 1;
 	transform.localRotation = Quaternion.identity;
+	for (var i :int = ammo; i < initialAmmo; i++) {
+		ammoModels[i].gameObject.SetActiveRecursively(false);
+	}
 }
 
 function PickItem(player :GameObject) {

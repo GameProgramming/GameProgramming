@@ -27,9 +27,9 @@ function Update () {
 			curPos += speed/20.0;
 			speed += Physics.gravity/20.0;
 		}
-		matFade += 5 * Time.deltaTime;
+		matFade += 10 * Time.deltaTime;
 	} else {
-		matFade -= 5 * Time.deltaTime;
+		matFade -= 10 * Time.deltaTime;
 	}
 	matFade = Mathf.Clamp01(matFade);
 	line.material.Lerp(mat1, mat2, matFade);
