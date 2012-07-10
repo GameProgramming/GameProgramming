@@ -150,9 +150,9 @@ function GetClosestBase (bot : GameObject) : GameObject {
 }
 
 function GetClosestOwnBase (bot : GameObject) : GameObject {
-	UpdateBases ();
+	//UpdateBases ();
 	//just get the closest spawn base for now
-	return GetClosestObjectInArray(bot, ownBases);
+	return GetClosestObjectInArray(bot, teamComponent.GetAllBases());
 }
 
 function GetUfos () : GameObject[] {
