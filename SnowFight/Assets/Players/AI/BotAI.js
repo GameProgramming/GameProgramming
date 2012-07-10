@@ -485,6 +485,7 @@ function RollBall ()
 					Debug.DrawRay(groundBaseFlag.position, transform.up * 50, Color.green);
 				}
 			}
+			else itemManager.ReleaseItem();
 		}
 		yield;
 	}
@@ -610,14 +611,16 @@ function Attack ()
 		 			  	if (RL.getProgress() < RL.aimFor){
 		 			  		RL.addToProgress(Time.deltaTime);
 		 			  		
-		 			  		Debug.Log("NT:"+newTransform.position);
-		 			  		Debug.Log("lostLock:"+lostTarget);
-		 			  		transform.LookAt(target.transform);	//locked = true;
+//		 			  		Debug.Log("NT:"+newTransform.position);
+//		 			  		Debug.Log("lostLock:"+lostTarget);
+		 			  		//transform.LookAt(target.transform);	//locked = true;
 							//	RL.Fire(1);
-						
+							var angleY = Vector3.Angle(target.transform.position-transform.position, transform.forward);
+		 			  		motor.Rotate (0, angleY);
 						}else if (RL.getProgress() >= RL.aimFor){
+							motor.inputFire = !motor.inputFire;
 							//Debug.Log("SHOOT!!!!!!!!");
-								RL.Fire(2);
+								//RL.Fire(2);
 								target.GetComponent(PlayerStatus).isLockedTarget = false;
 								newTransform = null;
 		 			  			lostTarget = 0;
@@ -626,7 +629,7 @@ function Attack ()
 		 		}
 		 		else { //if there's a bazooka lying around, go get it!
 		 			//hopefully do something useful in TeamAI!
-		 			shootDistance = punchRadius;
+//		 			shootDistance = punchRadius;
 		 			RemoveTarget();
 		 			return;
 		 		}
@@ -634,7 +637,7 @@ function Attack ()
 
 			//shoot and move around a bit ;)
 //			if((pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
-			if (distanceToEnemy < shootDistance) {
+			if (distanceToEnemy < shootDistance && !weapon) {
 				if (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3)
 					motor.inputAltFire = !motor.inputAltFire;
 				else
@@ -650,7 +653,10 @@ function Attack ()
 				}
 			}
 
-			moveDir = direction;
+			if (backup)
+				moveDir = -direction;
+			else
+				moveDir = direction;
 			
 //			if (Random.value > 0.99 && !pStatus.IsRidingUfo() && !itemManager.GetItem()) {
 			if (Random.value > 0.999 && !itemManager.GetItem()) {
