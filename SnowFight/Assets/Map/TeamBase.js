@@ -1,6 +1,7 @@
 private var enterTime :float = 0;
 
 var baseID : int;
+var onFlagWonSound  : AudioClip;
 
 @System.NonSerialized
 var team : Team;
@@ -32,6 +33,13 @@ var specialWeaponIcons : Texture2D[];
 
 //var spawnWeaponPipelineLength :int = 4;
 //var spawnWeaponPipeline : Array;
+
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	    	   	transform.audio.Play();
+	}
+}
 
 
 function GetSpawnPoint() : Vector3 {
@@ -138,6 +146,7 @@ function SetTeam (t :Team) {
 	if (oldTeam) oldTeam.SendMessage("OnBaseSwitchesTeam", this);
 	if (t) t.SendMessage("OnBaseSwitchesTeam", this);
 	gameObject.BroadcastMessage("SetColor", team.color, SendMessageOptions.DontRequireReceiver);
+	PlayAudio(onFlagWonSound);
 }
 
 function OnTriggerStay(other : Collider) {
