@@ -41,8 +41,11 @@ private var credits = false;
 private var instructions = false;
 private var gameInstructions = false;
 private var inputInstructions = false;
+
 private var startGame = false;
 private var joinGame = false;
+
+private var humanPlayers = "1";
 
 // Enable this if not running a client on the server machine
 //MasterServer.dedicatedServer = true;
@@ -388,6 +391,11 @@ function MakeStartWindow (id : int) {
 		botCount = GUILayout.TextField(botCount);
 		GUILayout.EndHorizontal();
 		
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Maximum human connections");
+		humanPlayers = GUILayout.TextField(humanPlayers);
+		GUILayout.EndHorizontal();
+		
 		if (GUILayout.Button ("Start Server / Singleplayer")) {
 			StartServer (serverName, levels[selectedLevelId]);
 		}
@@ -395,7 +403,7 @@ function MakeStartWindow (id : int) {
 }
 
 function StartServer (serverName :String, level :String) {
-	Network.InitializeServer(32, serverPort, useNat);
+	Network.InitializeServer(parseInt(humanPlayers), serverPort, useNat);
 	MasterServer.RegisterHost(gameName, serverName, "Map: "+level);
 	GetComponent(NetworkLevelLoad).LoadNewLevel(level);
 }
