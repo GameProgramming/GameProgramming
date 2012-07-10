@@ -18,14 +18,14 @@ private var size : int = 0;
 
 function Awake () {
 	size = 0;
-}
-
-function Start() {
 	for (var b : Transform in transform) {
 		if (b.CompareTag("Base")) {
 			bases.Add(b.gameObject);
 		}
 	}
+}
+
+function Start() {
 }
 
 function FixedUpdate () {
@@ -51,12 +51,10 @@ function HasLost () {
 function GetSpawnPoints () :Transform[] {
 	var spawns :Transform[] = [];
 	
-	for (var b : Transform in transform) {
-		if (b.tag == "Base") {
-			for (var t : Transform in b.transform) {
-				if (t.tag == "PlayerSpawn") {
-					spawns += [t];
-				}
+	for (var b : GameObject in bases) {
+		for (var t : Transform in b.transform) {
+			if (t.tag == "PlayerSpawn") {
+				spawns += [t];
 			}
 		}
 	}
@@ -65,14 +63,12 @@ function GetSpawnPoints () :Transform[] {
 
 function GetSpawnPoint(spawnPointID : int) : Vector3 {
 	var position : Vector3; 
-	for (var b : Transform in transform) {
-		if (b.tag == "Base") {
-			var base = b.GetComponent(TeamBase);
-			if (base.GetID() == spawnPointID) {
-				position = base.GetSpawnPoint();
-				break;
-			}
-		}	
+	for (var b : GameObject in bases) {
+		var base = b.GetComponent(TeamBase);
+		if (base.GetID() == spawnPointID) {
+			position = base.GetSpawnPoint();
+			break;
+		}
 	}
 	return position;
 }
