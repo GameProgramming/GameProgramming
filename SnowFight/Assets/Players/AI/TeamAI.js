@@ -281,6 +281,6 @@ function FindClosestEnemy () : GameObject {
 }
 
 function WantsBazooka (player:GameObject) : boolean {
-	return (GetClosestFlyingEnemy(player)!=null);
+	return (GetClosestFlyingEnemy(player)!=null && Random.value>0.5);
 //	return wantBazooka;
 }

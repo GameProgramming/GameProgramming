@@ -540,7 +540,7 @@ function Attack ()
 			
 			// depending on the angle, start moving
 			direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
-			moveDir = Vector3.zero;
+		//	moveDir = Vector3.zero;
 		} else {
 			// The angle of our forward direction and the player position is larger than 100 degrees
 			// That means he is out of sight
@@ -575,9 +575,15 @@ function Attack ()
 				backup = false;
 				
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
-		 	if (Random.value > 0.7 && pStatus.IsRidingUfo() && AboveTarget() && 
-		 	(target.GetComponent(PlayerStatus) && !target.GetComponent(PlayerStatus).IsRidingUfo())) {
-		 		motor.inputAltFire = true;
+			if (pStatus.IsRidingUfo()) {
+//				if(target.GetComponent(PlayerStatus).IsRidingUfo()) {
+//					motor.inputFire = !motor.inputFire;
+//				}
+//			 	else 
+				if (target.GetComponent(PlayerStatus) && AboveTarget() && Random.value > 0.7) {
+			 		motor.inputAltFire = true;
+//					motor.inputAltFire = !motor.inputAltFire;
+			 	}
 		 	}
 		 	
 		 	//we've turned our back and suffer a loss of memory
@@ -601,13 +607,7 @@ function Attack ()
 	 			//motor.inputFire = !motor.inputFire;
 		 		if (weapon && weapon.CompareTag("Weapon")) {
 	 				RL = weapon.GetComponent(RocketLauncher);
-		 			if(RL) {		 		
-		 				if (!RL.HasAmmo()) {
-		 					itemManager.ReleaseItem();
-		 					RemoveTarget();
-		 					return;
-		 				}
-		 					
+		 			if(RL) {		 				 					
 //		 				if(newTransform == null){
 //		 					newTransform = target.transform;
 //		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
@@ -645,14 +645,22 @@ function Attack ()
 		 		}
 		 	}
 
+
+			if (RL && !RL.HasAmmo()) {
+				itemManager.ReleaseItem();
+				RemoveTarget();
+				return;
+			}
 			//shoot and move around a bit ;)
 //			if((pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
 			if (distanceToEnemy < shootDistance && !RL) {
-				if (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3)
-					motor.inputAltFire = !motor.inputAltFire;
-				//either we're on foot, or we're in a ufo and so is our target
-				else if (!pStatus.IsRidingUfo() || (pStatus.IsRidingUfo() && target.GetComponent(PlayerStatus).IsRidingUfo()))
-					motor.inputFire = !motor.inputFire;
+				//if (!pStatus.IsRidingUfo()) {
+					if (!pStatus.IsRidingUfo() && (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3))
+						motor.inputAltFire = !motor.inputAltFire;
+					//either we're on foot, or we're in a ufo and so is our target
+					else if (!pStatus.IsRidingUfo() || (pStatus.IsRidingUfo() && target.GetComponent(PlayerStatus).IsRidingUfo()))
+						motor.inputFire = !motor.inputFire;
+				//}
 				
 				direction = Vector3.left * strafing;
 				if (Random.value > 0.9) {
@@ -664,7 +672,7 @@ function Attack ()
 				}
 			}
 
-			if (backup)
+			if (backup && !pStatus.IsRidingUfo())
 				moveDir = -direction;
 			else
 				moveDir = direction;
