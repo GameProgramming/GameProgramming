@@ -154,8 +154,8 @@ function Move (offset : Vector3) {
 
 		correctionVector.y = 0.0;
 		offset.y = 0;
-		
 		rigidbody.MovePosition(transform.position + (offset -  correctionVector));
+		//rigidbody.velocity = offset - correctionVector;
 		extrapolatedPosition = transform.position;
 	}
 }
