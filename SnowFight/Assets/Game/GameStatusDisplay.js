@@ -118,6 +118,8 @@ function OnGUI() {
 	
 	//Show the win message.
 	if (displayGameOver) {
+		Screen.showCursor = true;
+		Screen.lockCursor = false;
 		var winText : String;
 		winText = "Team "+ status.winner.ToString() + " wins!";
 		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
