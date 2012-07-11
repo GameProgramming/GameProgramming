@@ -15,6 +15,8 @@ var onNoSnowballs : AudioClip;
 var onNoRockets : AudioClip;
 var onUfoShotSound : AudioClip;
 
+var netExtrapolationTime :float = 0.2;
+
 function PlayAudio(audio : AudioClip){
 	transform.audio.clip=audio;
 	if(!transform.audio.isPlaying){
@@ -95,7 +97,8 @@ function SendFire ( bullet :Rigidbody ) {
 	bullet.networkView.viewID = netId;
 	BufferShot(bullet.gameObject);
 //	Debug.Log ("Send fire "+netId);
-	this.networkView.RPC("NetFire", RPCMode.Others, netId, bullet.position, bullet.velocity);
+	this.networkView.RPC("NetFire", RPCMode.Others, netId,
+					bullet.position+bullet.velocity*netExtrapolationTime, bullet.velocity);
 }
 
 @RPC
@@ -106,7 +109,7 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
 	clone.networkView.viewID = netId;
 	if (player) clone.GetComponent(Damage).shooter = player.gameObject;
 	clone.velocity = velo;
-	SendMessageUpwards("BulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
+	SendMessageUpwards("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
 //	Debug.Log ("Rcv fire "+netId);
 }
 
@@ -139,7 +142,7 @@ function SendFireTarget ( bullet :Rigidbody, target :GameObject ) {
 		tarId = target.networkView.viewID;
 	}
 	BufferShot(bullet.gameObject);
-	networkView.RPC("NetFireTarget", RPCMode.Others, netId, bullet.position,
+	networkView.RPC("NetFireTarget", RPCMode.Others, netId, bullet.position+bullet.transform.forward*netExtrapolationTime,
 					bullet.rotation.eulerAngles.x, bullet.rotation.eulerAngles.y,tarId);
 }
 

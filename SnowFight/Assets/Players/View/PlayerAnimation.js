@@ -80,14 +80,13 @@ function Awake() {
 	body = transform.Find("Model");
 	meshRenderers = body.GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = body.GetComponentsInChildren.<SkinnedMeshRenderer> ();
-
-	//make sure the player is visible on start
-	for (var rend : MeshRenderer in meshRenderers) {
-		rend.enabled = true;
-	}
-	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
-		rend.enabled = true;
-	}
+	
+//	for (var rend : MeshRenderer in meshRenderers) {
+//		rend.enabled = false;
+//	}
+//	for (var rend : SkinnedMeshRenderer in skinnedRenderers) {
+//		rend.enabled = false;
+//	}
 }
 
 function OnJoinTeam (t :Team) {

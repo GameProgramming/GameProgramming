@@ -30,7 +30,7 @@ var itemLogoUfo :Texture;
 var itemLogoSnowball :Texture;
 var itemLogoRockets :Texture;
 
-function Start () {
+function Awake () {
 	motor = GetComponent(CharacterMotorSF);
 	pStatus = GetComponent(PlayerStatus);
 	item = null;
@@ -38,7 +38,7 @@ function Start () {
 	itemGUIStyle.clipping = TextClipping.Overflow;
 	itemGUIStyle2.clipping = TextClipping.Overflow;
 	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
-	tooltip = game.GetComponent(Tooltip);
+	tooltip = game.GetComponent(Tooltip);	
 }
 
 function OnGUI () {
@@ -179,7 +179,11 @@ function Update () {
 
 function SetItem( it :GameObject ) {
 	if (it == item) {
-		Debug.Log ("Prevented the re-setting of the same item for "+pStatus.playerName);
+		Debug.LogWarning ("Prevented the re-setting of the same item for "+pStatus.playerName);
+		return;
+	}
+	if (!it) {
+		Debug.LogWarning ("Prevented the setting of a non-item "+pStatus.playerName);
 		return;
 	}
 	item = it;
@@ -268,6 +272,7 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     			SetItem(it.gameObject);
     		} else {
     			Debug.Log("Received an item signal for an unknown itm. Id="+itemId);
+    			ReleaseItem(); // ist diese zeile sinnvoll?
     		}
     	} else {
     		ReleaseItem();

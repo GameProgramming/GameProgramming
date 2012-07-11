@@ -9,7 +9,7 @@ private var fragLog :Array = new Array();
 
 private var statusDisplay :GameStatusDisplay;
 
-function Start () {
+function Awake () {
 	statusDisplay = GetComponent(GameStatusDisplay);
 }
 

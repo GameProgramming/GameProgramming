@@ -44,7 +44,7 @@ private var terrain :Terrain;
 
 private var extrapolatedPosition :Vector3;
 
-function Start () {
+function Awake () {
 //	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
 	shot = false;
@@ -60,11 +60,15 @@ function Start () {
 	terrain = Terrain.activeTerrain;
 	trail = transform.Find("Trail").particleSystem;
 	transform.localScale = Vector3.zero;
-}
-
-function Awake () {
+	
  	startSize = transform.localScale;
 	ballSize = 10;
+}
+
+@RPC
+function NetShootBall (velo :Vector3) {
+	shot = true;
+	velocity = velo;				
 }
 
 function Update () {
@@ -80,17 +84,18 @@ function Update () {
 				loadshot += Time.deltaTime;
 			} else if (loadshot > 0.001) {
 				loadshot = Mathf.Clamp(loadshot, 0.5, 3);
-				shot = true;
-				velocity = loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / ballSize)
-									* pushingPlayer.transform.forward.normalized;//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
+				//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;
 				loadshot = 0;
+				networkView.RPC("NetShootBall", RPCMode.Server,
+							loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / ballSize)
+							* pushingPlayer.transform.forward.normalized);
 				pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			}
 		}
 	}
 	
-	if (!pushingPlayer) {
+	if (!pushingPlayer && networkView.isMine) {
 		GetComponent(CharacterController).Move(Time.deltaTime * velocity);
 	}
 	

@@ -21,14 +21,13 @@ private var snowAmountManager :SnowAmountManager;
 
 function Awake () {
 	snowAmountManager = GameObject.FindGameObjectWithTag("Game").GetComponent(SnowAmountManager);
+	snowballRessource = transform.Find("SnowballRessource");
 }
 
 function Start () {
 	snowRestockingRound = snowAmountManager.GetDistributionRound();
 	
 	GetComponent(Collider).isTrigger = true;
-	
-	snowballRessource = transform.Find("SnowballRessource");
 	
 	transform.position.y = Terrain.activeTerrain.SampleHeight(transform.position) + 0.8;
 

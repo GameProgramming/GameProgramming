@@ -63,6 +63,10 @@ function Start() {
 }
 
 function Update () {
+	if (owner) {
+		transform.eulerAngles.x = -playerMotor.rotationY-10;
+		weaponModel.renderer.enabled = true;
+	}
 	if (owner && owner.networkView.isMine) {
 	
 		AimTarget(targetName);
@@ -132,7 +136,10 @@ function Update () {
 		if (ammo <= 0) alive = false;
 	} else {
 		transform.position.y += Time.deltaTime * (10+transform.position.y);
-		if (transform.position.y > 100 && Network.isServer) {
+		if (Mathf.Abs(transform.position.y) > 100 && Network.isServer) {
+			if (Network.isServer) {
+				GameObject.FindGameObjectWithTag("Game").SendMessage("LogDestruction", networkView.viewID);
+			}
 			Network.Destroy(gameObject);
 		}
 	}
@@ -401,6 +408,15 @@ function StopAudio(){
 	if(transform.audio.isPlaying){
 	    	   	transform.audio.Pause();
 	}
+}
+
+function OnPlayerConnected (player :NetworkPlayer) {
+	networkView.RPC("NetSyncPos", player, transform.localPosition);
+}
+
+@RPC
+function NetSyncPos ( pos :Vector3 ) {
+	transform.localPosition = pos;
 }
 
 

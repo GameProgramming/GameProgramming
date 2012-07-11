@@ -18,7 +18,6 @@ var hp : int = 100;
 var maxHp : int = 100;
 private var lastAttack : Attack;
 
-
 private var px : float; 
 private var pz : float; 
 
@@ -34,7 +33,7 @@ function StopAudio(){
 	}
 }
 
-function Start () {
+function Awake () {
 	px = transform.position.x;
 	pz = transform.position.z;
 	
@@ -168,6 +167,9 @@ function Crash () {
 
 function OnDestroy() {
 	Debug.Log("Destroy UFO");
+	if (Network.isServer) {
+		GameObject.FindGameObjectWithTag("Game").SendMessage("LogDestruction", networkView.viewID);
+	}
 	if (hp <= 0) {
 		Instantiate(explosion, transform.position, transform.rotation);
 	}
@@ -195,6 +197,15 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     	a.damage = hp - nHp;
     	NetApplyDamage(a);
     }
+}
+
+function OnPlayerConnected (player :NetworkPlayer) {
+	networkView.RPC("NetSyncPos", player, transform.localPosition);
+}
+
+@RPC
+function NetSyncPos ( pos :Vector3 ) {
+	transform.localPosition = pos;
 }
 
 function GameOver () {

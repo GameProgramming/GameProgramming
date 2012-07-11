@@ -9,7 +9,7 @@ private var direction : boolean;
 enum ArrowMode {Disabled, Jumping, Idle, Hinting, UpOut, DownOn};
 private var mode :ArrowMode = ArrowMode.Disabled;
 
-function Start () {
+function Awake () {
 	map = GameObject.FindGameObjectWithTag("OverviewCam").GetComponent(MapOverview);
 	transform.renderer.enabled = false;
 	direction = false;

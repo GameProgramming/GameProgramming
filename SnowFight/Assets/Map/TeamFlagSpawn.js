@@ -3,7 +3,7 @@ private var arrow :Arrow;
 private var mouseOver :boolean;
 private var teamBase :TeamBase;
 
-function Start () {
+function Awake () {
 	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
 	arrow = transform.Find("Arrow").GetComponent(Arrow);
 	teamBase = transform.parent.GetComponent(TeamBase);
