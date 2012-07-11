@@ -98,6 +98,7 @@ function Update () {
 					}
 				}
 			}else{
+//				Debug.Log("Rocket launcher: Dont have target " + Time.time, this);
 				if (playerMotor.inputFire && ammo > 0) {
 					bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
 					progress = 0;
@@ -150,6 +151,7 @@ function Update () {
 //}
 
 function Release () {
+//	Debug.Log("Releasing item " + Time.time, this);
 	owner = null;
 	playerStatus = null;
 	transform.parent = null;
@@ -165,6 +167,7 @@ function Release () {
 }
 
 function PickItem(player :GameObject) {
+//	Debug.Log("Picking item " + Time.time, this);
 	owner = player;
 //	ownerArmJoint = owner.transform.Find("Model/joint29/joint1/joint2/joint3");
 	collider.enabled = false;
@@ -267,7 +270,7 @@ function RenderAimingLine () {
 			if(scale > 10){
 				scale /= 3;
 			}
-			Debug.Log(scale);
+//			Debug.Log(scale);
 			aimingCircleOuter.localScale = Vector3(scale, scale, scale);
 			
 			scale *= (1.5 - progress/aimFor);

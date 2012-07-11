@@ -134,6 +134,7 @@ function Update () {
 		}
 	} else if (item && (inputActionUp || pStatus.IsDead())) {
 //  } else if (item && (inputAction || pStatus.IsDead())) {
+//		Debug.Log("1 Release Item " + Time.time, this);
 		ReleaseItem();
 	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem) ) {
 //	} else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem) && motor.IsGrounded()
@@ -146,6 +147,7 @@ function Update () {
 				SetItem(candidateItem.transform.parent.gameObject);
 			} else {
 				SetItem(candidateItem);
+//				Debug.Log("Set Item " + Time.time, this);
 			}
 		}
 	}
@@ -184,7 +186,9 @@ function SetItem( it :GameObject ) {
 	}
 	item = it;
 	candidateItem = null;
+	
 	if (pStatus.IsMainPlayer()) Debug.Log("Player picked up "+item);
+//	else Debug.Log("Bot picked up " + item + " at " + Time.time, this);
 	SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
 }
@@ -222,6 +226,7 @@ function ReleaseItem () {
 
 function OnItemDestruction ( destructedItem : GameObject) {
 	if (destructedItem == item) {
+		Debug.Log("2 Release Item " + item + " at " + Time.time, this);
 		ReleaseItem();
 	}
 }
@@ -270,6 +275,7 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     			Debug.Log("Received an item signal for an unknown itm. Id="+itemId);
     		}
     	} else {
+    		Debug.Log("3 Release Item " + Time.time, this);
     		ReleaseItem();
     	}
     }
