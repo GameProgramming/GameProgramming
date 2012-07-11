@@ -245,6 +245,9 @@ private function UpdateFunction () {
 	}
 	
 	if (canControl && itemInputBlock <= 0 && !GetComponent(PlayerStatus).IsDead()) {
+		if (inputFire && throwProgress == 0 && GetComponent(PlayerStatus).GetCurrentSnowballs() <= 0) {
+			SendMessage("OnCantThrow", SendMessageOptions.DontRequireReceiver);
+		}
 		if (inputFire && throwProgress == 0 && snowballSpawn.CanFire()) {
 			throwProgress = 2;
 			gameObject.SendMessage ("OnLoadThrow", SendMessageOptions.DontRequireReceiver);
@@ -422,7 +425,7 @@ function Rotate (x :float, y :float) {
 	if (canControl && playerState != PlayerState.Frozen && !gameOver) {
 		rotationX = transform.localEulerAngles.y + x;
 		rotationY += y;
-		rotationY = Mathf.Clamp (rotationY, -40, 30);
+		rotationY = Mathf.Clamp (rotationY, -40, 40);
 		transform.localEulerAngles = new Vector3(0, rotationX, 0);
 	}
 }
