@@ -11,7 +11,7 @@ private var progress :float = 0.0;
 var c1 : Color = Color.yellow;
 var c2 : Color = Color.red;
 var lengthOfLineRenderer : int = 20;
-var lineRenderer :LineRenderer;
+private var lineRenderer :LineRenderer;
 
     
 private var weaponModel :Transform;
@@ -25,8 +25,8 @@ var mat1 :Material;
 
 var aimAngle :float = 5;
 var aimFor : float = 4.0; 
-var viewAngle : Vector3;
-var locked :boolean;
+private var viewAngle : Vector3;
+private var locked :boolean;
 
 private var target : GameObject; 
 var targetName : String = "Ufo"; 
@@ -431,6 +431,10 @@ function GetAmmo () :int {
 
 function HasAmmo () :boolean {
 	return ammo > 0;
+}
+
+function SetTarget(tar : GameObject) {
+	target = tar;
 }
 
 @script RequireComponent (NetworkView)

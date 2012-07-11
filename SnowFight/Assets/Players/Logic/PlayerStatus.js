@@ -185,6 +185,11 @@ function OnHitByObject (otherObj : GameObject) {
 }
 
 function Die () {
+	if (IsMainPlayer()) {
+		var bar : PlayerHealthBar = transform.GetComponent(PlayerHealthBar);
+		bar.SetInUFO(false);
+	}
+	
 	if (IsDead()) {
 		return;
 	}else{
