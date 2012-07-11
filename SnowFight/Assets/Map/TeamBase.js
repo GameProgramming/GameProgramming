@@ -24,7 +24,7 @@ var takeOverCurrTeam :Team = null;
 private var currentTeamTakingOver : Team;
 private var progress : float;
 private var regenerationProgress :float = 0;
-var regenerationTime :float = 0.5;
+var regenerationTime :float = 1;
 var regenerationAmount :float = 5;
 
 private var mainPlayerStatus : PlayerStatus;
@@ -102,8 +102,8 @@ function Update () {
 	for (var go : GameObject in gos)  {
 		if (PlayerInRange(go)) {
 	    	var status : PlayerStatus = go.GetComponent(PlayerStatus);
-	    	go.SendMessage("SetClosestBase", this, SendMessageOptions.DontRequireReceiver);
-    		if (!status.IsDead()) {
+	    	if (!status.IsDead()) {
+	    		go.SendMessage("SetClosestBase", this, SendMessageOptions.DontRequireReceiver);
     			if (status.team != teamTakingOver) {
 	    			if (teamTakingOver == null) {
 	    				teamTakingOver = status.team;
@@ -162,7 +162,7 @@ function OnTriggerStay(other : Collider) {
 				else
 					weapon = specialWeapons[0];
 					
-				Network.Instantiate(weapon, other.transform.position, Quaternion.identity,0);
+				Network.Instantiate(weapon, other.transform.position + Vector3(0,8,0), Quaternion.identity,0);
 					
 				other.gameObject.SendMessage("OnReachBase", SendMessageOptions.DontRequireReceiver);
 				enterTime = 0.0;

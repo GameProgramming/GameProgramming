@@ -16,10 +16,14 @@ function Awake() {
 		stepEv.functionName = "OnRightStep";
 		stepEv.time = 0;
 		anim["walk"].clip.AddEvent(stepEv);
+		anim["push"].clip.AddEvent(stepEv);
+		anim["rocketlauncher"].clip.AddEvent(stepEv);
 		stepEv = new AnimationEvent();
 		stepEv.functionName = "OnLeftStep";
 		stepEv.time = 15;
 		anim["walk"].clip.AddEvent(stepEv);
+		anim["push"].clip.AddEvent(stepEv);
+		anim["rocketlauncher"].clip.AddEvent(stepEv);
 		initialized = true;
 	}
 

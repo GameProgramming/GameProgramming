@@ -40,6 +40,8 @@ private var trail :ParticleSystem;
 private var appearing :float;
 private var terrain :Terrain;
 
+private var extrapolatedPosition :Vector3;
+
 function Start () {
 	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
@@ -55,7 +57,7 @@ function Start () {
 	
 	terrain = Terrain.activeTerrain;
 	trail = transform.Find("Trail").particleSystem;
-	transform.localScale = Vector3.zero; 
+	transform.localScale = Vector3.zero;
 }
 
 function Awake () {
@@ -113,12 +115,19 @@ function Update () {
 	}
 	
 	appearing = Mathf.Clamp01(appearing + Time.deltaTime);
-	
 	transform.localScale = appearing * Vector3(radius,radius,radius);
 	particleTail.emissionRate = dir.magnitude * 10;
-		
+	
 	if (shot && dir.sqrMagnitude < 0.025) {
 		shot = false;
+	}
+	
+	if (!pushingPlayer) {
+		if (networkView.isMine) {
+			extrapolatedPosition = transform.position + (.1/Time.deltaTime) * dir; 
+		} else {
+			transform.position = Vector3.Lerp(transform.position, extrapolatedPosition, 2*Time.deltaTime);
+		}
 	}
 }
 
@@ -147,7 +156,7 @@ function Move (offset : Vector3) {
 		offset.y = 0;
 		
 		rigidbody.MovePosition(transform.position + (offset -  correctionVector));
-
+		extrapolatedPosition = transform.position;
 	}
 }
 
@@ -181,12 +190,19 @@ function PickItem(player:GameObject) {
 }
 
 function OnReachBase () {
-	if (pushingPlayer) { //tell the bot that his ball has reached the base
+	if (pushingPlayer) {
 		pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 	}
-	collider.enabled = false;
-	yield WaitForSeconds(0.5);
+	networkView.RPC("NetReachBase", RPCMode.All);
+	yield WaitForSeconds(1);
 	Network.Destroy(gameObject);
+}
+
+@RPC
+function NetReachBase () {
+	particleSystem.gravityModifier = -0.7;
+	particleSystem.Emit(90);
+	collider.enabled = false;
 }
 
 function SmashBallToSnowfield () {
@@ -219,9 +235,7 @@ function OnDestroy () {
 
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     stream.Serialize(ballSize);
-    var pos :Vector3 = transform.localPosition;
-    stream.Serialize(pos);
-    transform.localPosition = pos;
+    stream.Serialize(extrapolatedPosition);
 }
 
 @script RequireComponent (BigSnowBallDamage)

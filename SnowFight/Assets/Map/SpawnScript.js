@@ -14,7 +14,7 @@ function Update () {
 	//The we can use the player in spawn only.
 	if (occupied) {
 		occupiedTime += Time.deltaTime;
-		if (occupiedTime >= 3.0) {
+		if (occupiedTime >= 1.5) {
 			occupied = false;
 			occupiedTime = 0.0;
 		}

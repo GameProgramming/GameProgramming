@@ -95,6 +95,10 @@ function Update () {
 		}
 		switch (state) {
 		case PlayerState.Dead:
+			if (IsMainPlayer() && spawnBaseID > 0) {
+				RadialProgress.SetRadialProgress("respawning",
+					(Time.time - killTime)/respawnTimeout);
+			}
 			if (Time.time > killTime + respawnTimeout && spawnBaseID > 0) {
 				Respawn();
 			}
@@ -481,7 +485,17 @@ function OnPlayerConnected(newPlayer: NetworkPlayer) {
 }
 
 function Regenerate (hpAmount :int) {
-	hp = Mathf.Clamp(hp + hpAmount, 0, fullHp);
+	if (Network.isServer) {
+		hp = Mathf.Clamp(hp + hpAmount, 0, fullHp);
+		networkView.RPC("NetRegenerate", RPCMode.Others, hp);
+		SendMessage("OnRegenerate", hpAmount, SendMessageOptions.DontRequireReceiver);
+	}
+}
+
+@RPC
+function NetRegenerate (newHp :int) {
+	var hpAmount = newHp - hp;
+	hp = newHp;
 	SendMessage("OnRegenerate", hpAmount, SendMessageOptions.DontRequireReceiver);
 }
 

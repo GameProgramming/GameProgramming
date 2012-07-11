@@ -42,6 +42,8 @@ var initialAmmo :int = 4;
 private var ammo :int = initialAmmo;
 private var alive :boolean = true;
 
+private var terrheight :float;
+
 function Start() {
     lineRenderer = GetComponent(LineRenderer);
     lineRenderer.SetVertexCount(3);
@@ -55,7 +57,7 @@ function Start() {
 	for (var i :int = 0; i < initialAmmo; i++) {
 		ammoModels[i] = transform.Find("Item/Ammo"+i.ToString());
 	}
-	
+	terrheight = Terrain.activeTerrain.SampleHeight(transform.position) + 1;
 	weaponModel.gameObject.active = false;
 	itemModel.gameObject.SetActiveRecursively(true);
 }
@@ -112,6 +114,7 @@ function Update () {
 		lineRenderer.enabled = false;
 		aimingCircleOuter.renderer.enabled = false;
 		aimingCircleInner.renderer.enabled = false;
+		transform.position.y = Mathf.MoveTowards(transform.position.y, terrheight, 15*Time.deltaTime);
 		
 //		if (everUsed) {
 //			unusedTime += Time.deltaTime;
@@ -153,7 +156,7 @@ function Release () {
 	weaponModel.gameObject.active = false;
 	itemModel.gameObject.SetActiveRecursively(true);
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer(null);
-	transform.position.y = Terrain.activeTerrain.SampleHeight(transform.position) + 1;
+	terrheight = Terrain.activeTerrain.SampleHeight(transform.position) + 1;
 	transform.localRotation = Quaternion.identity;
 	for (var i :int = ammo; i < initialAmmo; i++) {
 		ammoModels[i].gameObject.SetActiveRecursively(false);

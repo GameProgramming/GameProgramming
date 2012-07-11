@@ -346,4 +346,9 @@ function SetClosestBase (base :TeamBase) {
 	healthParticles.enableEmission = base.team == team && !playerStatus.HasFullHp();
 }
 
+function OnLand() {
+	body.SendMessage("OnRightStep");
+	body.SendMessage("OnLeftStep");
+}
+
 @script RequireComponent (NetworkView)

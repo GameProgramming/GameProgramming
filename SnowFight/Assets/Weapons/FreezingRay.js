@@ -33,7 +33,7 @@ function Update () {
 	energy += Time.deltaTime;
 	if (inputFire) {
 		PlayAudio(onFreezingSound);
-		energy -= Time.deltaTime * 2;
+		energy -= Time.deltaTime * 4;
 		this.transform.Rotate(0,Time.deltaTime * (5.0+energy) * 100.0,0);
 	}else{
 		StopAudio();
