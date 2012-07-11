@@ -162,7 +162,7 @@ function OnTriggerStay(other : Collider) {
 				else
 					weapon = specialWeapons[0];
 					
-				Network.Instantiate(weapon, other.transform.position, Quaternion.identity,0);
+				Network.Instantiate(weapon, other.transform.position + Vector3(0,8,0), Quaternion.identity,0);
 					
 				other.gameObject.SendMessage("OnReachBase", SendMessageOptions.DontRequireReceiver);
 				enterTime = 0.0;

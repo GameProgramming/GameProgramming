@@ -190,12 +190,19 @@ function PickItem(player:GameObject) {
 }
 
 function OnReachBase () {
-	if (pushingPlayer) { //tell the bot that his ball has reached the base
+	if (pushingPlayer) {
 		pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 	}
-	collider.enabled = false;
-	yield WaitForSeconds(0.5);
+	networkView.RPC("NetReachBase", RPCMode.All);
+	yield WaitForSeconds(1);
 	Network.Destroy(gameObject);
+}
+
+@RPC
+function NetReachBase () {
+	particleSystem.gravityModifier = -0.7;
+	particleSystem.Emit(90);
+	collider.enabled = false;
 }
 
 function SmashBallToSnowfield () {

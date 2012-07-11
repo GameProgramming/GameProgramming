@@ -9,6 +9,7 @@ private var velo :Vector3 = Vector3.zero;
 
 var onHoverSound  : AudioClip;
 var onMovingSound  : AudioClip;
+var explosion :GameObject;
 
 @System.NonSerialized
 private var terrain :Terrain;
@@ -166,8 +167,12 @@ function Crash () {
 }
 
 function OnDestroy() {
+	Debug.Log("Destroy UFO");
+	if (hp <= 0) {
+		Instantiate(explosion, transform.position, transform.rotation);
+	}
+	
 	if (owner) {
-		Debug.Log("Destroy UFO");
 		owner.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
 		var attack = new Attack();
 		attack.damageType = DamageType.Crash;
