@@ -130,7 +130,7 @@ function Idle ()
 					}
 				}
 				tar = teamAI.FindClosestEnemy();			
-				if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
+				if (tar && ((Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2) || pStatus.IsRidingUfo())) {
 					target = tar;
 					yield Attack();	
 				}
@@ -540,7 +540,7 @@ function Attack ()
 			
 			// depending on the angle, start moving
 			direction = transform.TransformDirection(Vector3.forward * attackSpeed * move);
-			moveDir = Vector3.zero;
+		//	moveDir = Vector3.zero;
 		} else {
 			// The angle of our forward direction and the player position is larger than 100 degrees
 			// That means he is out of sight
@@ -568,16 +568,24 @@ function Attack ()
 			
 			//we're getting too close, move back!
 			if (distanceToEnemy < shootDistance*0.1 && !pStatus.IsRidingUfo())
-				backup = true;
+				backup = true; 
 			
 			//we're far away now, move closer again
 			if (backup && distanceToEnemy > shootDistance)
 				backup = false;
 				
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
-		 	if (Random.value > 0.7 && pStatus.IsRidingUfo() && AboveTarget() && 
-		 	(target.GetComponent(PlayerStatus) && !target.GetComponent(PlayerStatus).IsRidingUfo())) {
-		 		motor.inputAltFire = true;
+			if (pStatus.IsRidingUfo()) {
+//				if(target.GetComponent(PlayerStatus).IsRidingUfo()) {
+//					motor.inputFire = !motor.inputFire;
+//				}
+//			 	else 
+//				MoveTowardsPosition (target.transform.position);
+//				direction = moveDir;
+				if (target.GetComponent(PlayerStatus) && AboveTarget() && Random.value > 0.7) {
+			 		motor.inputAltFire = true;
+//					motor.inputAltFire = !motor.inputAltFire;
+			 	}
 		 	}
 		 	
 		 	//we've turned our back and suffer a loss of memory
@@ -601,13 +609,7 @@ function Attack ()
 	 			//motor.inputFire = !motor.inputFire;
 		 		if (weapon && weapon.CompareTag("Weapon")) {
 	 				RL = weapon.GetComponent(RocketLauncher);
-		 			if(RL) {		 		
-		 				if (!RL.HasAmmo()) {
-		 					itemManager.ReleaseItem();
-		 					RemoveTarget();
-		 					return;
-		 				}
-		 					
+		 			if(RL) {		 				 					
 //		 				if(newTransform == null){
 //		 					newTransform = target.transform;
 //		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
@@ -645,16 +647,29 @@ function Attack ()
 		 		}
 		 	}
 
+
+			if (RL && !RL.HasAmmo()) {
+				itemManager.ReleaseItem();
+				RemoveTarget();
+				return;
+			}
 			//shoot and move around a bit ;)
 //			if((pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
 			if (distanceToEnemy < shootDistance && !RL) {
-				if (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3)
-					motor.inputAltFire = !motor.inputAltFire;
-				//either we're on foot, or we're in a ufo and so is our target
-				else if (!pStatus.IsRidingUfo() || (pStatus.IsRidingUfo() && target.GetComponent(PlayerStatus).IsRidingUfo()))
-					motor.inputFire = !motor.inputFire;
+				//if (!pStatus.IsRidingUfo()) {
+					if (!pStatus.IsRidingUfo() && (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3))
+						motor.inputAltFire = !motor.inputAltFire;
+					//either we're on foot, or we're in a ufo and so is our target
+					else if (!pStatus.IsRidingUfo() || (pStatus.IsRidingUfo() && target.GetComponent(PlayerStatus).IsRidingUfo()))
+						motor.inputFire = !motor.inputFire;
+				//}
 				
-				direction = Vector3.left * strafing;
+//				if (pStatus.IsRidingUfo()) {
+//					RotateTowardsPosition(target.transform.position, rotateSpeed);
+//					MoveTowardsPosition (target.transform.position);
+//					direction = moveDir;
+//				}
+			
 				if (Random.value > 0.9) {
 					strafing = 0;
 					var x = Random.value;
@@ -662,9 +677,17 @@ function Attack ()
 					if (x < 0.3) strafing = -1;
 					if (x > 0.95) motor.inputJump = true;
 				}
+				direction = Vector3.left * strafing;
 			}
 
-			if (backup)
+			if (pStatus.IsRidingUfo()) {
+				RotateTowardsPosition(target.transform.position, rotateSpeed);
+				MoveTowardsPosition (target.transform.position);
+				direction = moveDir;
+			}
+
+
+			if (backup && !pStatus.IsRidingUfo())
 				moveDir = -direction;
 			else
 				moveDir = direction;
