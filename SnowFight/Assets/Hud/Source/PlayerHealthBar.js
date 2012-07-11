@@ -76,7 +76,8 @@ function OnGUI() {
 		if (inUFO) {
 			var ray : FreezingRay = transform.GetComponentInChildren(FreezingRay);
 			GUI.Label( Rect (x+35, y-10, 30, 30), energyIcon);
-			DrawBar ( Rect(x+50, y+2, 180-3*playerInfoShift, 10), ray.energy / ray.energyMax,
+			if(ray)
+				DrawBar ( Rect(x+50, y+2, 180-3*playerInfoShift, 10), ray.energy / ray.energyMax,
 					Color(0.6, 0.8, 0.0,0.6), 0);
 		}
 		

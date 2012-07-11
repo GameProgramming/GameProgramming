@@ -8,9 +8,7 @@ var attackRotateSpeed = 20.0;
 
 var idleTime = 1.6;
 
-var punchRadius = 10;//7.1;
-//var freezeRadius = 50.0;
-//var sightRadius = 50.0;
+var punchRadius = 10;
 
 private var attackAngle = 10.0;
 private var isAttacking = false;
@@ -36,7 +34,6 @@ private var alternateDir = Vector3.zero;
 
 private var busy : boolean = false;
 private var teamAI : TeamAI;
-//private var lostTarget : int = 0;
 private var targets : GameObject[];
 
 function Awake () {
@@ -50,7 +47,7 @@ function Start ()
 {	
 	yield WaitForSeconds(Random.value);
 			
-	//Idle might be the wrong name for the function.. this does it all
+	//Idle might be the wrong name for the function.. anyway this does it all
 	yield Idle();
 }
 
@@ -116,7 +113,7 @@ function Idle ()
 			itemManager.ReleaseItem();
 	
 			targets = teamAI.GetTargets(gameObject);
-				for (t in targets) {
+			for (t in targets) {
 	//		if (targets.Length > 0) {
 	//			var t = targets[0];
 				if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
@@ -194,7 +191,8 @@ function ConquerBase() {
 		
 		//if an enemy is too close forget this stuff and attack!!
 		var enemy = teamAI.FindClosestEnemy();
-		if(Random.value > 0.8 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance) {
+		if(Random.value > 0.8 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance &&
+			FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 			RemoveTarget();
 			return;
 		}
@@ -332,7 +330,6 @@ function GetAmmo () {
 	var alreadyThere : boolean = false;
 	var arrivalTime : float;
 	var reloadTime : float;
-	
 	itemManager.ReleaseItem();
 	
 	while (true) {
@@ -368,7 +365,8 @@ function GetAmmo () {
 				
 				if (Random.value > 0.999) {
 					enemy = teamAI.FindClosestEnemy();
-					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance) {
+					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
+						FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 						RemoveTarget();
 						return;
 					}
@@ -413,18 +411,7 @@ function RollBall ()
 					RemoveTarget();
 					return;
 				}
-					
-				//if an enemy is too close forget this stuff and attack!!
-//				var enemy = teamAI.FindClosestEnemy();
-//				if(Random.value > 0.8 && enemy && 
-//					Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
-//					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
-//					groundBaseFlag = null;
-//					RemoveTarget();
-//					return;
-//				}
-//				
-				//var ballRadius = target.GetComponent(Renderer).bounds.size.x * 0.5;
+
 				 //if we're close enough, try to get a hold of it
 				MoveTowardsPosition(target.transform.position);
 				
@@ -440,9 +427,11 @@ function RollBall ()
 					motor.inputAction = false;
 				}
 				
+				//if an enemy is too close forget this stuff and attack!!
 				if (Random.value > 0.9) {
 					enemy = teamAI.FindClosestEnemy();
-					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance) {
+					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
+						FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 						motor.inputAction = false;
 						groundBaseFlag = null;
 						RemoveTarget();
@@ -516,8 +505,8 @@ function Attack ()
 	
 	while (true) {
 		//if our target is dead, stop
-//		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) { //RELOAD
-		if (!target || targetPlayer.IsDead()) {
+		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) { //RELOAD
+//		if (!target || targetPlayer.IsDead()) {
 			RemoveTarget();
 			return;
 		}
@@ -576,15 +565,8 @@ function Attack ()
 				
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
 			if (pStatus.IsRidingUfo()) {
-//				if(target.GetComponent(PlayerStatus).IsRidingUfo()) {
-//					motor.inputFire = !motor.inputFire;
-//				}
-//			 	else 
-//				MoveTowardsPosition (target.transform.position);
-//				direction = moveDir;
 				if (target.GetComponent(PlayerStatus) && AboveTarget() && Random.value > 0.7) {
 			 		motor.inputAltFire = true;
-//					motor.inputAltFire = !motor.inputAltFire;
 			 	}
 		 	}
 		 	
@@ -598,7 +580,6 @@ function Attack ()
 		 	//the enemy is riding a ufo.. desperate times call for desperate measures
 		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() &&
 		 		!pStatus.IsRidingUfo()) {
-//	 		if (target.GetComponent(PlayerStatus) && !pStatus.IsRidingUfo()) {
 		 		//if we have a bazooka, use it!
 	 			//aim and then shoot
 	 			//-------------------------
@@ -606,38 +587,21 @@ function Attack ()
 	 			//meanwhile always rotate towards the ufo
 	 			//RotateTowardsPosition(target.transform.position, rotateSpeed)
 	 			//when lock-time is over, shoot
-	 			//motor.inputFire = !motor.inputFire;
 		 		if (weapon && weapon.CompareTag("Weapon")) {
 	 				RL = weapon.GetComponent(RocketLauncher);
-		 			if(RL) {		 				 					
-//		 				if(newTransform == null){
-//		 					newTransform = target.transform;
-//		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
-//		 				}
-		 			  	//if(newTransform.position.x lostTarget){
-		 			  	//	target.GetComponent(PlayerStatus).isLockedTarget = false;
-		 			  	//	newTransform = null;
-		 			  	//	lostTarget +=1;
-		 				//}
-		 				
+		 			//if(RL) {		 				 					
 		 			  	if (RL.getProgress() < RL.aimFor){
 		 			  		RL.addToProgress(Time.deltaTime);
-		 			  		
-//		 			  		Debug.Log("NT:"+newTransform.position);
-//		 			  		Debug.Log("lostLock:"+lostTarget);
-		 			  		//transform.LookAt(target.transform);	//locked = true;
-							//	RL.Fire(1);
+
 							var angleY = Vector3.Angle(target.transform.position-transform.position, transform.forward);
 		 			  		motor.Rotate (0, angleY);
 						}else if (RL.getProgress() >= RL.aimFor){
+							Debug.Log("SHOOT! " + Time.time,this);
+							RL.SetTarget(target);
 							motor.inputFire = !motor.inputFire;
-							//Debug.Log("SHOOT!!!!!!!!");
-								//RL.Fire(2);
-								target.GetComponent(PlayerStatus).isLockedTarget = false;
-								//newTransform = null;
-		 			  			//lostTarget = 0;
+							target.GetComponent(PlayerStatus).isLockedTarget = false;
 						}
-		 			}		 			
+		 			//}		 			
 		 		}
 		 		else { //if there's a bazooka lying around, go get it!
 		 			//hopefully do something useful in TeamAI!
@@ -655,21 +619,15 @@ function Attack ()
 			}
 			//shoot and move around a bit ;)
 //			if((pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
-			if (distanceToEnemy < shootDistance && !RL) {
-				//if (!pStatus.IsRidingUfo()) {
-					if (!pStatus.IsRidingUfo() && (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3))
-						motor.inputAltFire = !motor.inputAltFire;
-					//either we're on foot, or we're in a ufo and so is our target
-					else if (!pStatus.IsRidingUfo() || (pStatus.IsRidingUfo() && target.GetComponent(PlayerStatus).IsRidingUfo()))
-						motor.inputFire = !motor.inputFire;
-				//}
+			if (distanceToEnemy < shootDistance && !(weapon && weapon.CompareTag("Weapon"))) {
+				if (!pStatus.IsRidingUfo() && (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3))
+					motor.inputAltFire = !motor.inputAltFire;
+				//either we're on foot, or we're in a ufo and so is our target
+				else if (!pStatus.IsRidingUfo() || (pStatus.IsRidingUfo() && target.GetComponent(PlayerStatus).IsRidingUfo()))
+					motor.inputFire = !motor.inputFire;
+				if(weapon && weapon.CompareTag("Weapon"))
+				Debug.Log("here with bazooka " + Time.time, this);
 				
-//				if (pStatus.IsRidingUfo()) {
-//					RotateTowardsPosition(target.transform.position, rotateSpeed);
-//					MoveTowardsPosition (target.transform.position);
-//					direction = moveDir;
-//				}
-			
 				if (Random.value > 0.9) {
 					strafing = 0;
 					var x = Random.value;
@@ -680,6 +638,7 @@ function Attack ()
 				direction = Vector3.left * strafing;
 			}
 
+			//hack to make sure the ufo really flies above the enemy to use freeze rays
 			if (pStatus.IsRidingUfo()) {
 				RotateTowardsPosition(target.transform.position, rotateSpeed);
 				MoveTowardsPosition (target.transform.position);
@@ -692,11 +651,10 @@ function Attack ()
 			else
 				moveDir = direction;
 			
-//			if (Random.value > 0.99 && !pStatus.IsRidingUfo() && !itemManager.GetItem()) {
-			if (Random.value > 0.999 && !itemManager.GetItem()) {
-				RemoveTarget();
-				return;
-			}
+//			if (Random.value > 0.99 && !itemManager.GetItem()) {
+//				RemoveTarget();
+//				return;
+//			}
 		}
 
 		// yield for one frame
