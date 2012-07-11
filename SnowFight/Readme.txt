@@ -113,4 +113,5 @@ Gameplay Programmer: Andreas Büscher
 Graphics Programmer : Hannes Rammer
 
 We also like to thank all the people in the course, who gave us feedback on our game,
-so we could improve it.
+so we could improve it. And of course we like to thank Thomas Bedenk and Johannes
+Giering that they could provide this course for us.
