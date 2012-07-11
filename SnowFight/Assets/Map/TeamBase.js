@@ -102,8 +102,8 @@ function Update () {
 	for (var go : GameObject in gos)  {
 		if (PlayerInRange(go)) {
 	    	var status : PlayerStatus = go.GetComponent(PlayerStatus);
-	    	go.SendMessage("SetClosestBase", this, SendMessageOptions.DontRequireReceiver);
-    		if (!status.IsDead()) {
+	    	if (!status.IsDead()) {
+	    		go.SendMessage("SetClosestBase", this, SendMessageOptions.DontRequireReceiver);
     			if (status.team != teamTakingOver) {
 	    			if (teamTakingOver == null) {
 	    				teamTakingOver = status.team;
