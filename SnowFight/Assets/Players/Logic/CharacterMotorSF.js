@@ -283,6 +283,8 @@ private function UpdateFunction () {
 	if (playerState == PlayerState.Alive) {
 		AdjustPlayerSpeed();
 		
+		movement.velocity = Vector3.ClampMagnitude(movement.velocity,10);
+		
 		// We copy the actual velocity into a temporary variable that we can manipulate.
 		var velocity : Vector3 = movement.velocity;
 		
@@ -412,6 +414,7 @@ private function UpdateFunction () {
 	        movingPlatform.activeLocalRotation = Quaternion.Inverse(movingPlatform.activePlatform.rotation) * movingPlatform.activeGlobalRotation; 
 		}
 	} else if (playerState == PlayerState.Dead) {
+		movement.velocity = Vector3.ClampMagnitude(movement.velocity, 10);
 		movement.velocity = ApplyGravityAndJumping (movement.velocity);
 		controller.Move(movement.velocity);
 	} else if (playerState == PlayerState.InVehicle) {

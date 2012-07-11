@@ -239,7 +239,7 @@ function CandidateTooFarAway() {
 
 //Check if another player might already hold the item
 function ItemNotHeld(it : GameObject) : boolean {
-	return (it.CompareTag("BigSnowball") 
+	return (false//it.CompareTag("BigSnowball") 
 		|| !it.transform.parent
 		|| !it.transform.parent.CompareTag("Player"));
 }
