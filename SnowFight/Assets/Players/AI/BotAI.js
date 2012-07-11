@@ -130,7 +130,7 @@ function Idle ()
 					}
 				}
 				tar = teamAI.FindClosestEnemy();			
-				if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
+				if (tar && ((Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2) || pStatus.IsRidingUfo())) {
 					target = tar;
 					yield Attack();	
 				}
@@ -568,7 +568,7 @@ function Attack ()
 			
 			//we're getting too close, move back!
 			if (distanceToEnemy < shootDistance*0.1 && !pStatus.IsRidingUfo())
-				backup = true;
+				backup = true; 
 			
 			//we're far away now, move closer again
 			if (backup && distanceToEnemy > shootDistance)
@@ -580,6 +580,8 @@ function Attack ()
 //					motor.inputFire = !motor.inputFire;
 //				}
 //			 	else 
+//				MoveTowardsPosition (target.transform.position);
+//				direction = moveDir;
 				if (target.GetComponent(PlayerStatus) && AboveTarget() && Random.value > 0.7) {
 			 		motor.inputAltFire = true;
 //					motor.inputAltFire = !motor.inputAltFire;
@@ -662,7 +664,12 @@ function Attack ()
 						motor.inputFire = !motor.inputFire;
 				//}
 				
-				direction = Vector3.left * strafing;
+//				if (pStatus.IsRidingUfo()) {
+//					RotateTowardsPosition(target.transform.position, rotateSpeed);
+//					MoveTowardsPosition (target.transform.position);
+//					direction = moveDir;
+//				}
+			
 				if (Random.value > 0.9) {
 					strafing = 0;
 					var x = Random.value;
@@ -670,7 +677,15 @@ function Attack ()
 					if (x < 0.3) strafing = -1;
 					if (x > 0.95) motor.inputJump = true;
 				}
+				direction = Vector3.left * strafing;
 			}
+
+			if (pStatus.IsRidingUfo()) {
+				RotateTowardsPosition(target.transform.position, rotateSpeed);
+				MoveTowardsPosition (target.transform.position);
+				direction = moveDir;
+			}
+
 
 			if (backup && !pStatus.IsRidingUfo())
 				moveDir = -direction;
