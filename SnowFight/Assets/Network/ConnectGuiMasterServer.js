@@ -219,6 +219,12 @@ function MakeStartWindow (id : int) {
 		GUILayout.EndHorizontal();
 		
 		GUILayout.BeginHorizontal();
+		if (GUILayout.Button("Start Singleplayer")) {
+			StartServer (serverName, levels[selectedLevelId]);
+		}
+		GUILayout.EndHorizontal();
+		
+		GUILayout.BeginHorizontal();
 		GUILayout.Label("Server Name");
 		serverName = GUILayout.TextField(serverName);
 		GUILayout.EndHorizontal();
@@ -238,7 +244,7 @@ function MakeStartWindow (id : int) {
 		humanPlayers = GUILayout.TextField(humanPlayers);
 		GUILayout.EndHorizontal();
 		
-		if (GUILayout.Button ("Start Server / Singleplayer")) {
+		if (GUILayout.Button ("Start Server")) {
 			StartServer (serverName, levels[selectedLevelId]);
 		}
 	}
