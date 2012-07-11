@@ -37,7 +37,7 @@ private var alternateDir = Vector3.zero;
 private var busy : boolean = false;
 private var teamAI : TeamAI;
 private var lostTarget : int = 0;
-var newTransform : Transform = null;
+//var newTransform : Transform = null;
 
 function Awake () {
 	var game : GameStatus = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
@@ -554,7 +554,7 @@ function Attack ()
 			
 			shootDistance = punchRadius;
 			var weapon : GameObject = itemManager.GetItem();
-			if (weapon && weapon.CompareTag("Weapon")) {
+			if (weapon && (weapon.CompareTag("Weapon") || weapon.CompareTag("Ufo"))) {
  				shootDistance *= 3;
 	 			//get the closest enemy in a ufo if there is one
 	 			tar = teamAI.GetClosestFlyingEnemy(gameObject);
@@ -585,7 +585,8 @@ function Attack ()
 		 	}
 		 	
 		 	//the enemy is riding a ufo.. desperate times call for desperate measures
-		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() && !pStatus.IsRidingUfo()) {
+		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() &&
+		 		!pStatus.IsRidingUfo()) {
 //	 		if (target.GetComponent(PlayerStatus) && !pStatus.IsRidingUfo()) {
 		 		//if we have a bazooka, use it!
 	 			//aim and then shoot
@@ -604,10 +605,10 @@ function Attack ()
 		 					return;
 		 				}
 		 					
-		 				if(newTransform == null){
-		 					newTransform = target.transform;
-		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
-		 				}
+//		 				if(newTransform == null){
+//		 					newTransform = target.transform;
+//		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
+//		 				}
 		 			  	//if(newTransform.position.x lostTarget){
 		 			  	//	target.GetComponent(PlayerStatus).isLockedTarget = false;
 		 			  	//	newTransform = null;
@@ -628,8 +629,8 @@ function Attack ()
 							//Debug.Log("SHOOT!!!!!!!!");
 								//RL.Fire(2);
 								target.GetComponent(PlayerStatus).isLockedTarget = false;
-								newTransform = null;
-		 			  			lostTarget = 0;
+								//newTransform = null;
+		 			  			//lostTarget = 0;
 						}
 		 			}		 			
 		 		}
