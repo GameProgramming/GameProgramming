@@ -138,9 +138,12 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 		var damageObject :BigSnowBallDamage = hit.transform.GetComponent(BigSnowBallDamage);
 		var lastOwner : GameObject = ball.GetLastOwner();
 		
-		if (hit.rigidbody.velocity.sqrMagnitude > 0.04 && lastOwner != gameObject) {
+		//Debug.Log("big snowball hit "+ball.velocity);
+		
+		if (ball.velocity.sqrMagnitude > 0.05 && lastOwner != gameObject) {
 			var attack = new Attack();
 			attack.damage = damageObject.GetDamage();
+			//Debug.Log("big snowball hit damage "+attack.damage);
 			// todo: die groesse vielleicht noch mit rein.
 			attack.attacker = lastOwner;
 			ApplyDamage(attack);

@@ -31,8 +31,10 @@ var fallSpeed : float = 9.81;
 var startSize : Vector3;
 private var startRadius : float;
 private var shot : boolean = false; 
+private var loadshot :float = 0;
 
 private var shootDirection : Vector3;
+var velocity :Vector3  = Vector3.zero;
 
 var snowRessource : GameObject;
 
@@ -43,7 +45,7 @@ private var terrain :Terrain;
 private var extrapolatedPosition :Vector3;
 
 function Start () {
-	collider.attachedRigidbody.useGravity = false;
+//	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
 	shot = false;
 	appearing = 0;
@@ -75,19 +77,31 @@ function Update () {
 				pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
 				SmashBallToSnowfield();
 			} else if (playerMotor.inputFire) {
+				loadshot += Time.deltaTime;
+			} else if (loadshot > 0.001) {
+				loadshot = Mathf.Clamp(loadshot, 0.5, 3);
 				shot = true;
-				rigidbody.velocity = (GetComponent(BigSnowBallDamage).GetSpeed() * 10 / ballSize)
+				velocity = loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / ballSize)
 									* pushingPlayer.transform.forward.normalized;//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;
-
+				loadshot = 0;
 				pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			}
 		}
 	}
 	
+	if (!pushingPlayer) {
+		GetComponent(CharacterController).Move(Time.deltaTime * velocity);
+	}
+	
 	//else if (rollBall) {
 	radius = startRadius * ballSize / 10;
 	//Debug.Log(radius);
+
+	var terrH :float = Terrain.activeTerrain.SampleHeight(transform.position);
+	if (terrH  + radius/2 < transform.position.y && shot)
+		velocity += 2 * Time.deltaTime * velocity.normalized;
+	if (collider.enabled) transform.position.y = terrH + radius/2;
 
 	//rotate ball while rolling
 	var dir :Vector3 = transform.position - lastPosition;
@@ -136,7 +150,8 @@ function LateUpdate () {
 }
 
 function FixedUpdate () {
-   	rigidbody.velocity.y += -1 * fallSpeed * Time.deltaTime;
+	velocity = Vector3.MoveTowards(velocity, Vector3(0,0,0), (15+5*radius)*Time.deltaTime);
+ //  	rigidbody.velocity.y += -1 * fallSpeed * Time.deltaTime;
 }
 
 function Move (offset : Vector3) {
@@ -145,17 +160,16 @@ function Move (offset : Vector3) {
 		var playerController = pushingPlayer.GetComponent(CharacterController);
 		var playerTransform :Transform = pushingPlayer.transform;
 		//try to make sure the ball is infront of the player
-		var minDistance = playerController.radius + radius + 0.2;
+		var minDistance = playerController.radius + radius*.7 + 0.3;
 		var desiredPos : Vector3 = playerTransform.position + playerTransform.forward * minDistance;
-		var correctionVector : Vector3 = transform.position - desiredPos;
-		correctionVector.Normalize();
-		correctionVector *= ballCorrectionSpeed;
-		correctionVector *= Time.deltaTime;
-
+		var correctionVector : Vector3 = Vector3.ClampMagnitude(
+						transform.position - desiredPos,ballCorrectionSpeed* Time.deltaTime);
 		correctionVector.y = 0.0;
 		offset.y = 0;
-		rigidbody.MovePosition(transform.position + (offset -  correctionVector));
-		//rigidbody.velocity = offset - correctionVector;
+		
+		//rigidbody.MovePosition(transform.position + (offset -  correctionVector));
+		//transform.position += (offset -  correctionVector);
+		GetComponent(CharacterController).Move(offset -  correctionVector);
 		extrapolatedPosition = transform.position;
 	}
 }
@@ -174,7 +188,8 @@ function IsBallTooFarAway (player : GameObject) : boolean {
 function Release () {
 	if (pushingPlayer) {
 		if (!shot)
-			rigidbody.velocity = Vector3.zero;
+			velocity = Vector3.zero;
+		loadshot = 0;
 		transform.parent = null;
 		pushingPlayer = null;
 	}
@@ -185,6 +200,7 @@ function PickItem(player:GameObject) {
 	pushingPlayer = player;
 	transform.parent = pushingPlayer.transform;
 	playerMotor = player.GetComponent(CharacterMotorSF);
+	loadshot = 0;
 	shot = false;
 	//networkView.enabled = false;
 }
@@ -194,6 +210,7 @@ function OnReachBase () {
 		pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 	}
 	networkView.RPC("NetReachBase", RPCMode.All);
+	velocity = 10 * Vector3.down;
 	yield WaitForSeconds(1);
 	Network.Destroy(gameObject);
 }
@@ -203,6 +220,7 @@ function NetReachBase () {
 	particleSystem.gravityModifier = -0.7;
 	particleSystem.Emit(90);
 	collider.enabled = false;
+	velocity = 10 * Vector3.down;
 }
 
 function SmashBallToSnowfield () {
@@ -210,6 +228,7 @@ function SmashBallToSnowfield () {
 	var res :GameObject = Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
 	res.GetComponent(SnowRessource).CreateResourceFromSnowball(ballSize);
 	collider.enabled = false;
+	velocity = 20 * Vector3.down;
 	yield WaitForSeconds(0.5);
 	Network.Destroy(gameObject);
 }
