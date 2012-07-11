@@ -73,10 +73,10 @@ function Update () {
 		}	  		
 			
 		var canShoot : boolean = bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0;
-		var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= bulletSpawn.GetComponent(BulletSpawn).snowCosts;
+		//var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= bulletSpawn.GetComponent(BulletSpawn).snowCosts;
 		
 		
-		if (canShoot && hasSnowballs) {
+		if (canShoot) {
 			
 			if(target){
 				//Debug.Log("Hold Aim for " + (aimFor - progress) + "seconds");		
@@ -151,6 +151,7 @@ function Update () {
 
 function Release () {
 	owner = null;
+	playerStatus = null;
 	transform.parent = null;
 	collider.enabled = true;
 	weaponModel.gameObject.active = false;
