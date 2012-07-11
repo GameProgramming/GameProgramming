@@ -36,8 +36,8 @@ private var alternateDir = Vector3.zero;
 
 private var busy : boolean = false;
 private var teamAI : TeamAI;
-private var lostTarget : int = 0;
-var newTransform : Transform = null;
+//private var lostTarget : int = 0;
+private var targets : GameObject[];
 
 function Awake () {
 	var game : GameStatus = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
@@ -115,7 +115,7 @@ function Idle ()
 			moveDir = Vector3.zero;
 			itemManager.ReleaseItem();
 	
-			var targets : GameObject[] = teamAI.GetTargets(gameObject);
+			targets = teamAI.GetTargets(gameObject);
 				for (t in targets) {
 	//		if (targets.Length > 0) {
 	//			var t = targets[0];
@@ -350,6 +350,7 @@ function GetAmmo () {
 				motor.inputAction = true;
 				buildingBall = Time.time;
 				yield WaitForSeconds(GetComponent(ItemManager).srPickTime);
+//				targets = [];
 				RemoveTarget();
 				return;
 			}
@@ -365,7 +366,7 @@ function GetAmmo () {
 			if (Vector3.Distance(transform.position, target.transform.position) >= 1) {
 				MoveTowardsPosition(target.transform.position);
 				
-				if (Random.value > 0.9) {
+				if (Random.value > 0.999) {
 					enemy = teamAI.FindClosestEnemy();
 					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance) {
 						RemoveTarget();
@@ -414,15 +415,15 @@ function RollBall ()
 				}
 					
 				//if an enemy is too close forget this stuff and attack!!
-				var enemy = teamAI.FindClosestEnemy();
-				if(Random.value > 0.8 && enemy && 
-					Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
-					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
-					groundBaseFlag = null;
-					RemoveTarget();
-					return;
-				}
-				
+//				var enemy = teamAI.FindClosestEnemy();
+//				if(Random.value > 0.8 && enemy && 
+//					Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
+//					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+//					groundBaseFlag = null;
+//					RemoveTarget();
+//					return;
+//				}
+//				
 				//var ballRadius = target.GetComponent(Renderer).bounds.size.x * 0.5;
 				 //if we're close enough, try to get a hold of it
 				MoveTowardsPosition(target.transform.position);
@@ -457,6 +458,7 @@ function RollBall ()
 				if (ball.GetComponent(BigSnowBall).IsBallTooFarAway (gameObject)) {
 					groundBaseFlag = null;
 					RemoveTarget();
+					itemManager.ReleaseItem();
 					return;
 				}
 				
@@ -472,9 +474,10 @@ function RollBall ()
 					
 				if(BallAtBase(groundBaseFlag.position)) {
 					moveDir = Vector3.zero;
+//					targets = [];
 				}
 				else {
-					if (teamAI.WantsBazooka() || ball.GetComponent(BigSnowBall).HasReachedFullSize() || Vector3.Distance(transform.position, groundBaseFlag.position)>attackDistance) {
+					if (teamAI.WantsBazooka(gameObject) || ball.GetComponent(BigSnowBall).HasReachedFullSize() || Vector3.Distance(transform.position, groundBaseFlag.position)>attackDistance) {
 						MoveTowardsPosition(groundBaseFlag.position);
 					}
 					else {
@@ -554,7 +557,7 @@ function Attack ()
 			
 			shootDistance = punchRadius;
 			var weapon : GameObject = itemManager.GetItem();
-			if (weapon && weapon.CompareTag("Weapon")) {
+			if (weapon && (weapon.CompareTag("Weapon") || weapon.CompareTag("Ufo"))) {
  				shootDistance *= 3;
 	 			//get the closest enemy in a ufo if there is one
 	 			tar = teamAI.GetClosestFlyingEnemy(gameObject);
@@ -585,7 +588,8 @@ function Attack ()
 		 	}
 		 	
 		 	//the enemy is riding a ufo.. desperate times call for desperate measures
-		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() && !pStatus.IsRidingUfo()) {
+		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() &&
+		 		!pStatus.IsRidingUfo()) {
 //	 		if (target.GetComponent(PlayerStatus) && !pStatus.IsRidingUfo()) {
 		 		//if we have a bazooka, use it!
 	 			//aim and then shoot
@@ -604,10 +608,10 @@ function Attack ()
 		 					return;
 		 				}
 		 					
-		 				if(newTransform == null){
-		 					newTransform = target.transform;
-		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
-		 				}
+//		 				if(newTransform == null){
+//		 					newTransform = target.transform;
+//		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
+//		 				}
 		 			  	//if(newTransform.position.x lostTarget){
 		 			  	//	target.GetComponent(PlayerStatus).isLockedTarget = false;
 		 			  	//	newTransform = null;
@@ -628,8 +632,8 @@ function Attack ()
 							//Debug.Log("SHOOT!!!!!!!!");
 								//RL.Fire(2);
 								target.GetComponent(PlayerStatus).isLockedTarget = false;
-								newTransform = null;
-		 			  			lostTarget = 0;
+								//newTransform = null;
+		 			  			//lostTarget = 0;
 						}
 		 			}		 			
 		 		}

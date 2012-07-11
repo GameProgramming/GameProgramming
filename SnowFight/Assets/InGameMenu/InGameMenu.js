@@ -44,6 +44,8 @@ function Update() {
 function OnGUI () {
 
 	if (showIngameMenu) {
+		Screen.showCursor = true;
+		Screen.lockCursor = false;
 		ingameMenuRect = GUILayout.Window(0, ingameMenuRect, MakeIngameMenuRect, "Ingame Menu");
 	} else {
 		if (showChangeMap) {
