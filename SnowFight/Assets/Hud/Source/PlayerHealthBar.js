@@ -19,9 +19,57 @@ var healthIconGrey :Texture;
 var ufoIcon :Texture;
 var energyIcon :Texture;
 
+var quickInfo :String = "";
+var quickInfoProgress :float = 0;
+var quickInfoStyle :GUIStyle;
+private var quickInfoShadowStyle :GUIStyle;
+
+var player :PlayerStatus;
+
+function Awake () {
+	player = gameObject.GetComponent(PlayerStatus);
+	quickInfoShadowStyle = new GUIStyle(quickInfoStyle);
+	quickInfoShadowStyle.normal.textColor = Color.black;
+}
+
+function SetQuickInfo (info :String) {
+	quickInfo = info;
+	quickInfoProgress = 1;
+}
+
+function OnFrag (f :Frag) {
+	SetQuickInfo("You killed "+f.victim.playerName+".");
+}
+
+function OnDeath () {
+	if (player.GetLastAttack() && player.GetLastAttack().attacker) {
+		var attacker = player.GetLastAttack().attacker.GetComponent(PlayerStatus);
+		if (attacker == player) {
+			SetQuickInfo("You commited suicide.");
+		} else {
+			SetQuickInfo("You were killed by "+attacker.playerName);
+		}
+	} else {
+		SetQuickInfo("You died.");
+	}
+}
+
 function OnGUI() {
-	var player :PlayerStatus = gameObject.GetComponent(PlayerStatus);	
-	if (player.IsMainPlayer() && !player.IsDead()) {
+	if (!player.IsMainPlayer()) return; // should not happen, actually.
+	if (quickInfoProgress > 0) {
+		quickInfoProgress -= .1 * Time.deltaTime;
+		var xi :float;
+		if (quickInfoProgress > 0.8) {
+			xi = Screen.width - (Screen.width - 20) * 5*(1-quickInfoProgress);
+		} else if (quickInfoProgress > 0.2) {
+			xi = 20;
+		} else {
+			xi = Screen.width - (Screen.width - 20) * 5*(.4-quickInfoProgress);
+		}
+		GUI.Label(Rect(xi+1,Screen.height-98,300,50), quickInfo,quickInfoShadowStyle);
+		GUI.Label(Rect(xi,Screen.height-100,300,50), quickInfo,quickInfoStyle);
+	}
+	if (!player.IsDead()) {
 		var hpPercent : float = parseFloat(player.GetHp()) / parseFloat(player.GetFullHp());
 		var x :float = 10;
 		var y :float = Screen.height - 50;
@@ -80,111 +128,6 @@ function OnGUI() {
 				DrawBar ( Rect(x+50, y+2, 180-3*playerInfoShift, 10), ray.energy / ray.energyMax,
 					Color(0.6, 0.8, 0.0,0.6), 0);
 		}
-		
-//		if (!inUFO) {
-//			
-//		} else {
-//			//The UFO Health display.
-//			var uFOScript : Ufo = transform.GetComponentInChildren(Ufo);
-//			if (uFOScript) {
-//				var uFOHealthPercent = uFOScript.hp / uFOScript.maxHp;		
-//				var uFOHealthTexture : Texture2D = new Texture2D(1, 1);
-//				var uFOHealthColor : Color = color;
-//				var uFOHealthStyle : GUIStyle = new GUIStyle();
-//				var uFOHealthBoxWidth = uFOHealthPercent * (Screen.width/4);
-//				uFOHealthTexture.SetPixel(0, 0, uFOHealthColor);
-//				uFOHealthTexture.Apply();
-//				uFOHealthStyle.normal.background = uFOHealthTexture;
-//				GUI.Label (Rect (1, Screen.height - 80, 30, 30), ufoIcon);
-//				GUI.Box (Rect (29, Screen.height - 75, totalWidth + 2, boxHeight+2), "");
-//				GUI.Box (Rect (30, Screen.height - 74, uFOHealthBoxWidth, boxHeight), "", uFOHealthStyle);
-//				
-//				//The freezing ray display.
-//				var uFOFreezingTexture : Texture2D = new Texture2D(1, 1);
-//				var uFOFreezingColor : Color = Color(.8, 1, 0.2,0.6);;
-//				var uFOFreezingStyle : GUIStyle = new GUIStyle();
-//				var ray : FreezingRay = transform.GetComponentInChildren(FreezingRay);
-//				var rayPercent = ray.energy / ray.energyMax;
-//				var freezingRayBoxWidth = rayPercent * (Screen.width/4);
-//				uFOFreezingTexture.SetPixel(0, 0, uFOFreezingColor);
-//				uFOFreezingTexture.Apply();
-//				uFOFreezingStyle.normal.background = uFOFreezingTexture;
-//				GUI.Label (Rect (1, Screen.height - 50, 30, 30), energyIcon);
-//				GUI.Box (Rect (29, Screen.height - 50, totalWidth + 2, boxHeight+2), "");
-//				GUI.Box (Rect (30, Screen.height - 49, freezingRayBoxWidth, boxHeight), "", uFOFreezingStyle);
-//				
-//				//The player health
-//				GUI.Label (Rect (1, Screen.height - 30, 20, 20), player.team.teamIcon);
-//				GUI.Label (Rect (10, Screen.height - 25, 20, 20), healthIcon);
-//				GUI.Box (Rect (29, Screen.height - 25, (totalWidth+2)/2, (boxHeight+2)/2), "");
-//				GUI.Box (Rect (30, Screen.height - 24, boxWidth/2, boxHeight/2), "",style);
-//			}
-//		}
-//		
-//		
-//		//Create a new texture and style.
-//		texture = new Texture2D(1, 1);
-//		color = new Color(1, 1, 1, 1);
-//		style = new GUIStyle();
-//		//Width of a single box.
-//		boxWidth = 18;
-//		//Height of a single box.
-//		boxHeight = 18;
-//		//Set the style.
-//		texture.SetPixel(0, 0, color);
-//		texture.Apply();
-//		style.normal.background = texture;
-//		
-//		//Get the number of maximum balls.
-//		var numberOfBoxes = player.GetMaximumSnowballs();
-//		//Get the number of current snowballs.
-//		var numberOfSnowballs = player.GetCurrentSnowballs();
-//		var j : int = boxWidth * numberOfBoxes + 50;
-//		
-//		if (!inUFO) {
-//			//Create the boxes for the rocket launcher.
-//			if (hasRocketLauncher) {
-//				var maxNumberOfRockets : int = rocketLauncher.initialAmmo;
-//				var numberOfRockets : int = rocketLauncher.GetAmmo();
-//				j = boxWidth*2*maxNumberOfRockets + 50;
-//				for (i=0; i<maxNumberOfRockets; i++) {
-//					if (i < numberOfRockets) {
-//						GUI.Label (Rect (Screen.width - j, Screen.height - boxHeight * 4, boxWidth*4, boxHeight*4), rocketTexture);
-//					}
-//					j -= boxWidth * 2;
-//				}
-//				if (numberOfRockets == 0) {
-//					GUI.Label (Rect (Screen.width - 200, Screen.height - boxHeight * 2, 200, 30), "No Rockets anymore.", neutralStyle);
-//				}
-//			} else {
-//				//Now create the boxes.
-//				for (i=0; i<numberOfBoxes; i++) {			
-//					if (i < numberOfSnowballs) {
-//						GUI.Label (Rect (Screen.width - j, Screen.height - boxHeight * 2, boxWidth*2, boxHeight*2), snowballTexture);
-//					}
-//					j -= boxWidth;
-//				}
-//				if (numberOfSnowballs == 0) {
-//					GUI.Label (Rect (Screen.width - 200, Screen.height - boxHeight * 2, 200, 30), "No Snowballs anymore.", neutralStyle);
-//				}
-//			}
-//
-//
-//		} else {
-//			j = boxWidth * numberOfBoxes * 0.8 + 50;
-//			//Now create the boxes.
-//			for (i=0; i<numberOfBoxes; i++) {
-//				if (i < numberOfSnowballs) {
-//					GUI.Label (Rect (Screen.width - j, Screen.height - boxHeight * 1.5, boxWidth * 1.5, boxHeight*1.5), snowballTexture);
-//				}
-//				j -= boxWidth * 0.8;
-//			}
-//			if (numberOfSnowballs == 0) {
-//				GUI.Label (Rect (Screen.width - 200, Screen.height - boxHeight, 200, 30), "No Snowballs anymore.", neutralStyle);
-//			}
-//		}
-//
-		//GUI.Box (Rect (Screen.width/1.4 + (totalWidth-boxWidth), 10, boxWidth, boxHeight), "",style);
 	}
 }
 

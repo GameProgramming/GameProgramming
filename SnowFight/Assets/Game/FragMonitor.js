@@ -16,10 +16,11 @@ function Awake () {
 function OnPlayerDeath (pl :PlayerStatus) {
 	var f :Frag = new Frag();
 	f.victim = pl;
+	f.time = Time.time;
 	if (pl.GetLastAttack() && pl.GetLastAttack().attacker) {
 		f.attacker = pl.GetLastAttack().attacker.GetComponent(PlayerStatus);
+		f.attacker.SendMessage("OnFrag", f);
 	}
-	f.time = Time.time;
 	fragLog.Add(f);
 }
 
