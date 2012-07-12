@@ -68,7 +68,7 @@ function GetTargets (player : GameObject) : GameObject[] {
 				closestBall = GetClosestObjectInArray(player, snowBalls);
 				var closestRessource = GetClosestObjectInArray(player, snowRessources);
 				if (closestBall && Vector3.Distance(player.transform.position, closestBall.transform.position) < 
-					Vector3.Distance(player.transform.position, closestRessource.transform.position))
+					Vector3.Distance(player.transform.position, closestRessource.transform.position)*4)
 					targets += [closestBall];
 				else 
 					targets += [closestRessource];
@@ -283,6 +283,6 @@ function FindClosestEnemy () : GameObject {
 }
 
 function WantsBazooka (player:GameObject) : boolean {
-	return (GetClosestFlyingEnemy(player)!=null && Random.value>0.5);
+	return (GetClosestFlyingEnemy(player)!=null);// && Random.value>0.5);
 //	return wantBazooka;
 }

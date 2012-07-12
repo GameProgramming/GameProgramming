@@ -414,7 +414,6 @@ function GetAmmo () {
 function RollBall ()
 {
 	groundBaseFlag = null;
-	itemManager.ReleaseItem();
 	
 	while (true) {
 		motor.inputAction = false;
@@ -444,6 +443,10 @@ function RollBall ()
 
 				 //if we're close enough, try to get a hold of it
 				MoveTowardsPosition(target.transform.position);
+				
+				if (Vector3.Distance(transform.position, target.transform.position) < 5) {
+					itemManager.ReleaseItem();
+				}
 				
 				var candidateItem = itemManager.GetCandidateItem();
 				if(candidateItem && candidateItem.CompareTag("BigSnowball")) {
