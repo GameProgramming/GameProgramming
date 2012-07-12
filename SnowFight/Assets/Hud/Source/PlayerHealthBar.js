@@ -66,8 +66,8 @@ function OnGUI() {
 		} else {
 			xi = Screen.width - (Screen.width - 20) * 5*(.4-quickInfoProgress);
 		}
-		GUI.Label(Rect(xi+1,Screen.height-98,300,50), quickInfo,quickInfoShadowStyle);
-		GUI.Label(Rect(xi,Screen.height-100,300,50), quickInfo,quickInfoStyle);
+		GUI.Label(Rect(xi+1,Screen.height-98,600,50), quickInfo,quickInfoShadowStyle);
+		GUI.Label(Rect(xi,Screen.height-100,600,50), quickInfo,quickInfoStyle);
 	}
 	if (!player.IsDead()) {
 		var hpPercent : float = parseFloat(player.GetHp()) / parseFloat(player.GetFullHp());

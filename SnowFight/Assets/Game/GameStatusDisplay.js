@@ -91,7 +91,7 @@ function OnGUI() {
 			if (t == status.playerS.GetTeam()) {
 				GUI.Label(SRect(posX, posY, 20,20), teamIndicator);
 			} else if (status.playerS.IsDead()) {
-				if (GUI.Button(SRect(posX, posY, 20,20), "o")) {
+				if (GUI.Button(SRect(posX, posY, 20,20), t.teamNumber==1?"<<":">>")) {
 					t.AddPlayer (status.player); 
 				}
 			}

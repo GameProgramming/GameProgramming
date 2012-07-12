@@ -152,6 +152,10 @@ function Update () {
 	if (!closestBase || !closestBase.PlayerInRange(gameObject)) {
 		closestBase = null;
 		healthParticles.enableEmission = false;
+	} else if (playerState != PlayerState.Dead && playerStatus.IsMainPlayer() &&
+			closestBase.takeOverProgress > 0.001 && closestBase.takeOverCurrTeam) {
+		RadialProgress.SetRadialProgress(closestBase.takeOverProgress, 3,
+									closestBase.takeOverCurrTeam.teamBaseIcon);
 	}
 	
 //	

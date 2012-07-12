@@ -216,28 +216,28 @@ function OnGUI () {
 //		GUILayout.EndVertical();
 //		GUILayout.EndArea();
 //	}
-	if (mainPlayerStatus != null) {
-		if (takeOverProgress > 0.0 && !mainPlayerStatus.IsDead()) {
-			var texture : Texture2D = new Texture2D(1, 1);
-			var style : GUIStyle = new GUIStyle();
-			var color : Color;
-			var takeOverPercent : float = takeOverProgress;
-			color = new Color(1-takeOverPercent, takeOverPercent, 0, 0.5);
-			texture.SetPixel(0, 0, color);
-			texture.Apply();
-			style.normal.background = texture;
-		
-			var boxWidth : float= (Screen.width/8 + 10);
-			var boxHeight = 19;
-			var finalBoxWidth = takeOverPercent * boxWidth;
-			
-			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
-			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
-		}
-	}
-	if (takeOverProgress <= 0.0) {
-		mainPlayerStatus = null;
-	}
+//	if (mainPlayerStatus != null) {
+//		if (takeOverProgress > 0.0 && !mainPlayerStatus.IsDead()) {
+//			var texture : Texture2D = new Texture2D(1, 1);
+//			var style : GUIStyle = new GUIStyle();
+//			var color : Color;
+//			var takeOverPercent : float = takeOverProgress;
+//			color = new Color(1-takeOverPercent, takeOverPercent, 0, 0.5);
+//			texture.SetPixel(0, 0, color);
+//			texture.Apply();
+//			style.normal.background = texture;
+//		
+//			var boxWidth : float= (Screen.width/8 + 10);
+//			var boxHeight = 19;
+//			var finalBoxWidth = takeOverPercent * boxWidth;
+//			
+//			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
+//			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
+//		}
+//	}
+//	if (takeOverProgress <= 0.0) {
+//		mainPlayerStatus = null;
+//	}
 }
 
 function IsBeingTaken() {

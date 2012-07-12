@@ -18,6 +18,7 @@ private var formerItem :GameObject;
 var fullHp : int = 10;
 private var hp : int = fullHp;
 private var killTime = -respawnTimeout;
+private var respawnLease :boolean = false;
 
 private var state : PlayerState = PlayerState.Dead;
 private var frozen :float;
@@ -104,7 +105,11 @@ function Update () {
 		switch (state) {
 		case PlayerState.Dead:
 			if (IsMainPlayer() && spawnBaseID > 0) {
-				RadialProgress.SetRadialProgress((Time.time - killTime)/respawnTimeout, 10, null);
+				if (respawnLease) {
+					RadialProgress.SetRadialProgress(-1, 10, null);
+				} else {
+					RadialProgress.SetRadialProgress((Time.time - killTime)/respawnTimeout, 10, null);
+				}
 			}
 			if (Time.time > killTime + respawnTimeout && spawnBaseID > 0) {
 				Respawn();
@@ -311,9 +316,11 @@ function NetRespawn ( spawnBase :int ) {
 		currentSnowballs = maximumSnowballCapacity;
 		SetState(PlayerState.Alive);
 		frozen = 0;
+		respawnLease = false;
 		
 		gameObject.SendMessage ("OnRespawn", SendMessageOptions.DontRequireReceiver);
 	} else {
+		respawnLease = true;
 		killTime += respawnTimeout / 2;
 	}
 }
@@ -455,6 +462,7 @@ function GetSpawnBaseID () : int {
 function SetSpawnBaseID (newSpawnBaseID : int) {
 	spawnBaseID = newSpawnBaseID;
 	killTime = Time.time;
+	respawnLease = false;
 }
 
 private function NetSetState (s :PlayerState) {

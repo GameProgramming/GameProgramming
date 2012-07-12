@@ -6,11 +6,14 @@ private var locked : boolean = false;
 private var pressed : boolean = false;
 private var disconnect : boolean = false;
 
+private var showTooltips :boolean = true;
+private var playerName :String = "";
+
 function Awake () {
 	showIngameMenu = false;
 	showChangeMap = false;
 	ingameMenuRect = Rect(Screen.width/2 - 125, Screen.height/2 - 75, 250, 150);
-	changeMapRect = Rect(Screen.width/2 - 50, Screen.height/2 - 30, 200, 60);
+	changeMapRect = Rect(Screen.width/2 - 125, Screen.height/2 - 30, 250, 60);
 }
 
 function Update() {
@@ -19,21 +22,29 @@ function Update() {
 			showChangeMap = false;
 			showIngameMenu = true;
 		} else {
-			pressed = false;
 			showIngameMenu = !showIngameMenu;
-			var player : GameObject = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus).player;
-			var status : PlayerStatus = player.GetComponent(PlayerStatus);
-			var motor : CharacterMotorSF;
+			var status : PlayerStatus = GameObject.
+					FindGameObjectWithTag("Game").GetComponent(GameStatus).playerS;
+			var input : InputController;
 			if (status.IsMainPlayer()) {
-				motor = player.GetComponent(CharacterMotorSF);
+				if (pressed) {
+					status.SetName(playerName);
+				} else {
+					playerName = status.playerName;
+				}
+				input = status.gameObject.GetComponent(InputController);
 				if (!locked) {
 					locked = true;
-					motor.canControl = false;
+					input.enabled = false;
 				} else {
 					locked = false;
-					motor.canControl = true;
+					input.enabled = true;
 				}
 			}
+			if (pressed) {
+				GameObject.FindGameObjectWithTag("Game").SendMessage("SetTooltipActivity", showTooltips);
+			}
+			pressed = false;
 		}
 	}
 	if (disconnect) {
@@ -46,11 +57,13 @@ function OnGUI () {
 	if (showIngameMenu) {
 		Screen.showCursor = true;
 		Screen.lockCursor = false;
-		ingameMenuRect = GUILayout.Window(0, ingameMenuRect, MakeIngameMenuRect, "Ingame Menu");
+//		var menuRect :Rect = Rect(ingameMenuRect);
+//		menuRect.y = 
+		GUILayout.Window(0, ingameMenuRect, MakeIngameMenuRect, "");
 	} else {
 		if (showChangeMap) {
-			changeMapRect = GUILayout.Window(1, changeMapRect, MakeChangeMenuRect, "Change Map");
-		}
+			GUILayout.Window(1, changeMapRect, MakeChangeMenuRect, "Change Map");
+		} 
 	}
 }
 
@@ -74,6 +87,9 @@ function MakeChangeMenuRect(id : int) {
 
 function MakeIngameMenuRect(id : int) {
 		GUILayout.BeginVertical();
+		showTooltips = GUILayout.Toggle(showTooltips, "Show tooltips.");
+		playerName = GUILayout.TextField(playerName);
+		GUILayout.Space(10);
 		if (Network.isServer) {
 			if (GUILayout.Button ("Restart Map")) {
 				GameObject.FindGameObjectWithTag("Game").SendMessage("Restart");;
@@ -82,14 +98,16 @@ function MakeIngameMenuRect(id : int) {
 				showChangeMap = true;
 				showIngameMenu = false;
 			}
+			GUILayout.Space(10);
 		}
-		if (GUILayout.Button ("Main Menu / Disconnect")) {
+		if (GUILayout.Button ("Disconnect")) {
 			pressed = true;
 			disconnect = true;
 		}
 		if (GUILayout.Button ("Exit Game")) {
 			Application.Quit();
 		}
+		GUILayout.Space(10);
 		if (GUILayout.Button ("Resume Game")) {
 			pressed = true;
 		}

@@ -18,6 +18,8 @@ var onUfoShotSound : AudioClip;
 //would prevent hitting oneself.. but poorly done.
 var netExtrapolationTime :float = 0.0;
 
+var ammoIcon :Texture;
+
 function PlayAudio(audio : AudioClip){
 	transform.audio.clip=audio;
 	if(!transform.audio.isPlaying){
@@ -240,7 +242,7 @@ function OnGUI() {
 		style.normal.background = texture;
 		
 		if (reloadPercent > 0.0) {
-			RadialProgress.SetRadialProgress(1-reloadPercent*1.02, 5, null);
+			RadialProgress.SetRadialProgress(1-reloadPercent*1.02, 5, ammoIcon);
 //			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
 //			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
 		}

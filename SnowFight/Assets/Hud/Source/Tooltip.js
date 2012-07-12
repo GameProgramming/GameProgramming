@@ -18,6 +18,8 @@ private var changeProgress :float = 0;
 private var style : GUIStyle;
 private var shadowStyle : GUIStyle;
 
+private var tooltipActivity = true;
+
 function Awake () {
 	style = GetComponent(GameStatusDisplay).neuralStyle;
 	shadowStyle = GetComponent(GameStatusDisplay).shadowStyle;
@@ -38,32 +40,34 @@ function Update () {
 }
 
 function OnGUI() {
-	style = GetComponent(GameStatusDisplay).neutralStyle;
-	shadowStyle = GetComponent(GameStatusDisplay).shadowStyle;
-
-	var y :float = Screen.height - 100 ;
-	var x :float = Screen.width - changeProgress * 310;
+	if (tooltipActivity) {
+		style = GetComponent(GameStatusDisplay).neutralStyle;
+		shadowStyle = GetComponent(GameStatusDisplay).shadowStyle;
 	
-	if (tipIcon) GUI.Label (Rect (x, y, 60, 60), tipIcon);
-	x += 50;
-	y += 10;
-	if (tipLMB != "") {
-		GUI.Label (Rect (x, y-5, 30, 30), iconLmb);
-		GUI.Label (Rect (x+31, y+2, 200, 30), tipLMB, shadowStyle);
-		GUI.Label (Rect (x+30, y, 200, 30), tipLMB, style);
-		y += 20;
-	}
-	if (tipRMB != "") {
-		GUI.Label (Rect (x, y-5, 30, 30), iconRmb);
-		GUI.Label (Rect (x+31, y+2, 200, 30), tipRMB, shadowStyle);
-		GUI.Label (Rect (x+30, y, 200, 30), tipRMB, style);
-		y += 20;
-	}
-	if (tipAction != "") {
-		GUI.Label (Rect (x, y-5, 30, 30), iconAction);
-		GUI.Label (Rect (x+31, y+2, 200, 30), tipAction, shadowStyle);
-		GUI.Label (Rect (x+30, y, 200, 30), tipAction, style);
-		y += 20;
+		var y :float = Screen.height - 100 ;
+		var x :float = Screen.width - changeProgress * 310;
+		
+		if (tipIcon) GUI.Label (Rect (x, y, 60, 60), tipIcon);
+		x += 50;
+		y += 10;
+		if (tipLMB != "") {
+			GUI.Label (Rect (x, y-5, 30, 30), iconLmb);
+			GUI.Label (Rect (x+31, y+2, 200, 30), tipLMB, shadowStyle);
+			GUI.Label (Rect (x+30, y, 200, 30), tipLMB, style);
+			y += 20;
+		}
+		if (tipRMB != "") {
+			GUI.Label (Rect (x, y-5, 30, 30), iconRmb);
+			GUI.Label (Rect (x+31, y+2, 200, 30), tipRMB, shadowStyle);
+			GUI.Label (Rect (x+30, y, 200, 30), tipRMB, style);
+			y += 20;
+		}
+		if (tipAction != "") {
+			GUI.Label (Rect (x, y-5, 30, 30), iconAction);
+			GUI.Label (Rect (x+31, y+2, 200, 30), tipAction, shadowStyle);
+			GUI.Label (Rect (x+30, y, 200, 30), tipAction, style);
+			y += 20;
+		}
 	}
 }
 
@@ -72,4 +76,8 @@ function SetTooltip (lmb :String, rmb :String, action :String, icon :Texture) {
 	newTipRMB = rmb;
 	newTipAction = action;
 	newTipIcon = icon;
+}
+
+function SetTooltipActivity (a :boolean) {
+	tooltipActivity = a;
 }

@@ -37,6 +37,9 @@ private var joinGame = false;
 
 private var humanPlayers = "1";
 
+private var origin :Vector2;
+var logo :Texture;
+
 // Enable this if not running a client on the server machine
 //MasterServer.dedicatedServer = true;
 
@@ -58,7 +61,21 @@ function OnGUI ()
 	if (Network.peerType == NetworkPeerType.Disconnected) {
 		Screen.showCursor = true;
 		Screen.lockCursor = false;
-		mainRect = GUILayout.Window (0, mainRect, MakeMainWindow, "");	
+		//mainRect = GUILayout.Window (0, mainRect, MakeMainWindow, "");	
+		
+		var scale :float = Screen.width / 700.0;
+		
+		GUI.DrawTexture(Rect(origin.x-100*scale,origin.y-100*scale, 200*scale,200*scale), logo);
+		
+		if (GUI.Button(Rect(origin.x-300*scale,origin.y-15*scale, 100*scale,30*scale),"Start")) {
+			ShowStartWindow();
+		}
+		if (GUI.Button(Rect(origin.x+200*scale,origin.y-15*scale, 100*scale,30*scale),"Join")) {
+			ShowJoinWindow();
+		}
+		if (GUI.Button(Rect(origin.x-50*scale,origin.y+200*scale, 100*scale,30*scale),"Quit")) {
+			Application.Quit();
+		}
 		
 		if (startGame) {
 			startJoinRect = GUILayout.Window (1, startJoinRect, MakeStartWindow, "");
@@ -97,6 +114,8 @@ function Awake ()
 		Debug.Log("This machine has a private IP address");
 	
 	levels = GetComponent(NetworkLevelLoad).supportedNetworkLevels;
+	
+	origin = Vector2(Screen.width/2, Screen.height/2);
 }
 
 function Update()

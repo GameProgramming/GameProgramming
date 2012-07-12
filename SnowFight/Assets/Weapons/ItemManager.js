@@ -17,10 +17,10 @@ private var candidateItem : GameObject;
 private var movementOffset : Vector3;
 var maxCandidateDistance : float = 1.0;
 
-private var showItemGUI : boolean = true;
-var itemGUIStyle : GUIStyle;
-var itemGUIStyle2 : GUIStyle;
-var itemGUITime : float = 0.0;
+//private var showItemGUI : boolean = true;
+//var itemGUIStyle : GUIStyle;
+//var itemGUIStyle2 : GUIStyle;
+//var itemGUITime : float = 0.0;
 
 private var snowResourcePick :SnowRessource; // typo im typnamen, ach mensch...
 private var srPickProgress : float = 0;
@@ -35,46 +35,46 @@ function Awake () {
 	pStatus = GetComponent(PlayerStatus);
 	item = null;
 	snowResourcePick = null;
-	itemGUIStyle.clipping = TextClipping.Overflow;
-	itemGUIStyle2.clipping = TextClipping.Overflow;
+//	itemGUIStyle.clipping = TextClipping.Overflow;
+//	itemGUIStyle2.clipping = TextClipping.Overflow;
 	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
 	tooltip = game.GetComponent(Tooltip);	
 }
 
 function OnGUI () {
-	var status : PlayerStatus = transform.GetComponent(PlayerStatus);
-	var textForToolTip : String;
-	var textForToolTip2 : String;
-	if (status.IsMainPlayer() && showItemGUI) {
-		var texture : Texture2D = new Texture2D(1, 1);
-		var style = new GUIStyle();
-		var boxWidth : float = (Screen.width/8 + 10);
-		var finalBoxWidth;
-		var color;
-		var text;
-	
-		var srPercent : float = srPickProgress / srPickTime;
-		if (srPercent < 0.0) {
-			srPercent = 0.0;
-		}
-		if (srPercent == 0.0) {
-			color = new Color(1, 0, 0,0.5);
-			finalBoxWidth = boxWidth;
-		} else {
-			color = new Color(1-srPercent, srPercent, 0,0.5);
-			finalBoxWidth = srPercent * boxWidth;
-		}
-	
-		var boxHeight = 19;
-		texture.SetPixel(0, 0, color);
-		texture.Apply();
-		style.normal.background = texture;
-	
-		if (srPercent > 0.0) {
-			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
-			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
-		}
-	}
+//	var status : PlayerStatus = transform.GetComponent(PlayerStatus);
+//	var textForToolTip : String;
+//	var textForToolTip2 : String;
+//	if (status.IsMainPlayer() && showItemGUI) {
+//		var texture : Texture2D = new Texture2D(1, 1);
+//		var style = new GUIStyle();
+//		var boxWidth : float = (Screen.width/8 + 10);
+//		var finalBoxWidth;
+//		var color;
+//		var text;
+//	
+//		var srPercent : float = srPickProgress / srPickTime;
+//		if (srPercent < 0.0) {
+//			srPercent = 0.0;
+//		}
+//		if (srPercent == 0.0) {
+//			color = new Color(1, 0, 0,0.5);
+//			finalBoxWidth = boxWidth;
+//		} else {
+//			color = new Color(1-srPercent, srPercent, 0,0.5);
+//			finalBoxWidth = srPercent * boxWidth;
+//		}
+//	
+//		var boxHeight = 19;
+//		texture.SetPixel(0, 0, color);
+//		texture.Apply();
+//		style.normal.background = texture;
+//	
+//		if (srPercent > 0.0) {
+//			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
+//			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
+//		}
+//	}
 }
 
 @RPC
@@ -118,7 +118,7 @@ function Update () {
 		if (snowResourcePick.IsGrabBigSnowballPossible() 
 				&& inputAction && !pStatus.IsDead()) {
 			srPickProgress += Time.deltaTime;
-
+			
 			if (srPickProgress > srPickTime) {
 				if (Network.isServer) {
 					SetItem(snowResourcePick.GrabBigSnowball(gameObject));
@@ -149,6 +149,9 @@ function Update () {
 	}
 	
 	if (pStatus.IsMainPlayer() && !pStatus.IsDead()) {
+		if (srPickProgress > 0) {
+			RadialProgress.SetRadialProgress(srPickProgress / srPickTime, 15, itemLogoSnowball);
+		}
 		if (item) {
 			if (item.CompareTag("Ufo")) {
 				tooltip.SetTooltip("Cannon", "Freezing Ray", "Exit", itemLogoUfo);
@@ -283,9 +286,9 @@ function GetCandidateItem() : GameObject {
 	return candidateItem;
 }
 
-function GetShowItemGUI () : boolean {
-	return showItemGUI;
-}
+//function GetShowItemGUI () : boolean {
+//	return showItemGUI;
+//}
 
 @script RequireComponent (CharacterMotorSF)
 @script RequireComponent (NetworkView)
