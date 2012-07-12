@@ -92,9 +92,14 @@ function Update () {
 				loadshot = Mathf.Clamp(loadshot, 0.5, 3);
 				//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;
-				networkView.RPC("NetShootBall", RPCMode.Server,
+				if (Network.isServer) {
+					NetShootBall(loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / ballSize)
+							* pushingPlayer.transform.forward.normalized);
+				} else {
+					networkView.RPC("NetShootBall", RPCMode.Server,
 							loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / ballSize)
 							* pushingPlayer.transform.forward.normalized);
+				}
 				loadshot = 0;
 				pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			}
