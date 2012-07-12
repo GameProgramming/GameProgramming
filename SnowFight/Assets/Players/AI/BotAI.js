@@ -68,7 +68,7 @@ function Update () {
 //		&& !pStatus.IsRidingUfo() && Time.time > (stuckTime + timeoutWhenStuck) 
 //		&& motor.movement.velocity.magnitude < attackSpeed * 0.3) {
 	if (moveDir != Vector3.zero && Time.time > (stuckTime + timeoutWhenStuck) 
-		&& motor.movement.velocity.magnitude < attackSpeed * 0.5) {
+		&& motor.movement.velocity.magnitude < attackSpeed * 0.3) {
 		
 		if (!stuck) { //strafe, or change direction
 			stuck = true;
@@ -429,11 +429,20 @@ function RollBall ()
 	
 	while (true) {
 		motor.inputAction = false;
-		
-		var attack = pStatus.GetLastAttack();
-		if (!target || pStatus.IsRidingUfo() || (attack && (Time.time - attack.time)<0.01)) {
+	
+		if (!target || pStatus.IsRidingUfo()) {
 			groundBaseFlag = null;
 			RemoveTarget();
+			return;
+		}
+		
+		var attack = pStatus.GetLastAttack();
+		if(attack && (Time.time - attack.time)<0.01) {
+			targets = [];
+			groundBaseFlag = null;
+			RemoveTarget();
+			if (ball)
+				itemManager.ReleaseItem();
 			return;
 		}
 		
