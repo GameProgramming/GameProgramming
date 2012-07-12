@@ -241,7 +241,7 @@ function NetDie (attacker :NetworkViewID) {
 	SetState(PlayerState.Dead);
 	killTime = Time.time;
 	
-	gameObject.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
+	gameObject.SendMessage ("OnDeath", this, SendMessageOptions.DontRequireReceiver);
 	gameObject.SendMessage ("RemoveTarget", SendMessageOptions.DontRequireReceiver);
 	game.SendMessage ("OnPlayerDeath", this);
 }
