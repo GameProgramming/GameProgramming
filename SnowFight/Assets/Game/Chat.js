@@ -97,8 +97,9 @@ function Update () {
 }
 
 function OnGUI () {
+	GUI.skin.label.fontSize = 15;
     for (var off :float = 0; off <= 1; off++) {
-	    GUILayout.BeginArea (Rect (40,Screen.height-250-off,400,201-off));
+	    GUILayout.BeginArea (Rect (40,Screen.height-250-off,500,201-off));
 	    for (var i :int = Mathf.Max(0, messages.length-5); i < messages.length; i++) {
 	    	if (i < messages.length - 5) break;
 	    	var m :Message = messages[i] as Message;

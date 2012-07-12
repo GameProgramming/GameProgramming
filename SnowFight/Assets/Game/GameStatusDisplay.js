@@ -91,7 +91,7 @@ function OnGUI() {
 			GUI.Label (SRect(posX, posY, 35, 25), "  :", shadowStyle);
 			teamStyle = GetTeamStyle(t);
 			teamStyle.fontSize = 20;
-			GUI.Label (SRect(posX-1, posY-2, 35, 25), "  :", teamStyle);
+			GUI.Label (SRect(posX-1, posY-1, 35, 25), "  :", teamStyle);
 			teamStyle.fontSize = oldFontSize;
 		} else {
 			if (t == status.playerS.GetTeam()) {
@@ -107,7 +107,7 @@ function OnGUI() {
 			teamStyle = GetTeamStyle(t);
 			teamStyle.fontSize = 20;
 			GUI.Label (SRect(posX, posY, 35, 25), t.tickets.ToString(), shadowStyle);
-			GUI.Label (SRect(posX-1, posY-2, 35, 25), t.tickets.ToString(), teamStyle);
+			GUI.Label (SRect(posX-1, posY-1, 35, 25), t.tickets.ToString(), teamStyle);
 			teamStyle.fontSize = oldFontSize;
 		}
 		posY += 15;
