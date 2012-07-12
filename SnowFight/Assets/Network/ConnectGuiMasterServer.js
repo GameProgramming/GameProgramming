@@ -1,8 +1,8 @@
 DontDestroyOnLoad(this);
 
-var gameName = "TUSnowFight";
+var gameName = "TUYetiTournament";
 var serverPort = 25002;
-var serverName = "SomeServer";
+var serverName = "YetiServer";
 var botCount = "10";
 
 var playerName = "Player01";
@@ -32,7 +32,7 @@ private var selectedLevelId = 0;
 
 var skin : GUISkin;
 
-private var humanPlayers = "1";
+private var humanPlayers = "4";
 
 private var origin :Vector2;
 var logo :Texture;
@@ -137,7 +137,7 @@ function Awake ()
 	
 	levels = GetComponent(NetworkLevelLoad).supportedNetworkLevels;
 	
-	origin = Vector2(Screen.width/2, -Screen.height/2);
+	origin = Vector2(Screen.width/2, Screen.height*2);
 }
 
 function Update()
