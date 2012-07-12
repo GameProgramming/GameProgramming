@@ -42,12 +42,19 @@ private var terrain :Terrain;
 
 private var extrapolatedPosition :Vector3;
 
+var snowSound1 : AudioClip;
+var snowSound2 : AudioClip;
+var snowSound3 : AudioClip;
+var snowSound4 : AudioClip;
+
+private var px : float; 
+private var pz : float; 
+
 function Start () {
 	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
 	shot = false;
 	appearing = 0;
-	
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
 	
@@ -58,6 +65,8 @@ function Start () {
 	terrain = Terrain.activeTerrain;
 	trail = transform.Find("Trail").particleSystem;
 	transform.localScale = Vector3.zero;
+	px = transform.position.x;
+	pz = transform.position.z;
 }
 
 function Awake () {
@@ -70,11 +79,14 @@ function Update () {
 		if (playerMotor.IsMovingBackward() || playerMotor.IsJumping() || IsBallTooFarAway (pushingPlayer)) {
 			pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);		}
 		else {
+			
 			if (playerMotor.inputAltFire) {
 				// player destroys snowball
+				PlaySnowAudio();
 				pushingPlayer.SendMessage("OnItemDestruction", gameObject, SendMessageOptions.DontRequireReceiver);
 				SmashBallToSnowfield();
 			} else if (playerMotor.inputFire) {
+				PlaySnowAudio();
 				shot = true;
 				rigidbody.velocity = (GetComponent(BigSnowBallDamage).GetSpeed() * 10 / ballSize)
 									* pushingPlayer.transform.forward.normalized;//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
@@ -142,6 +154,7 @@ function FixedUpdate () {
 function Move (offset : Vector3) {
 	if (pushingPlayer && !shot) {
 		//Roll(true);
+		PlayMoveSnowAudio();
 		var playerController = pushingPlayer.GetComponent(CharacterController);
 		var playerTransform :Transform = pushingPlayer.transform;
 		//try to make sure the ball is infront of the player
@@ -207,6 +220,7 @@ function NetReachBase () {
 
 function SmashBallToSnowfield () {
 //	transform.parent = null;
+	PlaySnowAudio();
 	var res :GameObject = Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
 	res.GetComponent(SnowRessource).CreateResourceFromSnowball(ballSize);
 	collider.enabled = false;
@@ -236,6 +250,59 @@ function OnDestroy () {
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     stream.Serialize(ballSize);
     stream.Serialize(extrapolatedPosition);
+}
+
+function PlayAudio(audio : AudioClip){
+	if(!transform.audio.isPlaying){
+		transform.audio.clip=audio;
+		transform.audio.Play();
+	}
+}
+
+function PlayMoveSnowAudio(){
+
+	var pxRound:float = Mathf.Round(px * 10.0f) / 10.0f;
+	var pzRound:float = Mathf.Round(pz * 10.0f) / 10.0f;
+	
+	var posXRound:float = Mathf.Round(transform.position.x  * 10.0f) / 10.0f;
+	var posZRound:float = Mathf.Round(transform.position.z * 10.0f) / 10.0f;
+
+	if(pxRound != posXRound || pzRound != posZRound){
+		px = transform.position.x;
+		pz = transform.position.z;
+		var soundNumber : float = Random.Range(0.0,0.4);
+	//Debug.Log(soundNumber);
+	if(soundNumber <= 0.1){
+		PlayAudio(snowSound1);
+	}
+	if(soundNumber > 0.1 && soundNumber <= 0.2){
+		PlayAudio(snowSound2);
+	}
+	if(soundNumber > 0.2 && soundNumber <= 0.3){
+		PlayAudio(snowSound3);
+	}
+	if(soundNumber > 0.3){
+		PlayAudio(snowSound4);
+	}	
+	}		
+}
+
+function PlaySnowAudio(){
+
+	var soundNumber : float = Random.Range(0.0,0.4);
+	//Debug.Log(soundNumber);
+	if(soundNumber <= 0.1){
+		PlayAudio(snowSound1);
+	}
+	if(soundNumber > 0.1 && soundNumber <= 0.2){
+		PlayAudio(snowSound2);
+	}
+	if(soundNumber > 0.2 && soundNumber <= 0.3){
+		PlayAudio(snowSound3);
+	}
+	if(soundNumber > 0.3){
+		PlayAudio(snowSound4);
+	}	
 }
 
 @script RequireComponent (BigSnowBallDamage)

@@ -19,6 +19,12 @@ var activationTimeout : float = 5.0;
 private var snowRestockingRound :int = 0;
 private var snowAmountManager :SnowAmountManager;
 
+var onGrabSound1 : AudioClip;
+var onGrabSound2 : AudioClip;
+var onGrabSound3 : AudioClip;
+var onGrabSound4 : AudioClip;
+
+
 function Awake () {
 	snowAmountManager = GameObject.FindGameObjectWithTag("Game").GetComponent(SnowAmountManager);
 }
@@ -55,6 +61,7 @@ function Update () {
 //This function will be called when a player grabs a snowball.
 function Grab() {
 	if (currentSnowballs > 0) {
+		PlayGrabAudio();
 		currentSnowballs -= 1;
 	}
 	
@@ -129,4 +136,29 @@ function CreateResourceFromSnowball(ballSize : float) {
 
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     stream.Serialize(currentSnowballs);
+}
+
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+		transform.audio.Play();
+	}
+}
+
+function PlayGrabAudio(){
+	var soundNumber : float = Random.Range(0.0,0.4);
+	//Debug.Log(soundNumber);
+	if(soundNumber <= 0.1){
+		PlayAudio(onGrabSound1);
+	}
+	if(soundNumber > 0.1 && soundNumber <= 0.2){
+		PlayAudio(onGrabSound2);
+	}
+	if(soundNumber > 0.2 && soundNumber <= 0.3){
+		PlayAudio(onGrabSound3);
+	}
+	if(soundNumber > 0.3){
+		PlayAudio(onGrabSound4);
+	}
+		
 }
