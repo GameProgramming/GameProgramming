@@ -66,54 +66,54 @@ function Update () {
 	if (owner) {
 		transform.eulerAngles.x = -playerMotor.rotationY-10;
 		weaponModel.renderer.enabled = true;
-	}
-	if (owner && owner.networkView.isMine) {
-	
-		AimTarget(targetName);
+		if (owner.networkView.isMine) {
 		
-		transform.eulerAngles.x = -playerMotor.rotationY-10;
-	  	if(target == null){
-			progress = 0;
-		}	  		
+			AimTarget(targetName);
 			
-		var canShoot : boolean = bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0;
-		//var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= bulletSpawn.GetComponent(BulletSpawn).snowCosts;
-		
-		
-		if (canShoot) {
+			transform.eulerAngles.x = -playerMotor.rotationY-10;
+		  	if(target == null){
+				progress = 0;
+			}	  		
+				
+			var canShoot : boolean = bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0;
+			//var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= bulletSpawn.GetComponent(BulletSpawn).snowCosts;
 			
-			if(target){
-				//Debug.Log("Hold Aim for " + (aimFor - progress) + "seconds");		
-				if (progress < aimFor){
-					progress += Time.deltaTime;
-					locked = true;
+			
+			if (canShoot) {
+				
+				if(target){
+					//Debug.Log("Hold Aim for " + (aimFor - progress) + "seconds");		
+					if (progress < aimFor){
+						progress += Time.deltaTime;
+						locked = true;
+						if (playerMotor.inputFire && ammo > 0) {
+							bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
+							ammo--;
+							progress = 0;
+						}
+					}else if (progress >= aimFor) {
+						//Debug.Log("SHOOT!!!!!!!!");
+						if (playerMotor.inputFire && ammo > 0) {
+							bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
+							progress = 0;
+							ammo--;
+							networkView.RPC("SetAmmo", RPCMode.Others, ammo);
+						}
+					}
+				}else{
 					if (playerMotor.inputFire && ammo > 0) {
 						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
-						ammo--;
-						progress = 0;
-					}
-				}else if (progress >= aimFor) {
-					//Debug.Log("SHOOT!!!!!!!!");
-					if (playerMotor.inputFire && ammo > 0) {
-						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
 						progress = 0;
 						ammo--;
 						networkView.RPC("SetAmmo", RPCMode.Others, ammo);
 					}
-				}
+				}	
 			}else{
-				if (playerMotor.inputFire && ammo > 0) {
-					bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
-					progress = 0;
-					ammo--;
-					networkView.RPC("SetAmmo", RPCMode.Others, ammo);
-				}
-			}	
-		}else{
-			progress = 0;
+				progress = 0;
+			}
+			weaponModel.renderer.enabled = true;
+			RenderAimingLine ();
 		}
-		weaponModel.renderer.enabled = true;
-		RenderAimingLine ();
 	} else if (alive) {
 		lineRenderer.enabled = false;
 		aimingCircleOuter.renderer.enabled = false;
@@ -189,7 +189,7 @@ function PickItem(player :GameObject) {
 //	}
 	
 	transform.parent = owner.transform;
-	transform.localPosition = Vector3 (0.4,1,0.6);
+	transform.localPosition = Vector3 (0.4,1,0.9);
 	//transform.localRotation = Quaternion.zero;
 	transform.localRotation.x = 0;
 	transform.localRotation.y = 0;

@@ -129,3 +129,5 @@ function CreateResourceFromSnowball(ballSize : float) {
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     stream.Serialize(currentSnowballs);
 }
+
+@script RequireComponent (NetworkView)

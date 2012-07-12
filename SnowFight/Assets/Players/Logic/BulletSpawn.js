@@ -15,7 +15,8 @@ var onNoSnowballs : AudioClip;
 var onNoRockets : AudioClip;
 var onUfoShotSound : AudioClip;
 
-var netExtrapolationTime :float = 0.2;
+//would prevent hitting oneself.. but poorly done.
+var netExtrapolationTime :float = 0.0;
 
 function PlayAudio(audio : AudioClip){
 	transform.audio.clip=audio;
@@ -109,6 +110,7 @@ function NetFire ( netId :NetworkViewID, pos :Vector3, velo :Vector3 ) {
 	clone.networkView.viewID = netId;
 	if (player) clone.GetComponent(Damage).shooter = player.gameObject;
 	clone.velocity = velo;
+	clone.MovePosition(pos + netExtrapolationTime * velo);
 	SendMessageUpwards("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
 //	Debug.Log ("Rcv fire "+netId);
 }

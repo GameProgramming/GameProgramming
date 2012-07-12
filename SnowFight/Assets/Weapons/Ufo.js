@@ -44,6 +44,7 @@ function Awake () {
 	velo = Vector3.zero;
 	terrain = Terrain.activeTerrain;
 	transform.Find("EngineParticles").particleSystem.enableEmission = false;
+	transform.Find("DamageParticles").particleSystem.enableEmission = false;
 }
 
 function Update () {
@@ -138,6 +139,9 @@ function ApplyDamage (attack :Attack) {
 	if (Network.isServer) {
 		lastAttack = attack;
 		hp -= attack.damage;
+		if (hp < maxHp / 2) {
+			transform.Find("DamageParticles").particleSystem.enableEmission = true;
+		}
 		hp = Mathf.Max(0, hp);
 	}
 }
@@ -147,6 +151,9 @@ function NetApplyDamage (attack :Attack) {
 	lastAttack = attack;
 	hp -= attack.damage;
 	hp = Mathf.Max(0, hp);
+	if (hp < maxHp / 2) {
+		transform.Find("DamageParticles").particleSystem.enableEmission = true;
+	}
 }
 
 function Crash () {
