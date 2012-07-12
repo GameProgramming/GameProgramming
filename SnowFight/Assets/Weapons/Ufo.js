@@ -41,8 +41,10 @@ function Awake () {
 	freezer = transform.Find("Ufo/FreezingRay").GetComponent(FreezingRay);
 	velo = Vector3.zero;
 	terrain = Terrain.activeTerrain;
-	transform.Find("EngineParticles").particleSystem.enableEmission = false;
-	transform.Find("DamageParticles").particleSystem.enableEmission = false;
+	if (transform.Find("EngineParticles"))
+		transform.Find("EngineParticles").particleSystem.enableEmission = false;
+	if (transform.Find("DamageParticles"))
+		transform.Find("DamageParticles").particleSystem.enableEmission = false;
 }
 
 function PlayUfoSounds(){
