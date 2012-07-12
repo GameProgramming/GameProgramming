@@ -45,7 +45,7 @@ function Update () {
 	
 	if (freezingCurr && inputFire) {
 		freezingProgress += Time.deltaTime;
-		if (freezingProgress >= freezingTime) {
+		if (freezingProgress >= freezingTime && networkView.isMine) {
 			var attack = new Attack();
 			attack.damage = freezingStrength;
 			attack.damageType = DamageType.Freeze;

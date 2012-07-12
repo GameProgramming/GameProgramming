@@ -26,10 +26,10 @@ function SetShow (s :boolean) {
 }
 
 function CompareScore (p1 :PlayerStatus, p2 :PlayerStatus) {
-	if ((p1.killCount-p1.deathCount) - (p2.killCount-p2.deathCount) != 0) {
-		return -((p1.killCount-p1.deathCount) - (p2.killCount-p2.deathCount));
-	} else if (p1.killCount - p2.killCount != 0) {
+	if (p1.killCount - p2.killCount != 0) {
 		return -(p1.killCount - p2.killCount);
+	} else if ((p1.killCount-p1.deathCount) - (p2.killCount-p2.deathCount) != 0) {
+		return -((p1.killCount-p1.deathCount) - (p2.killCount-p2.deathCount));
 	} else {
 		return -String.Compare(p1.playerName, p2.playerName);
 	}

@@ -258,13 +258,13 @@ function NetDie (attacker :NetworkViewID) {
 }
 
 function OnDeath () {
-	if (Network.isServer) {
+	if (networkView.isMine) {
 		deathCount++;
 	}
 }
 
 function OnFrag (f :Frag) {
-	if (Network.isServer) {
+	if (networkView.isMine) {
 		if (f.victim && f.victim.team == this.team) {
 			killCount--;
 		} else {
