@@ -158,7 +158,7 @@ function Update () {
 			if (item.CompareTag("Ufo")) {
 				tooltip.SetTooltip("Cannon", "Freezing Ray", "Exit", itemLogoUfo);
 			} else if (item.CompareTag("BigSnowball")) {
-				tooltip.SetTooltip("Push", "Create Snow Resource", "Drop", itemLogoSnowball);
+				tooltip.SetTooltip("Push", "Create Snow Field", "Drop", itemLogoSnowball);
 			} else if (item.CompareTag("Weapon")) {
 				tooltip.SetTooltip("Fire Rocket", "", "Drop", itemLogoRockets);
 			}
@@ -169,8 +169,9 @@ function Update () {
 				tooltip.SetTooltip("", "", "Pick up", itemLogoSnowball);
 			} else if (candidateItem.CompareTag("Weapon")) {
 				tooltip.SetTooltip("", "", "Pick up", itemLogoRockets);
-			} else if (candidateItem.CompareTag("SnowballRessource")) {
-				tooltip.SetTooltip("", "", "Create Snowball", itemLogoSnowball);
+			} else if (candidateItem.CompareTag("SnowballRessource")
+						&& candidateItem.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
+				tooltip.SetTooltip("", "", "Create Big Snowball", itemLogoSnowball);
 			} else if (candidateItem.CompareTag("UfoBody")) {
 				tooltip.SetTooltip("", "", "Jump in", itemLogoUfo);
 			} else {

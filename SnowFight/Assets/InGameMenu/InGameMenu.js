@@ -11,6 +11,7 @@ private var playerName :String = "";
 
 var neutralStyle : GUIStyle;
 var shadowStyle : GUIStyle;
+var skin :GUISkin;
 
 var fontMaterial :Material;
 
@@ -64,6 +65,7 @@ function Update() {
 function OnGUI () {
 
 	if (showIngameMenu) {
+		GUI.skin = skin;
 		
 		Screen.showCursor = true;
 		Screen.lockCursor = false;

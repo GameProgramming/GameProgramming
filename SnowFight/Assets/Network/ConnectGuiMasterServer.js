@@ -137,7 +137,7 @@ function Awake ()
 	
 	levels = GetComponent(NetworkLevelLoad).supportedNetworkLevels;
 	
-	origin = Vector2(Screen.width/2, -Screen.height/2);
+	origin = Vector2(Screen.width/2, Screen.height*2);
 }
 
 function Update()
