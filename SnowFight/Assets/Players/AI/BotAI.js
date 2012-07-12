@@ -261,6 +261,10 @@ function GetUFO () {
 
 			Debug.DrawRay(target.transform.position, transform.up * 50, Color.blue);
 			
+			if (Vector3.Distance(transform.position, target.transform.position) < 10) {
+				itemManager.ReleaseItem();
+			}
+			
 			var candidateItem = itemManager.GetCandidateItem();	
 			if (candidateItem && (candidateItem.CompareTag("Ufo") || 
 				candidateItem.transform.parent && candidateItem.transform.parent.CompareTag("Ufo"))) {
@@ -291,8 +295,8 @@ function GetBazooka () {
 			return;
 		}
 		
-		if (itemManager.GetItem())
-			itemManager.ReleaseItem();
+//		if (itemManager.GetItem())
+//			itemManager.ReleaseItem();
 			
 		//if target is a weapon
 		if (target.CompareTag("Weapon")) {
@@ -314,6 +318,10 @@ function GetBazooka () {
 			var bazookaPos = target.transform.position;
 			bazookaPos.y = transform.position.y;
 			var distance = Vector3.Distance(transform.position, bazookaPos);
+
+			if (distance < 10) {
+				itemManager.ReleaseItem();
+			}
 
 			var candidateItem = itemManager.GetCandidateItem();
 			if(candidateItem && candidateItem.CompareTag("Weapon")) {
@@ -447,7 +455,7 @@ function RollBall ()
 				 //if we're close enough, try to get a hold of it
 				MoveTowardsPosition(target.transform.position);
 				
-				if (Vector3.Distance(transform.position, target.transform.position) < 5) {
+				if (Vector3.Distance(transform.position, target.transform.position) < 10) {
 					itemManager.ReleaseItem();
 				}
 				
@@ -481,7 +489,7 @@ function RollBall ()
 				//release the button, once the ball is yours
 				motor.inputAction = false;
 				
-				if (Random.value > 0.999) {
+				if (Random.value > 0.99) {
 					enemy = teamAI.FindClosestEnemy();
 					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
 						FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
