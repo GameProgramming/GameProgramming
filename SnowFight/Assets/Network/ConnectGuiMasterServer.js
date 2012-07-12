@@ -75,7 +75,7 @@ function OnGUI ()
 		if (GUI.Button(Rect(origin.x+150*scale,origin.y-15*scale, 100,30),"join")) {
 			currScreen = GUIScreen.Join;
 		}
-		if (GUI.Button(Rect(origin.x-50,origin.y+150*scale, 100,30),"quit")) {
+		if (GUI.Button(Rect(origin.x-50,origin.y+100*scale, 100,30),"quit")) {
 			currScreen = GUIScreen.Credits;
 		}
 		
