@@ -111,7 +111,8 @@ function OnGUI() {
 			ammoNumber= rocketLauncher.GetAmmo();
 			h = 60;
 			w = 120 / ammoMaxNumber;
-			currX = x+20+120;
+			y = y + 15;
+			currX = x+20+90;
 			for (i = 0; i < ammoMaxNumber; i++) {
 				tex =
 					i >= (ammoMaxNumber-ammoNumber) ? rocketTexture
