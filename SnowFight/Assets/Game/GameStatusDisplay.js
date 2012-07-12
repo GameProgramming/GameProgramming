@@ -73,20 +73,26 @@ function OnGUI() {
 
 	var teams :Team[] = [status.GetTeamById(1), status.neutralTeam, status.GetTeamById(2)];
 
-	var posX :float = 5;
+	var posX :float = 10;
 	
 	if (status.playerS.IsDead()) {
 		infoScaling = Mathf.Clamp(infoScaling + 2*Time.deltaTime,1,2);
 	} else {
-		infoScaling = Mathf.Clamp(infoScaling - 2*Time.deltaTime,1,2);
+		posX = 30;
+		infoScaling = Mathf.Clamp(infoScaling - 2*Time.deltaTime, 1.5,2);
 	}
-	
+	var oldFontSize = shadowStyle.fontSize;
+	shadowStyle.fontSize = 20;
+	var teamStyle : GUIStyle;
 	for (var t :Team in teams) {
 		var posY :float = 5;
 		if (t.teamNumber == 0) {
 			posY += 15+30;
 			GUI.Label (SRect(posX, posY, 35, 25), "  :", shadowStyle);
-			GUI.Label (SRect(posX-1, posY-2, 35, 25), "  :", GetTeamStyle(t));
+			teamStyle = GetTeamStyle(t);
+			teamStyle.fontSize = 20;
+			GUI.Label (SRect(posX-1, posY-2, 35, 25), "  :", teamStyle);
+			teamStyle.fontSize = oldFontSize;
 		} else {
 			if (t == status.playerS.GetTeam()) {
 				GUI.Label(SRect(posX, posY, 20,20), teamIndicator);
@@ -98,8 +104,11 @@ function OnGUI() {
 			posY += 15;
 			GUI.Label(SRect(posX-10, posY, 35,35), t.teamIcon);
 			posY += 30;
+			teamStyle = GetTeamStyle(t);
+			teamStyle.fontSize = 20;
 			GUI.Label (SRect(posX, posY, 35, 25), t.tickets.ToString(), shadowStyle);
-			GUI.Label (SRect(posX-1, posY-2, 35, 25), t.tickets.ToString(), GetTeamStyle(t));
+			GUI.Label (SRect(posX-1, posY-2, 35, 25), t.tickets.ToString(), teamStyle);
+			teamStyle.fontSize = oldFontSize;
 		}
 		posY += 15;
 		var offX :float = 0;
@@ -111,15 +120,8 @@ function OnGUI() {
 
 		posX += 20;
 	}
+	shadowStyle.fontSize = oldFontSize;
 	
-	if (Network.isServer) {
-		var txt :String = Network.player.ipAddress.ToString() + "\n"
-							+ Network.player.externalIP.ToString() + ":" + Network.player.externalPort;
-		GUI.Label( Rect(Screen.width-180, Screen.height-40, 180,40),
-						txt, shadowStyle );
-		GUI.Label( Rect(Screen.width-181, Screen.height-42, 180,40),
-						txt, neutralStyle );
-	}
 	
 	//Show the win message.
 	if (displayGameOver) {

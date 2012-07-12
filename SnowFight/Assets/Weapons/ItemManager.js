@@ -30,6 +30,8 @@ var itemLogoUfo :Texture;
 var itemLogoSnowball :Texture;
 var itemLogoRockets :Texture;
 
+var onSetReleaseItemSound : AudioClip;
+
 function Awake () {
 	motor = GetComponent(CharacterMotorSF);
 	pStatus = GetComponent(PlayerStatus);
@@ -189,7 +191,9 @@ function SetItem( it :GameObject ) {
 	}
 	item = it;
 	candidateItem = null;
-	
+	if (!item.CompareTag("BigSnowball")) {
+		PlayAudio(onSetReleaseItemSound);
+	}
 	if (pStatus.IsMainPlayer()) Debug.Log("Player picked up "+item);
 	SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
@@ -217,6 +221,8 @@ function ReleaseItem () {
 		var status : PlayerStatus = transform.GetComponent(PlayerStatus);
 		if (item.CompareTag("BigSnowball")) {
 			item.transform.parent = null;
+		}else{
+			PlayAudio(onSetReleaseItemSound);
 		}
 		if (pStatus.IsMainPlayer()) Debug.Log("Player released "+item);
 		
@@ -289,6 +295,13 @@ function GetCandidateItem() : GameObject {
 //function GetShowItemGUI () : boolean {
 //	return showItemGUI;
 //}
+
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	   	transform.audio.Play();
+	}
+}
 
 @script RequireComponent (CharacterMotorSF)
 @script RequireComponent (NetworkView)

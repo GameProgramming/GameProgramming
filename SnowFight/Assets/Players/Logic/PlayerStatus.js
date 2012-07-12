@@ -86,6 +86,9 @@ function NetJoinTeam (teamId : int) {
 function Update () {
 
 	if (!gameOver) {
+		if (transform.position.y > 250) {
+			ApplyDamage(null);
+		}
 		//Check if we are the main and dead.
 		if (IsMainPlayer()) {
 			if (IsDead()) {

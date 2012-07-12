@@ -12,7 +12,7 @@ var teamBaseIcon :Texture;
 private var bases :Array = new Array();
 
 private var size : int = 0;
-
+private var teamPlayers:Array = new Array();
 //private var ticketReduceTime = 0.5;
 //private var currentTicketReduceTime = 0.0;
 
@@ -24,6 +24,7 @@ function Awake () {
 			bases.Add(b.gameObject);
 		}
 	}
+	UpdatePlayers ();
 }
 
 function Start() {
@@ -87,12 +88,21 @@ function GetAllBases () : GameObject[] {
 
 function GetAllPlayers () : Transform[] {
 	var players : Transform[] = [];
-	for (var p : Transform in transform) {
-		if (p.CompareTag("Player")) {
-			players += [p];
-		}
+	for (var p : GameObject in teamPlayers) {
+//		if (p.CompareTag("Player")) {
+			players += [p.transform];
+//		}
 	}
 	return players;
+}
+
+function UpdatePlayers (){
+	teamPlayers.Clear();
+	for (var p : Transform in transform) {
+		if (p.CompareTag("Player")) {
+			teamPlayers.Add(p.gameObject);
+		}
+	}
 }
 
 function LoseTickets (count :int) {
@@ -131,11 +141,12 @@ function AddPlayer (p :GameObject) {
 //		var base : TeamBase = GetBase().GetComponent(TeamBase);
 //		pStatus.spawnBaseID = base.GetID();
 //	} // otherwise the team apparently has no bases.
-//	
+	teamPlayers.Add(p.gameObject);
 	size++;
 }
 
-function OnPlayerLeft (player :PlayerStatus) {
+function OnPlayerLeft (p :PlayerStatus) {
+	teamPlayers.Remove(p.gameObject);
 	size--;
 }
 
