@@ -110,20 +110,10 @@ function Idle ()
 	
 			whileCounter ++;
 			moveDir = Vector3.zero;
-			itemManager.ReleaseItem();
-//			Debug.Log("Released1 " + Time.time, this);
 	
 			targets = teamAI.GetTargets(gameObject);
-//			var closestTarget : GameObject = teamAI.GetClosestObjectInArray(gameObject, targets);
-//			if (Vector3.Distance(transform.position, closestTarget.transform.position) < attackDistance) {
-//				Debug.Log("There's something closer! " + Time.time, this);
-//				targets = [];
-//				targets += [closestTarget];
-//			}
 			
 			for (t in targets) {
-	//		if (targets.Length > 0) {
-	//			var t = targets[0];
 				if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
 					tar = FindSnowResource();
 					if (tar) {
@@ -198,9 +188,15 @@ function ConquerBase() {
 		}
 		
 		//if an enemy is too close forget this stuff and attack!!
-		var enemy = teamAI.FindClosestEnemy();
-		if(Random.value > 0.8 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance) {
-//		 &&	FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+		if(Random.value > 0.8) {
+			var enemy = teamAI.FindClosestEnemy();
+			if(enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance*2) {
+//			 &&	FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+				RemoveTarget();
+				return;
+			}
+		}
+		if(Random.value > 0.999) {
 			RemoveTarget();
 			return;
 		}
@@ -248,11 +244,13 @@ function GetUFO () {
 			}
 				
 			//if an enemy is too close forget this stuff and attack!!
-			var enemy = teamAI.FindClosestEnemy();
-			if(Random.value > 0.8 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
-				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
-				RemoveTarget();
-				return;
+			if(Random.value > 0.8) { 
+				var enemy = teamAI.FindClosestEnemy();
+				if (enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
+					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+					RemoveTarget();
+					return;
+				}
 			}
 			
 			isAttacking = false;
@@ -302,7 +300,7 @@ function GetBazooka () {
 				
 			//if an enemy is too close forget this stuff and attack!!
 			var enemy = teamAI.FindClosestEnemy();
-			if(Random.value > 0.99 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance && 
+			if(Random.value > 0.99 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance*2 && 
 				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 				RemoveTarget();
 				return;
@@ -342,8 +340,6 @@ function GetAmmo () {
 	var alreadyThere : boolean = false;
 	var arrivalTime : float;
 	var reloadTime : float;
-//	itemManager.ReleaseItem();
-//	Debug.Log("Released2 " + Time.time, this);
 	
 	while (true) {
 		if (!target || pStatus.IsRidingUfo()) {
@@ -355,6 +351,15 @@ function GetAmmo () {
 		Debug.DrawRay(transform.position, transform.up * 50, Color.cyan);
 		Debug.DrawRay(target.transform.position, transform.up * 50, Color.cyan);
 		
+		if (Random.value > 0.999) {
+			enemy = teamAI.FindClosestEnemy();
+			if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
+				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+				RemoveTarget();
+				return;
+			}
+		}
+		
 		if (alreadyThere) {
 			if (Random.value > 0.8 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
 				motor.inputAction = true;
@@ -362,10 +367,10 @@ function GetAmmo () {
 				yield WaitForSeconds(GetComponent(ItemManager).srPickTime);
 //				targets = [];
 				target = teamAI.GetClosestObjectInArray(gameObject, teamAI.GetSnowBalls());
-				if (target) {
-//					Debug.Log("Switch to balls " + Time.time, this);
-					yield RollBall();
-				}
+	//				if (target) {
+	//					Debug.Log("Switch to balls " + Time.time, this);
+	//					yield RollBall();
+	//				}
 				RemoveTarget();
 				return;
 			}
@@ -380,15 +385,6 @@ function GetAmmo () {
 		else {
 			if (Vector3.Distance(transform.position, target.transform.position) >= 1) {
 				MoveTowardsPosition(target.transform.position);
-				
-				if (Random.value > 0.999) {
-					enemy = teamAI.FindClosestEnemy();
-					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
-						FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
-						RemoveTarget();
-						return;
-					}
-				}
 			}
 			else {
 				//wait for a while
@@ -396,6 +392,15 @@ function GetAmmo () {
 				arrivalTime = Time.time;
 				reloadTime = Random.Range(1.0,2.0);
 				moveDir = Vector3.zero;
+			}
+			
+			if (Random.value > 0.99) {
+//			enemy = teamAI.FindClosestEnemy();
+//			if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
+//				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+				RemoveTarget();
+				return;
+//				}
 			}
 		}			
 		yield;
@@ -405,6 +410,8 @@ function GetAmmo () {
 function RollBall ()
 {
 	groundBaseFlag = null;
+	itemManager.ReleaseItem();
+	
 	while (true) {
 		motor.inputAction = false;
 		
@@ -453,7 +460,7 @@ function RollBall ()
 						FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 						motor.inputAction = false;
 						groundBaseFlag = null;
-						RemoveTarget();
+						RemoveTarget();;
 						return;
 					}
 				}
@@ -467,7 +474,6 @@ function RollBall ()
 					groundBaseFlag = null;
 					RemoveTarget();
 					itemManager.ReleaseItem();
-					Debug.Log("Released3 " + Time.time, this);
 					return;
 				}
 				
@@ -497,8 +503,6 @@ function RollBall ()
 					Debug.DrawRay(groundBaseFlag.position, transform.up * 50, Color.green);
 				}
 			}
-//			else { itemManager.ReleaseItem(); Debug.Log("Released4 " + Time.time, this);}
-			
 		}
 		yield;
 	}
@@ -527,7 +531,6 @@ function Attack ()
 	while (true) {
 		//if our target is dead, stop
 		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) { //RELOAD
-//		if (!target || targetPlayer.IsDead()) {
 			RemoveTarget();
 			return;
 		}
@@ -600,8 +603,13 @@ function Attack ()
 		 	}
 		 	
 		 	//the enemy is riding a ufo.. desperate times call for desperate measures
-		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() &&
-		 		!pStatus.IsRidingUfo()) {
+		 	if (target.GetComponent(PlayerStatus) && !pStatus.IsRidingUfo()
+		 		&& target.GetComponent(PlayerStatus).IsRidingUfo() && !weapon) {
+		 		//if there's a bazooka lying around, go get it!
+		 		//hopefully do something useful in TeamAI!
+		 		RemoveTarget();
+	 			return;
+		 	}
 		 		//if we have a bazooka, use it!
 	 			//aim and then shoot
 	 			//-------------------------
@@ -609,34 +617,24 @@ function Attack ()
 	 			//meanwhile always rotate towards the ufo
 	 			//RotateTowardsPosition(target.transform.position, rotateSpeed)
 	 			//when lock-time is over, shoot
-		 		if (weapon && weapon.CompareTag("Weapon")) {
-	 				RL = weapon.GetComponent(RocketLauncher);
-		 			//if(RL) {		 				 					
-		 			  	if (RL.getProgress() < RL.aimFor){
-		 			  		RL.addToProgress(Time.deltaTime);
-
-							var angleY = Vector3.Angle(target.transform.position-transform.position, transform.forward);
-		 			  		motor.Rotate (0, angleY);
-						}else if (RL.getProgress() >= RL.aimFor){
-							Debug.Log("SHOOT! " + Time.time,this);
-							RL.SetTarget(target);
-							motor.inputFire = !motor.inputFire;
-							target.GetComponent(PlayerStatus).isLockedTarget = false;
-						}
-		 			//}		 			
-		 		}
-		 		else { //if there's a bazooka lying around, go get it!
-		 			//hopefully do something useful in TeamAI!
-//		 			shootDistance = punchRadius;
-		 			RemoveTarget();
-		 			return;
-		 		}
-		 	}
+	 		if (weapon && weapon.CompareTag("Weapon")) {
+ 				RL = weapon.GetComponent(RocketLauncher);
+		 				 					
+ 			  	if (RL.getProgress() < RL.aimFor && target.GetComponent(PlayerStatus).IsRidingUfo()){
+ 			  		RL.addToProgress(Time.deltaTime);
+					var angleY = Vector3.Angle(target.transform.position-transform.position, transform.forward);
+ 			  		motor.Rotate (0, angleY);
+				}else if (RL.getProgress() >= RL.aimFor){
+//					Debug.Log("SHOOT! " + Time.time,this);
+					RL.SetTarget(target);
+					motor.inputFire = !motor.inputFire;
+					target.GetComponent(PlayerStatus).isLockedTarget = false;
+				}	 			
+	 		}
 
 
 			if (RL && !RL.HasAmmo()) {
 				itemManager.ReleaseItem();
-				Debug.Log("Released5 " + Time.time, this);
 				RemoveTarget();
 				return;
 			}
@@ -648,8 +646,6 @@ function Attack ()
 				//either we're on foot, or we're in a ufo and so is our target
 				else if (!pStatus.IsRidingUfo() || (pStatus.IsRidingUfo() && target.GetComponent(PlayerStatus).IsRidingUfo()))
 					motor.inputFire = !motor.inputFire;
-				if(weapon && weapon.CompareTag("Weapon"))
-				Debug.Log("here with bazooka " + Time.time, this);
 				
 				if (Random.value > 0.9) {
 					strafing = 0;

@@ -88,18 +88,18 @@ function GetTargets (player : GameObject) : GameObject[] {
 	//Get bazookas if they're around
 	//or go make a snowball at a snowressource
 	if (Random.value > 0.8 || firstBot) {
+		closestRessource = GetClosestObjectInArray(player, snowRessources);
+		if (IsClosestTeamMember(player, closestRessource.transform.position)) {
+			targets += [closestRessource];
+			//return targets;
+		}
+		
 		if (bazookas.Length > 0) {
 			var closestBazooka = GetClosestObjectInArray(player, bazookas);
 			if (IsClosestTeamMember(player, closestBazooka.transform.position)) {
 				targets += [closestBazooka];
 				//return targets;
 			}
-		}
-	
-		closestRessource = GetClosestObjectInArray(player, snowRessources);
-		if (IsClosestTeamMember(player, closestRessource.transform.position)) {
-			targets += [closestRessource];
-			//return targets;
 		}
 	}
 	
