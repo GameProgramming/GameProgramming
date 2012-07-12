@@ -557,39 +557,39 @@ function NetRegenerate (newHp :int) {
 }
 
 function OnGUI() {
-	 if (isLockedTarget) {
-    	var innerTexture : Texture2D = new Texture2D(1, 1);
-		var innerStyle = new GUIStyle();
-		var innerColor : Color;
-		var outerTexture : Texture2D = new Texture2D(1, 1);
-		var outerStyle = new GUIStyle();
-		var outerColor : Color;
-		
-		var totalWidth = Screen.width/10; 
-		var boxWidth=10;
-		
-		var aiming:String= "";
-		    
-		boxWidth = Screen.width/10;
-			
-		 
-			innerColor = new Color(1, 1, 1,0.5);
-			outerColor = new Color(1, 0, 0,0.5);
-			aiming = "Targeted";
-		  
-		innerTexture.SetPixel(0, 0, innerColor);
-		innerTexture.Apply();
-		innerStyle.normal.background = innerTexture;
-		outerTexture.SetPixel(0, 0, outerColor);
-		outerTexture.Apply();
-		outerStyle.normal.background = outerTexture;
-		
-		 
-		boxWidth = ((Screen.width/8)-20);
-		GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 47, boxWidth+2, 18), "", outerStyle);
-		GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 46, boxWidth  ,16), aiming,innerStyle);
-		
-    } 
+//	 if (isLockedTarget) {
+//    	var innerTexture : Texture2D = new Texture2D(1, 1);
+//		var innerStyle = new GUIStyle();
+//		var innerColor : Color;
+//		var outerTexture : Texture2D = new Texture2D(1, 1);
+//		var outerStyle = new GUIStyle();
+//		var outerColor : Color;
+//		
+//		var totalWidth = Screen.width/10; 
+//		var boxWidth=10;
+//		
+//		var aiming:String= "";
+//		    
+//		boxWidth = Screen.width/10;
+//			
+//		 
+//			innerColor = new Color(1, 1, 1,0.5);
+//			outerColor = new Color(1, 0, 0,0.5);
+//			aiming = "Targeted";
+//		  
+//		innerTexture.SetPixel(0, 0, innerColor);
+//		innerTexture.Apply();
+//		innerStyle.normal.background = innerTexture;
+//		outerTexture.SetPixel(0, 0, outerColor);
+//		outerTexture.Apply();
+//		outerStyle.normal.background = outerTexture;
+//		
+//		 
+//		boxWidth = ((Screen.width/8)-20);
+//		GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 47, boxWidth+2, 18), "", outerStyle);
+//		GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 46, boxWidth  ,16), aiming,innerStyle);
+//		
+//    } 
 }
 
 @script RequireComponent (NetworkView)
