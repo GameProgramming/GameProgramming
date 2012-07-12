@@ -14,6 +14,7 @@ var snowCosts :int = 1;
 var onNoSnowballs : AudioClip;
 var onNoRockets : AudioClip;
 var onUfoShotSound : AudioClip;
+var onThrowSound : AudioClip;
 
 //would prevent hitting oneself.. but poorly done.
 var netExtrapolationTime :float = 0.0;
@@ -62,6 +63,8 @@ function Fire () {
 		if(CanFire()){
 			if (player.IsRidingUfo()){
 				PlayAudio(onUfoShotSound);
+			}else{
+				PlayAudio(onThrowSound);
 			}
 		  	var projectile = GetProjectile();
 		  	
