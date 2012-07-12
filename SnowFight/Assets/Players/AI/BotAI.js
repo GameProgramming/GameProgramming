@@ -361,7 +361,7 @@ function GetAmmo () {
 		}
 		
 		if (alreadyThere) {
-			if (Random.value > 0.8 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
+			if (Random.value > 0.5 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
 				motor.inputAction = true;
 				buildingBall = Time.time;
 				yield WaitForSeconds(GetComponent(ItemManager).srPickTime);
