@@ -39,9 +39,9 @@ function OnRightStep () {
 		 terrain.SampleHeight(rightFootEmitter.transform.position) + 0.05;
 	rightFootEmitter.startRotation = transform.rotation.eulerAngles.y;
 	rightFootEmitter.Emit(1);
-	audio.clip = onRightSound;
-	if(!audio.isPlaying){
-	    	   	audio.Play();
+	transform.Find("StepsRight").audio.clip = onRightSound;
+	if(!transform.Find("StepsRight").audio.isPlaying){
+	    	   	transform.Find("StepsRight").audio.Play();
 			}
 }
 function OnLeftStep () {
@@ -49,8 +49,8 @@ function OnLeftStep () {
 		 terrain.SampleHeight(leftFootEmitter.transform.position) + 0.05;
 	leftFootEmitter.startRotation = transform.rotation.eulerAngles.y;
 	leftFootEmitter.Emit(1);
-	audio.clip = onLeftSound;
-	if(!audio.isPlaying){
-	    	   	audio.Play();
+	transform.Find("StepsLeft").audio.clip = onLeftSound;
+	if(!transform.Find("StepsLeft").audio.isPlaying){
+	    	   	transform.Find("StepsLeft").audio.Play();
 			}
 }

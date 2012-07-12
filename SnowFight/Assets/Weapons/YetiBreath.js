@@ -9,6 +9,32 @@ var strength :int = 10;
 private var player :PlayerStatus;
 private var targets :Array;
 
+var onBreathSound1 : AudioClip;
+var onBreathSound2 : AudioClip;
+var onBreathSound3 : AudioClip;
+
+function PlayBreathAudio(){
+	var soundNumber : float = Random.Range(0.0,0.3);
+	//Debug.Log(soundNumber);
+	if(soundNumber <= 0.1){
+		PlayAudio(onBreathSound1);
+	}
+	if(soundNumber > 0.1 && soundNumber <= 0.2){
+		PlayAudio(onBreathSound2);
+	}
+	if(soundNumber > 0.2){
+		PlayAudio(onBreathSound3);
+	}
+		
+}
+
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	    	   	transform.audio.Play();
+	}
+}
+
 function Start() {
 	targets = new Array();
 }
@@ -48,6 +74,7 @@ function Fire () {
 		breathProgress = breathTime;
 		particleSystem.Play();
 	}
+	PlayBreathAudio();
 }
 
 function OnTriggerEnter (other :Collider) {

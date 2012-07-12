@@ -133,10 +133,8 @@ function Update () {
 			snowResourcePick = null;
 		}
 	} else if (item && (inputActionUp || pStatus.IsDead())) {
-//  } else if (item && (inputAction || pStatus.IsDead())) {
 		ReleaseItem();
 	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem) ) {
-//	} else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem) && motor.IsGrounded()
 		if (candidateItem.CompareTag("SnowballRessource")) {
 			snowResourcePick = candidateItem.GetComponent(SnowRessource);
 			srPickProgress = 0;
@@ -188,6 +186,7 @@ function SetItem( it :GameObject ) {
 	}
 	item = it;
 	candidateItem = null;
+	
 	if (pStatus.IsMainPlayer()) Debug.Log("Player picked up "+item);
 	SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);

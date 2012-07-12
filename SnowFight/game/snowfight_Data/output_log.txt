@@ -1,0 +1,1075 @@
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 9.0c [aticfx32.dll 8.17.10.1083]
+    Renderer: Intel(R) HD Graphics Family
+    Vendor:   Intel
+    VRAM:     64 MB (via DXGI)
+    Caps:     Shader=30 DepthRT=1 NativeDepth=1 NativeShadow=1 DF16=1 DF24=1 INTZ=1 RAWZ=0 NULL=1 RESZ=1 SlowINTZ=0
+desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
+<I> Initializing (RawInput).
+<RI> Input initialized.
+Initialize engine version: 3.5.1f2
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\uni\Informatik\GP\gpgit\SnowFight\game\snowfight_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\uni\Informatik\GP\gpgit\SnowFight\game\snowfight_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\uni\Informatik\GP\gpgit\SnowFight\game\snowfight_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\uni\Informatik\GP\gpgit\SnowFight\game\snowfight_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\uni\Informatik\GP\gpgit\SnowFight\game\snowfight_Data\Managed\Assembly-UnityScript.dll (this message is harmless)
+Loading C:\uni\Informatik\GP\gpgit\SnowFight\game\snowfight_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
+- Completed reload, in  0.097 seconds
+Platform assembly: C:\uni\Informatik\GP\gpgit\SnowFight\game\snowfight_Data\Managed\UnityScript.Lang.dll (this message is harmless)
+Platform assembly: C:\uni\Informatik\GP\gpgit\SnowFight\game\snowfight_Data\Managed\Boo.Lang.dll (this message is harmless)
+This machine has a private IP address
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/ExportGenerated/StandalonePlayer/UnityEngineDebug.cpp Line: 43)
+
+DNSLookup: Error looking up connectiontester.unity3d.com (1460)
+Cannot resolve connection tester address, you must be connected to the internet before performing this or set the address to something accessible to you.
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Network/NetworkUtility.cpp Line: 501)
+
+sendto failed with code -1 for char 9 and length 1464.
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+
+Unloading 2 unused Assets to reduce memory usage. Loaded Objects now: 189. Operation took 16.490242 ms.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+sendto failed with code -1 for char 9 and length 1464.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+sendto failed with code -1 for char 9 and length 1464.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+sendto failed with code -1 for char 9 and length 1464.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+sendto failed with code -1 for char 9 and length 1172.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+sendto failed with code -1 for char 9 and length 1172.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+sendto failed with code -1 for char 9 and length 1172.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+sendto failed with code -1 for char 9 and length 1172.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+sendto failed with code -1 for char 9 and length 548.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+sendto failed with code -1 for char 9 and length 548.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+sendto failed with code -1 for char 9 and length 548.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: needs reset, doing it
+FullResetD3DDevice
+ResetD3DDevice
+dev->Reset
+D3Dwindow device not lost anymore
+sendto failed with code -1 for char 9 and length 548.
+sendto failed with code -1 for char 9 and length 548.
+DNSLookup: Error looking up masterserver.unity3d.com (1460)
+Cannot resolve master server address, you must be connected to the internet before using it or set the address to something accessible to you.
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Network/NetworkUtility.cpp Line: 501)
+
+DNSLookup: Error looking up masterserver.unity3d.com (1460)
+Cannot resolve master server address, you must be connected to the internet before using it or set the address to something accessible to you.
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Network/NetworkUtility.cpp Line: 501)
+
+sendto failed with code -1 for char 9 and length 1464.
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost
+Skipped rendering frame because GfxDevice is in invalid state (device lost)
+ 
+(Filename: C:/BuildAgent/work/b0bcff80449a48aa/Runtime/Misc/Player.cpp Line: 1593)
+
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: still lost

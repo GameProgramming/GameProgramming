@@ -239,3 +239,7 @@ function OnGUI () {
 		mainPlayerStatus = null;
 	}
 }
+
+function IsBeingTaken() {
+	return takeOverProgress > 0.0;
+}
