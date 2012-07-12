@@ -511,7 +511,9 @@ function RollBall ()
 					
 				if(BallAtBase(groundBaseFlag.position)) {
 					moveDir = Vector3.zero;
-//					targets = [];
+					targets = [];
+					RemoveTarget();
+					return;
 				}
 				else {
 					if (teamAI.WantsBazooka(gameObject) || ball.GetComponent(BigSnowBall).HasReachedFullSize() || Vector3.Distance(transform.position, groundBaseFlag.position)>attackDistance) {
