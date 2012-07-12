@@ -64,8 +64,8 @@ function Update () {
 	}
 
 	//we're probably not moving forward although we want to
-	if (moveDir != Vector3.zero && !ball && !(target && target.CompareTag("BigSnowball")) 
-		&& !pStatus.IsRidingUfo() && Time.time > (stuckTime + timeoutWhenStuck) 
+	if (moveDir != Vector3.zero && !ball && !pStatus.IsRidingUfo() 
+		&& Time.time > (stuckTime + timeoutWhenStuck) 
 		&& motor.movement.velocity.magnitude < attackSpeed * 0.3) {
 		
 		if (!stuck) { //strafe, or change direction
