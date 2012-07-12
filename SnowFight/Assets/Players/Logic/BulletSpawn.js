@@ -125,10 +125,10 @@ function FireHeatSeekingRocket (target :GameObject) {
 			clone = Instantiate(projectile, transform.position, transform.rotation);
 			clone.GetComponent(HeatSeeking).missleTarget = target;
 			
-			snowCosts = projectile.GetComponent(Projectile).snowCosts;
-			if (snowCosts > 0) {
-				player.SubtractSnowball(snowCosts);
-			}
+//			snowCosts = projectile.GetComponent(Projectile).snowCosts;
+//			if (snowCosts > 0) {
+//				player.SubtractSnowball(snowCosts);
+//			}
 			SendFireTarget(clone, target);
 			player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
 			reloadProgress = clone.GetComponent(Projectile).reloadTime;

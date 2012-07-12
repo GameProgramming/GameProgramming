@@ -11,13 +11,14 @@ private var playerName :String = "";
 
 var neutralStyle : GUIStyle;
 var shadowStyle : GUIStyle;
+var skin :GUISkin;
 
 var fontMaterial :Material;
 
 function Awake () {
 	showIngameMenu = false;
 	showChangeMap = false;
-	ingameMenuRect = Rect(Screen.width/2 - 125, Screen.height/2 - 75, 250, 150);
+	ingameMenuRect = Rect(Screen.width/2 - 125, Screen.height/2 - 120, 250, 240);
 	changeMapRect = Rect(Screen.width/2 - 125, Screen.height/2 - 30, 250, 60);
 	neutralStyle.font.material = fontMaterial;
 	neutralStyle.normal.textColor = Color.white;
@@ -64,6 +65,7 @@ function Update() {
 function OnGUI () {
 
 	if (showIngameMenu) {
+		GUI.skin = skin;
 		
 		Screen.showCursor = true;
 		Screen.lockCursor = false;
@@ -80,6 +82,7 @@ function OnGUI () {
 		
 	} else {
 		if (showChangeMap) {
+			GUI.skin = skin;
 			GUILayout.Window(1, changeMapRect, MakeChangeMenuRect, "Change Map");
 		} 
 	}

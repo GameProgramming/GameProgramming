@@ -1,8 +1,8 @@
 DontDestroyOnLoad(this);
 
-var gameName = "TUSnowFight";
+var gameName = "TUYetiTournament";
 var serverPort = 25002;
-var serverName = "SomeServer";
+var serverName = "YetiServer";
 var botCount = "10";
 
 var playerName = "Player01";
@@ -32,13 +32,15 @@ private var selectedLevelId = 0;
 
 var skin : GUISkin;
 
-private var startGame = false;
-private var joinGame = false;
-
-private var humanPlayers = "1";
+private var humanPlayers = "4";
 
 private var origin :Vector2;
 var logo :Texture;
+var creditTime :float = 0;
+
+enum GUIScreen {Default, Start, Join, Credits, Quit};
+
+var currScreen :GUIScreen = GUIScreen.Default;
 
 // Enable this if not running a client on the server machine
 //MasterServer.dedicatedServer = true;
@@ -63,42 +65,62 @@ function OnGUI ()
 		Screen.lockCursor = false;
 		//mainRect = GUILayout.Window (0, mainRect, MakeMainWindow, "");	
 		
-		var scale :float = Screen.width / 700.0;
+		var scale :float = Screen.width / 1024.0;
 		
 		GUI.DrawTexture(Rect(origin.x-100*scale,origin.y-100*scale, 200*scale,200*scale), logo);
 		
-		if (GUI.Button(Rect(origin.x-300*scale,origin.y-15*scale, 100*scale,30*scale),"Start")) {
-			ShowStartWindow();
+		if (GUI.Button(Rect(origin.x-150*scale-100,origin.y-15*scale, 100,30),"start")) {
+			currScreen = GUIScreen.Start;
 		}
-		if (GUI.Button(Rect(origin.x+200*scale,origin.y-15*scale, 100*scale,30*scale),"Join")) {
-			ShowJoinWindow();
+		if (GUI.Button(Rect(origin.x+150*scale,origin.y-15*scale, 100,30),"join")) {
+			currScreen = GUIScreen.Join;
 		}
-		if (GUI.Button(Rect(origin.x-50*scale,origin.y+200*scale, 100*scale,30*scale),"Quit")) {
-			Application.Quit();
-		}
-		
-		if (startGame) {
-			startJoinRect = GUILayout.Window (1, startJoinRect, MakeStartWindow, "");
+		if (GUI.Button(Rect(origin.x-50,origin.y+100*scale, 100,30),"quit")) {
+			currScreen = GUIScreen.Credits;
 		}
 		
-		if (joinGame) {
-			startJoinRect = GUILayout.Window(2, startJoinRect, MakeJoinWindow, "");
+		GUILayout.Window (1, new Rect(origin.x-.6*Screen.width-(100+500*scale), Screen.height*.2, (100+500*scale), Screen.height*.6), MakeStartWindow, "");
+		GUILayout.Window(2, new Rect(origin.x+.6*Screen.width, Screen.height*.1, (100+500*scale), Screen.height*.8), MakeJoinWindow, "");
+		GUILayout.Window(3, new Rect(origin.x-.3*Screen.width, origin.y+Screen.height*.6, .6*Screen.width, Screen.height*.8), MakeCreditWindow, "");
+		
+		switch (currScreen) {
+		case GUIScreen.Start:
+			origin = Vector2.MoveTowards(origin, Vector2(1.5*Screen.width, Screen.height/2), scale*1500*Time.deltaTime);
+			break;
+		case GUIScreen.Join:
+			origin = Vector2.MoveTowards(origin, Vector2(-Screen.width/2, Screen.height/2), scale*1500*Time.deltaTime);
+			break;
+		case GUIScreen.Credits:
+			origin = Vector2.MoveTowards(origin, Vector2(Screen.width/2, -Screen.height/2), scale*1500*Time.deltaTime);
+			creditTime += Time.deltaTime;
+			if (creditTime > 3) {
+				currScreen = GUIScreen.Quit;
+			}
+			break;
+		case GUIScreen.Quit:
+			origin = Vector2.MoveTowards(origin, Vector2(Screen.width/2, -1.5*Screen.height), scale*1500*Time.deltaTime);
+			if (Vector2.Distance(origin, Vector2(Screen.width/2, -1.5*Screen.height)) < 10) {
+				Application.Quit();
+			}
+			break;
+		default:
+			origin = Vector2.MoveTowards(origin, Vector2(Screen.width/2, Screen.height/2), scale*1500*Time.deltaTime);
 		}
 
 	}
 }
 
-function ShowStartWindow() {
-	startJoinRect = Rect(Screen.width/4, 0, 3 * Screen.width/4, Screen.height/4);
-	if (joinGame) joinGame = false; 
-	startGame = true;
-}
-
-function ShowJoinWindow() {
-	startJoinRect = Rect(Screen.width/4, 0, 3 * Screen.width/4, Screen.height/4);
-	if (startGame) startGame = false;
-	joinGame = true;
-}
+//function ShowStartWindow() {
+//	startJoinRect = Rect(Screen.width/4, 0, 3 * Screen.width/4, Screen.height/4);
+//	if (joinGame) joinGame = false; 
+//	startGame = true;
+//}
+//
+//function ShowJoinWindow() {
+//	startJoinRect = Rect(Screen.width/4, 0, 3 * Screen.width/4, Screen.height/4);
+//	if (startGame) startGame = false;
+//	joinGame = true;
+//}
 
 function Awake ()
 {
@@ -115,7 +137,7 @@ function Awake ()
 	
 	levels = GetComponent(NetworkLevelLoad).supportedNetworkLevels;
 	
-	origin = Vector2(Screen.width/2, Screen.height/2);
+	origin = Vector2(Screen.width/2, Screen.height*2);
 }
 
 function Update()
@@ -200,73 +222,106 @@ function TestConnection()
 	//Debug.Log(connectionTestResult + " " + probingPublicIP + " " + doneTesting);
 }
 
-function MakeMainWindow(id : int) {
-	
-	if (Network.peerType == NetworkPeerType.Disconnected) {
-		GUILayout.Space(12);
-		
-		GUILayout.BeginHorizontal();
-		if (GUILayout.Button("Start")) {
-			ShowStartWindow();
-		}
-		GUILayout.EndHorizontal();
-		
-		GUILayout.BeginHorizontal();
-		if (GUILayout.Button("Join")) {
-			ShowJoinWindow();
-		}
-		GUILayout.EndHorizontal();
-		
-		GUILayout.Space(3 * Screen.height/4);
-		
-		GUILayout.BeginHorizontal();
-		if (GUILayout.Button("Exit Game")) {
-			Application.Quit();
-		}
-		GUILayout.EndHorizontal();
-	}
-	
-}
+//function MakeMainWindow(id : int) {
+//	
+//	if (Network.peerType == NetworkPeerType.Disconnected) {
+//		GUILayout.Space(12);
+//		
+//		GUILayout.BeginHorizontal();
+//		if (GUILayout.Button("Start")) {
+//			ShowStartWindow();
+//		}
+//		GUILayout.EndHorizontal();
+//		
+//		GUILayout.BeginHorizontal();
+//		if (GUILayout.Button("Join")) {
+//			ShowJoinWindow();
+//		}
+//		GUILayout.EndHorizontal();
+//		
+//		GUILayout.Space(3 * Screen.height/4);
+//		
+//		GUILayout.BeginHorizontal();
+//		if (GUILayout.Button("Exit Game")) {
+//			Application.Quit();
+//		}
+//		GUILayout.EndHorizontal();
+//	}
+//	
+//}
 
 function MakeStartWindow (id : int) {	
 	if (Network.peerType == NetworkPeerType.Disconnected) {
 		GUILayout.Space(12);
-	
-		GUILayout.BeginHorizontal();
-		GUILayout.Label("Player name");
-		playerName = GUILayout.TextField(playerName);
-		GUILayout.EndHorizontal();
 		
 		GUILayout.BeginHorizontal();
-		if (GUILayout.Button("Start Singleplayer")) {
-			StartServer (serverName, levels[selectedLevelId]);
+		GUILayout.Label("     ");
+		if (GUILayout.Button("back  >>", GUILayout.ExpandWidth(false))){
+			currScreen = GUIScreen.Default;
 		}
 		GUILayout.EndHorizontal();
 		
+		GUILayout.Space(10);
+	
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Server Name");
-		serverName = GUILayout.TextField(serverName);
+		GUILayout.Label("player name");
+		playerName = GUILayout.TextField(playerName);
 		GUILayout.EndHorizontal();
 		
+		GUILayout.Space(10);
+		
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Map");
+		GUILayout.Label("map");
 		selectedLevelId = GUILayout.SelectionGrid(selectedLevelId, levels, 1);
 		GUILayout.EndHorizontal();
 		
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Bot count");
+		GUILayout.Label("bot count");
 		botCount = GUILayout.TextField(botCount);
 		GUILayout.EndHorizontal();
 		
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Maximum human connections");
+		GUILayout.Label("     ");
+		if (GUILayout.Button("start singleplayer")) {
+			StartServer (serverName, levels[selectedLevelId]);
+		}
+		GUILayout.EndHorizontal();
+		
+		GUILayout.Space(12);
+		
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("server name");
+		serverName = GUILayout.TextField(serverName);
+		GUILayout.EndHorizontal();
+		
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("maximum connections");
 		humanPlayers = GUILayout.TextField(humanPlayers);
 		GUILayout.EndHorizontal();
 		
-		if (GUILayout.Button ("Start Server")) {
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("     ");
+		if (GUILayout.Button ("start server")) {
 			StartServer (serverName, levels[selectedLevelId]);
 		}
+		GUILayout.EndHorizontal();
 	}
+}
+
+function MakeCreditWindow (id : int) {	
+	GUILayout.Space(12);
+	
+	GUILayout.Button("YETI TOURNAMENT", GUILayout.ExpandWidth(false));
+	GUILayout.Space(22);
+	GUILayout.Label("benjamin bisping  -  ben@mrkeks.net");
+	GUILayout.Label("tiare feuchtner  -  tiaref26@gmail.com");
+	GUILayout.Label("andreas büscher  -  andi_buescher0404@gmx.de");
+	GUILayout.Label("hannes rammer  -  hannes.rammer@gmail.com");
+	GUILayout.Space(22);
+	GUILayout.Label("Game Dev Class");
+	GUILayout.Label("SoSe2012 @ TU Berlin");
+	GUILayout.Space(22);
+	GUILayout.Label("Enjoy the summer!");
 }
 
 function StartServer (serverName :String, level :String) {
@@ -278,18 +333,28 @@ function StartServer (serverName :String, level :String) {
 function MakeJoinWindow(id : int)
 {
 	GUILayout.Space(12);
+	GUILayout.BeginHorizontal();
+	if (GUILayout.Button("<<  back", GUILayout.ExpandWidth(false))) {
+		currScreen = GUIScreen.Default;
+	}
+	GUILayout.Label("     ");
+	GUILayout.EndHorizontal();
+	
+	GUILayout.Space(10);
 	
 	GUILayout.BeginHorizontal();
-	GUILayout.Label("Player name");
+	GUILayout.Label("player name");
 	playerName = GUILayout.TextField(playerName);
 	GUILayout.EndHorizontal();
+	
+	GUILayout.Space(10);
 
 	GUILayout.BeginHorizontal();
-	GUILayout.Label("Server IP");
+	GUILayout.Label("server IP");
 	iPAdress = GUILayout.TextField(iPAdress);
-	GUILayout.Label("Port");
+	GUILayout.Label("port");
 	iPort = GUILayout.TextField(iPort);
-	if (GUILayout.Button("Connect")) {
+	if (GUILayout.Button("connect")) {
 		Debug.Log ("Trying to connect to "+iPAdress);
 		var error :NetworkConnectionError = Network.Connect(iPAdress, parseInt(iPort));
 		if (error && error != NetworkConnectionError.NoError) {
@@ -301,7 +366,7 @@ function MakeJoinWindow(id : int)
 	GUILayout.EndHorizontal();
 
 	// Refresh hosts
-	if (GUILayout.Button ("Refresh available Servers") || Time.realtimeSinceStartup > lastHostListRequest + hostListRefreshTimeout)
+	if (GUILayout.Button ("refresh available servers") || Time.realtimeSinceStartup > lastHostListRequest + hostListRefreshTimeout)
 	{
 		MasterServer.RequestHostList (gameName);
 		lastHostListRequest = Time.realtimeSinceStartup;
@@ -310,6 +375,13 @@ function MakeJoinWindow(id : int)
 
 	var data : HostData[] = MasterServer.PollHostList();
 	var count = 0;
+	if (data.Length == 0) {
+		GUILayout.Space(25);
+		GUILayout.BeginHorizontal();
+		GUILayout.Label(" --| no servers found. :( |-- ");
+		GUILayout.EndHorizontal();
+		GUILayout.Space(25);
+	}
 	for (var element in data)
 	{
 		GUILayout.BeginHorizontal();
@@ -344,11 +416,12 @@ function MakeJoinWindow(id : int)
 			GUILayout.Label(element.comment);
 			GUILayout.Space(5);
 			GUILayout.FlexibleSpace();
-			if (GUILayout.Button("Connect"))
+			if (GUILayout.Button("connect"))
 				Network.Connect(element);
 		}
 		GUILayout.EndHorizontal();	
-
+		
+		
 	}
 }
 

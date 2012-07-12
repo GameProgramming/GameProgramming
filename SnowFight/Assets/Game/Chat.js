@@ -47,18 +47,35 @@ function NetChatMessage (senderId :NetworkViewID, text :String, team :boolean) {
 	m.sender = sender;
 	m.text = text;
 	m.team = team;
-	m.meta = true;
+	m.meta = false;
 	messages.Add(m);
 }
 
 function MetaMessage (text :String) {
 	var m :Message = new Message();
-	m.time = Time.time;
-	m.sender = null;
-	m.text = text;
-	m.team = false;
-	m.meta = true;
-	messages.Add(m);
+	if (text.Length >= 50) {
+		m.time = Time.time;
+		m.sender = null;
+		m.text = text.Substring(0, 49);
+		m.team = false;
+		m.meta = true;
+		messages.Add(m);
+		var m2 :Message = new Message();
+		m2.time = Time.time;
+		m2.sender = null;
+		m2.text = text.Substring(50);
+		m2.team = false;
+		m2.meta = true;
+		messages.Add(m2);
+	} else {
+		m.time = Time.time;
+		m.sender = null;
+		m.text = text;
+		m.team = false;
+		m.meta = true;
+		messages.Add(m);
+	}
+
 }
 
 function Update () {
@@ -126,10 +143,27 @@ function OnGUI () {
 
 function ParseChatInput (inputText :String) {
 	if (game.player && inputText.Length > 0) {
+		var firstString : String;
+		var secondString : String;
 		if (inputText.StartsWith("/team ")) {
-			ChatMessage (game.playerS, inputText.Substring(6), true);
-		} else {
-			ChatMessage (game.playerS, inputText, false);
+			if (inputText.Length > 50) {
+				firstString = inputText.Substring(6, 49);
+				secondString = inputText.Substring(50);
+				ChatMessage (game.playerS, firstString, true);
+				ChatMessage (game.playerS, secondString, true);
+			} else {
+				ChatMessage (game.playerS, inputText.Substring(6), true);
+			}
+		} else {			
+			if (inputText.Length > 50) {
+				firstString = inputText.Substring(0, 49);
+				secondString = inputText.Substring(50);
+				ChatMessage (game.playerS, firstString, false);
+				ChatMessage (game.playerS, secondString, false);
+			} else {
+				ChatMessage (game.playerS, inputText, false);
+			}
+		
 		}
 	}
 }

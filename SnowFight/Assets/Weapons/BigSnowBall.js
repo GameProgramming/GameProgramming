@@ -88,6 +88,7 @@ function Update () {
 				PlayAudio(hitSnow);
 				loadshot += Time.deltaTime;
 			} else if (loadshot > 0.001) {
+				//PlaySnowAudio();
 				loadshot = Mathf.Clamp(loadshot, 0.5, 3);
 				//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;

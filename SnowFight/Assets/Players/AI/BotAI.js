@@ -64,8 +64,10 @@ function Update () {
 	}
 
 	//we're probably not moving forward although we want to
-	if (moveDir != Vector3.zero && !ball && !(target && target.CompareTag("BigSnowball")) 
-		&& !pStatus.IsRidingUfo() && Time.time > (stuckTime + timeoutWhenStuck) 
+//	if (moveDir != Vector3.zero && !ball && !(target && target.CompareTag("BigSnowball")) 
+//		&& !pStatus.IsRidingUfo() && Time.time > (stuckTime + timeoutWhenStuck) 
+//		&& motor.movement.velocity.magnitude < attackSpeed * 0.3) {
+	if (moveDir != Vector3.zero && Time.time > (stuckTime + timeoutWhenStuck) 
 		&& motor.movement.velocity.magnitude < attackSpeed * 0.3) {
 		
 		if (!stuck) { //strafe, or change direction
@@ -196,7 +198,7 @@ function ConquerBase() {
 				return;
 			}
 		}
-		if(Random.value > 0.999) {
+		if(Random.value > 0.99) {
 			RemoveTarget();
 			return;
 		}
@@ -261,6 +263,10 @@ function GetUFO () {
 
 			Debug.DrawRay(target.transform.position, transform.up * 50, Color.blue);
 			
+			if (Vector3.Distance(transform.position, target.transform.position) < 10) {
+				itemManager.ReleaseItem();
+			}
+			
 			var candidateItem = itemManager.GetCandidateItem();	
 			if (candidateItem && (candidateItem.CompareTag("Ufo") || 
 				candidateItem.transform.parent && candidateItem.transform.parent.CompareTag("Ufo"))) {
@@ -291,8 +297,8 @@ function GetBazooka () {
 			return;
 		}
 		
-		if (itemManager.GetItem())
-			itemManager.ReleaseItem();
+//		if (itemManager.GetItem())
+//			itemManager.ReleaseItem();
 			
 		//if target is a weapon
 		if (target.CompareTag("Weapon")) {
@@ -314,6 +320,10 @@ function GetBazooka () {
 			var bazookaPos = target.transform.position;
 			bazookaPos.y = transform.position.y;
 			var distance = Vector3.Distance(transform.position, bazookaPos);
+
+			if (distance < 10) {
+				itemManager.ReleaseItem();
+			}
 
 			var candidateItem = itemManager.GetCandidateItem();
 			if(candidateItem && candidateItem.CompareTag("Weapon")) {
@@ -414,7 +424,6 @@ function GetAmmo () {
 function RollBall ()
 {
 	groundBaseFlag = null;
-	itemManager.ReleaseItem();
 	
 	while (true) {
 		motor.inputAction = false;
@@ -424,11 +433,14 @@ function RollBall ()
 			RemoveTarget();
 			return;
 		}
-			
+		
 		//if target is a ball
 		if (target && target.CompareTag("BigSnowball")) {
 			isAttacking = false;
-			ball = itemManager.GetItem();
+		
+		ball = itemManager.GetItem();
+		if (ball && !ball.CompareTag("BigSnowball"))
+			ball = null;
 			
 			Debug.DrawRay(transform.position, transform.up * 50, Color.green);
 			Debug.DrawRay(target.transform.position, transform.up * 50, Color.green);
@@ -444,6 +456,10 @@ function RollBall ()
 
 				 //if we're close enough, try to get a hold of it
 				MoveTowardsPosition(target.transform.position);
+				
+				if (Vector3.Distance(transform.position, target.transform.position) < 10) {
+					itemManager.ReleaseItem();
+				}
 				
 				var candidateItem = itemManager.GetCandidateItem();
 				if(candidateItem && candidateItem.CompareTag("BigSnowball")) {
@@ -470,9 +486,21 @@ function RollBall ()
 				}
 			}
 			//if we have a ball run to base
-			else if (ball.CompareTag("BigSnowball") && groundBaseFlag) { //but make sure we have a base
+			else if (groundBaseFlag) { //make sure we have a base
+//			else if (ball.CompareTag("BigSnowball") && groundBaseFlag) { 
 				//release the button, once the ball is yours
 				motor.inputAction = false;
+				
+				if (Random.value > 0.99) {
+					enemy = teamAI.FindClosestEnemy();
+					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
+						FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+						motor.inputAction = false;
+						groundBaseFlag = null;
+						RemoveTarget();;
+						return;
+					}
+				}
 				
 				if (ball.GetComponent(BigSnowBall).IsBallTooFarAway (gameObject)) {
 					groundBaseFlag = null;
@@ -493,7 +521,9 @@ function RollBall ()
 					
 				if(BallAtBase(groundBaseFlag.position)) {
 					moveDir = Vector3.zero;
-//					targets = [];
+					targets = [];
+					RemoveTarget();
+					return;
 				}
 				else {
 					if (teamAI.WantsBazooka(gameObject) || ball.GetComponent(BigSnowBall).HasReachedFullSize() || Vector3.Distance(transform.position, groundBaseFlag.position)>attackDistance) {
