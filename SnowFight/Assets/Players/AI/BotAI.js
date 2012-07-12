@@ -68,7 +68,7 @@ function Update () {
 //		&& !pStatus.IsRidingUfo() && Time.time > (stuckTime + timeoutWhenStuck) 
 //		&& motor.movement.velocity.magnitude < attackSpeed * 0.3) {
 	if (moveDir != Vector3.zero && Time.time > (stuckTime + timeoutWhenStuck) 
-		&& motor.movement.velocity.magnitude < attackSpeed * 0.3) {
+		&& motor.movement.velocity.magnitude < attackSpeed * 0.5) {
 		
 		if (!stuck) { //strafe, or change direction
 			stuck = true;
@@ -87,11 +87,13 @@ function Update () {
 	else
 		stuck = false;
 
-	if(Time.time < (stuckTime + timeoutWhenStuck) && !pStatus.IsRidingUfo() && (target && !target.CompareTag("BigSnowball")))
+	if(Time.time < (stuckTime + timeoutWhenStuck))
 		motor.inputMoveDirection = alternateDir;
 	else
 		motor.inputMoveDirection = moveDir;
 	
+	if(target && target.CompareTag("BigSnowball"))
+		Debug.Log("Am stuck! " + stuck, this);
 }
 
 function Idle ()
@@ -355,7 +357,7 @@ function GetAmmo () {
 	var reloadTime : float;
 	
 	while (true) {
-		if (!target || pStatus.IsRidingUfo()) {
+		if (!target || pStatus.IsRidingUfo() || itemManager.GetItem()) {
 			RemoveTarget();
 			return;
 		}
@@ -428,7 +430,8 @@ function RollBall ()
 	while (true) {
 		motor.inputAction = false;
 		
-		if (!target || pStatus.IsRidingUfo()) {
+		var attack = pStatus.GetLastAttack();
+		if (!target || pStatus.IsRidingUfo() || (attack && (Time.time - attack.time)<0.01)) {
 			groundBaseFlag = null;
 			RemoveTarget();
 			return;

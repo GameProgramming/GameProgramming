@@ -164,6 +164,7 @@ function Release () {
 	weaponModel.gameObject.active = false;
 	itemModel.gameObject.SetActiveRecursively(true);
 	bulletSpawn.GetComponent(BulletSpawn).ConnectToPlayer(null);
+	transform.position += transform.forward; //position weapon far enough away to not get stuck
 	terrheight = Terrain.activeTerrain.SampleHeight(transform.position) + 1;
 	transform.localRotation = Quaternion.identity;
 	for (var i :int = ammo; i < initialAmmo; i++) {
