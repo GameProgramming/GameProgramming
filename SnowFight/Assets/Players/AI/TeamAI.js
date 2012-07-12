@@ -89,7 +89,7 @@ function GetTargets (player : GameObject) : GameObject[] {
 	//or go make a snowball at a snowressource
 	if (Random.value > 0.8 || firstBot) {
 		closestRessource = GetClosestObjectInArray(player, snowRessources);
-		if (IsClosestTeamMember(player, closestRessource.transform.position)) {
+		if (IsClosestTeamMember(player, closestRessource.transform.position) || firstBot) {
 			targets += [closestRessource];
 			//return targets;
 		}
@@ -200,6 +200,7 @@ function GetClosestTeamMember (pos : Vector3) : GameObject {
 	var closest : GameObject;
 	var minDist = Mathf.Infinity;
 	var curDist = 0.0;
+	teamMembers = teamComponent.GetAllPlayers();
 	for (var player in teamMembers) {
 		curDist = Vector3.Distance(player.position, pos);
 		if (curDist < minDist && !player.GetComponent(BotAI).IsBusy()) {
@@ -214,11 +215,12 @@ function GetClosestTeamMember (pos : Vector3) : GameObject {
 function IsClosestTeamMember (player : GameObject, pos : Vector3) : boolean {
 	var minDist = Vector3.Distance(player.transform.position, pos);
 	var curDist = 0.0;
+	teamMembers = teamComponent.GetAllPlayers();
 	for (var bot in teamMembers) {
-		curDist = Vector3.Distance(bot.position, pos);
-		if (curDist < minDist && bot.GetComponent(BotAI).enabled && !bot.GetComponent(BotAI).IsBusy()) {
-			minDist = curDist;
-			return false;
+		if (bot != player && bot.GetComponent(BotAI).enabled && !bot.GetComponent(PlayerStatus).IsDead()){// && !bot.GetComponent(BotAI).IsBusy()) {
+			curDist = Vector3.Distance(bot.position, pos);
+			if (curDist < minDist)
+				return false;
 		}
 	}
 	return true;

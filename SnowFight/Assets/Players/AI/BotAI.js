@@ -290,6 +290,9 @@ function GetBazooka () {
 			itemManager.GetItem() && itemManager.GetItem().CompareTag("Weapon")) {
 			return;
 		}
+		
+		if (itemManager.GetItem())
+			itemManager.ReleaseItem();
 			
 		//if target is a weapon
 		if (target.CompareTag("Weapon")) {
@@ -361,12 +364,13 @@ function GetAmmo () {
 		}
 		
 		if (alreadyThere) {
-			if (Random.value > 0.5 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
+			if ((Random.value > 0.5 || teamAI.WantsBazooka(gameObject)) 
+				&& target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
 				motor.inputAction = true;
 				buildingBall = Time.time;
 				yield WaitForSeconds(GetComponent(ItemManager).srPickTime);
-//				targets = [];
-				target = teamAI.GetClosestObjectInArray(gameObject, teamAI.GetSnowBalls());
+				targets = [];
+				//target = teamAI.GetClosestObjectInArray(gameObject, teamAI.GetSnowBalls());
 	//				if (target) {
 	//					Debug.Log("Switch to balls " + Time.time, this);
 	//					yield RollBall();
