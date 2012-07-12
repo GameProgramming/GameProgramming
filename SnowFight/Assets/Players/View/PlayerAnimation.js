@@ -28,6 +28,8 @@ private var meshRenderers :MeshRenderer[];
 private var skinnedRenderers :SkinnedMeshRenderer[];
 private var controller :CharacterController;
 
+var healingSound : AudioClip;
+
 enum PlayerViewMode {Default, AimUp}
 private var viewMode :PlayerViewMode = PlayerViewMode.Default;
 
@@ -351,11 +353,21 @@ function OnBulletSpawnFired (bs :BulletSpawn) {
 function SetClosestBase (base :TeamBase) {
 	closestBase = base;
 	healthParticles.enableEmission = base.team == team && !playerStatus.HasFullHp();
+	if(healthParticles.enableEmission){
+		PlayAudio(healingSound);
+	}
 }
 
 function OnLand() {
 	body.SendMessage("OnRightStep");
 	body.SendMessage("OnLeftStep");
+}
+
+function PlayAudio(audio : AudioClip){
+	transform.audio.clip=audio;
+	if(!transform.audio.isPlaying){
+	    	   	transform.audio.Play();
+	}
 }
 
 @script RequireComponent (NetworkView)
