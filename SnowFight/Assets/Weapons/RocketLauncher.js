@@ -342,6 +342,7 @@ function OnGUI(){
 				progrAim = 1 ;
 				aiming = "Target locked";
 				PlayAudio(onLockedSound);
+				boxWidth = Screen.width/7 - 12;
 		    }else if(progress > 0 && progress < aimFor){
 				aimColor1 = new Color(0, 1, progress,0.4);
 				aimColor2 = new Color(0, 1, progress,0.4);
@@ -349,6 +350,7 @@ function OnGUI(){
 				progrAim = progress/aimFor ;
 				aiming = "Locking target";
 				PlayAudio(onLockingSound);
+				boxWidth = Screen.width/7 - 17;
 			}else{
 				StopAudio();
 				progrAim = 1 ;
@@ -356,6 +358,7 @@ function OnGUI(){
 				aimColor2 = new Color(1, 1, 0,0.2);
 				outerColor = new Color(0, 0, 0,0.5);
 				aiming = "Locking not possible";
+				boxWidth = Screen.width/5 - 16;
 			}
 		}
 		aimTexture1.SetPixel(0, 0, aimColor1);
@@ -381,9 +384,12 @@ function OnGUI(){
 		//GUI.Box (Rect (Screen.width/2-10 -25, Screen.height/2-3, 20, 6), "",aimStyle2);
 		//GUI.Box (Rect (Screen.width/2-3 -25, Screen.height/2-10, 6, 20), "",aimStyle1);
 		
-		boxWidth = ((Screen.width/8)-20);
-		GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 47, boxWidth+2, 18), "", outerStyle);
-		GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 46, boxWidth * progrAim ,16), aiming,aimStyle2);
+		
+		if (target) {
+			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 47, boxWidth+2, 18), "", outerStyle);
+			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 46, boxWidth * progrAim ,16), aiming,aimStyle2);
+		}
+
 		
 			
 	}
