@@ -9,11 +9,20 @@ private var disconnect : boolean = false;
 private var showTooltips :boolean = true;
 private var playerName :String = "";
 
+var neutralStyle : GUIStyle;
+var shadowStyle : GUIStyle;
+
+var fontMaterial :Material;
+
 function Awake () {
 	showIngameMenu = false;
 	showChangeMap = false;
 	ingameMenuRect = Rect(Screen.width/2 - 125, Screen.height/2 - 75, 250, 150);
 	changeMapRect = Rect(Screen.width/2 - 125, Screen.height/2 - 30, 250, 60);
+	neutralStyle.font.material = fontMaterial;
+	neutralStyle.normal.textColor = Color.white;
+	shadowStyle = new GUIStyle(neutralStyle);
+	shadowStyle.normal.textColor = Color.black;
 }
 
 function Update() {
@@ -55,11 +64,20 @@ function Update() {
 function OnGUI () {
 
 	if (showIngameMenu) {
+		
 		Screen.showCursor = true;
 		Screen.lockCursor = false;
 //		var menuRect :Rect = Rect(ingameMenuRect);
 //		menuRect.y = 
 		GUILayout.Window(0, ingameMenuRect, MakeIngameMenuRect, "");
+		
+		if (Network.isServer) {
+			var txt :String = Network.player.ipAddress.ToString() + "\n"
+				+ Network.player.externalIP.ToString() + ":" + Network.player.externalPort;
+			GUI.Label( Rect(Screen.width-180, Screen.height-40, 180,40), txt, shadowStyle );
+			GUI.Label( Rect(Screen.width-181, Screen.height-42, 180,40), txt, neutralStyle );
+		}
+		
 	} else {
 		if (showChangeMap) {
 			GUILayout.Window(1, changeMapRect, MakeChangeMenuRect, "Change Map");
