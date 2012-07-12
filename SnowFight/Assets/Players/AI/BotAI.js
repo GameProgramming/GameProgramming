@@ -624,7 +624,7 @@ function Attack ()
  			  		RL.addToProgress(Time.deltaTime);
 					var angleY = Vector3.Angle(target.transform.position-transform.position, transform.forward);
  			  		motor.Rotate (0, angleY);
-				}else if (RL.getProgress() >= RL.aimFor){
+				}else {//if (RL.getProgress() >= RL.aimFor){
 //					Debug.Log("SHOOT! " + Time.time,this);
 					RL.SetTarget(target);
 					motor.inputFire = !motor.inputFire;
