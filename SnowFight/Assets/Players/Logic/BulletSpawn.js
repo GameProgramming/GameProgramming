@@ -11,8 +11,7 @@ var reloadProgress : float = 0.0;
 var startYSpeed :float = 0.0;
 
 var snowCosts :int = 1;
-var onNoSnowballs : AudioClip;
-var onNoRockets : AudioClip;
+
 var onUfoShotSound : AudioClip;
 var onThrowSound : AudioClip;
 
@@ -92,8 +91,6 @@ function Fire () {
 				}
 			}
 			
-		}else{
-			PlayAudio(onNoSnowballs);
 		}
 	}
 }
@@ -135,8 +132,6 @@ function FireHeatSeekingRocket (target :GameObject) {
 			SendFireTarget(clone, target);
 			player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);
 			reloadProgress = clone.GetComponent(Projectile).reloadTime;
-		}else{
-			PlayAudio(onNoRockets);
 		}
 	}
 }
