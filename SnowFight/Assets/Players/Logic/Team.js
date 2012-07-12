@@ -20,6 +20,7 @@ function Awake () {
 	size = 0;
 	for (var b : Transform in transform) {
 		if (b.CompareTag("Base")) {
+			bases.Remove(b.gameObject);
 			bases.Add(b.gameObject);
 		}
 	}

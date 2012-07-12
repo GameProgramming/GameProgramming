@@ -36,7 +36,7 @@ ModelImporter:
     normalSmoothAngle: 60
     splitTangentsAcrossUV: 0
     normalImportMode: 0
-    tangentImportMode: 0
+    tangentImportMode: 1
   textMetaNamesToFileIDs:
     //RootNode:
       data:

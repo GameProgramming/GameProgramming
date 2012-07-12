@@ -1,3 +1,4 @@
+#pragma strict
 
 class Message {
 	var time :float;
@@ -15,9 +16,13 @@ private var statusDisplay :GameStatusDisplay;
 private var chatActive :boolean = false;
 private var currMsg :String = "";
 
+private var metaStyle :GUIStyle;
+
 function Start () {
 	statusDisplay = GetComponent(GameStatusDisplay);
 	game = GetComponent(GameStatus);
+	metaStyle = GUIStyle(statusDisplay.neutralStyle);
+	metaStyle.normal.textColor = Color(0,0.8,0);
 }
 
 function ChatMessage (sender :PlayerStatus, text :String, team :boolean) {
@@ -42,12 +47,18 @@ function NetChatMessage (senderId :NetworkViewID, text :String, team :boolean) {
 	m.sender = sender;
 	m.text = text;
 	m.team = team;
-	m.meta = false;
+	m.meta = true;
 	messages.Add(m);
 }
 
-function MetaMessage () {
-	
+function MetaMessage (text :String) {
+	var m :Message = new Message();
+	m.time = Time.time;
+	m.sender = null;
+	m.text = text;
+	m.team = false;
+	m.meta = true;
+	messages.Add(m);
 }
 
 function Update () {
@@ -73,17 +84,20 @@ function OnGUI () {
 	    GUILayout.BeginArea (Rect (40,Screen.height-250-off,400,201-off));
 	    for (var i :int = Mathf.Max(0, messages.length-5); i < messages.length; i++) {
 	    	if (i < messages.length - 5) break;
-	    	var m :Message = messages[i];
+	    	var m :Message = messages[i] as Message;
 	    	if (m.time < Time.time - 10) continue;
 		    //GUILayout.BeginHorizontal();
-		    if (!m.team || m.sender && game.playerS && game.playerS.team == m.sender.team) {
+		    if (m.meta) {
+		    	GUILayout.Box(":: " + m.text, off==1 ? metaStyle : statusDisplay.shadowStyle);
+		    } else if (!m.team || m.sender && game.playerS && game.playerS.team == m.sender.team) {
 		    	//GUILayout.Box("<"+m.sender.playerName+"> ", off==1 ? statusDisplay.GetTeamStyle(m.sender.GetTeam())
 		    	//				: statusDisplay.shadowStyle, GUILayout.ExpandHeight(true));
 		    	if (m.team) {
 			    	GUILayout.Box("<"+m.sender.playerName+"> " + "[Team] "+m.text, off==1 ?
 			    			statusDisplay.GetTeamStyle(m.sender.GetTeam()) : statusDisplay.shadowStyle);
 			    } else {
-			    	GUILayout.Box("<"+m.sender.playerName+"> " + m.text, off==1 ? statusDisplay.neutralStyle : statusDisplay.shadowStyle);
+			    	GUILayout.Box("<"+m.sender.playerName+"> " + m.text, off==1 ? statusDisplay.neutralStyle
+			    																: statusDisplay.shadowStyle);
 			    }
 		    }
 		    //GUILayout.EndHorizontal();

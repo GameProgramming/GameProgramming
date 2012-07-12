@@ -54,7 +54,11 @@ function Awake () {
 
 function Start() {
 	gameOver = false;
-	SetState(PlayerState.Dead);
+	if (networkView.isMine) {
+		SetState(PlayerState.Dead);
+	} else {
+		NetSetState(PlayerState.Dead);
+	}
 }
 
 function JoinTeam (t :Team) {
@@ -138,9 +142,12 @@ function OnControllerColliderHit(hit : ControllerColliderHit){
 		var damageObject :BigSnowBallDamage = hit.transform.GetComponent(BigSnowBallDamage);
 		var lastOwner : GameObject = ball.GetLastOwner();
 		
-		if (hit.rigidbody.velocity.sqrMagnitude > 0.04 && lastOwner != gameObject) {
+		//Debug.Log("big snowball hit "+ball.velocity);
+		
+		if (ball.velocity.sqrMagnitude > 0.05 && lastOwner != gameObject) {
 			var attack = new Attack();
 			attack.damage = damageObject.GetDamage();
+			//Debug.Log("big snowball hit damage "+attack.damage);
 			// todo: die groesse vielleicht noch mit rein.
 			attack.attacker = lastOwner;
 			ApplyDamage(attack);
@@ -178,6 +185,11 @@ function OnHitByObject (otherObj : GameObject) {
 }
 
 function Die () {
+	if (IsMainPlayer()) {
+		var bar : PlayerHealthBar = transform.GetComponent(PlayerHealthBar);
+		bar.SetInUFO(false);
+	}
+	
 	if (IsDead()) {
 		return;
 	}else{
@@ -229,7 +241,7 @@ function NetDie (attacker :NetworkViewID) {
 	SetState(PlayerState.Dead);
 	killTime = Time.time;
 	
-	gameObject.SendMessage ("OnDeath", SendMessageOptions.DontRequireReceiver);
+	gameObject.SendMessage ("OnDeath", this, SendMessageOptions.DontRequireReceiver);
 	gameObject.SendMessage ("RemoveTarget", SendMessageOptions.DontRequireReceiver);
 	game.SendMessage ("OnPlayerDeath", this);
 }
@@ -475,12 +487,25 @@ function SetName (name :String) {
 
 @RPC
 function NetSetName (name :String) {
+	if (playerName == "AnonPlayer") {
+		
+	} else {
+		GameObject.FindGameObjectWithTag("Game").SendMessage("MetaMessage",
+							playerName + " is now called " + name +".");
+	}
 	playerName = name;
 }
 
 function OnPlayerConnected(newPlayer: NetworkPlayer) {
 	if (state != PlayerState.Dead) {
 		networkView.RPC("NetRespawn", newPlayer, spawnBaseID);
+	}
+}
+
+function OnDestroy () {
+	if (GameObject.FindGameObjectWithTag("Game")) {
+		GameObject.FindGameObjectWithTag("Game").SendMessage("MetaMessage",
+							playerName + " leaves the game.");
 	}
 }
 

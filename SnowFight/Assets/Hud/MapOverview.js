@@ -6,10 +6,10 @@ var camFollow :SmoothFollow;
 
 
 function Awake () {
+	camFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent(SmoothFollow);
 }
 
 function Start () {
-	camFollow = GameObject.FindGameObjectWithTag("MainCamera").GetComponent(SmoothFollow);
 	ResetPlayerCam();
 }
 

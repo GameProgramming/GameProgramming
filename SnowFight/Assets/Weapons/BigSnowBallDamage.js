@@ -40,7 +40,7 @@ function GetScoringTeam () : Team {
 
 //actual velocity
 function GetVelocity() : Vector3{
-	return gameObject.GetComponent(Rigidbody).velocity;
+	return gameObject.GetComponent(BigSnowBall).velocity;
 }
 
 function GetSpeed () : int{

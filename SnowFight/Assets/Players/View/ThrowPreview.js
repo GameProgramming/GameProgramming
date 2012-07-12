@@ -9,7 +9,7 @@ var mat2 :Material;
 private var matFade = 0.0;
 
 
-function Start () {
+function Awake () {
 	player = transform.parent.GetComponent(PlayerStatus);
 	bulletSpawn = GetComponent(BulletSpawn);
 	line = GetComponent(LineRenderer);

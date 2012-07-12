@@ -209,14 +209,8 @@ private var controller : CharacterController;
 
 private var playerState :PlayerState;
 
-function Start () {
-	gameOver = false;
-	canControl = false;
-	extrapolatedPosition = transform.position;
-	extrapolationInterval = 1 / Network.sendRate;
-}
-
 function Awake () {
+	
 	movement.tempMaxPushForwardSpeed = movement.maxForwardSpeed;
 	movement.tempMaxPushSidewaysSpeed = movement.maxSidewaysSpeed;
 	
@@ -230,6 +224,12 @@ function Awake () {
 	inputAction = false;
 	inputFire = false;					
 	inputAltFire = false;
+	
+	gameOver = false;
+	canControl = false;
+	extrapolatedPosition = transform.position;
+	extrapolationInterval = 1 / Network.sendRate;
+
 }
 
 private function UpdateFunction () {
@@ -245,6 +245,9 @@ private function UpdateFunction () {
 	}
 	
 	if (canControl && itemInputBlock <= 0 && !GetComponent(PlayerStatus).IsDead()) {
+		if (inputFire && throwProgress == 0 && GetComponent(PlayerStatus).GetCurrentSnowballs() <= 0) {
+			SendMessage("OnCantThrow", SendMessageOptions.DontRequireReceiver);
+		}
 		if (inputFire && throwProgress == 0 && snowballSpawn.CanFire()) {
 			throwProgress = 2;
 			gameObject.SendMessage ("OnLoadThrow", SendMessageOptions.DontRequireReceiver);
@@ -279,6 +282,8 @@ private function UpdateFunction () {
 	
 	if (playerState == PlayerState.Alive) {
 		AdjustPlayerSpeed();
+		
+		movement.velocity = Vector3.ClampMagnitude(movement.velocity,10);
 		
 		// We copy the actual velocity into a temporary variable that we can manipulate.
 		var velocity : Vector3 = movement.velocity;
@@ -409,6 +414,7 @@ private function UpdateFunction () {
 	        movingPlatform.activeLocalRotation = Quaternion.Inverse(movingPlatform.activePlatform.rotation) * movingPlatform.activeGlobalRotation; 
 		}
 	} else if (playerState == PlayerState.Dead) {
+		movement.velocity = Vector3.ClampMagnitude(movement.velocity, 10);
 		movement.velocity = ApplyGravityAndJumping (movement.velocity);
 		controller.Move(movement.velocity);
 	} else if (playerState == PlayerState.InVehicle) {
@@ -422,7 +428,7 @@ function Rotate (x :float, y :float) {
 	if (canControl && playerState != PlayerState.Frozen && !gameOver) {
 		rotationX = transform.localEulerAngles.y + x;
 		rotationY += y;
-		rotationY = Mathf.Clamp (rotationY, -40, 30);
+		rotationY = Mathf.Clamp (rotationY, -40, 40);
 		transform.localEulerAngles = new Vector3(0, rotationX, 0);
 	}
 }

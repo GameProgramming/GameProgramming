@@ -11,7 +11,7 @@ private var progress :float = 0.0;
 var c1 : Color = Color.yellow;
 var c2 : Color = Color.red;
 var lengthOfLineRenderer : int = 20;
-var lineRenderer :LineRenderer;
+private var lineRenderer :LineRenderer;
 
     
 private var weaponModel :Transform;
@@ -25,8 +25,8 @@ var mat1 :Material;
 
 var aimAngle :float = 5;
 var aimFor : float = 4.0; 
-var viewAngle : Vector3;
-var locked :boolean;
+private var viewAngle : Vector3;
+private var locked :boolean;
 
 private var target : GameObject; 
 var targetName : String = "Ufo"; 
@@ -63,53 +63,57 @@ function Start() {
 }
 
 function Update () {
-	if (owner && owner.networkView.isMine) {
-	
-		AimTarget(targetName);
-		
+	if (owner) {
 		transform.eulerAngles.x = -playerMotor.rotationY-10;
-	  	if(target == null){
-			progress = 0;
-		}	  		
-			
-		var canShoot : boolean = bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0;
-		//var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= bulletSpawn.GetComponent(BulletSpawn).snowCosts;
+		weaponModel.renderer.enabled = true;
+		if (owner.networkView.isMine) {
 		
-		
-		if (canShoot) {
+			AimTarget(targetName);
 			
-			if(target){
-				//Debug.Log("Hold Aim for " + (aimFor - progress) + "seconds");		
-				if (progress < aimFor){
-					progress += Time.deltaTime;
-					locked = true;
+			transform.eulerAngles.x = -playerMotor.rotationY-10;
+		  	if(target == null){
+				progress = 0;
+			}	  		
+				
+			var canShoot : boolean = bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0;
+			//var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= bulletSpawn.GetComponent(BulletSpawn).snowCosts;
+			
+			
+			if (canShoot) {
+				
+				if(target){
+					//Debug.Log("Hold Aim for " + (aimFor - progress) + "seconds");		
+					if (progress < aimFor){
+						progress += Time.deltaTime;
+						locked = true;
+						if (playerMotor.inputFire && ammo > 0) {
+							bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
+							ammo--;
+							progress = 0;
+						}
+					}else if (progress >= aimFor) {
+						//Debug.Log("SHOOT!!!!!!!!");
+						if (playerMotor.inputFire && ammo > 0) {
+							bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
+							progress = 0;
+							ammo--;
+							networkView.RPC("SetAmmo", RPCMode.Others, ammo);
+						}
+					}
+				}else{
 					if (playerMotor.inputFire && ammo > 0) {
 						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
-						ammo--;
-						progress = 0;
-					}
-				}else if (progress >= aimFor) {
-					//Debug.Log("SHOOT!!!!!!!!");
-					if (playerMotor.inputFire && ammo > 0) {
-						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
 						progress = 0;
 						ammo--;
 						networkView.RPC("SetAmmo", RPCMode.Others, ammo);
 					}
-				}
+				}	
 			}else{
-				if (playerMotor.inputFire && ammo > 0) {
-					bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
-					progress = 0;
-					ammo--;
-					networkView.RPC("SetAmmo", RPCMode.Others, ammo);
-				}
-			}	
-		}else{
-			progress = 0;
+				progress = 0;
+			}
+			weaponModel.renderer.enabled = true;
+			RenderAimingLine ();
 		}
-		weaponModel.renderer.enabled = true;
-		RenderAimingLine ();
 	} else if (alive) {
 		lineRenderer.enabled = false;
 		aimingCircleOuter.renderer.enabled = false;
@@ -132,7 +136,10 @@ function Update () {
 		if (ammo <= 0) alive = false;
 	} else {
 		transform.position.y += Time.deltaTime * (10+transform.position.y);
-		if (transform.position.y > 100 && Network.isServer) {
+		if (Mathf.Abs(transform.position.y) > 100 && Network.isServer) {
+			if (Network.isServer) {
+				GameObject.FindGameObjectWithTag("Game").SendMessage("LogDestruction", networkView.viewID);
+			}
 			Network.Destroy(gameObject);
 		}
 	}
@@ -182,7 +189,7 @@ function PickItem(player :GameObject) {
 //	}
 	
 	transform.parent = owner.transform;
-	transform.localPosition = Vector3 (0.4,1,0.6);
+	transform.localPosition = Vector3 (0.4,1,0.9);
 	//transform.localRotation = Quaternion.zero;
 	transform.localRotation.x = 0;
 	transform.localRotation.y = 0;
@@ -403,6 +410,15 @@ function StopAudio(){
 	}
 }
 
+function OnPlayerConnected (player :NetworkPlayer) {
+	networkView.RPC("NetSyncPos", player, transform.localPosition);
+}
+
+@RPC
+function NetSyncPos ( pos :Vector3 ) {
+	transform.localPosition = pos;
+}
+
 
 @RPC
 function SetAmmo (newAmmo :int) {
@@ -415,6 +431,10 @@ function GetAmmo () :int {
 
 function HasAmmo () :boolean {
 	return ammo > 0;
+}
+
+function SetTarget(tar : GameObject) {
+	target = tar;
 }
 
 @script RequireComponent (NetworkView)

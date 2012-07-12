@@ -10,8 +10,13 @@ function Start () {
 
 function OnCollisionEnter(collision : Collision){
 	if (Network.isServer) {
-		collision.gameObject.SendMessage("OnHitByObject", gameObject, SendMessageOptions.DontRequireReceiver);
-		networkView.RPC("NetHitSomething", RPCMode.All);
+		var d :Damage = GetComponent(Damage);
+		if (d && d.GetShooter() && d.GetShooter() == collision.gameObject) {
+			Debug.Log("Ignored hitting oneself.");
+		} else {
+			collision.gameObject.SendMessage("OnHitByObject", gameObject, SendMessageOptions.DontRequireReceiver);
+			networkView.RPC("NetHitSomething", RPCMode.All);
+		}
 	}
 }
 

@@ -61,9 +61,7 @@ function Awake () {
 	takeOverDist = takeOverRadius * takeOverRadius;
 	//spawnWeaponPipeline = new Array();
 	//FillPipeline();
-}
-
-function Start () {
+	
 	team = transform.parent.gameObject.GetComponent(Team);
 	if (team == null) {
 		Debug.LogError("Could not determine TeamBase team. "+
@@ -73,6 +71,10 @@ function Start () {
 	SetTeam(team);
 	currentTeamTakingOver = null;
 	progress = 0.0;
+}
+
+function Start () {
+
 }
 
 //function FillPipeline() {
@@ -236,4 +238,8 @@ function OnGUI () {
 	if (takeOverProgress <= 0.0) {
 		mainPlayerStatus = null;
 	}
+}
+
+function IsBeingTaken() {
+	return takeOverProgress > 0.0;
 }

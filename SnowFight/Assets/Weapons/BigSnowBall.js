@@ -31,8 +31,10 @@ var fallSpeed : float = 9.81;
 var startSize : Vector3;
 private var startRadius : float;
 private var shot : boolean = false; 
+private var loadshot :float = 0;
 
 private var shootDirection : Vector3;
+var velocity :Vector3  = Vector3.zero;
 
 var snowRessource : GameObject;
 
@@ -50,28 +52,34 @@ var snowSound4 : AudioClip;
 private var px : float; 
 private var pz : float; 
 
-function Start () {
-	collider.attachedRigidbody.useGravity = false;
+function Awake () {
+//	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
 	shot = false;
 	appearing = 0;
+
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();
-	
+
 	particleTail = transform.Find("Particles").GetComponent(ParticleSystem);
-	
+
 	startRadius = GetComponent(Renderer).bounds.extents.x;
-	
+
 	terrain = Terrain.activeTerrain;
 	trail = transform.Find("Trail").particleSystem;
 	transform.localScale = Vector3.zero;
-	px = transform.position.x;
-	pz = transform.position.z;
-}
 
-function Awake () {
  	startSize = transform.localScale;
 	ballSize = 10;
+	px = transform.position.x;
+	pz = transform.position.z;
+ 
+}
+
+@RPC
+function NetShootBall (velo :Vector3) {
+	shot = true;
+	velocity = velo;				
 }
 
 function Update () {
@@ -87,19 +95,36 @@ function Update () {
 				SmashBallToSnowfield();
 			} else if (playerMotor.inputFire) {
 				PlaySnowAudio();
-				shot = true;
-				rigidbody.velocity = (GetComponent(BigSnowBallDamage).GetSpeed() * 10 / ballSize)
-									* pushingPlayer.transform.forward.normalized;//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
+				loadshot += Time.deltaTime;
+			} else if (loadshot > 0.001) {
+				loadshot = Mathf.Clamp(loadshot, 0.5, 3);
+				//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;
-
+				networkView.RPC("NetShootBall", RPCMode.Server,
+							loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / ballSize)
+							* pushingPlayer.transform.forward.normalized);
+				loadshot = 0;
 				pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			}
+		}
+	}
+	
+	if (!pushingPlayer && networkView.isMine) {
+		if (collider.enabled) {
+			GetComponent(CharacterController).Move(Time.deltaTime * velocity);
+		} else {
+			transform.position += Time.deltaTime * velocity;
 		}
 	}
 	
 	//else if (rollBall) {
 	radius = startRadius * ballSize / 10;
 	//Debug.Log(radius);
+
+	var terrH :float = Terrain.activeTerrain.SampleHeight(transform.position);
+	if (terrH  + radius/2 < transform.position.y && shot)
+		velocity += 2 * Time.deltaTime * velocity.normalized;
+	if (collider.enabled) transform.position.y = terrH + radius/2;
 
 	//rotate ball while rolling
 	var dir :Vector3 = transform.position - lastPosition;
@@ -113,7 +138,7 @@ function Update () {
 	trail.transform.Rotate(rotAxis, -angle, Space.World);
 	
 	//create the trail behind the pushed snowball
-	trail.transform.position.y = terrain.SampleHeight(trail.transform.position) + 0.05;
+	trail.transform.position.y = terrH + 0.05;
 //	trail.startRotation = transform.rotation.eulerAngles.y;
 	trail.startSize = radius * 1.5;
 	//trail.Emit(1);
@@ -145,10 +170,14 @@ function Update () {
 
 function LateUpdate () {
 	lastPosition = transform.position;
+	if (!collider.enabled) {
+		velocity.y -= 40 * Time.deltaTime;
+	}
 }
 
 function FixedUpdate () {
-   	rigidbody.velocity.y += -1 * fallSpeed * Time.deltaTime;
+	velocity = Vector3.MoveTowards(velocity, Vector3(0,0,0), (15+5*radius)*Time.deltaTime);
+ //  	rigidbody.velocity.y += -1 * fallSpeed * Time.deltaTime;
 }
 
 function Move (offset : Vector3) {
@@ -158,17 +187,16 @@ function Move (offset : Vector3) {
 		var playerController = pushingPlayer.GetComponent(CharacterController);
 		var playerTransform :Transform = pushingPlayer.transform;
 		//try to make sure the ball is infront of the player
-		var minDistance = playerController.radius + radius + 0.2;
+		var minDistance = playerController.radius + radius*.7 + 0.3;
 		var desiredPos : Vector3 = playerTransform.position + playerTransform.forward * minDistance;
-		var correctionVector : Vector3 = transform.position - desiredPos;
-		correctionVector.Normalize();
-		correctionVector *= ballCorrectionSpeed;
-		correctionVector *= Time.deltaTime;
-
+		var correctionVector : Vector3 = Vector3.ClampMagnitude(
+						transform.position - desiredPos,ballCorrectionSpeed* Time.deltaTime);
 		correctionVector.y = 0.0;
 		offset.y = 0;
 		
-		rigidbody.MovePosition(transform.position + (offset -  correctionVector));
+		//rigidbody.MovePosition(transform.position + (offset -  correctionVector));
+		//transform.position += (offset -  correctionVector);
+		GetComponent(CharacterController).Move(offset -  correctionVector);
 		extrapolatedPosition = transform.position;
 	}
 }
@@ -187,7 +215,8 @@ function IsBallTooFarAway (player : GameObject) : boolean {
 function Release () {
 	if (pushingPlayer) {
 		if (!shot)
-			rigidbody.velocity = Vector3.zero;
+			velocity = Vector3.zero;
+		loadshot = 0;
 		transform.parent = null;
 		pushingPlayer = null;
 	}
@@ -198,6 +227,7 @@ function PickItem(player:GameObject) {
 	pushingPlayer = player;
 	transform.parent = pushingPlayer.transform;
 	playerMotor = player.GetComponent(CharacterMotorSF);
+	loadshot = 0;
 	shot = false;
 	//networkView.enabled = false;
 }

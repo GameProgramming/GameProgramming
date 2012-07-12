@@ -2,6 +2,8 @@
 #pragma downcast
 private var motor : CharacterMotorSF;
 private var pStatus : PlayerStatus;
+private var game :GameStatus;
+private var tooltip :Tooltip;
 
 @System.NonSerialized
 var inputAction : boolean = false;
@@ -24,13 +26,19 @@ private var snowResourcePick :SnowRessource; // typo im typnamen, ach mensch...
 private var srPickProgress : float = 0;
 var srPickTime : float = 3;
 
-function Start () {
+var itemLogoUfo :Texture;
+var itemLogoSnowball :Texture;
+var itemLogoRockets :Texture;
+
+function Awake () {
 	motor = GetComponent(CharacterMotorSF);
 	pStatus = GetComponent(PlayerStatus);
 	item = null;
 	snowResourcePick = null;
 	itemGUIStyle.clipping = TextClipping.Overflow;
 	itemGUIStyle2.clipping = TextClipping.Overflow;
+	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+	tooltip = game.GetComponent(Tooltip);	
 }
 
 function OnGUI () {
@@ -38,47 +46,6 @@ function OnGUI () {
 	var textForToolTip : String;
 	var textForToolTip2 : String;
 	if (status.IsMainPlayer() && showItemGUI) {
-		if (item != null) {
-				itemGUITime += Time.deltaTime;
-			if (item.CompareTag("Ufo")) {
-				textForToolTip = "Left click to shoot.";
-				textForToolTip2 = "Right click to freeze enemies.";
-			} else if (item.CompareTag("BigSnowball")) {
-				textForToolTip = "Right click to create a snow ressource..";
-			} else if (item.CompareTag("Weapon")) {
-				textForToolTip = "Left click to shoot.";
-			}
-
-			if (textForToolTip2 != null) {
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-79, 200, 20), textForToolTip, itemGUIStyle2);
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-80, 200, 20), textForToolTip, itemGUIStyle);
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-59, 200, 20), textForToolTip2, itemGUIStyle2);
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-60, 200, 20), textForToolTip2, itemGUIStyle);
-			} else {
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-59, 200, 20), textForToolTip, itemGUIStyle2);
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-60, 200, 20), textForToolTip, itemGUIStyle);
-			}
-
-		} else {
-			itemGUITime = 0.0;
-			if (candidateItem) {
-				if (candidateItem.CompareTag("BigSnowball") && item == null) {
-					textForToolTip = "Press E to move big Snowball.";
-				} else if (candidateItem.CompareTag("Weapon") && item == null) {
-					textForToolTip = "Press E to use Snow Rocket.";
-				} else if (candidateItem.CompareTag("SnowballRessource") && item == null) {
-					textForToolTip = "Hold E to create a big Snowball.";		
-				} else if (candidateItem.layer != LayerMask.NameToLayer("Item")) {
-					if (candidateItem.transform.parent != null) {
-						if (candidateItem.transform.parent.gameObject.layer == LayerMask.NameToLayer("Item")) {
-							textForToolTip = "Press E to get in the UFO.";
-						}
-					}
-				}
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-59, 200, 20), textForToolTip, itemGUIStyle2);
-				GUI.Label (Rect (Screen.width/2 - 100, Screen.height-60, 200, 20), textForToolTip, itemGUIStyle);
-			}
-		}
 		var texture : Texture2D = new Texture2D(1, 1);
 		var style = new GUIStyle();
 		var boxWidth : float = (Screen.width/8 + 10);
@@ -166,10 +133,8 @@ function Update () {
 			snowResourcePick = null;
 		}
 	} else if (item && (inputActionUp || pStatus.IsDead())) {
-//  } else if (item && (inputAction || pStatus.IsDead())) {
 		ReleaseItem();
 	} else if (!item && inputActionUp && candidateItem && ItemNotHeld(candidateItem) ) {
-//	} else if (!item && inputAction && candidateItem && ItemNotHeld(candidateItem) && motor.IsGrounded()
 		if (candidateItem.CompareTag("SnowballRessource")) {
 			snowResourcePick = candidateItem.GetComponent(SnowRessource);
 			srPickProgress = 0;
@@ -182,15 +147,46 @@ function Update () {
 			}
 		}
 	}
+	
+	if (pStatus.IsMainPlayer() && !pStatus.IsDead()) {
+		if (item) {
+			if (item.CompareTag("Ufo")) {
+				tooltip.SetTooltip("Cannon", "Freezing Ray", "Exit", itemLogoUfo);
+			} else if (item.CompareTag("BigSnowball")) {
+				tooltip.SetTooltip("Push", "Create Snow Resource", "Drop", itemLogoSnowball);
+			} else if (item.CompareTag("Weapon")) {
+				tooltip.SetTooltip("Fire Rocket", "", "Drop", itemLogoRockets);
+			}
+		} else {
+			if (!candidateItem) {
+				tooltip.SetTooltip("", "", "", null);
+			} else if (candidateItem.CompareTag("BigSnowball")) {
+				tooltip.SetTooltip("", "", "Pick up", itemLogoSnowball);
+			} else if (candidateItem.CompareTag("Weapon")) {
+				tooltip.SetTooltip("", "", "Pick up", itemLogoRockets);
+			} else if (candidateItem.CompareTag("SnowballRessource")) {
+				tooltip.SetTooltip("", "", "Create Snowball", itemLogoSnowball);
+			} else if (candidateItem.CompareTag("UfoBody")) {
+				tooltip.SetTooltip("", "", "Jump in", itemLogoUfo);
+			} else {
+				tooltip.SetTooltip("", "", "", null);
+			}
+		}
+	}
 }
 
 function SetItem( it :GameObject ) {
 	if (it == item) {
-		Debug.Log ("Prevented the re-setting of the same item for "+pStatus.playerName);
+		Debug.LogWarning ("Prevented the re-setting of the same item for "+pStatus.playerName);
+		return;
+	}
+	if (!it) {
+		Debug.LogWarning ("Prevented the setting of a non-item "+pStatus.playerName);
 		return;
 	}
 	item = it;
 	candidateItem = null;
+	
 	if (pStatus.IsMainPlayer()) Debug.Log("Player picked up "+item);
 	SendMessage("OnItemChange", this, SendMessageOptions.DontRequireReceiver);
 	item.SendMessage("PickItem", gameObject, SendMessageOptions.DontRequireReceiver);
@@ -246,7 +242,7 @@ function CandidateTooFarAway() {
 
 //Check if another player might already hold the item
 function ItemNotHeld(it : GameObject) : boolean {
-	return (it.CompareTag("BigSnowball") 
+	return (false//it.CompareTag("BigSnowball") 
 		|| !it.transform.parent
 		|| !it.transform.parent.CompareTag("Player"));
 }
@@ -275,6 +271,7 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     			SetItem(it.gameObject);
     		} else {
     			Debug.Log("Received an item signal for an unknown itm. Id="+itemId);
+    			ReleaseItem(); // ist diese zeile sinnvoll?
     		}
     	} else {
     		ReleaseItem();

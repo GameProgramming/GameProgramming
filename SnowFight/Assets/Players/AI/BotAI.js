@@ -8,9 +8,7 @@ var attackRotateSpeed = 20.0;
 
 var idleTime = 1.6;
 
-var punchRadius = 10;//7.1;
-//var freezeRadius = 50.0;
-//var sightRadius = 50.0;
+var punchRadius = 10;
 
 private var attackAngle = 10.0;
 private var isAttacking = false;
@@ -36,7 +34,6 @@ private var alternateDir = Vector3.zero;
 
 private var busy : boolean = false;
 private var teamAI : TeamAI;
-//private var lostTarget : int = 0;
 private var targets : GameObject[];
 
 function Awake () {
@@ -50,7 +47,7 @@ function Start ()
 {	
 	yield WaitForSeconds(Random.value);
 			
-	//Idle might be the wrong name for the function.. this does it all
+	//Idle might be the wrong name for the function.. anyway this does it all
 	yield Idle();
 }
 
@@ -113,12 +110,10 @@ function Idle ()
 	
 			whileCounter ++;
 			moveDir = Vector3.zero;
-			itemManager.ReleaseItem();
 	
 			targets = teamAI.GetTargets(gameObject);
-				for (t in targets) {
-	//		if (targets.Length > 0) {
-	//			var t = targets[0];
+			
+			for (t in targets) {
 				if (pStatus.GetCurrentSnowballs() == 0 && !pStatus.IsRidingUfo()) { //RELOAD
 					tar = FindSnowResource();
 					if (tar) {
@@ -130,7 +125,7 @@ function Idle ()
 					}
 				}
 				tar = teamAI.FindClosestEnemy();			
-				if (tar && (Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2 || pStatus.IsRidingUfo())) {
+				if (tar && ((Vector3.Distance(transform.position, tar.transform.position) < attackDistance*2) || pStatus.IsRidingUfo())) {
 					target = tar;
 					yield Attack();	
 				}
@@ -193,14 +188,21 @@ function ConquerBase() {
 		}
 		
 		//if an enemy is too close forget this stuff and attack!!
-		var enemy = teamAI.FindClosestEnemy();
-		if(Random.value > 0.8 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance) {
+		if(Random.value > 0.8) {
+			var enemy = teamAI.FindClosestEnemy();
+			if(enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance*2) {
+//			 &&	FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+				RemoveTarget();
+				return;
+			}
+		}
+		if(Random.value > 0.999) {
 			RemoveTarget();
 			return;
 		}
 		
 		if (alreadyThere) {
-			if (Time.time > arrivalTime+patience) {
+			if (Time.time > arrivalTime+patience || !target.GetComponent(TeamBase).IsBeingTaken()) {
 				alreadyThere = false;
 				RemoveTarget();
 				return;
@@ -242,11 +244,13 @@ function GetUFO () {
 			}
 				
 			//if an enemy is too close forget this stuff and attack!!
-			var enemy = teamAI.FindClosestEnemy();
-			if(Random.value > 0.8 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
-				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
-				RemoveTarget();
-				return;
+			if(Random.value > 0.8) { 
+				var enemy = teamAI.FindClosestEnemy();
+				if (enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
+					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+					RemoveTarget();
+					return;
+				}
 			}
 			
 			isAttacking = false;
@@ -260,10 +264,14 @@ function GetUFO () {
 			var candidateItem = itemManager.GetCandidateItem();	
 			if (candidateItem && (candidateItem.CompareTag("Ufo") || 
 				candidateItem.transform.parent && candidateItem.transform.parent.CompareTag("Ufo"))) {
+				//motor.inputAction = false;
 				motor.inputAction = true;
 				motor.inputAltFire = false;
-				yield WaitForSeconds(0.01);
+				yield WaitForSeconds(0.001);
 				motor.inputAction = false;
+				
+				RemoveTarget();
+				return;
 			}
 			Debug.DrawRay(transform.position, transform.up * 50, Color.blue);
 			MoveTowardsPosition(ufoPos);
@@ -292,7 +300,7 @@ function GetBazooka () {
 				
 			//if an enemy is too close forget this stuff and attack!!
 			var enemy = teamAI.FindClosestEnemy();
-			if(Random.value > 0.99 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
+			if(Random.value > 0.99 && enemy && Vector3.Distance(enemy.transform.position, transform.position)< attackDistance*2 && 
 				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 				RemoveTarget();
 				return;
@@ -307,13 +315,13 @@ function GetBazooka () {
 			var candidateItem = itemManager.GetCandidateItem();
 			if(candidateItem && candidateItem.CompareTag("Weapon")) {
 				motor.inputAction = true;
-				motor.inputAltFire = false;
-//				RemoveTs
-				yield WaitForSeconds(0.01);
+				yield WaitForSeconds(0.001);
 				motor.inputAction = false;
-				moveDir = Vector3.zero;
-				if (!target) return;
 				
+				//itemManager.SetItem(candidateItem);
+				moveDir = Vector3.zero;
+				
+				//this mean's we've suceeded picking up. that's good!
 				if (itemManager.GetItem()) {
 					RemoveTarget();
 					return;
@@ -333,8 +341,6 @@ function GetAmmo () {
 	var arrivalTime : float;
 	var reloadTime : float;
 	
-	itemManager.ReleaseItem();
-	
 	while (true) {
 		if (!target || pStatus.IsRidingUfo()) {
 			RemoveTarget();
@@ -345,12 +351,26 @@ function GetAmmo () {
 		Debug.DrawRay(transform.position, transform.up * 50, Color.cyan);
 		Debug.DrawRay(target.transform.position, transform.up * 50, Color.cyan);
 		
+		if (Random.value > 0.999) {
+			enemy = teamAI.FindClosestEnemy();
+			if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
+				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+				RemoveTarget();
+				return;
+			}
+		}
+		
 		if (alreadyThere) {
-			if (Random.value > 0.8 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
+			if (Random.value > 0.5 && target.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
 				motor.inputAction = true;
 				buildingBall = Time.time;
 				yield WaitForSeconds(GetComponent(ItemManager).srPickTime);
 //				targets = [];
+				target = teamAI.GetClosestObjectInArray(gameObject, teamAI.GetSnowBalls());
+	//				if (target) {
+	//					Debug.Log("Switch to balls " + Time.time, this);
+	//					yield RollBall();
+	//				}
 				RemoveTarget();
 				return;
 			}
@@ -365,14 +385,6 @@ function GetAmmo () {
 		else {
 			if (Vector3.Distance(transform.position, target.transform.position) >= 1) {
 				MoveTowardsPosition(target.transform.position);
-				
-				if (Random.value > 0.999) {
-					enemy = teamAI.FindClosestEnemy();
-					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance) {
-						RemoveTarget();
-						return;
-					}
-				}
 			}
 			else {
 				//wait for a while
@@ -380,6 +392,15 @@ function GetAmmo () {
 				arrivalTime = Time.time;
 				reloadTime = Random.Range(1.0,2.0);
 				moveDir = Vector3.zero;
+			}
+			
+			if (Random.value > 0.99) {
+//			enemy = teamAI.FindClosestEnemy();
+//			if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
+//				FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+				RemoveTarget();
+				return;
+//				}
 			}
 		}			
 		yield;
@@ -389,6 +410,8 @@ function GetAmmo () {
 function RollBall ()
 {
 	groundBaseFlag = null;
+	itemManager.ReleaseItem();
+	
 	while (true) {
 		motor.inputAction = false;
 		
@@ -408,23 +431,13 @@ function RollBall ()
 			//if we don't have a ball go get it
 			if (!ball) {
 				//if the ball is already taken or we're out of ammo, return to check your other options
-				if (BallRolledByFriend ()) {
+				//if (BallRolledByFriend ()) {
+				if (BallRolledByOther ()) {
 					groundBaseFlag =  null;
 					RemoveTarget();
 					return;
 				}
-					
-				//if an enemy is too close forget this stuff and attack!!
-//				var enemy = teamAI.FindClosestEnemy();
-//				if(Random.value > 0.8 && enemy && 
-//					Vector3.Distance(enemy.transform.position, transform.position)< 2*attackDistance && 
-//					FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
-//					groundBaseFlag = null;
-//					RemoveTarget();
-//					return;
-//				}
-//				
-				//var ballRadius = target.GetComponent(Renderer).bounds.size.x * 0.5;
+
 				 //if we're close enough, try to get a hold of it
 				MoveTowardsPosition(target.transform.position);
 				
@@ -440,12 +453,14 @@ function RollBall ()
 					motor.inputAction = false;
 				}
 				
+				//if an enemy is too close forget this stuff and attack!!
 				if (Random.value > 0.9) {
 					enemy = teamAI.FindClosestEnemy();
-					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance) {
+					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
+						FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
 						motor.inputAction = false;
 						groundBaseFlag = null;
-						RemoveTarget();
+						RemoveTarget();;
 						return;
 					}
 				}
@@ -488,7 +503,6 @@ function RollBall ()
 					Debug.DrawRay(groundBaseFlag.position, transform.up * 50, Color.green);
 				}
 			}
-			else itemManager.ReleaseItem();
 		}
 		yield;
 	}
@@ -516,8 +530,7 @@ function Attack ()
 	
 	while (true) {
 		//if our target is dead, stop
-//		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) { //RELOAD
-		if (!target || targetPlayer.IsDead()) {
+		if (!target || pStatus.GetCurrentSnowballs() == 0 || targetPlayer.IsDead()) { //RELOAD
 			RemoveTarget();
 			return;
 		}
@@ -568,7 +581,7 @@ function Attack ()
 			
 			//we're getting too close, move back!
 			if (distanceToEnemy < shootDistance*0.1 && !pStatus.IsRidingUfo())
-				backup = true;
+				backup = true; 
 			
 			//we're far away now, move closer again
 			if (backup && distanceToEnemy > shootDistance)
@@ -576,27 +589,27 @@ function Attack ()
 				
 			//if a bot is in a ufo and above an enemy, make him use the freeze ray
 			if (pStatus.IsRidingUfo()) {
-//				if(target.GetComponent(PlayerStatus).IsRidingUfo()) {
-//					motor.inputFire = !motor.inputFire;
-//				}
-//			 	else 
 				if (target.GetComponent(PlayerStatus) && AboveTarget() && Random.value > 0.7) {
 			 		motor.inputAltFire = true;
-//					motor.inputAltFire = !motor.inputAltFire;
 			 	}
 		 	}
 		 	
 		 	//we've turned our back and suffer a loss of memory
 			if (lostSight && !pStatus.IsRidingUfo()) {
+				Debug.Log("Lost sight " + Time.time, this);
 		 		moveDir = Vector3.zero;
 		 		RemoveTarget();
 		 		return;
 		 	}
 		 	
 		 	//the enemy is riding a ufo.. desperate times call for desperate measures
-		 	if (target.GetComponent(PlayerStatus) && target.GetComponent(PlayerStatus).IsRidingUfo() &&
-		 		!pStatus.IsRidingUfo()) {
-//	 		if (target.GetComponent(PlayerStatus) && !pStatus.IsRidingUfo()) {
+		 	if (target.GetComponent(PlayerStatus) && !pStatus.IsRidingUfo()
+		 		&& target.GetComponent(PlayerStatus).IsRidingUfo() && !weapon) {
+		 		//if there's a bazooka lying around, go get it!
+		 		//hopefully do something useful in TeamAI!
+		 		RemoveTarget();
+	 			return;
+		 	}
 		 		//if we have a bazooka, use it!
 	 			//aim and then shoot
 	 			//-------------------------
@@ -604,46 +617,20 @@ function Attack ()
 	 			//meanwhile always rotate towards the ufo
 	 			//RotateTowardsPosition(target.transform.position, rotateSpeed)
 	 			//when lock-time is over, shoot
-	 			//motor.inputFire = !motor.inputFire;
-		 		if (weapon && weapon.CompareTag("Weapon")) {
-	 				RL = weapon.GetComponent(RocketLauncher);
-		 			if(RL) {		 				 					
-//		 				if(newTransform == null){
-//		 					newTransform = target.transform;
-//		 					target.GetComponent(PlayerStatus).isLockedTarget = true;
-//		 				}
-		 			  	//if(newTransform.position.x lostTarget){
-		 			  	//	target.GetComponent(PlayerStatus).isLockedTarget = false;
-		 			  	//	newTransform = null;
-		 			  	//	lostTarget +=1;
-		 				//}
-		 				
-		 			  	if (RL.getProgress() < RL.aimFor){
-		 			  		RL.addToProgress(Time.deltaTime);
-		 			  		
-//		 			  		Debug.Log("NT:"+newTransform.position);
-//		 			  		Debug.Log("lostLock:"+lostTarget);
-		 			  		//transform.LookAt(target.transform);	//locked = true;
-							//	RL.Fire(1);
-							var angleY = Vector3.Angle(target.transform.position-transform.position, transform.forward);
-		 			  		motor.Rotate (0, angleY);
-						}else if (RL.getProgress() >= RL.aimFor){
-							motor.inputFire = !motor.inputFire;
-							//Debug.Log("SHOOT!!!!!!!!");
-								//RL.Fire(2);
-								target.GetComponent(PlayerStatus).isLockedTarget = false;
-								//newTransform = null;
-		 			  			//lostTarget = 0;
-						}
-		 			}		 			
-		 		}
-		 		else { //if there's a bazooka lying around, go get it!
-		 			//hopefully do something useful in TeamAI!
-//		 			shootDistance = punchRadius;
-		 			RemoveTarget();
-		 			return;
-		 		}
-		 	}
+	 		if (weapon && weapon.CompareTag("Weapon")) {
+ 				RL = weapon.GetComponent(RocketLauncher);
+		 				 					
+ 			  	if (RL.getProgress() < RL.aimFor && target.GetComponent(PlayerStatus).IsRidingUfo()){
+ 			  		RL.addToProgress(Time.deltaTime);
+					var angleY = Vector3.Angle(target.transform.position-transform.position, transform.forward);
+ 			  		motor.Rotate (0, angleY);
+				}else {//if (RL.getProgress() >= RL.aimFor){
+//					Debug.Log("SHOOT! " + Time.time,this);
+					RL.SetTarget(target);
+					motor.inputFire = !motor.inputFire;
+					target.GetComponent(PlayerStatus).isLockedTarget = false;
+				}	 			
+	 		}
 
 
 			if (RL && !RL.HasAmmo()) {
@@ -653,16 +640,13 @@ function Attack ()
 			}
 			//shoot and move around a bit ;)
 //			if((pos - target.transform.position).magnitude - (target.transform.position.y - pos.y) < punchRadius
-			if (distanceToEnemy < shootDistance && !RL) {
-				//if (!pStatus.IsRidingUfo()) {
-					if (!pStatus.IsRidingUfo() && (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3))
-						motor.inputAltFire = !motor.inputAltFire;
-					//either we're on foot, or we're in a ufo and so is our target
-					else if (!pStatus.IsRidingUfo() || (pStatus.IsRidingUfo() && target.GetComponent(PlayerStatus).IsRidingUfo()))
-						motor.inputFire = !motor.inputFire;
-				//}
+			if (distanceToEnemy < shootDistance && !(weapon && weapon.CompareTag("Weapon"))) {
+				if (!pStatus.IsRidingUfo() && (pStatus.GetCurrentSnowballs() == 0 || distanceToEnemy < punchRadius*0.3))
+					motor.inputAltFire = !motor.inputAltFire;
+				//either we're on foot, or we're in a ufo and so is our target
+				else if (!pStatus.IsRidingUfo() || (pStatus.IsRidingUfo() && target.GetComponent(PlayerStatus).IsRidingUfo()))
+					motor.inputFire = !motor.inputFire;
 				
-				direction = Vector3.left * strafing;
 				if (Random.value > 0.9) {
 					strafing = 0;
 					var x = Random.value;
@@ -670,18 +654,26 @@ function Attack ()
 					if (x < 0.3) strafing = -1;
 					if (x > 0.95) motor.inputJump = true;
 				}
+				direction = Vector3.left * strafing;
 			}
+
+			//hack to make sure the ufo really flies above the enemy to use freeze rays
+			if (pStatus.IsRidingUfo()) {
+				RotateTowardsPosition(target.transform.position, rotateSpeed);
+				MoveTowardsPosition (target.transform.position);
+				direction = moveDir;
+			}
+
 
 			if (backup && !pStatus.IsRidingUfo())
 				moveDir = -direction;
 			else
 				moveDir = direction;
 			
-//			if (Random.value > 0.99 && !pStatus.IsRidingUfo() && !itemManager.GetItem()) {
-			if (Random.value > 0.999 && !itemManager.GetItem()) {
-				RemoveTarget();
-				return;
-			}
+//			if (Random.value > 0.99 && !itemManager.GetItem()) {
+//				RemoveTarget();
+//				return;
+//			}
 		}
 
 		// yield for one frame
@@ -761,6 +753,14 @@ function BallOfFriend ( t : Transform ) : boolean {
 function BallRolledByFriend () : boolean {
 	var parent = target.transform.parent;
 	if (parent && parent.GetComponent(PlayerStatus) && parent.GetComponent(PlayerStatus).team == pStatus.team)
+		return true;
+	else
+		return false;
+}
+
+function BallRolledByOther () : boolean {
+	var parent = target.transform.parent;
+	if (parent && parent.GetComponent(PlayerStatus))// && parent.GetComponent(PlayerStatus).team == pStatus.team)
 		return true;
 	else
 		return false;

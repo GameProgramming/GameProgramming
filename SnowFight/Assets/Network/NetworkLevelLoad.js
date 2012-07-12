@@ -82,9 +82,41 @@ function OnNetworkLoadedLevel ()
 function OnPlayerDisconnected (player : NetworkPlayer)
 {
 	Debug.Log("Server destroying player "+player.ToString());
-	Network.RemoveRPCs(player, 0);
+	
+	Network.RemoveRPCs(player);
 	Network.DestroyPlayerObjects(player);
+	
+	yield WaitForSeconds(0.25);
+	if (GameObject.FindGameObjectWithTag("Game")) {
+		GameObject.FindGameObjectWithTag("Game").
+			SendMessage("MetaMessage", "Player "+player.ipAddress+" left.");
+	}
 }
+
+function OnServerInitialized () {
+	yield WaitForSeconds(0.25);
+	if (GameObject.FindGameObjectWithTag("Game")) {
+		GameObject.FindGameObjectWithTag("Game").
+			SendMessage("MetaMessage", "Server is up and running. Your IP: "+Network.player.ipAddress+" / "
+				+ Network.player.externalIP.ToString() + ":" + Network.player.externalPort+".");
+	}
+}
+
+function OnConnectedToServer () {
+	yield WaitForSeconds(0.25);
+	if (GameObject.FindGameObjectWithTag("Game")) {
+		GameObject.FindGameObjectWithTag("Game").
+			SendMessage("MetaMessage", "Connected to Server. IP:"+Network.connections[0].ipAddress);
+	}
+}
+
+function OnPlayerConnected (player :NetworkPlayer) {
+	if (GameObject.FindGameObjectWithTag("Game")) {
+		GameObject.FindGameObjectWithTag("Game").
+			SendMessage("MetaMessage", "A new Player joined. IP:"+player.ipAddress);
+	}
+}
+
 
 function LoadNewLevel(level : String) {
 	// Make sure no old RPC calls are buffered and then send load level command
