@@ -157,13 +157,6 @@ function GetUfos () : GameObject[] {
 	return ufos;
 }
 
-function IsUfoOccupiedByEnemy (ufo : GameObject) : boolean {
-	var owner = ufo.GetComponent(Ufo).GetOwner();
-	if (owner && owner.GetComponent(PlayerStatus).GetTeamNumber() != teamNumber)
-		return true;
-	else return false;
-}
-
 function GetClosestFlyingEnemy (bot : GameObject) : GameObject {
 	GetUfos();
 	var flyingBots : GameObject[] = [];
@@ -173,6 +166,13 @@ function GetClosestFlyingEnemy (bot : GameObject) : GameObject {
 		}
 	}
 	return GetClosestObjectInArray(bot, flyingBots);
+}
+
+function IsUfoOccupiedByEnemy (ufo : GameObject) : boolean {
+	var owner = ufo.GetComponent(Ufo).GetOwner();
+	if (owner && owner.GetComponent(PlayerStatus).GetTeamNumber() != teamNumber)
+		return true;
+	else return false;
 }
 
 function IsUfoUnoccupied (ufo : GameObject) : boolean {

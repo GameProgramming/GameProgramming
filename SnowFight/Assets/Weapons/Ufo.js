@@ -69,7 +69,9 @@ function PlayUfoSounds(){
 
 function Update () {
 
-	
+	if (owner && !transform.parent)
+		owner = null;
+		
 	if (owner && networkView.isMine) {
 		PlayUfoSounds();
 		if (playerMotor.inputFire && bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0) {
