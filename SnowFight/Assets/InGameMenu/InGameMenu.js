@@ -27,7 +27,7 @@ function Update() {
 					FindGameObjectWithTag("Game").GetComponent(GameStatus).playerS;
 			var input : InputController;
 			if (status.IsMainPlayer()) {
-				if (pressed) {
+				if (pressed && playerName != status.playerName) {
 					status.SetName(playerName);
 				} else {
 					playerName = status.playerName;
