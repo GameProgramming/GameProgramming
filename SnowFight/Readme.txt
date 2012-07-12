@@ -100,6 +100,7 @@ The following controls are default values:
 - You can use the freezing ray by clicking the right mouse button.
 - When holding the rocket laucher can shoot by clicking the left mouse button
   when you locked the target long enough.
+- When pressing "M" you can switch between the map overview and the normal camera.
 
 
 --------------------------------------------

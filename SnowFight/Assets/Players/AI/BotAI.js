@@ -68,7 +68,7 @@ function Update () {
 //		&& !pStatus.IsRidingUfo() && Time.time > (stuckTime + timeoutWhenStuck) 
 //		&& motor.movement.velocity.magnitude < attackSpeed * 0.3) {
 	if (moveDir != Vector3.zero && Time.time > (stuckTime + timeoutWhenStuck) 
-		&& motor.movement.velocity.magnitude < attackSpeed * 0.5) {
+		&& motor.movement.velocity.magnitude < attackSpeed * 0.3) {
 		
 		if (!stuck) { //strafe, or change direction
 			stuck = true;
@@ -92,8 +92,8 @@ function Update () {
 	else
 		motor.inputMoveDirection = moveDir;
 	
-	if(target && target.CompareTag("BigSnowball"))
-		Debug.Log("Am stuck! " + stuck, this);
+//	if(target && target.CompareTag("BigSnowball"))
+//		Debug.Log("Am stuck! " + stuck, this);
 }
 
 function Idle ()
@@ -187,6 +187,15 @@ function ConquerBase() {
 		
 		var team = target.transform.parent;
 		if (!team || team.GetComponent(Team).GetTeamNumber() == pStatus.GetTeamNumber()) {//leave once the base is conquered
+			RemoveTarget();
+			return;
+		}
+		
+				
+		var attack = pStatus.GetLastAttack();
+		if(attack && (Time.time - attack.time)<0.01) {
+			targets = [];
+			groundBaseFlag = null;
 			RemoveTarget();
 			return;
 		}
@@ -429,11 +438,20 @@ function RollBall ()
 	
 	while (true) {
 		motor.inputAction = false;
-		
-		var attack = pStatus.GetLastAttack();
-		if (!target || pStatus.IsRidingUfo() || (attack && (Time.time - attack.time)<0.01)) {
+	
+		if (!target || pStatus.IsRidingUfo()) {
 			groundBaseFlag = null;
 			RemoveTarget();
+			return;
+		}
+		
+		var attack = pStatus.GetLastAttack();
+		if(attack && (Time.time - attack.time)<0.01) {
+			targets = [];
+			groundBaseFlag = null;
+			RemoveTarget();
+			if (ball)
+				itemManager.ReleaseItem();
 			return;
 		}
 		
@@ -656,10 +674,14 @@ function Attack ()
 	 			//when lock-time is over, shoot
 	 		if (weapon && weapon.CompareTag("Weapon")) {
  				RL = weapon.GetComponent(RocketLauncher);
-		 				 					
+ 				var angleY = 0.0;
+// 				if (!target.GetComponent(PlayerStatus).IsRidingUfo())	{ //just aim down a tiny bit
+// 					angleY = -0.2;
+// 			  		motor.Rotate (0, angleY);
+// 				}
  			  	if (RL.getProgress() < RL.aimFor && target.GetComponent(PlayerStatus).IsRidingUfo()){
  			  		RL.addToProgress(Time.deltaTime);
-					var angleY = Vector3.Angle(target.transform.position-transform.position, transform.forward);
+					angleY = Vector3.Angle(target.transform.position-transform.position, transform.forward);
  			  		motor.Rotate (0, angleY);
 				}else {//if (RL.getProgress() >= RL.aimFor){
 //					Debug.Log("SHOOT! " + Time.time,this);
