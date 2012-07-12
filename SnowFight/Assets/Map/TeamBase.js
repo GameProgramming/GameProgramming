@@ -2,6 +2,7 @@ private var enterTime :float = 0;
 
 var baseID : int;
 var onFlagWonSound  : AudioClip;
+var onItemCreateSound  : AudioClip;
 
 @System.NonSerialized
 var team : Team;
@@ -165,7 +166,7 @@ function OnTriggerStay(other : Collider) {
 					weapon = specialWeapons[0];
 					
 				Network.Instantiate(weapon, other.transform.position + Vector3(0,8,0), Quaternion.identity,0);
-					
+				PlayAudio(onItemCreateSound);
 				other.gameObject.SendMessage("OnReachBase", SendMessageOptions.DontRequireReceiver);
 				enterTime = 0.0;
 			}
