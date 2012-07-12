@@ -191,6 +191,15 @@ function ConquerBase() {
 			return;
 		}
 		
+				
+		var attack = pStatus.GetLastAttack();
+		if(attack && (Time.time - attack.time)<0.01) {
+			targets = [];
+			groundBaseFlag = null;
+			RemoveTarget();
+			return;
+		}
+		
 		//if an enemy is too close forget this stuff and attack!!
 		if(Random.value > 0.8) {
 			var enemy = teamAI.FindClosestEnemy();
