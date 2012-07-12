@@ -37,6 +37,8 @@ var onDamageSound2 : AudioClip;
 var onDamageSound3 : AudioClip;
 var onDieSound : AudioClip;
 
+var killCount :int;
+var deathCount :int;
 
 class Attack {
 	var attacker :GameObject;
@@ -48,6 +50,8 @@ class Attack {
 private var lastAttack :Attack;
 
 function Awake () {
+	killCount = 0;
+	deathCount = 0;
 	if(GameObject.FindGameObjectWithTag("Game"))
 		game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
 }
@@ -100,8 +104,7 @@ function Update () {
 		switch (state) {
 		case PlayerState.Dead:
 			if (IsMainPlayer() && spawnBaseID > 0) {
-				RadialProgress.SetRadialProgress("respawning",
-					(Time.time - killTime)/respawnTimeout);
+				RadialProgress.SetRadialProgress((Time.time - killTime)/respawnTimeout, 10, null);
 			}
 			if (Time.time > killTime + respawnTimeout && spawnBaseID > 0) {
 				Respawn();
@@ -244,6 +247,22 @@ function NetDie (attacker :NetworkViewID) {
 	gameObject.SendMessage ("OnDeath", this, SendMessageOptions.DontRequireReceiver);
 	gameObject.SendMessage ("RemoveTarget", SendMessageOptions.DontRequireReceiver);
 	game.SendMessage ("OnPlayerDeath", this);
+}
+
+function OnDeath () {
+	if (Network.isServer) {
+		deathCount++;
+	}
+}
+
+function OnFrag (f :Frag) {
+	if (Network.isServer) {
+		if (f.victim && f.victim.team == this.team) {
+			killCount--;
+		} else {
+			killCount++;
+		}
+	}
 }
 
 function IsFrozen () :boolean {
@@ -472,6 +491,8 @@ function IsMainPlayer () {
 function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
 	var s :int = state;
     stream.Serialize(s);
+    stream.Serialize(killCount);
+    stream.Serialize(deathCount);
     if (s != state) {
     	Debug.Log ("Network state change "+playerName+" to "+s);
     	var st :PlayerState = s;

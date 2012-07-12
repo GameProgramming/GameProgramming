@@ -18,6 +18,9 @@ var shadowStyle : GUIStyle;
 
 var teamIndicator :Texture;
 
+var gameWinTexture :Texture;
+var gameLoseTexture :Texture;
+
 private var displayGameOver = false;
 
 private var infoScaling :float = 1;
@@ -122,16 +125,25 @@ function OnGUI() {
 	if (displayGameOver) {
 		Screen.showCursor = true;
 		Screen.lockCursor = false;
-		var winText : String;
-		winText = "Team "+ status.winner.ToString() + " wins!";
-		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
-		GUI.Box(Rect(0, 0, Screen.width, Screen.height), "");
-		if (status.winner.GetTeamNumber() == 1) {
-			GUI.Label (Rect (Screen.width/2 - 105, Screen.height/2-15, 210, 30), winText, styleTeam1);
+		
+		var posRect :Rect = Rect(Screen.width * 0.33, Screen.height*.5-Screen.width*0.33,
+									Screen.width*0.33, Screen.width*0.33);
+		if (status.winner == status.playerS.team) {
+			GUI.DrawTexture(posRect,gameWinTexture);
+		} else {
+			GUI.DrawTexture(posRect,gameLoseTexture);
 		}
-		if (status.winner.GetTeamNumber() == 2) {
-			GUI.Label (Rect (Screen.width/2 - 105, Screen.height/2-15, 210, 30), winText, styleTeam2);
-		}		
+		
+//		var winText : String;
+//		winText = "Team "+ status.winner.ToString() + " wins!";
+//		GUI.color = new Color(0.4, 0.4, 0.9, 0.8);
+//		GUI.Box(Rect(0, 0, Screen.width, Screen.height), "");
+//		if (status.winner.GetTeamNumber() == 1) {
+//			GUI.Label (Rect (Screen.width/2 - 105, Screen.height/2-15, 210, 30), winText, styleTeam1);
+//		}
+//		if (status.winner.GetTeamNumber() == 2) {
+//			GUI.Label (Rect (Screen.width/2 - 105, Screen.height/2-15, 210, 30), winText, styleTeam2);
+//		}
 	}
 }
 

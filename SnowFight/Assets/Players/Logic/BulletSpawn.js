@@ -240,7 +240,7 @@ function OnGUI() {
 		style.normal.background = texture;
 		
 		if (reloadPercent > 0.0) {
-			RadialProgress.SetRadialProgress("reloading", 1-reloadPercent*1.02);
+			RadialProgress.SetRadialProgress(1-reloadPercent*1.02, 5, null);
 //			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 25, (Screen.width/8 + 12), boxHeight+2), "");
 //			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 24, finalBoxWidth, boxHeight), "", style);
 		}

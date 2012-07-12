@@ -47,5 +47,9 @@ function OnGUI () {
 }
 
 function GetLastFrag () :Frag {
-	return fragLog[fragLog.length-1];
+	if (fragLog.length > 0) {
+		return fragLog[fragLog.length-1];
+	} else {
+		return null;
+	}
 }
