@@ -74,6 +74,7 @@ function Awake() {
 	anim["rocketfire"].layer = 1;
 	anim["rocketfire"].speed = 14;
 	anim["rocketfire"].weight = 10;
+	anim["rocketfire"].blendMode = AnimationBlendMode.Additive;
 	
 	anim.enabled = true;
 	
@@ -209,6 +210,7 @@ function OnDeath () {
 
 function OnRespawn () {
 	frost.renderer.enabled = false;
+	anim.Stop();
 	//show player
 	for (var rend : MeshRenderer in meshRenderers) {
 		rend.enabled = true;
@@ -273,6 +275,7 @@ function OnPlayerStateChange (newState :PlayerState) {
 		break;
 	case PlayerState.Alive:
 	case PlayerState.InVehicle:
+		anim.Stop();
 		if (frost) frost.renderer.enabled = false;
 		if (playerStatus.IsMainPlayer()) {
 			transform.Find("Arrow").SendMessage("SetArrowMode", ArrowMode.Jumping);
@@ -294,6 +297,7 @@ function OnItemChange(itemManager :ItemManager) {
 	if (anim) {
 		anim.Stop("push");
 		anim.Stop("rocketlauncher");
+		anim.Stop("rocketfire");
 		anim.Stop("throw1");
 		anim.Stop("throw2");
 		if (item && item.CompareTag("BigSnowball")) {
