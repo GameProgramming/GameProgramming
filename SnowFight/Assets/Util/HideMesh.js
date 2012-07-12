@@ -5,7 +5,7 @@ private var skinnedRenderers :SkinnedMeshRenderer[];
 
 var hideMeshOnRuntime : boolean = false;
 
-function Start () {
+function Awake () {
 
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
 	skinnedRenderers = GetComponentsInChildren.<SkinnedMeshRenderer> ();

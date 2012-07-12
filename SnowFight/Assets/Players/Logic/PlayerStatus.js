@@ -54,7 +54,11 @@ function Awake () {
 
 function Start() {
 	gameOver = false;
-	SetState(PlayerState.Dead);
+	if (networkView.isMine) {
+		SetState(PlayerState.Dead);
+	} else {
+		NetSetState(PlayerState.Dead);
+	}
 }
 
 function JoinTeam (t :Team) {
@@ -483,12 +487,25 @@ function SetName (name :String) {
 
 @RPC
 function NetSetName (name :String) {
+	if (playerName == "AnonPlayer") {
+		
+	} else {
+		GameObject.FindGameObjectWithTag("Game").SendMessage("MetaMessage",
+							playerName + " is now called " + name +".");
+	}
 	playerName = name;
 }
 
 function OnPlayerConnected(newPlayer: NetworkPlayer) {
 	if (state != PlayerState.Dead) {
 		networkView.RPC("NetRespawn", newPlayer, spawnBaseID);
+	}
+}
+
+function OnDestroy () {
+	if (GameObject.FindGameObjectWithTag("Game")) {
+		GameObject.FindGameObjectWithTag("Game").SendMessage("MetaMessage",
+							playerName + " leaves the game.");
 	}
 }
 

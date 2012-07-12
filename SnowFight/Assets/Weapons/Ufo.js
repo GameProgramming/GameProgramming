@@ -18,7 +18,6 @@ var hp : int = 100;
 var maxHp : int = 100;
 private var lastAttack : Attack;
 
-
 private var px : float; 
 private var pz : float; 
 
@@ -34,7 +33,7 @@ function StopAudio(){
 	}
 }
 
-function Start () {
+function Awake () {
 	px = transform.position.x;
 	pz = transform.position.z;
 	
@@ -45,6 +44,7 @@ function Start () {
 	velo = Vector3.zero;
 	terrain = Terrain.activeTerrain;
 	transform.Find("EngineParticles").particleSystem.enableEmission = false;
+	transform.Find("DamageParticles").particleSystem.enableEmission = false;
 }
 
 function Update () {
@@ -139,6 +139,9 @@ function ApplyDamage (attack :Attack) {
 	if (Network.isServer) {
 		lastAttack = attack;
 		hp -= attack.damage;
+		if (hp < maxHp / 2) {
+			transform.Find("DamageParticles").particleSystem.enableEmission = true;
+		}
 		hp = Mathf.Max(0, hp);
 	}
 }
@@ -148,6 +151,9 @@ function NetApplyDamage (attack :Attack) {
 	lastAttack = attack;
 	hp -= attack.damage;
 	hp = Mathf.Max(0, hp);
+	if (hp < maxHp / 2) {
+		transform.Find("DamageParticles").particleSystem.enableEmission = true;
+	}
 }
 
 function Crash () {
@@ -168,6 +174,9 @@ function Crash () {
 
 function OnDestroy() {
 	Debug.Log("Destroy UFO");
+	if (Network.isServer) {
+		GameObject.FindGameObjectWithTag("Game").SendMessage("LogDestruction", networkView.viewID);
+	}
 	if (hp <= 0) {
 		Instantiate(explosion, transform.position, transform.rotation);
 	}
@@ -195,6 +204,15 @@ function OnSerializeNetworkView(stream :BitStream, info :NetworkMessageInfo) {
     	a.damage = hp - nHp;
     	NetApplyDamage(a);
     }
+}
+
+function OnPlayerConnected (player :NetworkPlayer) {
+	networkView.RPC("NetSyncPos", player, transform.localPosition);
+}
+
+@RPC
+function NetSyncPos ( pos :Vector3 ) {
+	transform.localPosition = pos;
 }
 
 function GameOver () {

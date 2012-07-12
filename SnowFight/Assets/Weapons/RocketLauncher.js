@@ -63,54 +63,57 @@ function Start() {
 }
 
 function Update () {
-	if (owner && owner.networkView.isMine) {
-	
-		AimTarget(targetName);
-		
+	if (owner) {
 		transform.eulerAngles.x = -playerMotor.rotationY-10;
-	  	if(target == null){
-			progress = 0;
-		}	  		
-			
-		var canShoot : boolean = bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0;
-		//var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= bulletSpawn.GetComponent(BulletSpawn).snowCosts;
+		weaponModel.renderer.enabled = true;
+		if (owner.networkView.isMine) {
 		
-		
-		if (canShoot) {
+			AimTarget(targetName);
 			
-			if(target){
-				//Debug.Log("Hold Aim for " + (aimFor - progress) + "seconds");		
-				if (progress < aimFor){
-					progress += Time.deltaTime;
-					locked = true;
+			transform.eulerAngles.x = -playerMotor.rotationY-10;
+		  	if(target == null){
+				progress = 0;
+			}	  		
+				
+			var canShoot : boolean = bulletSpawn.GetComponent(BulletSpawn).reloadProgress <= 0;
+			//var hasSnowballs : boolean = owner.GetComponent(PlayerStatus).GetCurrentSnowballs() >= bulletSpawn.GetComponent(BulletSpawn).snowCosts;
+			
+			
+			if (canShoot) {
+				
+				if(target){
+					//Debug.Log("Hold Aim for " + (aimFor - progress) + "seconds");		
+					if (progress < aimFor){
+						progress += Time.deltaTime;
+						locked = true;
+						if (playerMotor.inputFire && ammo > 0) {
+							bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
+							ammo--;
+							progress = 0;
+						}
+					}else if (progress >= aimFor) {
+						//Debug.Log("SHOOT!!!!!!!!");
+						if (playerMotor.inputFire && ammo > 0) {
+							bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
+							progress = 0;
+							ammo--;
+							networkView.RPC("SetAmmo", RPCMode.Others, ammo);
+						}
+					}
+				}else{
 					if (playerMotor.inputFire && ammo > 0) {
 						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
-						ammo--;
-						progress = 0;
-					}
-				}else if (progress >= aimFor) {
-					//Debug.Log("SHOOT!!!!!!!!");
-					if (playerMotor.inputFire && ammo > 0) {
-						bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(target);
 						progress = 0;
 						ammo--;
 						networkView.RPC("SetAmmo", RPCMode.Others, ammo);
 					}
-				}
+				}	
 			}else{
-//				Debug.Log("Rocket launcher: Dont have target " + Time.time, this);
-				if (playerMotor.inputFire && ammo > 0) {
-					bulletSpawn.GetComponent(BulletSpawn).FireHeatSeekingRocket(null);
-					progress = 0;
-					ammo--;
-					networkView.RPC("SetAmmo", RPCMode.Others, ammo);
-				}
-			}	
-		}else{
-			progress = 0;
+				progress = 0;
+			}
+			weaponModel.renderer.enabled = true;
+			RenderAimingLine ();
 		}
-		weaponModel.renderer.enabled = true;
-		RenderAimingLine ();
 	} else if (alive) {
 		lineRenderer.enabled = false;
 		aimingCircleOuter.renderer.enabled = false;
@@ -133,7 +136,10 @@ function Update () {
 		if (ammo <= 0) alive = false;
 	} else {
 		transform.position.y += Time.deltaTime * (10+transform.position.y);
-		if (transform.position.y > 100 && Network.isServer) {
+		if (Mathf.Abs(transform.position.y) > 100 && Network.isServer) {
+			if (Network.isServer) {
+				GameObject.FindGameObjectWithTag("Game").SendMessage("LogDestruction", networkView.viewID);
+			}
 			Network.Destroy(gameObject);
 		}
 	}
@@ -151,7 +157,6 @@ function Update () {
 //}
 
 function Release () {
-//	Debug.Log("Releasing item " + Time.time, this);
 	owner = null;
 	playerStatus = null;
 	transform.parent = null;
@@ -167,7 +172,6 @@ function Release () {
 }
 
 function PickItem(player :GameObject) {
-//	Debug.Log("Picking item " + Time.time, this);
 	owner = player;
 //	ownerArmJoint = owner.transform.Find("Model/joint29/joint1/joint2/joint3");
 	collider.enabled = false;
@@ -185,7 +189,7 @@ function PickItem(player :GameObject) {
 //	}
 	
 	transform.parent = owner.transform;
-	transform.localPosition = Vector3 (0.4,1,0.6);
+	transform.localPosition = Vector3 (0.4,1,0.9);
 	//transform.localRotation = Quaternion.zero;
 	transform.localRotation.x = 0;
 	transform.localRotation.y = 0;
@@ -270,7 +274,7 @@ function RenderAimingLine () {
 			if(scale > 10){
 				scale /= 3;
 			}
-//			Debug.Log(scale);
+			Debug.Log(scale);
 			aimingCircleOuter.localScale = Vector3(scale, scale, scale);
 			
 			scale *= (1.5 - progress/aimFor);
@@ -404,6 +408,15 @@ function StopAudio(){
 	if(transform.audio.isPlaying){
 	    	   	transform.audio.Pause();
 	}
+}
+
+function OnPlayerConnected (player :NetworkPlayer) {
+	networkView.RPC("NetSyncPos", player, transform.localPosition);
+}
+
+@RPC
+function NetSyncPos ( pos :Vector3 ) {
+	transform.localPosition = pos;
 }
 
 

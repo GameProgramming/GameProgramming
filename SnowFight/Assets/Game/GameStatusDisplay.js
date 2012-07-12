@@ -28,9 +28,7 @@ function Awake () {
 	if (skyBox && !RenderSettings.skybox) {
 		RenderSettings.skybox = skyBox;
 	}
-}
-
-function Start ()  {
+	
 	skin.font.material = fontMaterial;
 	styleTeam1.font.material = fontMaterial;
 	styleTeam2.font.material = fontMaterial;
@@ -48,6 +46,10 @@ function Start ()  {
 	neutralStyle.normal.textColor = Color.white;
 	shadowStyle = new GUIStyle(neutralStyle);
 	shadowStyle.normal.textColor = Color.black;
+}
+
+function Start ()  {
+
 }
 
 static function ScaleRect ( factor :float, r :Rect) :Rect{

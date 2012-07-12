@@ -44,7 +44,7 @@ private var terrain :Terrain;
 
 private var extrapolatedPosition :Vector3;
 
-function Start () {
+function Awake () {
 //	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
 	shot = false;
@@ -60,11 +60,15 @@ function Start () {
 	terrain = Terrain.activeTerrain;
 	trail = transform.Find("Trail").particleSystem;
 	transform.localScale = Vector3.zero;
-}
-
-function Awake () {
+	
  	startSize = transform.localScale;
 	ballSize = 10;
+}
+
+@RPC
+function NetShootBall (velo :Vector3) {
+	shot = true;
+	velocity = velo;				
 }
 
 function Update () {
@@ -80,18 +84,23 @@ function Update () {
 				loadshot += Time.deltaTime;
 			} else if (loadshot > 0.001) {
 				loadshot = Mathf.Clamp(loadshot, 0.5, 3);
-				shot = true;
-				velocity = loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / ballSize)
-									* pushingPlayer.transform.forward.normalized;//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
+				//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;
+				networkView.RPC("NetShootBall", RPCMode.Server,
+							loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / ballSize)
+							* pushingPlayer.transform.forward.normalized);
 				loadshot = 0;
 				pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 			}
 		}
 	}
 	
-	if (!pushingPlayer) {
-		GetComponent(CharacterController).Move(Time.deltaTime * velocity);
+	if (!pushingPlayer && networkView.isMine) {
+		if (collider.enabled) {
+			GetComponent(CharacterController).Move(Time.deltaTime * velocity);
+		} else {
+			transform.position += Time.deltaTime * velocity;
+		}
 	}
 	
 	//else if (rollBall) {
@@ -115,7 +124,7 @@ function Update () {
 	trail.transform.Rotate(rotAxis, -angle, Space.World);
 	
 	//create the trail behind the pushed snowball
-	trail.transform.position.y = terrain.SampleHeight(trail.transform.position) + 0.05;
+	trail.transform.position.y = terrH + 0.05;
 //	trail.startRotation = transform.rotation.eulerAngles.y;
 	trail.startSize = radius * 1.5;
 	//trail.Emit(1);
@@ -147,6 +156,9 @@ function Update () {
 
 function LateUpdate () {
 	lastPosition = transform.position;
+	if (!collider.enabled) {
+		velocity.y -= 40 * Time.deltaTime;
+	}
 }
 
 function FixedUpdate () {
@@ -210,7 +222,6 @@ function OnReachBase () {
 		pushingPlayer.SendMessage("ReleaseItem", null, SendMessageOptions.DontRequireReceiver);
 	}
 	networkView.RPC("NetReachBase", RPCMode.All);
-	velocity = 10 * Vector3.down;
 	yield WaitForSeconds(1);
 	Network.Destroy(gameObject);
 }
@@ -220,7 +231,6 @@ function NetReachBase () {
 	particleSystem.gravityModifier = -0.7;
 	particleSystem.Emit(90);
 	collider.enabled = false;
-	velocity = 10 * Vector3.down;
 }
 
 function SmashBallToSnowfield () {
@@ -228,7 +238,6 @@ function SmashBallToSnowfield () {
 	var res :GameObject = Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
 	res.GetComponent(SnowRessource).CreateResourceFromSnowball(ballSize);
 	collider.enabled = false;
-	velocity = 20 * Vector3.down;
 	yield WaitForSeconds(0.5);
 	Network.Destroy(gameObject);
 }

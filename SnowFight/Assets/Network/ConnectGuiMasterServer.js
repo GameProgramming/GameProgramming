@@ -342,6 +342,11 @@ function GetBotCount () : int {
 }
 
 function Disconnect () {
+	if (Network.isServer) {
+		Debug.Log("Closing down Server.");
+	} else {
+		Debug.Log("Disconnect from Server.");
+	}
 	Network.Disconnect();
 	MasterServer.UnregisterHost();
 }

@@ -209,14 +209,8 @@ private var controller : CharacterController;
 
 private var playerState :PlayerState;
 
-function Start () {
-	gameOver = false;
-	canControl = false;
-	extrapolatedPosition = transform.position;
-	extrapolationInterval = 1 / Network.sendRate;
-}
-
 function Awake () {
+	
 	movement.tempMaxPushForwardSpeed = movement.maxForwardSpeed;
 	movement.tempMaxPushSidewaysSpeed = movement.maxSidewaysSpeed;
 	
@@ -230,6 +224,12 @@ function Awake () {
 	inputAction = false;
 	inputFire = false;					
 	inputAltFire = false;
+	
+	gameOver = false;
+	canControl = false;
+	extrapolatedPosition = transform.position;
+	extrapolationInterval = 1 / Network.sendRate;
+
 }
 
 private function UpdateFunction () {
