@@ -393,6 +393,8 @@ function OnGUI(){
 
 		
 			
+	}else{
+		StopAudio();
 	}
 }
 
