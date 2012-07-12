@@ -387,8 +387,8 @@ function OnGUI(){
 		
 		
 		if (target) {
-			GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 47, boxWidth+2, 18), "", outerStyle);
-			GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 46, boxWidth * progrAim ,16), aiming,aimStyle2);
+			//GUI.Box (Rect (Screen.width / 2 - boxWidth/2-1, Screen.height - 47, boxWidth+2, 18), "", outerStyle);
+			//GUI.Box (Rect (Screen.width / 2 - boxWidth/2, Screen.height - 46, boxWidth * progrAim ,16), aiming,aimStyle2);
 		}
 
 		

@@ -283,7 +283,7 @@ function MakeStartWindow (id : int) {
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("     ");
 		if (GUILayout.Button("start singleplayer")) {
-			StartServer (serverName, levels[selectedLevelId]);
+			StartServer (serverName, levels[selectedLevelId], false);
 		}
 		GUILayout.EndHorizontal();
 		
@@ -302,7 +302,7 @@ function MakeStartWindow (id : int) {
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("     ");
 		if (GUILayout.Button ("start server")) {
-			StartServer (serverName, levels[selectedLevelId]);
+			StartServer (serverName, levels[selectedLevelId], true);
 		}
 		GUILayout.EndHorizontal();
 	}
@@ -324,9 +324,9 @@ function MakeCreditWindow (id : int) {
 	GUILayout.Label("Enjoy the summer!");
 }
 
-function StartServer (serverName :String, level :String) {
-	Network.InitializeServer(parseInt(humanPlayers), serverPort, useNat);
-	MasterServer.RegisterHost(gameName, serverName, "Map: "+level);
+function StartServer (serverName :String, level :String, global :boolean) {
+	Network.InitializeServer(global ? parseInt(humanPlayers) : 0, serverPort, useNat);
+	if (global) MasterServer.RegisterHost(gameName, serverName, "Map: "+level);
 	GetComponent(NetworkLevelLoad).LoadNewLevel(level);
 }
 
