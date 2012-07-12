@@ -196,7 +196,7 @@ function ConquerBase() {
 				return;
 			}
 		}
-		if(Random.value > 0.999) {
+		if(Random.value > 0.99) {
 			RemoveTarget();
 			return;
 		}
@@ -423,11 +423,14 @@ function RollBall ()
 			RemoveTarget();
 			return;
 		}
-			
+		
 		//if target is a ball
 		if (target && target.CompareTag("BigSnowball")) {
 			isAttacking = false;
-			ball = itemManager.GetItem();
+		
+		ball = itemManager.GetItem();
+		if (ball && !ball.CompareTag("BigSnowball"))
+			ball = null;
 			
 			Debug.DrawRay(transform.position, transform.up * 50, Color.green);
 			Debug.DrawRay(target.transform.position, transform.up * 50, Color.green);
@@ -473,9 +476,21 @@ function RollBall ()
 				}
 			}
 			//if we have a ball run to base
-			else if (ball.CompareTag("BigSnowball") && groundBaseFlag) { //but make sure we have a base
+			else if (groundBaseFlag) { //make sure we have a base
+//			else if (ball.CompareTag("BigSnowball") && groundBaseFlag) { 
 				//release the button, once the ball is yours
 				motor.inputAction = false;
+				
+				if (Random.value > 0.999) {
+					enemy = teamAI.FindClosestEnemy();
+					if (enemy && (enemy.transform.position - transform.position).magnitude < 2*attackDistance &&
+						FirstCloserThanSecond(enemy.transform.position, target.transform.position)) {
+						motor.inputAction = false;
+						groundBaseFlag = null;
+						RemoveTarget();;
+						return;
+					}
+				}
 				
 				if (ball.GetComponent(BigSnowBall).IsBallTooFarAway (gameObject)) {
 					groundBaseFlag = null;
