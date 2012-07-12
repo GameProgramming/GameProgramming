@@ -32,6 +32,11 @@ var itemLogoRockets :Texture;
 
 var onSetReleaseItemSound : AudioClip;
 
+var makeBigSnowballSound1 : AudioClip;
+var makeBigSnowballSound2 : AudioClip;
+var makeBigSnowballSound3 : AudioClip;
+var makeBigSnowballSound4 : AudioClip;
+
 function Awake () {
 	motor = GetComponent(CharacterMotorSF);
 	pStatus = GetComponent(PlayerStatus);
@@ -120,7 +125,7 @@ function Update () {
 		if (snowResourcePick.IsGrabBigSnowballPossible() 
 				&& inputAction && !pStatus.IsDead()) {
 			srPickProgress += Time.deltaTime;
-			
+			PlayMakeSnowballAudio();
 			if (srPickProgress > srPickTime) {
 				if (Network.isServer) {
 					SetItem(snowResourcePick.GrabBigSnowball(gameObject));
@@ -298,10 +303,28 @@ function GetCandidateItem() : GameObject {
 //}
 
 function PlayAudio(audio : AudioClip){
-	transform.audio.clip=audio;
 	if(!transform.audio.isPlaying){
+	   	transform.audio.clip=audio;
 	   	transform.audio.Play();
 	}
+}
+
+function PlayMakeSnowballAudio(){
+
+	var soundNumber : float = Random.Range(0.0,0.4);
+	//Debug.Log(soundNumber);
+	if(soundNumber <= 0.1){
+		PlayAudio(makeBigSnowballSound1);
+	}
+	if(soundNumber > 0.1 && soundNumber <= 0.2){
+		PlayAudio(makeBigSnowballSound2);
+	}
+	if(soundNumber > 0.2 && soundNumber <= 0.3){
+		PlayAudio(makeBigSnowballSound3);
+	}
+	if(soundNumber > 0.3){
+		PlayAudio(makeBigSnowballSound4);
+	}	
 }
 
 @script RequireComponent (CharacterMotorSF)

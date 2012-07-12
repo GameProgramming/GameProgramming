@@ -24,7 +24,6 @@ var onGrabSound2 : AudioClip;
 var onGrabSound3 : AudioClip;
 var onGrabSound4 : AudioClip;
 
-
 function Awake () {
 	snowAmountManager = GameObject.FindGameObjectWithTag("Game").GetComponent(SnowAmountManager);
 	snowballRessource = transform.Find("SnowballRessource");

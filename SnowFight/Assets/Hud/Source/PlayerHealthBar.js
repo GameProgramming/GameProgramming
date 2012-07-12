@@ -24,6 +24,8 @@ var quickInfoProgress :float = 0;
 var quickInfoStyle :GUIStyle;
 private var quickInfoShadowStyle :GUIStyle;
 
+var onNoSnowballs  : AudioClip;
+
 var player :PlayerStatus;
 
 function Awake () {
@@ -99,9 +101,17 @@ function OnGUI() {
 		var w :float = 2*3*(30-playerInfoShift) / ammoMaxNumber;
 		var currX :float = x+50+2*playerInfoShift+ 2*3*(30-playerInfoShift);
 		for (var i :int = 0; i < ammoMaxNumber; i++) {
-			var tex :Texture =
-				i >= (ammoMaxNumber-ammoNumber) ? snowballTexture
-							   				    : (ammoTime%1 > 0.5 ? noAmmoTextureBlink : noAmmoTexture);
+			var tex :Texture;
+			if(i >= (ammoMaxNumber-ammoNumber)){
+				tex = snowballTexture;
+			}else{
+				if(ammoTime%1 > 0.5){
+					PlayAudio(onNoSnowballs);
+					tex = noAmmoTextureBlink;
+				}else{
+					tex = noAmmoTexture;
+				}
+			}
 			GUI.Label( Rect (currX, y+2*playerInfoShift, h, h), tex);
 			currX -= w;
 		}
@@ -181,5 +191,12 @@ function OnItemChange(itemManager :ItemManager) {
 	} else {
 		inUFO = false;
 		hasRocketLauncher = false;
+	}
+}
+
+function PlayAudio(audio : AudioClip){
+	if(!transform.audio.isPlaying){
+	   	transform.audio.clip=audio;
+	   	transform.audio.Play();
 	}
 }
