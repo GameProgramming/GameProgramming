@@ -2,6 +2,11 @@ fileFormatVersion: 2
 guid: 6618e938bb4526443b39dec703358c46
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - bullet: {instanceID: 0}
+  - onNoSnowballs: {fileID: 8300000, guid: b792eac1b9b61614c8dc6781d296166c, type: 1}
+  - onNoRockets: {fileID: 8300000, guid: 2e662f2dff9648b4f93787e0cdcf9eb3, type: 1}
+  - onUfoShotSound: {fileID: 8300000, guid: 177e91e02d0257d40b3845ef68dd6059, type: 1}
+  - onThrowSound: {fileID: 8300000, guid: b7ae2cb60ead028489c45e877c6a7bb1, type: 1}
   executionOrder: 0
   icon: {instanceID: 0}
