@@ -56,7 +56,7 @@ function OnMouseDown() {
 }
 
 function OnMouseOver() {
-	if (!game.playerS) return;
+	if (!game.playerS || !teamBase.team) return;
 	var teamNumber = teamBase.team.GetTeamNumber();
 	var playerTeamNumber = game.playerS.GetTeamNumber();
 	if (game.playerS.IsDead() && teamNumber == playerTeamNumber) {

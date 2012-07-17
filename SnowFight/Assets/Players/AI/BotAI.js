@@ -818,11 +818,13 @@ function BallRolledByFriend () : boolean {
 }
 
 function BallRolledByOther () : boolean {
-	var parent = target.transform.parent;
-	if (parent && parent.GetComponent(PlayerStatus))// && parent.GetComponent(PlayerStatus).team == pStatus.team)
-		return true;
-	else
-		return false;
+	return target && target.CompareTag("BigSnowball")
+			&& target.GetComponent(BigSnowBall).IsHeld();
+//	var parent = target.transform.parent;
+//	if (parent && parent.GetComponent(PlayerStatus))// && parent.GetComponent(PlayerStatus).team == pStatus.team)
+//		return true;
+//	else
+//		return false;
 }
 
 function AboveTarget() {

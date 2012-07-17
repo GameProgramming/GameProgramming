@@ -8,6 +8,9 @@ class Message {
 	var team :boolean;
 }
 
+var chatLines :int = 6;
+var lineLength :int = 50;
+
 private var messages :Array = new Array();
 
 private var game :GameStatus;
@@ -53,29 +56,12 @@ function NetChatMessage (senderId :NetworkViewID, text :String, team :boolean) {
 
 function MetaMessage (text :String) {
 	var m :Message = new Message();
-	if (text.Length >= 50) {
-		m.time = Time.time;
-		m.sender = null;
-		m.text = text.Substring(0, 49);
-		m.team = false;
-		m.meta = true;
-		messages.Add(m);
-		var m2 :Message = new Message();
-		m2.time = Time.time;
-		m2.sender = null;
-		m2.text = text.Substring(50);
-		m2.team = false;
-		m2.meta = true;
-		messages.Add(m2);
-	} else {
-		m.time = Time.time;
-		m.sender = null;
-		m.text = text;
-		m.team = false;
-		m.meta = true;
-		messages.Add(m);
-	}
-
+	m.time = Time.time;
+	m.sender = null;
+	m.text = text;
+	m.team = false;
+	m.meta = true;
+	messages.Add(m);
 }
 
 function Update () {
@@ -85,12 +71,10 @@ function Update () {
 			ParseChatInput (currMsg);
 			currMsg = "";
 		} else if (Input.GetKeyUp("escape")) {
-			Debug.Log("DeActivateChat");
 			chatActive = false;
 		}
 	} else {
 		if (Input.GetKeyUp("return")) {
-			Debug.Log("ActivateChat");
 			chatActive = true;
 		}
 	}
@@ -98,30 +82,70 @@ function Update () {
 
 function OnGUI () {
 	GUI.skin.label.fontSize = 15;
-    for (var off :float = 0; off <= 1; off++) {
-	    GUILayout.BeginArea (Rect (40,Screen.height-250-off,500,201-off));
-	    for (var i :int = Mathf.Max(0, messages.length-5); i < messages.length; i++) {
-	    	if (i < messages.length - 5) break;
-	    	var m :Message = messages[i] as Message;
-	    	if (m.time < Time.time - 10) continue;
-		    //GUILayout.BeginHorizontal();
-		    if (m.meta) {
-		    	GUILayout.Box(":: " + m.text, off==1 ? metaStyle : statusDisplay.shadowStyle);
-		    } else if (!m.team || m.sender && game.playerS && game.playerS.team == m.sender.team) {
-		    	//GUILayout.Box("<"+m.sender.playerName+"> ", off==1 ? statusDisplay.GetTeamStyle(m.sender.GetTeam())
-		    	//				: statusDisplay.shadowStyle, GUILayout.ExpandHeight(true));
-		    	if (m.team) {
-			    	GUILayout.Box("<"+m.sender.playerName+"> " + "[Team] "+m.text, off==1 ?
-			    			statusDisplay.GetTeamStyle(m.sender.GetTeam()) : statusDisplay.shadowStyle);
-			    } else {
-			    	GUILayout.Box("<"+m.sender.playerName+"> " + m.text, off==1 ? statusDisplay.neutralStyle
-			    																: statusDisplay.shadowStyle);
-			    }
-		    }
-		    //GUILayout.EndHorizontal();
-	    }
-	    GUILayout.EndArea ();
-    }
+	var lines :String[] = new String[chatLines];
+	var styles :GUIStyle[] = new GUIStyle[chatLines];
+	var i :int = messages.length-1;
+	var l :int = chatLines;
+	
+	while (i >= 0) {
+		var m :Message = messages[i] as Message;
+		i--;
+		if (m.time < Time.time-20) break;
+		var txt :String = m.text;
+		var style :GUIStyle = statusDisplay.neutralStyle;
+		if (m.meta) {
+			txt = ":: " + txt;
+			style = metaStyle;
+		} else if (m.team) {
+			if (m.sender && game.playerS && game.playerS.team == m.sender.team) {
+				txt = "<"+m.sender.playerName+"> " + "[Team] " + txt;
+				style = statusDisplay.GetTeamStyle(m.sender.GetTeam());
+			} else {
+				continue;
+			}
+		} else {
+			txt = "<"+m.sender.playerName+"> " + txt;
+		}
+		var neededLines :int =  txt.Length / lineLength + 1;
+		l -= neededLines;
+		if (l < 0) break;
+		for (var ll :int = 0; ll < neededLines; ll++) {
+			lines[l+ll] = (ll > 0 ? "  " : "") + (txt.Length > lineLength ? txt.Remove(lineLength) : txt);
+			styles[l+ll] = style;
+			txt = (txt.Length > lineLength ? txt.Substring(lineLength) : txt);
+		}
+	}
+	
+	var y :int = Screen.height - 50 - 20 * (chatLines - l);
+	for (i = l; i < chatLines; i++) {
+		ShadowedLabel(Rect(0,y, 700,30), lines[i], styles[i]);
+		y += 20;
+	}
+	
+//    for (var off :float = 0; off <= 1; off++) {
+//	    GUILayout.BeginArea (Rect (40,Screen.height-250-off,500,201-off));
+//	    for (var i :int = Mathf.Max(0, messages.length-5); i < messages.length; i++) {
+//	    	if (i < messages.length - 5) break;
+//	    	var m :Message = messages[i] as Message;
+//	    	if (m.time < Time.time - 10) continue;
+//		    //GUILayout.BeginHorizontal();
+//		    if (m.meta) {
+//		    	GUILayout.Box(":: " + m.text, off==1 ? metaStyle : statusDisplay.shadowStyle);
+//		    } else if (!m.team || m.sender && game.playerS && game.playerS.team == m.sender.team) {
+//		    	//GUILayout.Box("<"+m.sender.playerName+"> ", off==1 ? statusDisplay.GetTeamStyle(m.sender.GetTeam())
+//		    	//				: statusDisplay.shadowStyle, GUILayout.ExpandHeight(true));
+//		    	if (m.team) {
+//			    	GUILayout.Box("<"+m.sender.playerName+"> " + "[Team] "+m.text, off==1 ?
+//			    			statusDisplay.GetTeamStyle(m.sender.GetTeam()) : statusDisplay.shadowStyle);
+//			    } else {
+//			    	GUILayout.Box("<"+m.sender.playerName+"> " + m.text, off==1 ? statusDisplay.neutralStyle
+//			    																: statusDisplay.shadowStyle);
+//			    }
+//		    }
+//		    //GUILayout.EndHorizontal();
+//	    }
+//	    GUILayout.EndArea ();
+//    }
     if (chatActive) {
 		if (Event.current.type == EventType.KeyDown
 			&& (Event.current.keyCode == KeyCode.Return
@@ -142,31 +166,40 @@ function OnGUI () {
 	}
 }
 
+function ShadowedLabel (r :Rect, text :String, style :GUIStyle) {
+	GUI.Label(Rect(r.x, r.y+2, r.width, r.height), text, statusDisplay.shadowStyle);
+	GUI.Label(r, text, style);
+}
+
 function ParseChatInput (inputText :String) {
 	if (game.player && inputText.Length > 0) {
 		var firstString : String;
 		var secondString : String;
 		if (inputText.StartsWith("/team ")) {
-			if (inputText.Length > 50) {
-				firstString = inputText.Substring(6, 49);
-				secondString = inputText.Substring(50);
-				ChatMessage (game.playerS, firstString, true);
-				ChatMessage (game.playerS, secondString, true);
-			} else {
-				ChatMessage (game.playerS, inputText.Substring(6), true);
-			}
-		} else {			
-			if (inputText.Length > 50) {
-				firstString = inputText.Substring(0, 49);
-				secondString = inputText.Substring(50);
-				ChatMessage (game.playerS, firstString, false);
-				ChatMessage (game.playerS, secondString, false);
-			} else {
-				ChatMessage (game.playerS, inputText, false);
-			}
-		
+			ChatMessage (game.playerS, inputText.Substring(6), true);
+		} else if (inputText.StartsWith("/killbots")) {
+			KillBots();
+		} else if (inputText.StartsWith("/")) {
+			MetaMessage ("Valid commands:");
+			MetaMessage ("/team MSG -- send message only to team members");
+			MetaMessage ("/killbots -- kill all bots (only server)");
+		} else {
+			ChatMessage (game.playerS, inputText, false);
 		}
 	}
+}
+
+function KillBots() {
+	if (!Network.isServer) {
+		MetaMessage ("Only the server may kill the bots.");
+		return;
+	}
+	for (var go :GameObject in GameObject.FindGameObjectsWithTag("Player")) {
+		var attack = new Attack();
+		attack.damage = 10000;
+		go.SendMessage("ApplyDamage", attack, SendMessageOptions.DontRequireReceiver);
+	}
+	MetaMessage ("Killed all bots.");
 }
 
 @script RequireComponent (NetworkView)

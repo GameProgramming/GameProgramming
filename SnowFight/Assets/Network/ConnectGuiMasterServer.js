@@ -17,6 +17,7 @@ private var hostListRefreshTimeout = 10.0;
 private var connectionTestResult : ConnectionTesterStatus = ConnectionTesterStatus.Undetermined;
 private var filterNATHosts = false;
 private var probingPublicIP = false;
+private var needTesting = false;
 private var doneTesting = false;
 private var timer : float = 0.0;
 private var useNat = false;		// Should the server enabled NAT punchthrough feature
@@ -88,6 +89,7 @@ function OnGUI ()
 			origin = Vector2.MoveTowards(origin, Vector2(1.5*Screen.width, Screen.height/2), scale*1500*Time.deltaTime);
 			break;
 		case GUIScreen.Join:
+			needTesting = true;
 			origin = Vector2.MoveTowards(origin, Vector2(-Screen.width/2, Screen.height/2), scale*1500*Time.deltaTime);
 			break;
 		case GUIScreen.Credits:
@@ -143,7 +145,7 @@ function Awake ()
 function Update()
 {
 	// If test is undetermined, keep running
-	if (!doneTesting)
+	if (!doneTesting && needTesting)
 		TestConnection();
 }
 
@@ -325,6 +327,7 @@ function MakeCreditWindow (id : int) {
 }
 
 function StartServer (serverName :String, level :String, global :boolean) {
+	if (global) needTesting = true;
 	Network.InitializeServer(global ? parseInt(humanPlayers) : 0, serverPort, useNat);
 	if (global) MasterServer.RegisterHost(gameName, serverName, "Map: "+level);
 	GetComponent(NetworkLevelLoad).LoadNewLevel(level);
@@ -332,6 +335,7 @@ function StartServer (serverName :String, level :String, global :boolean) {
 
 function MakeJoinWindow(id : int)
 {
+	if (!needTesting) return;
 	GUILayout.Space(12);
 	GUILayout.BeginHorizontal();
 	if (GUILayout.Button("<<  back", GUILayout.ExpandWidth(false))) {

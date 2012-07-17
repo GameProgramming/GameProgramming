@@ -26,7 +26,7 @@ function OnPlayerDeath (pl :PlayerStatus) {
 
 function OnGUI () {
     for (var off :float = 0; off <= 1; off++) {
-	    GUILayout.BeginArea (Rect (Screen.width-200,1-off,200,201-off));
+	    GUILayout.BeginArea (Rect (Screen.width-240,1-off,240,201-off));
 	    for (var i :int = Mathf.Max(0, fragLog.length-5); i < fragLog.length; i++) {
 	    	if (i < fragLog.length - 5) break;
 	    	var f :Frag = fragLog[i];

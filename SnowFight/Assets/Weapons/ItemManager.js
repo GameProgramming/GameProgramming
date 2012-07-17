@@ -155,32 +155,38 @@ function Update () {
 		}
 	}
 	
-	if (pStatus.IsMainPlayer() && !pStatus.IsDead()) {
-		if (srPickProgress > 0) {
-			RadialProgress.SetRadialProgress(srPickProgress / srPickTime, 15, itemLogoSnowball);
-		}
-		if (item) {
-			if (item.CompareTag("Ufo")) {
-				tooltip.SetTooltip("Cannon", "Freezing Ray", "Exit", itemLogoUfo);
-			} else if (item.CompareTag("BigSnowball")) {
-				tooltip.SetTooltip("Push", "Create Snow Field", "Drop", itemLogoSnowball);
-			} else if (item.CompareTag("Weapon")) {
-				tooltip.SetTooltip("Fire Rocket", "", "Drop", itemLogoRockets);
+	if (pStatus.IsMainPlayer()) {
+		if (pStatus.IsDead()) {
+			if (pStatus.team) {
+				tooltip.SetTooltip("Select a candycane\n to spawn.", "", "", pStatus.team.teamBaseIcon);
 			}
 		} else {
-			if (!candidateItem) {
-				tooltip.SetTooltip("", "", "", null);
-			} else if (candidateItem.CompareTag("BigSnowball")) {
-				tooltip.SetTooltip("", "", "Pick up", itemLogoSnowball);
-			} else if (candidateItem.CompareTag("Weapon")) {
-				tooltip.SetTooltip("", "", "Pick up", itemLogoRockets);
-			} else if (candidateItem.CompareTag("SnowballRessource")
-						&& candidateItem.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
-				tooltip.SetTooltip("", "", "Create Big Snowball", itemLogoSnowball);
-			} else if (candidateItem.CompareTag("UfoBody")) {
-				tooltip.SetTooltip("", "", "Jump in", itemLogoUfo);
+			if (srPickProgress > 0) {
+				RadialProgress.SetRadialProgress(srPickProgress / srPickTime, 15, itemLogoSnowball);
+			}
+			if (item) {
+				if (item.CompareTag("Ufo")) {
+					tooltip.SetTooltip("Cannon", "Freezing Ray", "Exit", itemLogoUfo);
+				} else if (item.CompareTag("BigSnowball")) {
+					tooltip.SetTooltip("Push", "Create Snow Field", "Drop", itemLogoSnowball);
+				} else if (item.CompareTag("Weapon")) {
+					tooltip.SetTooltip("Fire Rocket", "", "Drop", itemLogoRockets);
+				}
 			} else {
-				tooltip.SetTooltip("", "", "", null);
+				if (!candidateItem) {
+					tooltip.SetTooltip("", "", "", null);
+				} else if (candidateItem.CompareTag("BigSnowball")) {
+					tooltip.SetTooltip("", "", "Pick up", itemLogoSnowball);
+				} else if (candidateItem.CompareTag("Weapon")) {
+					tooltip.SetTooltip("", "", "Pick up", itemLogoRockets);
+				} else if (candidateItem.CompareTag("SnowballRessource")
+							&& candidateItem.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
+					tooltip.SetTooltip("", "", "Create Big Snowball", itemLogoSnowball);
+				} else if (candidateItem.CompareTag("UfoBody")) {
+					tooltip.SetTooltip("", "", "Jump in", itemLogoUfo);
+				} else {
+					tooltip.SetTooltip("", "", "", null);
+				}
 			}
 		}
 	}
@@ -257,9 +263,15 @@ function CandidateTooFarAway() {
 
 //Check if another player might already hold the item
 function ItemNotHeld(it : GameObject) : boolean {
-	return (false//it.CompareTag("BigSnowball") 
-		|| !it.transform.parent
-		|| !it.transform.parent.CompareTag("Player"));
+	return !(ItemHeld(it));
+//	return (false//it.CompareTag("BigSnowball") 
+//		|| !it.transform.parent
+//		|| !it.transform.parent.CompareTag("Player"));
+}
+
+function ItemHeld (it :GameObject) :boolean {
+	return ((it.CompareTag("BigSnowball") && it.GetComponent(BigSnowBall).IsHeld())
+		|| (it.transform.parent != null && it.transform.parent.CompareTag("Player")));
 }
 
 function GetItem () : GameObject {

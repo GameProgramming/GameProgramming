@@ -124,7 +124,7 @@ function FireHeatSeekingRocket (target :GameObject) {
 		  	var clone : Rigidbody;	
 			clone = Instantiate(projectile, transform.position, transform.rotation);
 			clone.GetComponent(HeatSeeking).missleTarget = target;
-			
+			clone.GetComponent(Damage).shooter = player.gameObject;
 //			snowCosts = projectile.GetComponent(Projectile).snowCosts;
 //			if (snowCosts > 0) {
 //				player.SubtractSnowball(snowCosts);

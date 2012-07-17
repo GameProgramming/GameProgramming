@@ -20,7 +20,8 @@ function GetDamage() : int {
 	damage = 0;
 	//TODO.. no harm if shooter is hit by own ball
 	if (GetVelocity().sqrMagnitude > painfulSpeed * painfulSpeed) {
-		damage = Mathf.Round(maximumDamage * GetVelocity().magnitude/speed);
+		damage = Mathf.Round(maximumDamage * GetComponent(BigSnowBall).GetCurrentSnowballs()
+								* GetVelocity().magnitude/speed);
 	}
 //	Debug.Log("Velocity " + GetVelocity().magnitude + " damage " + damage, this);
 	return Mathf.Min(maximumDamage, damage);
@@ -44,5 +45,5 @@ function GetVelocity() : Vector3{
 }
 
 function GetSpeed () : int{
-	return speed * 10;
+	return speed;
 }

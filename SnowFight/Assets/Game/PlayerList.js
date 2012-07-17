@@ -5,9 +5,11 @@ private var players2 :Array;
 
 private var show = false;
 private var showProgress :float = 0;
+private var displayGameover = false;
 
 function Awake () {
 	statusDisplay = GetComponent(GameStatusDisplay);
+	displayGameover = false;
 }
 
 function SetShow (s :boolean) {
@@ -54,28 +56,36 @@ function Update () {
 function OnGUI () {
 	if (showProgress > 0) {
 		var y: int = 70;
+		if (displayGameover) y += 150;
 		for (var p :PlayerStatus in players1) {
 			var x: int = showProgress*Screen.width*.5-200;
 			if (p.IsMainPlayer()) {
 				ShadowedLabel(Rect(x-20, y, 20, 20), ">", statusDisplay.neutralStyle);
 			}
-			ShadowedLabel(Rect(x, y, 150, 20), p.playerName, statusDisplay.GetTeamStyle(p.GetTeam()));
+			ShadowedLabel(Rect(x, y, 150, 20), p.IsDead() ? "(" + p.playerName + ")" : p.playerName,
+												statusDisplay.GetTeamStyle(p.GetTeam()));
 			x += 150;
 			ShadowedLabel(Rect(x, y, 100, 20), p.killCount.ToString() + " / " + p.deathCount.ToString()
 												, statusDisplay.neutralStyle);
 			y += 20;
 		}
 		y = 70;
+		if (displayGameover) y += 150;
 		for (var p :PlayerStatus in players2) {
 			x = Screen.width+30-showProgress*Screen.width*.5;
 			if (p.IsMainPlayer()) {
 				ShadowedLabel(Rect(x-20, y, 20, 20), ">", statusDisplay.neutralStyle);
 			}
-			ShadowedLabel(Rect(x, y, 150, 20), p.playerName, statusDisplay.GetTeamStyle(p.GetTeam()));
+			ShadowedLabel(Rect(x, y, 150, 20), p.IsDead() ? "(" + p.playerName + ")" : p.playerName,
+												statusDisplay.GetTeamStyle(p.GetTeam()));
 			x += 150;
 			ShadowedLabel(Rect(x, y, 100, 20), p.killCount.ToString() + " / " + p.deathCount.ToString()
 												, statusDisplay.neutralStyle);
 			y += 20;
 		}
 	}
+}
+
+function GameOver () {
+	displayGameover = true;
 }

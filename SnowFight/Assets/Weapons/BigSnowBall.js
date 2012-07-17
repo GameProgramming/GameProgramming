@@ -86,18 +86,21 @@ function Update () {
 				SmashBallToSnowfield();
 			} else if (playerMotor.inputFire) {
 				PlayAudio(hitSnow);
+				if (pushingPlayer.GetComponent(PlayerStatus).IsMainPlayer()) {
+					RadialProgress.SetRadialProgress((2.0-loadshot) / 2, 17, null);
+				}
 				loadshot += Time.deltaTime;
 			} else if (loadshot > 0.001) {
 				//PlaySnowAudio();
-				loadshot = Mathf.Clamp(loadshot, 0.5, 3);
+				loadshot = Mathf.Clamp(loadshot, 0.5, 2);
 				//shootDirection * GetComponent(BigSnowBallDamage).GetSpeed();
 				lastOwner = pushingPlayer;
 				if (Network.isServer) {
-					NetShootBall(loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / ballSize)
+					NetShootBall(loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / Mathf.Min(20,ballSize))
 							* pushingPlayer.transform.forward.normalized);
 				} else {
 					networkView.RPC("NetShootBall", RPCMode.Server,
-							loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / ballSize)
+							loadshot * (GetComponent(BigSnowBallDamage).GetSpeed() / Mathf.Min(20,ballSize))
 							* pushingPlayer.transform.forward.normalized);
 				}
 				loadshot = 0;
@@ -173,7 +176,7 @@ function LateUpdate () {
 }
 
 function FixedUpdate () {
-	velocity = Vector3.MoveTowards(velocity, Vector3(0,0,0), (15+5*radius)*Time.deltaTime);
+	velocity = Vector3.MoveTowards(velocity, Vector3(0,0,0), (25+2*radius)*Time.deltaTime);
  //  	rigidbody.velocity.y += -1 * fallSpeed * Time.deltaTime;
 }
 
@@ -202,7 +205,7 @@ function IsBallTooFarAway (player : GameObject) : boolean {
 	if (player) {
 		var playerController = player.GetComponent(CharacterController);
 		var playerTransform = player.GetComponent(Transform);
-		var maxAllowedDist = Mathf.Max(maxBallDistance, playerController.radius + radius*4);
+		var maxAllowedDist = Mathf.Max(maxBallDistance, playerController.radius + radius*2);
 		tooFar = (Vector3.Distance(transform.position , playerController.transform.position) > maxAllowedDist);
 	}
 	return tooFar;
@@ -221,7 +224,7 @@ function Release () {
 
 function PickItem(player:GameObject) {
 	pushingPlayer = player;
-	transform.parent = pushingPlayer.transform;
+	//transform.parent = pushingPlayer.transform;
 	playerMotor = player.GetComponent(CharacterMotorSF);
 	loadshot = 0;
 	shot = false;
@@ -285,7 +288,22 @@ function PlayAudio(audio : AudioClip){
 	}
 }
 
+function IsHeld () :boolean {
+	return pushingPlayer != null;
+}
 
+//function OnControllerColliderHit(hit : ControllerColliderHit){
+//	Debug.Log("Hit something");
+//	if(hit.gameObject.CompareTag("Player")) {
+//		Debug.Log("Hit player " +hit.gameObject);
+//		if (velocity.sqrMagnitude > 0.05 && lastOwner != hit.gameObject) {
+//			var attack = new Attack();
+//			attack.damage = GetComponent(BigSnowBallDamage).GetDamage();
+//			attack.attacker = lastOwner;
+//			hit.gameObject.SendMessage("ApplyDamage", attack);
+//		}
+//	}
+//}
 
 @script RequireComponent (BigSnowBallDamage)
 @script RequireComponent (NetworkView)

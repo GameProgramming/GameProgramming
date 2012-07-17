@@ -51,21 +51,21 @@ function OnGUI() {
 		x += 50;
 		y += 10;
 		if (tipLMB != "") {
-			GUI.Label (Rect (x, y-5, 30, 30), iconLmb);
-			GUI.Label (Rect (x+31, y+2, 200, 30), tipLMB, shadowStyle);
-			GUI.Label (Rect (x+30, y, 200, 30), tipLMB, style);
+			GUI.Label (Rect (x, y-5, 30, 70), iconLmb);
+			GUI.Label (Rect (x+31, y+2, 200, 70), tipLMB, shadowStyle);
+			GUI.Label (Rect (x+30, y, 200, 70), tipLMB, style);
 			y += 20;
 		}
 		if (tipRMB != "") {
-			GUI.Label (Rect (x, y-5, 30, 30), iconRmb);
-			GUI.Label (Rect (x+31, y+2, 200, 30), tipRMB, shadowStyle);
-			GUI.Label (Rect (x+30, y, 200, 30), tipRMB, style);
+			GUI.Label (Rect (x, y-5, 30, 70), iconRmb);
+			GUI.Label (Rect (x+31, y+2, 200, 70), tipRMB, shadowStyle);
+			GUI.Label (Rect (x+30, y, 200, 70), tipRMB, style);
 			y += 20;
 		}
 		if (tipAction != "") {
-			GUI.Label (Rect (x, y-5, 30, 30), iconAction);
-			GUI.Label (Rect (x+31, y+2, 200, 30), tipAction, shadowStyle);
-			GUI.Label (Rect (x+30, y, 200, 30), tipAction, style);
+			GUI.Label (Rect (x, y-5, 30, 70), iconAction);
+			GUI.Label (Rect (x+31, y+2, 200, 70), tipAction, shadowStyle);
+			GUI.Label (Rect (x+30, y, 200, 70), tipAction, style);
 			y += 20;
 		}
 	}
