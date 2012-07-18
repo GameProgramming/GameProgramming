@@ -19,6 +19,9 @@ private var lastAttack : Attack;
 private var px : float; 
 private var pz : float; 
 
+private var mapCenter :Transform;
+private var game :GameStatus;
+
 function PlayAudio(audio : AudioClip){
 	transform.audio.clip=audio;
 	if(!transform.audio.isPlaying){
@@ -35,6 +38,8 @@ function Awake () {
 	px = transform.position.x;
 	pz = transform.position.z;
 	
+	game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+	mapCenter = GameObject.Find("/Game/MapCenter").transform;
 	
 	mesh = transform.Find("Ufo");
 	bulletSpawn = transform.Find("Ufo/BulletSpawn");
@@ -108,6 +113,13 @@ function FixedUpdate () {
 		playerMotor.SetVelocity(1.0*velo);
 	} else if (owner == null) {
 		transform.position += velo;
+	}
+	
+	if (Vector3.SqrMagnitude(mapCenter.position - transform.position)
+				> game.mapRadius*game.mapRadius) {
+		var attack = new Attack();
+		attack.damage = 20;
+		ApplyDamage(attack);
 	}
 }
 

@@ -809,13 +809,13 @@ function BallOfFriend ( t : Transform ) : boolean {
     return false;
 }
 
-function BallRolledByFriend () : boolean {
-	var parent = target.transform.parent;
-	if (parent && parent.GetComponent(PlayerStatus) && parent.GetComponent(PlayerStatus).team == pStatus.team)
-		return true;
-	else
-		return false;
-}
+//function BallRolledByFriend () : boolean {
+//	var parent = target.transform.parent;
+//	if (parent && parent.GetComponent(PlayerStatus) && parent.GetComponent(PlayerStatus).team == pStatus.team)
+//		return true;
+//	else
+//		return false;
+//}
 
 function BallRolledByOther () : boolean {
 	return target && target.CompareTag("BigSnowball")

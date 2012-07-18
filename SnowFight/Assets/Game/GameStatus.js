@@ -26,6 +26,7 @@ var botNames :String[] = ["Erwin", "Mark", "Konstantin", "Anton", "Bernhard", "T
 						  "Moritz", "Karl", "Martin", "Sebastian", "Jan", "Egon", "Markus",
 						  "Lukas", "Johann", "Wolfgang"];
 
+var mapRadius :float = 500;
 
 function Awake () {
 	gameOver = false;
@@ -181,4 +182,10 @@ function GetCurrentLevel () : String {
 
 function GetAllLevels () : String[] {
 	return allLevels;
+}
+
+function OnDrawGizmosSelected ()
+{
+	Gizmos.color = Color.red;
+	Gizmos.DrawWireSphere (transform.Find("MapCenter").position, mapRadius);
 }

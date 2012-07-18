@@ -30,7 +30,6 @@ var fallSpeed : float = 9.81;
 @System.NonSerialized
 var startSize : Vector3;
 private var startRadius : float;
-private var shot : boolean = false; 
 private var loadshot :float = 0;
 
 private var shootDirection : Vector3;
@@ -49,7 +48,6 @@ private var extrapolatedPosition :Vector3;
 function Awake () {
 //	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
-	shot = false;
 	appearing = 0;
 
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
@@ -69,8 +67,11 @@ function Awake () {
 
 @RPC
 function NetShootBall (velo :Vector3) {
-	shot = true;
 	velocity = velo;				
+}
+
+function Start () {
+	lastPosition = transform.position;
 }
 
 function Update () {
@@ -122,12 +123,13 @@ function Update () {
 	//Debug.Log(radius);
 
 	var terrH :float = Terrain.activeTerrain.SampleHeight(transform.position);
-	if (terrH  + radius/2 < transform.position.y && shot)
+	if (terrH  + radius/2 < transform.position.y)
 		velocity += 2 * Time.deltaTime * velocity.normalized;
 	if (collider.enabled) transform.position.y = terrH + radius/2;
 
 	//rotate ball while rolling
 	var dir :Vector3 = transform.position - lastPosition;
+	lastPosition = transform.position;
 	var rotAxis = Vector3.Cross(dir, Vector3.up);
 	rotAxis.Normalize();
 	var angle : float = -(2*radius*Mathf.PI)/36*dir.magnitude * ballTurnSpeed;
@@ -155,10 +157,6 @@ function Update () {
 	transform.localScale = appearing * Vector3(radius,radius,radius);
 	particleTail.emissionRate = dir.magnitude * 10;
 	
-	if (shot && dir.sqrMagnitude < 0.025) {
-		shot = false;
-	}
-	
 	if (!pushingPlayer) {
 		if (networkView.isMine) {
 			extrapolatedPosition = transform.position + (.1/Time.deltaTime) * dir; 
@@ -169,7 +167,7 @@ function Update () {
 }
 
 function LateUpdate () {
-	lastPosition = transform.position;
+	
 	if (!collider.enabled) {
 		velocity.y -= 40 * Time.deltaTime;
 	}
@@ -181,7 +179,7 @@ function FixedUpdate () {
 }
 
 function Move (offset : Vector3) {
-	if (pushingPlayer && !shot) {
+	if (pushingPlayer) {
 		//Roll(true);
 		var playerController = pushingPlayer.GetComponent(CharacterController);
 		var playerTransform :Transform = pushingPlayer.transform;
@@ -213,8 +211,6 @@ function IsBallTooFarAway (player : GameObject) : boolean {
 
 function Release () {
 	if (pushingPlayer) {
-		if (!shot)
-			velocity = Vector3.zero;
 		loadshot = 0;
 		transform.parent = null;
 		pushingPlayer = null;
@@ -227,7 +223,6 @@ function PickItem(player:GameObject) {
 	//transform.parent = pushingPlayer.transform;
 	playerMotor = player.GetComponent(CharacterMotorSF);
 	loadshot = 0;
-	shot = false;
 	//networkView.enabled = false;
 }
 
@@ -248,13 +243,29 @@ function NetReachBase () {
 }
 
 function SmashBallToSnowfield () {
-//	transform.parent = null;
+	networkView.RPC("NetSmashBallToSnowfield", RPCMode.All);
+}
+
+@RPC
+function NetSmashBallToSnowfield () {
 	PlayAudio(hitSnow);
-	var res :GameObject = Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
-	res.GetComponent(SnowRessource).CreateResourceFromSnowball(ballSize);
 	collider.enabled = false;
-	yield WaitForSeconds(0.5);
-	Network.Destroy(gameObject);
+	if (Network.isServer) {
+		var snowRes :GameObject[] = GameObject.FindGameObjectsWithTag("SnowballRessource");
+		var res :GameObject = null;
+		for (var go :GameObject in snowRes) {
+			if (Vector3.Distance(go.transform.position, transform.position) < 5 ) {
+				res = go;
+				break;
+			}
+		}
+		if (!res) {
+			res = Network.Instantiate(snowRessource, transform.position, Quaternion.identity,0);
+		}
+		res.GetComponent(SnowRessource).CreateResourceFromSnowball(ballSize);
+		yield WaitForSeconds(0.5);
+		Network.Destroy(gameObject);
+	}
 }
 
 function GetLastOwner() : GameObject {

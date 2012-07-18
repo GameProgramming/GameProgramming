@@ -10,8 +10,6 @@ var playerName :String = "AnonPlayer";
 var spawnBaseID : int;
 var respawnTimeout = 5.0;
 
-private var gameOver = false;
-
 enum PlayerState {Alive = 0, Dead = 1, Frozen = 2, InVehicle = 3}
 private var formerItem :GameObject;
 
@@ -31,6 +29,10 @@ private var collectionSnowTime : float;
 
 private var isMainPlayer :boolean = false;
 private var game :GameStatus;
+private var gameOver = false;
+private var mapCenter :Transform;
+private var tooFarAwayTime :float;
+
 var isLockedTarget : boolean = false;
 
 var onDamageSound1 : AudioClip;
@@ -53,8 +55,11 @@ private var lastAttack :Attack;
 function Awake () {
 	killCount = 0;
 	deathCount = 0;
+	
 	if(GameObject.FindGameObjectWithTag("Game"))
 		game = GameObject.FindGameObjectWithTag("Game").GetComponent(GameStatus);
+	tooFarAwaytime = 0;
+	mapCenter = GameObject.Find("/Game/MapCenter").transform;
 }
 
 function Start() {
@@ -105,6 +110,7 @@ function Update () {
 				}
 			}
 		}
+		
 		switch (state) {
 		case PlayerState.Dead:
 			if (IsMainPlayer() && spawnBaseID > 0) {
@@ -135,6 +141,19 @@ function Update () {
 		case PlayerState.InVehicle:
 			
 			break;
+		}
+		
+		if (state != PlayerState.Dead && 
+				Vector3.SqrMagnitude(mapCenter.position - transform.position)
+					> game.mapRadius*game.mapRadius) {
+			tooFarAwayTime += Time.deltaTime;
+			if (tooFarAwayTime > 1) {
+				var attack = new Attack();
+				attack.damage = 20;
+				ApplyDamage(attack);
+			}
+		} else {
+			tooFarAwayTime = 0;
 		}
 	}
 }
@@ -311,7 +330,7 @@ function NetRespawn ( spawnBase :int ) {
 	if (newPosition != Vector3.zero) {
 		newPosition.y += 5;
 		transform.position = newPosition;
-		transform.LookAt(GameObject.Find("/Game/MapCenter").transform);
+		transform.LookAt(mapCenter);
 		transform.eulerAngles.x = 0;
 		transform.eulerAngles.z = 0;
 	
@@ -463,8 +482,10 @@ function GetSpawnBaseID () : int {
 }
 
 function SetSpawnBaseID (newSpawnBaseID : int) {
+	if (newSpawnBaseID != spawnBaseID) {
+		killTime = Time.time;
+	}
 	spawnBaseID = newSpawnBaseID;
-	killTime = Time.time;
 	respawnLease = false;
 }
 

@@ -127,7 +127,7 @@ function OnTriggerStay(other : Collider) {
 
 function CreateResourceFromSnowball(ballSize : float) {
 	creationTime = Time.time;
-	currentSnowballs = Mathf.Min(Mathf.Round(ballSize), maxSnowballs);
+	currentSnowballs = Mathf.Min(Mathf.Round(currentSnowballs+ballSize), maxSnowballs);
 	snowballRessource = transform.Find("SnowballRessource");
 	GetComponent(Collider).isTrigger = true;
 }
