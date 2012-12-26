@@ -39,7 +39,7 @@ var specialWeaponIcons : Texture2D[];
 function PlayAudio(audio : AudioClip){
 	transform.audio.clip=audio;
 	if(!transform.audio.isPlaying){
-	    	   	transform.audio.Play();
+	    transform.audio.Play();
 	}
 }
 

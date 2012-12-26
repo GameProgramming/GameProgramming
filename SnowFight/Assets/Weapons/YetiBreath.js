@@ -35,7 +35,7 @@ function PlayAudio(audio : AudioClip){
 	}
 }
 
-function Start() {
+function Awake() {
 	targets = new Array();
 }
 

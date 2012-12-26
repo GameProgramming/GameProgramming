@@ -11,15 +11,11 @@ private var ufos : GameObject[];
 private var bazookas : GameObject[];
 private var snowBalls : GameObject[];
 private var snowRessources : GameObject[];
-private var firstBot : boolean;
-//private var wantBazooka : boolean = false;
 
 function Start () {
 	teamComponent = GetComponent(Team);
 	teamNumber = teamComponent.GetTeamNumber();
 	teamMembers = teamComponent.GetAllPlayers();
-	
-	firstBot = true;
 }
 
 function Update () {
@@ -27,92 +23,44 @@ function Update () {
 }
 
 function GetTargets (player : GameObject) : GameObject[] {
-	var closestBall : GameObject;
 	var targets : GameObject[] = [];
-//	wantBazooka = false;
 	
 	//find all relevant objects - we will probably need them anyways
 	GetUfos ();
 	GetBazookas();
 	GetSnowBalls();
 	GetSnowRessources();
-	//find bases
 	UpdateBases();
 	
-	//if there'still a free base, return that as targets!
-	if (!firstBot && unoccupiedBases.Length > 0) {
-		targets += [GetClosestObjectInArray (player,unoccupiedBases)];
+	if (Random.value > 0.5 && bazookas.Length > 0 && WantsBazooka(player)) {
+		var closestBazooka = GetClosestObjectInArray(player, bazookas);
+		targets += [closestBazooka];
+	} else {
+		if (snowBalls.Length > 0) {
+			var closestBall = GetClosestObjectInArray(player, snowBalls);
+			if (IsClosestTeamMember(player, closestBall.transform.position) && !closestBall.transform.parent) {
+				targets += [closestBall];
+			}
+		}	
+		var closestRessource = GetClosestObjectInArray(player, snowRessources);
+		targets += [closestRessource];
 	}
+	
+	//if theres still a free base, return that as targets!
+	if (unoccupiedBases.Length > 0) {
+		targets += unoccupiedBases;
+	}
+	
+	if (enemyBases.Length > 0)
+		targets += [GetClosestObjectInArray (player,enemyBases)];
+	else 
+		targets += [GetClosestObjectInArray (player,ownBases)];
 	
 	for (ufo in ufos) {
-		//if the ufo is empty and we're closest, go get it!
-		if (IsUfoUnoccupied (ufo) && IsClosestTeamMember(player, ufo.transform.position)) {
+		if (IsUfoUnoccupied (ufo)) {
 			targets += [ufo];
-			break;
-		}
-		//if there's an enemy in a ufo
-		else if (IsUfoOccupiedByEnemy(ufo)) {
-			//if there's a bazooka somewhere
-			if (bazookas.Length > 0) {
-				for (baz in bazookas) {
-					//and we're the closest bot, return that bazooka
-					if (IsClosestTeamMember(player, baz.transform.position)) {
-						targets += [baz];
-						break;
-					}
-				}
-			}
-			//if there's no bazooka find a snowball or snowfield to take to the base
-			else {	
-//				wantBazooka = true;		
-				closestBall = GetClosestObjectInArray(player, snowBalls);
-				var closestRessource = GetClosestObjectInArray(player, snowRessources);
-				if (closestBall && Vector3.Distance(player.transform.position, closestBall.transform.position) < 
-					Vector3.Distance(player.transform.position, closestRessource.transform.position)*4)
-					targets += [closestBall];
-				else 
-					targets += [closestRessource];
-			}
 		}
 	}
-	
-	//there might be no ufo or bazooka for us to get
-	//so perhaps get snowballs
-	if (snowBalls.Length > 0) {
-		closestBall = GetClosestObjectInArray(player, snowBalls);
-		if (IsClosestTeamMember(player, closestBall.transform.position) && !closestBall.transform.parent) {
-			targets += [closestBall];
-		}
-	}
-	
-	//Get bazookas if they're around
-	//or go make a snowball at a snowressource
-	if (Random.value > 0.8 || firstBot) {
-		closestRessource = GetClosestObjectInArray(player, snowRessources);
-		if (IsClosestTeamMember(player, closestRessource.transform.position) || firstBot) {
-			targets += [closestRessource];
-			//return targets;
-		}
-		
-		if (bazookas.Length > 0) {
-			var closestBazooka = GetClosestObjectInArray(player, bazookas);
-			if (IsClosestTeamMember(player, closestBazooka.transform.position)) {
-				targets += [closestBazooka];
-				//return targets;
-			}
-		}
-	}
-	
-	//otherwise return an enemies base to regain
-	if (unoccupiedBases.Length == 0) {
-		if (enemyBases.Length > 0)
-			targets += [GetClosestObjectInArray (player,enemyBases)];
-		else 
-			targets += [GetClosestObjectInArray (player,ownBases)];
-	}
-	
-	if(firstBot)
-		firstBot = false;
 		
 	return targets;
 }
@@ -185,12 +133,22 @@ function GetBazookas () : GameObject[] {
 }
 
 function GetSnowBalls () : GameObject[] {
-	snowBalls = GameObject.FindGameObjectsWithTag("BigSnowball");
+	snowBalls = [];
+	for (var s in GameObject.FindGameObjectsWithTag("BigSnowball")) {
+		if (!s.GetComponent(BigSnowBall).IsHeld()) {
+			snowBalls += [s];
+		}
+	}
 	return snowBalls;
 }
 
 function GetSnowRessources () : GameObject[] {
-	snowRessources = GameObject.FindGameObjectsWithTag("SnowballRessource");
+	snowRessources = [];
+	for (var sr in GameObject.FindGameObjectsWithTag("SnowballRessource")) {
+		if (sr.GetComponent(SnowRessource).IsGrabBigSnowballPossible()) {
+			snowRessources += [sr];
+		}
+	}
 	return snowRessources;
 }
 
@@ -218,7 +176,7 @@ function IsClosestTeamMember (player : GameObject, pos : Vector3) : boolean {
 	teamMembers = teamComponent.GetAllPlayers();
 	for (var bot in teamMembers) {
 		if (bot != player && bot.GetComponent(BotAI).enabled && !bot.GetComponent(PlayerStatus).IsDead()){// && !bot.GetComponent(BotAI).IsBusy()) {
-			curDist = Vector3.Distance(bot.position, pos);
+			curDist = (bot.position-pos).sqrMagnitude;
 			if (curDist < minDist)
 				return false;
 		}
@@ -252,22 +210,23 @@ function GetClosestObjectInArray (bot : GameObject, objects : GameObject[]) : Ga
 	return closest;
 }
 
-function FindClosestEnemy () : GameObject {
+function FindClosestEnemy (bot :GameObject) : GameObject {
     // Find all game objects with tag Enemy
     var gos:GameObject[] = GameObject.FindGameObjectsWithTag("Player"); 
     var closest:GameObject;
     var distance:float = Mathf.Infinity; 
-    var position:Vector3 = transform.position; 
+    var position:Vector3 = bot.transform.position; 
    // var diff;
 	var curDistance:float = 0.0;
 	        
     // Iterate through them and find the closest one
-    for (var go : GameObject in gos)  { 
-    	var status = go.GetComponent(PlayerStatus);
+    for (var go : GameObject in gos)  {
+    	var status :PlayerStatus = go.GetComponent.<PlayerStatus>();
     	//get closest bot
-    	if (status != null && !status.team.Friendly(teamComponent)) {
+    	if (status != null && !status.IsDead() && !status.IsRidingUfo() 
+    			&& !status.team.Friendly(teamComponent)) {
     		position.y = go.transform.position.y;
-	        curDistance = Vector3.Distance(go.transform.position, position);
+	        curDistance = (go.transform.position - position).sqrMagnitude;
 	        
 	        if (curDistance < distance) { 
 	            closest = go; 
@@ -279,10 +238,18 @@ function FindClosestEnemy () : GameObject {
 	        } 
         }
     } 
-    return closest;    
+    return closest;
+}
+
+function IsAFriend(player :GameObject) :boolean {
+	return player != null && player.GetComponent(PlayerStatus) != null
+		&& player.GetComponent(PlayerStatus).team.Friendly(teamComponent);
 }
 
 function WantsBazooka (player:GameObject) : boolean {
 	return (GetClosestFlyingEnemy(player)!=null);// && Random.value>0.5);
-//	return wantBazooka;
+}
+
+function WantsSpecialWeapon (player:GameObject) : boolean {
+	return (GetClosestFlyingEnemy(player)!=null || Random.value>0.2);
 }

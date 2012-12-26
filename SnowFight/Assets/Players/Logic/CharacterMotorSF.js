@@ -414,9 +414,11 @@ private function UpdateFunction () {
 	        movingPlatform.activeLocalRotation = Quaternion.Inverse(movingPlatform.activePlatform.rotation) * movingPlatform.activeGlobalRotation; 
 		}
 	} else if (playerState == PlayerState.Dead) {
-		movement.velocity = Vector3.ClampMagnitude(movement.velocity, 10);
-		movement.velocity = ApplyGravityAndJumping (movement.velocity);
-		controller.Move(movement.velocity);
+		if (transform.position.y > -10) {
+			movement.velocity = Vector3.ClampMagnitude(movement.velocity, 10);
+			movement.velocity = ApplyGravityAndJumping (movement.velocity);
+			controller.Move(movement.velocity);
+		}
 	} else if (playerState == PlayerState.InVehicle) {
 		transform.position += movement.velocity;
 	}
@@ -706,6 +708,14 @@ function IsTouchingCeiling () {
 
 function IsGrounded () {
 	return grounded;
+}
+
+function ReadyToThrow () {
+	return throwProgress >= 2;
+}
+
+function GetSnowballVelocity () :Vector3 {
+	return snowballSpawn.GetStartVelocity();
 }
 
 function TooSteep () {

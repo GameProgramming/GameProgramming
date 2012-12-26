@@ -323,7 +323,7 @@ function MakeCreditWindow (id : int) {
 	GUILayout.Label("Game Dev Class");
 	GUILayout.Label("SoSe2012 @ TU Berlin");
 	GUILayout.Space(22);
-	GUILayout.Label("Enjoy the summer!");
+	GUILayout.Label("Happy new year!");
 }
 
 function StartServer (serverName :String, level :String, global :boolean) {

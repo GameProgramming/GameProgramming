@@ -47,7 +47,7 @@ class Attack {
 	var attacker :GameObject;
 	var damageType :DamageType;
 	var damage :int;
-	var time :float;
+	var time :float = 0;
 }
 
 private var lastAttack :Attack;
@@ -503,7 +503,10 @@ private function SetState (s :PlayerState) {
 }
 
 function GetTeamNumber () : int {
-	return team.GetTeamNumber();
+	if (team)
+		return team.GetTeamNumber();
+	else
+		return -1;
 }
 
 function OnSetBot () {

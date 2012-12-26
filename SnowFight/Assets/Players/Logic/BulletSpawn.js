@@ -55,6 +55,13 @@ function Update () {
 	reloadProgress -= Time.deltaTime;
 }
 
+function GetStartVelocity () : Vector3 {
+	var speed :float = bullet.GetComponent(Projectile).speed;
+	return Vector3.ClampMagnitude(speed
+				* transform.TransformDirection (Vector3.forward
+				+ new Vector3(0, startYSpeed, 0)), speed );
+}
+
 function CanFire () {
 	return reloadProgress <= 0.0 && player.GetCurrentSnowballs() >= snowCosts;
 }
@@ -73,9 +80,7 @@ function Fire () {
 			  	var clone : Rigidbody;	
 				clone = Instantiate(projectile, transform.position, transform.rotation);
 				var speed :float = clone.GetComponent(Projectile).speed;
-			  	clone.velocity = Vector3.ClampMagnitude(speed
-			  				* transform.TransformDirection (Vector3.forward
-							+ new Vector3(0, startYSpeed, 0)), speed );
+			  	clone.velocity = GetStartVelocity();
 				clone.GetComponent(Damage).shooter = player.gameObject;
 				SendFire(clone);
 				player.SendMessage("OnBulletSpawnFired", this, SendMessageOptions.DontRequireReceiver);

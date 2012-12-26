@@ -64,13 +64,13 @@ function Start() {
 
 function Update () {
 	if (owner) {
-		transform.eulerAngles.x = -playerMotor.rotationY-10;
+		transform.eulerAngles.x = -playerMotor.rotationY*1.25-25;
 		weaponModel.renderer.enabled = true;
 		if (owner.networkView.isMine) {
 		
 			AimTarget(targetName);
 			
-			transform.eulerAngles.x = -playerMotor.rotationY-10;
+			transform.eulerAngles.x = -playerMotor.rotationY*1.25-25;
 		  	if(target == null){
 				progress = 0;
 			}	  		
@@ -275,7 +275,6 @@ function RenderAimingLine () {
 			if(scale > 10){
 				scale /= 3;
 			}
-			Debug.Log(scale);
 			aimingCircleOuter.localScale = Vector3(scale, scale, scale);
 			
 			scale *= (1.5 - progress/aimFor);

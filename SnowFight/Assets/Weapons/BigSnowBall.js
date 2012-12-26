@@ -23,6 +23,7 @@ var ballTurnSpeed = 150;
 private var pushingPlayer : GameObject;
 private var lastOwner : GameObject;
 private var playerMotor : CharacterMotorSF;
+private var reachedBase : boolean;
 private var isGrounded : boolean;
 var fallSpeed : float = 9.81;
 
@@ -48,6 +49,7 @@ private var extrapolatedPosition :Vector3;
 function Awake () {
 //	collider.attachedRigidbody.useGravity = false;
 	isGrounded = false;
+	reachedBase = false;
 	appearing = 0;
 
 	meshRenderers = GetComponentsInChildren.<MeshRenderer> ();
@@ -209,6 +211,10 @@ function IsBallTooFarAway (player : GameObject) : boolean {
 	return tooFar;
 }
 
+function HasReachedBase () : boolean {
+	return reachedBase;
+}
+
 function Release () {
 	if (pushingPlayer) {
 		loadshot = 0;
@@ -238,6 +244,7 @@ function OnReachBase () {
 @RPC
 function NetReachBase () {
 	particleSystem.gravityModifier = -0.7;
+	reachedBase = true;
 	particleSystem.Emit(90);
 	collider.enabled = false;
 }
@@ -301,6 +308,9 @@ function PlayAudio(audio : AudioClip){
 
 function IsHeld () :boolean {
 	return pushingPlayer != null;
+}
+function IsHeldBy (player :GameObject) :boolean {
+	return pushingPlayer != player;
 }
 
 //function OnControllerColliderHit(hit : ControllerColliderHit){
